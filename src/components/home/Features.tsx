@@ -1,4 +1,4 @@
-import { FastHeroIcon } from "@public/svgs";
+// import { FastHeroIcon } from "@public/svgs";
 export const Features = () => {
   return (
     <section className='pt-36 pb-16 px-6 text-center bg-white'>
@@ -10,7 +10,7 @@ export const Features = () => {
             you moving without delay.
           </p>
         </div>
-        <FastHeroIcon />
+        {/* <FastHeroIcon /> */}
       </div>
     </section>
   );

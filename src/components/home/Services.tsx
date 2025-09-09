@@ -1,26 +1,21 @@
 import Link from "next/link";
-import {
-  LogisticsHeroIcon,
-  RentARideHeroIcon,
-  ScheduleARideHeroIcon,
-} from "@public/svgs";
 
 export const Services = () => {
   const services = [
     {
       title: "Rent a ride",
       desc: "Perfect for daily use, events, or business trips. Flexible hourly, daily, rates.",
-      img: <RentARideHeroIcon />,
+      img: "<RentARideHeroIcon />",
     },
     {
       title: "Schedule ride",
       desc: "Book ahead for peace of mind. special occasions, or planned journeys.",
-      img: <ScheduleARideHeroIcon />,
+      img: "<ScheduleARideHeroIcon />",
     },
     {
       title: "Logistics",
       desc: "Secure package handling with tracking updates.",
-      img: <LogisticsHeroIcon />,
+      img: "<LogisticsHeroIcon />,",
     },
   ];
 

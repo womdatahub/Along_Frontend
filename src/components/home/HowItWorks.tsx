@@ -1,4 +1,4 @@
-import { HowItWorksHeroIcon } from "@public/svgs";
+// import { HowItWorksHeroIcon } from "@public/svgs";
 
 export const HowItWorks = () => {
   const steps = ["Choose Your Service", "Set Your Details", "Confirm & Ride"];
@@ -6,7 +6,7 @@ export const HowItWorks = () => {
   return (
     <section className='py-16 px-6 bg-white'>
       <div className='flex flex-col md:flex-row items-center gap-8 max-w-5xl mx-auto justify-between'>
-        <HowItWorksHeroIcon />
+        {/* <HowItWorksHeroIcon /> */}
         <div className='gap-4'>
           <h2 className='text-4xl font-extrabold'>How It Works</h2>
           <ul className='space-y-3 text-black'>

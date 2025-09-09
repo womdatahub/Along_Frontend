@@ -13,9 +13,7 @@ const Page = () => {
       </div>
       <div className='flex justify-center items-center h-full'>
         <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black text-4xl'>
-          <p className='font-semibold text-2xl text-center'>
-            Let’s get you onboard
-          </p>
+          <p className='font-semibold text-2xl text-center'>OTP </p>
           <input
             className='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
             placeholder='Enter phone number, email'
