@@ -1,5 +1,5 @@
 "use client";
-import { LogoComponent } from "@/components";
+import { AuthNavbar } from "@/components";
 
 const Layout = ({
   children,
@@ -7,11 +7,9 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <section className='w-screen h-screen overflow-hidden bg-white'>
-      <div className='px-32 pt-5'>
-        <LogoComponent />
-      </div>
-      <div className='flex flex-col gap-2 justify-center items-center h-full'>
+    <section className='w-screen h-screen overflow-y-'>
+      <AuthNavbar />
+      <div className='flex flex-col gap-2 justify-center items-center h-full mt-'>
         {children}
       </div>
     </section>

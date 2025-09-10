@@ -3,6 +3,7 @@
 import { DatePicker, SelectDropdown } from "@/components";
 import { cn } from "@/lib/utils";
 import { WhiteGreaterThanIcon } from "@public/svgs";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -22,8 +23,13 @@ const Page = () => {
           Tell us a bit about yourself to help us set up your account.
         </p>
       </div>
-      <div className='flex gap-4 px-4 py-7 rounded-lg bg-icons'>
-        <p>icon</p>
+      <div className='flex gap-4 px-4 py-7 rounded-lg bg-icons items-center'>
+        <Image
+          src='/images/passenger.png'
+          alt={"driver"}
+          width={40}
+          height={40}
+        />
         <p className='font-semibold text-base'>Rider</p>
       </div>
 

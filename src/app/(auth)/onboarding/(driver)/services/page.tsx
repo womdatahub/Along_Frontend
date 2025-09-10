@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { WhiteGreaterThanIcon } from "@public/svgs";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -25,71 +26,40 @@ const Page = () => {
         </p>
       </div>
       <div className='flex flex-col gap-4'>
-        <div className='flex flex-col gap-1 last:rounded-b-2xl first:rounded-t-2xl'>
-          <button
-            onClick={() => {
-              toggleOption("rental");
-            }}
-            className={cn(
-              "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl"
-            )}
-          >
-            <div className='flex gap-4 items-center'>
-              <p>icon</p>
-              <p className='font-medium text-xs'>Ride Rental</p>
-            </div>
-            <div
-              className={cn(
-                "size-4 bg-[#BBCCCF80]",
-                selectedOptions.includes("rental") && "bg-primary"
-              )}
-            />
-          </button>
-          <button
-            onClick={() => {
-              toggleOption("scheduled");
-            }}
-            className={cn(
-              "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl"
-            )}
-          >
-            <div className='flex gap-4 items-center'>
-              <p>icon</p>
-              <p className='font-medium text-xs'>Scheduled Ride</p>
-            </div>
-            <div
-              className={cn(
-                "size-4 bg-[#BBCCCF80]",
-                selectedOptions.includes("scheduled") && "bg-primary"
-              )}
-            />
-          </button>
-
-          <button
-            onClick={() => {
-              toggleOption("logistics");
-            }}
-            className={cn(
-              "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl"
-            )}
-          >
-            <div className='flex gap-4 items-center'>
-              <p>icon</p>
-              <p className='font-medium text-xs'>Logistics</p>
-            </div>
-            <div
-              className={cn(
-                "size-4 bg-[#BBCCCF80]",
-                selectedOptions.includes("logistics") && "bg-primary"
-              )}
-            />
-          </button>
+        <div className='flex flex-col gap-1'>
+          {items.map((item) => {
+            return (
+              <button
+                key={item.state}
+                onClick={() => {
+                  toggleOption(item.state);
+                }}
+                className={cn(
+                  "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl"
+                )}
+              >
+                <div className='flex gap-4 items-center'>
+                  <Image
+                    src={item.img}
+                    alt={item.state}
+                    width={40}
+                    height={40}
+                  />
+                  <p className='font-medium text-xs'>{item.title}</p>
+                </div>
+                <div
+                  className={cn(
+                    "size-4 bg-[#BBCCCF80]",
+                    selectedOptions.includes(item.state) && "bg-primary"
+                  )}
+                />
+              </button>
+            );
+          })}
           <div className='flex justify-between items-center gap-3 px-4 mt-3'>
             <p>Select all</p>
             <div
-              onClick={() =>
-                setSelectedOptions(["rental", "scheduled", "logistics"])
-              }
+              onClick={() => setSelectedOptions(items.map((i) => i.state))}
               className={cn(
                 "size-4 bg-[#BBCCCF80] cursor-pointer",
                 selectedOptions.length === 3 && "bg-primary"
@@ -135,3 +105,21 @@ const Page = () => {
   );
 };
 export default Page;
+
+const items = [
+  {
+    state: "rental",
+    title: "Ride Rental",
+    img: "/images/rental.png",
+  },
+  {
+    state: "scheduled",
+    title: "Scheduled Ride",
+    img: "/images/scheduled.png",
+  },
+  {
+    state: "logistics",
+    title: "Logistics",
+    img: "/images/logistics.png",
+  },
+];
