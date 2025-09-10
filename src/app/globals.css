@@ -13,7 +13,9 @@
 
   --color-primary: #0E696A;
   --color-gray: #777676;
-  --color-icons:#768B8F
+  --color-icons:#768B8F;
+  --color-inactive:#C9CDCE;
+  --color-placeholder:#C5C5C5;
 ;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
