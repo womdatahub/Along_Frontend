@@ -1,13 +1,10 @@
 "use client";
-
+import { AuthBackAndContinueButton } from "@/components";
 import { cn } from "@/lib/utils";
-import { WhiteGreaterThanIcon } from "@public/svgs";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
-  const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const toggleOption = (option: string) => {
@@ -68,39 +65,11 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className='flex justify-between items-center'>
-        <button
-          onClick={() => router.back()}
-          className='flex gap-3 items-center cursor-pointer'
-        >
-          <div className='flex justify-center items-center rounded-full bg-primary w-14 aspect-square rotate-180'>
-            <WhiteGreaterThanIcon />
-          </div>
-          <p className='text-sm'>Back</p>
-        </button>
-        <button
-          onClick={() => {
-            if (selectedOptions.length > 0)
-              router.push("/onboarding/driver-info");
-          }}
-          className={cn(
-            "flex gap-3 items-center cursor-pointer"
-            // otpValue.length !== 4 && "cursor-not-allowed"
-          )}
-        >
-          <p className='text-sm'>Continue</p>
-          <div
-            className={cn(
-              "flex justify-center items-center rounded-full w-14 aspect-square transition-colors duration-500 bg-primary",
-              selectedOptions.length > 0
-                ? "bg-primary"
-                : "bg-inactive cursor-not-allowed"
-            )}
-          >
-            <WhiteGreaterThanIcon />
-          </div>
-        </button>
-      </div>
+      <AuthBackAndContinueButton
+        backActive
+        continueActive={selectedOptions.length > 0}
+        continuePath='/onboarding/driver-info'
+      />
     </div>
   );
 };
