@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -20,11 +21,16 @@ const Page = () => {
             router.push("/onboarding/rider");
           }}
           className={cn(
-            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-icons transition-colors duration-500",
+            "flex gap-8 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-icons transition-colors duration-500 items-center",
             selected === "rider" && "bg-icons'"
           )}
         >
-          <p>icon</p>
+          <Image
+            src='/images/passenger.png'
+            alt={"rider"}
+            width={40}
+            height={40}
+          />
           <p className='font-semibold text-base'>Rider</p>
         </button>
         <button
@@ -33,11 +39,16 @@ const Page = () => {
             router.push("/onboarding/terms");
           }}
           className={cn(
-            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-icons transition-colors duration-500",
+            "flex gap-8 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-icons transition-colors duration-500 items-center",
             selected === "driver" && "bg-icons'"
           )}
         >
-          <p>icon</p>
+          <Image
+            src='/images/driver.png'
+            alt={"driver"}
+            width={40}
+            height={40}
+          />
           <p className='font-semibold text-base'>Driver</p>
         </button>
       </div>

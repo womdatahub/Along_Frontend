@@ -84,7 +84,7 @@ const Page = () => {
             )}
           >
             <WhiteGreaterThanIcon />
-          </div>{" "}
+          </div>
         </button>
       </div>
     </div>

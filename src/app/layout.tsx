@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat`}
       >
         {children}
         <Toaster position='bottom-right' richColors />

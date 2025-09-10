@@ -15,7 +15,7 @@ const Page = () => {
           Continue
         </button>
         <div className='flex flex-col gap-9 mt-5'>
-          <p className='text-xs font-semibold text-center'>or sign in with</p>
+          <p className='text-xs font-semibold text-center'>or continue with</p>
           <div className='flex gap-14 items-center justify-center'>
             {icons.map((icon, i) => {
               return (
