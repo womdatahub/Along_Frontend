@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -9,14 +12,21 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* My colors */
+  /* Along colors */
 
   --color-primary: #0E696A;
   --color-gray: #777676;
   --color-icons:#768B8F;
   --color-inactive:#C9CDCE;
   --color-placeholder:#C5C5C5;
-;
+
+  /* Along fonts */
+
+  --font-heebo: 'Heebo', sans-serif;
+  --font-fustat: 'Fustat', serif;
+
+
+  /* Shadcn colors */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

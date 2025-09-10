@@ -1,67 +1,80 @@
-import {
-  DarkFacebookIcon,
-  DarkGoogleIcon,
-  DarkIosIcon,
-  LogoIcon,
-} from "@public/svgs";
+"use client";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components";
+import { cn } from "@/lib/utils";
+import { WhiteGreaterThanIcon } from "@public/svgs";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useState } from "react";
 
 const Page = () => {
+  const [otpValue, setValue] = useState("");
   return (
-    <section className='w-screen h-screen overflow-hidden bg-white'>
-      <div className='px-32 pt-5'>
-        <LogoIcon />
-      </div>
-      <div className='flex justify-center items-center h-full'>
-        <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black text-4xl'>
-          <p className='font-semibold text-2xl text-center'>OTP </p>
-          <input
-            className='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
-            placeholder='Enter phone number, email'
-          />
-          <button className='bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
-            Continue
-          </button>
-          <div className='flex flex-col gap-9 mt-5'>
-            <p className='text-xs font-semibold text-center'>or sign in with</p>
-            <div className='flex gap-14 items-center justify-center'>
-              {icons.map((icon, i) => {
-                return (
-                  <button
-                    key={i}
-                    className='flex flex-col gap-1 cursor-pointer'
-                  >
-                    {icon.icon}
-                    <p className='text-xs text-icons font-semibold'>
-                      {icon.name}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-            <p className='text-gray text-xs font-light text-center'>
-              By continuing, you agree that Along and its affiliates may contact
-              you at the number you provide via calls, WhatsApp, or SMS/RCS
-              messages, which may sometimes be sent automatically.
-            </p>
+    <div className='flex flex-col gap-2 justify-center items-center h-full'>
+      <div className='flex flex-col gap-14 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
+        <p className='font-semibold text-2xl text-center'>
+          Let’s get you verified.
+        </p>
+        <div className='flex flex-col gap-5'>
+          <p className='text-center text-sm'>
+            Enter the 4-digit verification code sent to you.
+          </p>
+          <div className='w-full flex justify-center'>
+            <InputOTP
+              maxLength={4}
+              value={otpValue}
+              onChange={(value) => setValue(value)}
+              pattern={REGEXP_ONLY_DIGITS}
+              autoFocus
+              onComplete={() => {}}
+            >
+              <InputOTPGroup className='gap-7'>
+                {[0, 1, 2, 3].map((v) => {
+                  return (
+                    <InputOTPSlot
+                      key={v}
+                      index={v}
+                      className='bg-white size-15 aspect-square rounded-lg data-[active=true]:border-primary text-center text-2xl shadow-none'
+                    />
+                  );
+                })}
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+          <div className='flex flex-col text-center'>
+            <p className='text-sm'>Didn’t get the code?</p>
+            <button className='text-icons text-lg font-semibold hover:cursor-pointer'>
+              Resend
+            </button>
           </div>
         </div>
+        <div className='flex justify-between items-center'>
+          <button className='flex gap-3 items-center cursor-not-allowed'>
+            <div className='flex justify-center items-center rounded-full bg-inactive  w-14 aspect-square rotate-180'>
+              <WhiteGreaterThanIcon />
+            </div>
+            <p className='text-sm'>Back</p>
+          </button>
+          <button
+            className={cn(
+              "flex gap-3 items-center cursor-pointer",
+              otpValue.length !== 4 && "cursor-not-allowed"
+            )}
+          >
+            <p className='text-sm'>Continue</p>
+            <div
+              className={cn(
+                "flex justify-center items-center rounded-full w-14 aspect-square transition-colors duration-500",
+                otpValue.length === 4 ? "bg-primary" : "bg-inactive"
+              )}
+            >
+              <WhiteGreaterThanIcon />
+            </div>
+          </button>
+        </div>
       </div>
-    </section>
+      <p className='text-base text-gray'>
+        If you don’t see the code, check your spam folder too.
+      </p>
+    </div>
   );
 };
 export default Page;
-
-const icons = [
-  {
-    icon: <DarkIosIcon />,
-    name: "Apple",
-  },
-  {
-    icon: <DarkGoogleIcon />,
-    name: "Google",
-  },
-  {
-    icon: <DarkFacebookIcon />,
-    name: "Facebook",
-  },
-];
