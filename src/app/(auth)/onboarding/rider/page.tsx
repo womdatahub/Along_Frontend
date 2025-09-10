@@ -1,6 +1,6 @@
 "use client";
 
-import { DatePicker, SelectDropdown } from "@/components";
+import { CustomAuthInput, DatePicker, SelectDropdown } from "@/components";
 import { cn } from "@/lib/utils";
 import { WhiteGreaterThanIcon } from "@public/svgs";
 import Image from "next/image";
@@ -34,20 +34,9 @@ const Page = () => {
       </div>
 
       <div className='flex flex-col gap-4'>
-        <div className='flex flex-col gap-1'>
-          <p className='font-medium text-sm ml-5'>First Name</p>
-          <input
-            className='bg-white h-16 rounded-2xl px-4 text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder'
-            placeholder='John'
-          />
-        </div>
-        <div className='flex flex-col gap-1'>
-          <p className='font-medium text-sm ml-5'>Last Name</p>
-          <input
-            className='bg-white h-16 rounded-2xl px-4 text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder'
-            placeholder='Doe'
-          />
-        </div>
+        <CustomAuthInput label='First Name' placeholder='John' />
+        <CustomAuthInput label='Last Name' placeholder='Doe' />
+
         <DatePicker
           date={date}
           open={open}
