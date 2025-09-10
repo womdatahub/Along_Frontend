@@ -2,16 +2,11 @@
 
 import { AuthBackAndContinueButton, CustomAuthInput } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components/shared/UploadingImagesReusableComponent";
-import { cn } from "@/lib/utils";
 import { ImageType } from "@/types";
-import { UploadImageIcon, WhiteGreaterThanIcon } from "@public/svgs";
-import { useRouter } from "next/navigation";
+import { UploadImageIcon } from "@public/svgs";
 import { useState } from "react";
 
 const Page = () => {
-  const router = useRouter();
-  const [selected, setSelected] = useState("");
-
   const [previews, setPreviews] = useState<(ImageType | null)[]>([
     null,
     null,

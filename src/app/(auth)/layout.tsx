@@ -7,9 +7,9 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <section className='w-screen h-screen'>
+    <section className='w-screen min-h-screen flex flex-col'>
       <AuthNavbar />
-      <div className='flex flex-col gap-2 justify-center items-center h-full pt-44 lg:pt-32 pb-16 overflow-y-scroll'>
+      <div className='flex-1 flex flex-col gap-2 justify-center items-center pt-44 lg:pt-32 pb-16'>
         {children}
       </div>
     </section>
