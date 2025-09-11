@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fustat, Heebo } from "next/font/google";
 import { Toaster } from "@/components";
+import { AuthProvider } from "@/store";
 
 import "./globals.css";
 
@@ -41,7 +42,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
         <Toaster position='bottom-right' richColors />
       </body>
     </html>
