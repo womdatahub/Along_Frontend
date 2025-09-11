@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib";
 
 type Props = { label: string; placeholder: string; className?: string };
 export const CustomAuthInput = ({ label, placeholder, className }: Props) => {

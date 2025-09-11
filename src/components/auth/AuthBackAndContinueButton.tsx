@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib";
 import { WhiteGreaterThanIcon } from "@public/svgs";
 import { useRouter } from "next/navigation";
 

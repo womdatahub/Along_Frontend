@@ -1,6 +1,6 @@
 "use client";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib";
 import { WhiteGreaterThanIcon } from "@public/svgs";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";

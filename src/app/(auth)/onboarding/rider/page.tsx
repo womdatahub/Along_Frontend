@@ -1,7 +1,7 @@
 "use client";
 
 import { CustomAuthInput, DatePicker, SelectDropdown } from "@/components";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib";
 import { WhiteGreaterThanIcon } from "@public/svgs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
