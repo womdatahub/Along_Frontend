@@ -5,6 +5,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components";
+import HeadingHeebo from "@/components/shared/HeadingHeebo";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 
@@ -13,9 +14,7 @@ const Page = () => {
   return (
     <div className='flex flex-col gap-2 justify-center items-center h-full'>
       <div className='flex flex-col gap-14 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
-        <p className='font-semibold text-2xl text-center'>
-          Let’s get you verified.
-        </p>
+        <HeadingHeebo>Let’s get you verified.</HeadingHeebo>
         <div className='flex flex-col gap-5'>
           <p className='text-center text-sm'>
             Enter the 4-digit verification code sent to you.

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components";
+import HeadingHeebo from "@/components/shared/HeadingHeebo";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import { useRouter } from "next/navigation";
 
@@ -8,9 +9,7 @@ const Page = () => {
   return (
     <div className='flex justify-center items-center h-full'>
       <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black text-4xl'>
-        <p className='font-semibold text-2xl text-center'>
-          Let’s get you onboard
-        </p>
+        <HeadingHeebo>Let’s get you onboard</HeadingHeebo>
         <input
           className='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
           placeholder='Enter phone number, email'

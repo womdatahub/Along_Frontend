@@ -6,6 +6,7 @@ import {
   DatePicker,
   SelectDropdown,
 } from "@/components";
+import HeadingHeebo from "@/components/shared/HeadingHeebo";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -16,9 +17,7 @@ const Page = () => {
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] -mt-10 px-8 py-10 bg-[#EFF1F1] text-black'>
       <div className='flex flex-col gap-1'>
-        <p className='font-semibold text-2xl text-center'>
-          Lets get you started
-        </p>
+        <HeadingHeebo>Lets get you started</HeadingHeebo>
         <p className='text-sm text-center'>
           Tell us a bit about yourself to help us set up your account.
         </p>

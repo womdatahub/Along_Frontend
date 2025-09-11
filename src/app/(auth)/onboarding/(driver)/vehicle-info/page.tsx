@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthBackAndContinueButton, CustomAuthInput } from "@/components";
+import HeadingHeebo from "@/components/shared/HeadingHeebo";
 import { UploadingImagesReusableComponent } from "@/components/shared/UploadingImagesReusableComponent";
 import { ImageType } from "@/types";
 import { UploadImageIcon } from "@public/svgs";
@@ -17,9 +18,7 @@ const Page = () => {
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
       <div className='flex flex-col gap-2'>
-        <p className='font-semibold text-2xl text-center'>
-          Vehicle Registration
-        </p>
+        <HeadingHeebo>Vehicle Registration</HeadingHeebo>
         <p className='text-center text-sm'>
           Enter your car details to complete your registration and access
           related services{" "}

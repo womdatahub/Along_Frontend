@@ -3,3 +3,4 @@ export * from "./ui";
 export * from "./shared";
 export * from "./auth/AuthNavbar";
 export * from "./auth";
+export * from "./db";

@@ -4,3 +4,9 @@ export type ImageType = {
   imageSize: number;
   url?: string;
 };
+
+export type ApiResponse<T = Record<string, unknown>> = {
+  status: string;
+  message: string;
+  data: T;
+};

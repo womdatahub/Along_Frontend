@@ -1,5 +1,6 @@
 "use client";
 import { AuthBackAndContinueButton } from "@/components";
+import HeadingHeebo from "@/components/shared/HeadingHeebo";
 import { cn } from "@/lib";
 import Image from "next/image";
 import { useState } from "react";
@@ -17,7 +18,7 @@ const Page = () => {
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
       <div className='flex flex-col gap-2'>
-        <p className='font-semibold text-2xl text-center'>Offered services</p>
+        <HeadingHeebo>Offered services</HeadingHeebo>
         <p className='text-center text-sm'>
           Please select a service (s) you are interested in
         </p>

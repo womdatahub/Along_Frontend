@@ -1,5 +1,6 @@
 "use client";
 
+import HeadingHeebo from "@/components/shared/HeadingHeebo";
 import { cn } from "@/lib";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,7 @@ const Page = () => {
   const [selected, setSelected] = useState("");
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
-      <p className='font-semibold text-2xl text-center'>Register a User</p>
+      <HeadingHeebo>Register a User</HeadingHeebo>
       <div className='flex flex-col gap-4'>
         <p className='text-center text-sm'>
           Please select an option to register:
