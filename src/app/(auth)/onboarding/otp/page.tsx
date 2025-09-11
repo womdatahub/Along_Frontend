@@ -1,7 +1,10 @@
 "use client";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components";
-import { cn } from "@/lib";
-import { WhiteGreaterThanIcon } from "@public/svgs";
+import {
+  AuthBackAndContinueButton,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 
@@ -46,30 +49,11 @@ const Page = () => {
             </button>
           </div>
         </div>
-        <div className='flex justify-between items-center'>
-          <button className='flex gap-3 items-center cursor-not-allowed'>
-            <div className='flex justify-center items-center rounded-full bg-inactive  w-14 aspect-square rotate-180'>
-              <WhiteGreaterThanIcon />
-            </div>
-            <p className='text-sm'>Back</p>
-          </button>
-          <button
-            className={cn(
-              "flex gap-3 items-center cursor-pointer",
-              otpValue.length !== 4 && "cursor-not-allowed"
-            )}
-          >
-            <p className='text-sm'>Continue</p>
-            <div
-              className={cn(
-                "flex justify-center items-center rounded-full w-14 aspect-square transition-colors duration-500",
-                otpValue.length === 4 ? "bg-primary" : "bg-inactive"
-              )}
-            >
-              <WhiteGreaterThanIcon />
-            </div>
-          </button>
-        </div>
+        <AuthBackAndContinueButton
+          backActive
+          continueActive={otpValue.length === 4}
+          continuePath='/onboarding/user-type'
+        />
       </div>
       <p className='text-base text-gray'>
         If you don’t see the code, check your spam folder too.

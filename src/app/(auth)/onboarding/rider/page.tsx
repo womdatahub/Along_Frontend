@@ -1,17 +1,17 @@
 "use client";
 
-import { CustomAuthInput, DatePicker, SelectDropdown } from "@/components";
-import { cn } from "@/lib";
-import { WhiteGreaterThanIcon } from "@public/svgs";
+import {
+  AuthBackAndContinueButton,
+  CustomAuthInput,
+  DatePicker,
+  SelectDropdown,
+} from "@/components";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-
-  const router = useRouter();
 
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] -mt-10 px-8 py-10 bg-[#EFF1F1] text-black'>
@@ -55,33 +55,11 @@ const Page = () => {
         </div>
       </div>
 
-      <div className='flex justify-between items-center'>
-        <button
-          onClick={() => router.back()}
-          className='flex gap-3 items-center cursor-pointer'
-        >
-          <div className='flex justify-center items-center rounded-full bg-primary w-14 aspect-square rotate-180'>
-            <WhiteGreaterThanIcon />
-          </div>
-          <p className='text-sm'>Back</p>
-        </button>
-        <button
-          className={cn(
-            "flex gap-3 items-center cursor-pointer"
-            // otpValue.length !== 4 && "cursor-not-allowed"
-          )}
-        >
-          <p className='text-sm'>Continue</p>
-          <div
-            className={cn(
-              "flex justify-center items-center rounded-full w-14 aspect-square transition-colors duration-500 bg-primary"
-              //   otpValue.length === 4 ? "bg-primary" : "bg-inactive"
-            )}
-          >
-            <WhiteGreaterThanIcon />
-          </div>
-        </button>
-      </div>
+      <AuthBackAndContinueButton
+        backActive
+        continueActive
+        continuePath='/onboarding/user-type'
+      />
     </div>
   );
 };

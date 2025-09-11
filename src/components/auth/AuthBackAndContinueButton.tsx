@@ -2,6 +2,7 @@
 import { cn } from "@/lib";
 import { WhiteGreaterThanIcon } from "@public/svgs";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components";
 
 type Props = {
   continuePath: string;
@@ -16,23 +17,23 @@ export const AuthBackAndContinueButton = ({
   const router = useRouter();
   return (
     <div className='flex justify-between items-center'>
-      <button
+      <Button
         onClick={() => {
           if (backActive) router.back();
         }}
-        className='flex gap-3 items-center cursor-pointer'
+        className='flex gap-3 items-center cursor-pointer bg-transparent text-black hover:bg-transparent border-0 shadow-none'
       >
         <div className='flex justify-center items-center rounded-full bg-primary w-14 aspect-square rotate-180'>
           <WhiteGreaterThanIcon />
         </div>
         <p className='text-sm'>Back</p>
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => {
           if (continueActive) router.push(continuePath);
         }}
         className={cn(
-          "flex gap-3 items-center cursor-pointer",
+          "flex gap-3 items-center cursor-pointer bg-transparent text-black hover:bg-transparent border-0 shadow-none",
           !continueActive && "cursor-not-allowed"
         )}
       >
@@ -45,7 +46,7 @@ export const AuthBackAndContinueButton = ({
         >
           <WhiteGreaterThanIcon />
         </div>
-      </button>
+      </Button>
     </div>
   );
 };
