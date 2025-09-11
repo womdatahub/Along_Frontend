@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthBackAndContinueButton, CustomAuthInput } from "@/components";
-import HeadingHeebo from "@/components/shared/HeadingHeebo";
+import { HeadingHeebo } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components/shared/UploadingImagesReusableComponent";
 import { ImageType } from "@/types";
 import { UploadImageIcon } from "@public/svgs";

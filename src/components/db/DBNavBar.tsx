@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { HelpDbIcon, LogoIcon } from "@public/svgs";
 import Link from "next/link";
-import {HeadingHeebo} from "@/components";
+import { HeadingHeebo } from "@/components";
 
 export const DBNavbar = () => {
   // const [menuOpen, setMenuOpen] = useState(false);
@@ -34,7 +34,7 @@ export const DBNavbar = () => {
 
         <div className='flex items-center gap-3'>
           <HelpDbIcon />
-          <HeadingHeebo className='font-heebo text-lg'>Help!</HeadingHe>
+          <HeadingHeebo className='font-heebo text-lg'>Help!</HeadingHeebo>
         </div>
       </div>
     </nav>

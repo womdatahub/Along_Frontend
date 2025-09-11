@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components";
-import HeadingHeebo from "@/components/shared/HeadingHeebo";
+import { HeadingHeebo } from "@/components";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import { useRouter } from "next/navigation";
 

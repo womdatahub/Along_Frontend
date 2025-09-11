@@ -1,6 +1,6 @@
 "use client";
 import { AuthBackAndContinueButton } from "@/components";
-import HeadingHeebo from "@/components/shared/HeadingHeebo";
+import { HeadingHeebo } from "@/components";
 import { cn } from "@/lib";
 import Image from "next/image";
 import { useState } from "react";

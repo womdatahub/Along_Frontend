@@ -5,7 +5,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components";
-import HeadingHeebo from "@/components/shared/HeadingHeebo";
+import { HeadingHeebo } from "@/components";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 

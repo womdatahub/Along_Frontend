@@ -6,7 +6,7 @@ import {
   DatePicker,
   SelectDropdown,
 } from "@/components";
-import HeadingHeebo from "@/components/shared/HeadingHeebo";
+import { HeadingHeebo } from "@/components";
 import Image from "next/image";
 import { useState } from "react";
 
