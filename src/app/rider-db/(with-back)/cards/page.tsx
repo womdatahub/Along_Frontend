@@ -1,7 +1,10 @@
+"use client";
 import { Button, Card, CardContent, HeadingHeebo } from "@/components";
 import { RemoveCardIcon } from "@public/svgs";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   return (
     <div className='flex flex-col gap-5'>
       <HeadingHeebo className='text-start pl-4'>Card Details</HeadingHeebo>
@@ -28,7 +31,10 @@ const Page = () => {
         </CardContent>
       </Card>
       <div className='flex justify-between items-center w-full md:w-[446px] px-4'>
-        <Button className='cursor-pointer text-sm rounded-full'>
+        <Button
+          onClick={() => router.push("/rider-db/new-card")}
+          className='cursor-pointer text-sm rounded-full'
+        >
           Add card
         </Button>
         <Button
