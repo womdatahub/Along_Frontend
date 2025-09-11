@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { HelpDbIcon, LogoIcon } from "@public/svgs";
-import Link from "next/link";
-import { HeadingHeebo } from "@/components";
+import { HelpDbIcon } from "@public/svgs";
+import { HeadingHeebo, LogoComponent } from "@/components";
 
 export const DBNavbar = () => {
   // const [menuOpen, setMenuOpen] = useState(false);
@@ -28,9 +27,7 @@ export const DBNavbar = () => {
       }`}
     >
       <div className='flex justify-between items-center h-20 px-4 md:px-0 max-w-7xl mx-auto '>
-        <Link href='/'>
-          <LogoIcon />
-        </Link>
+        <LogoComponent />
 
         <div className='flex items-center gap-3'>
           <HelpDbIcon />

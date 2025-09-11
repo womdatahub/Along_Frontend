@@ -6,3 +6,4 @@ export * from "./calendar";
 export * from "./label";
 export * from "./popover";
 export * from "./select";
+export * from "./card";
