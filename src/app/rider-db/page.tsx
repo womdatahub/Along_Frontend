@@ -17,7 +17,7 @@ import Link from "next/link";
 
 const Page = () => {
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex-1 py-8 md:py-14'>
+    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>
         <div className='flex flex-col gap-2 w-fit'>
           <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
@@ -42,14 +42,14 @@ const Page = () => {
           </div>
         </div>
         <HeadingHeebo className='text-left mt-5'>Menu</HeadingHeebo>
-        <div className='flex gap-10 items-stretch'>
-          <div className='flex flex-col gap-10 border-r border-r-[#707072] pr-10 w-fit'>
+        <div className='flex gap-10 items-stretch h-[calc(100vh-200px)]'>
+          <div className='flex flex-col gap-10 border-r border-r-[#707072] pr-10 mb-32 w-fit whitespace-nowrap'>
             <Link href={"/rider-db/ride-details"}>Rent a car</Link>
             <Link href={"/rider-db/ride-details"}>Schedule a ride</Link>
             <Link href={"/onboarding"}>Drive</Link>
           </div>
-          <div className='flex flex-col gap-20'>
-            <div className='flex flex-1 flex-col gap-4 w-full md:max-w-1/3'>
+          <div className='flex flex-col gap-20 overflow-y-auto mb-32'>
+            <div className='flex flex-col gap-4 w-full md:max-w-1/3 '>
               <HeadingHeebo className='text-3xl text-left'>
                 Start your day the right way
               </HeadingHeebo>
@@ -62,6 +62,7 @@ const Page = () => {
               </Button>
             </div>
             <HeadingHeebo className='w-fit text-left'>Payment</HeadingHeebo>
+
             <div className='flex gap-4'>
               <Card className='flex flex-col gap-14 bg-[#1F364B] rounded-2xl justify-between w-full md:w-fit border-0 shadow-none'>
                 <CardContent className='flex gap-5'>
@@ -98,7 +99,7 @@ const Page = () => {
                   </Button>
                 </CardFooter>
               </Card>
-              <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-[#E7ECED] border-0 shadow-none p-3'>
+              <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-[#E7ECED] border-0 shadow-none px-6'>
                 <div className='flex flex-col gap-11'>
                   <HeadingHeebo className='text-sm text-left'>
                     Along wallet
@@ -126,26 +127,33 @@ const Page = () => {
               </Card>
             </div>
           </div>
-          <div className='flex flex-col gap-4 mr-5'>
-            <HeadingHeebo className='w-fit text-left'>Activities</HeadingHeebo>
-            <div className='flex gap-3 underline pb-8'>
-              <div className='mt-5'>
-                <LocationPointerSvg />
+          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto relative pb-32'>
+            <HeadingHeebo className='text-left sticky top-0 bg-[#EFF1F1] pb-2'>
+              Activities
+            </HeadingHeebo>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+              <div
+                key={item}
+                className='flex gap-3 pb-5 border-b border-b-[#D3D3D3]'
+              >
+                <div className='mt-5'>
+                  <LocationPointerSvg />
+                </div>
+                <div className='flex flex-col font-heebo'>
+                  <p className='text-[8px] font-medium'>Ride rental</p>
+                  <HeadingHeebo className='text-left text-sm'>
+                    Monte Calo Crescent, New Jersey
+                  </HeadingHeebo>
+                  <p className='text-[9px] text-icons flex gap-3'>
+                    Mon 23, August 2025 <span>12 : 35</span>
+                  </p>
+                  <p className='text-green-600 text-[9px]'>Completed</p>
+                  <HeadingHeebo className='text-left text-sm'>
+                    $45.99
+                  </HeadingHeebo>
+                </div>
               </div>
-              <div className='flex flex-col gap-1 font-heebo'>
-                <p className='text-[8px] font-medium'>Ride rental</p>
-                <HeadingHeebo className='text-left text-sm'>
-                  Monte Calo Crescent, New Jersey
-                </HeadingHeebo>
-                <p className='text-[9px] text-icons'>
-                  Mon 23, August 2025 <span>12 : 35</span>
-                </p>
-                <p className='text-green-600'>Completed</p>
-                <HeadingHeebo className='text-left text-sm'>
-                  $45.99
-                </HeadingHeebo>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
