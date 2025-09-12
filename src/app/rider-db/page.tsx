@@ -6,7 +6,12 @@ import {
   HeadingHeebo,
 } from "@/components";
 import { cn } from "@/lib";
-import { AccuracyIcon, RemoveCardIcon, WhiteForwardIcon } from "@public/svgs";
+import {
+  AccuracyIcon,
+  LocationPointerSvg,
+  RemoveCardIcon,
+  WhiteForwardIcon,
+} from "@public/svgs";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -58,29 +63,25 @@ const Page = () => {
             </div>
             <HeadingHeebo className='w-fit text-left'>Payment</HeadingHeebo>
             <div className='flex gap-4'>
-              <Card className='flex flex-col gap-14 bg-[#1F364B] rounded-2xl justify-between w-full md:w-fit'>
-                <CardContent>
-                  <div className='flex gap-5'>
-                    <div className='rounded-2xl flex flex-col justify-between  p-3 w-[384px] gap-14'>
-                      <div className='flex justify-between items-center'>
-                        <div className='flex flex-col'>
-                          <HeadingHeebo className='text-xl w-fit text-left font-bold text-white'>
-                            Mastercard
-                          </HeadingHeebo>
-                          <p className='text-white text-lg font-medium'>
-                            ***** ***** 3762
-                          </p>
-                          <p className='text-lightgreen text-xs'>
-                            Card details
-                          </p>
-                        </div>
-                        <Image
-                          src={"/images/credit-cards.png"}
-                          alt='credit-cards'
-                          width={61}
-                          height={77}
-                        />
+              <Card className='flex flex-col gap-14 bg-[#1F364B] rounded-2xl justify-between w-full md:w-fit border-0 shadow-none'>
+                <CardContent className='flex gap-5'>
+                  <div className='flex flex-col justify-between w-[384px] gap-14'>
+                    <div className='flex justify-between items-center'>
+                      <div className='flex flex-col'>
+                        <HeadingHeebo className='text-xl w-fit text-left font-bold text-white'>
+                          Mastercard
+                        </HeadingHeebo>
+                        <p className='text-white text-lg font-medium'>
+                          ***** ***** 3762
+                        </p>
+                        <p className='text-lightgreen text-xs'>Card details</p>
                       </div>
+                      <Image
+                        src={"/images/credit-cards.png"}
+                        alt='credit-cards'
+                        width={61}
+                        height={77}
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -97,16 +98,53 @@ const Page = () => {
                   </Button>
                 </CardFooter>
               </Card>
-              <Card className='flex gap-4 justify-between rounded-2xl w-full md:w-fit bg-gray'>
+              <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-[#E7ECED] border-0 shadow-none p-3'>
                 <div className='flex flex-col gap-11'>
-                  <HeadingHeebo className='text-sm'>Along wallet</HeadingHeebo>
-                  <div className='flex gap-2 flex-col'>
-                    <p>Balance</p>
-                    <HeadingHeebo className='text-2xl'>$4652.98</HeadingHeebo>
+                  <HeadingHeebo className='text-sm text-left'>
+                    Along wallet
+                  </HeadingHeebo>
+                  <div className='flex gap-4 justify-between'>
+                    <div className='flex flex-col'>
+                      <p>Balance</p>
+                      <HeadingHeebo className='text-2xl text-left'>
+                        $4652.98
+                      </HeadingHeebo>
+                    </div>
+                    <Image
+                      src='/images/wallet.png'
+                      alt='wallet'
+                      width={56}
+                      height={56}
+                      className={"w-14 h-fit -mt-10"}
+                    />
                   </div>
-                  <Button> Add fund</Button>
+                  <Button className='cursor-pointer rounded-full w-fit'>
+                    {" "}
+                    Add fund
+                  </Button>
                 </div>
               </Card>
+            </div>
+          </div>
+          <div className='flex flex-col gap-4 mr-5'>
+            <HeadingHeebo className='w-fit text-left'>Activities</HeadingHeebo>
+            <div className='flex gap-3 underline pb-8'>
+              <div className='mt-5'>
+                <LocationPointerSvg />
+              </div>
+              <div className='flex flex-col gap-1 font-heebo'>
+                <p className='text-[8px] font-medium'>Ride rental</p>
+                <HeadingHeebo className='text-left text-sm'>
+                  Monte Calo Crescent, New Jersey
+                </HeadingHeebo>
+                <p className='text-[9px] text-icons'>
+                  Mon 23, August 2025 <span>12 : 35</span>
+                </p>
+                <p className='text-green-600'>Completed</p>
+                <HeadingHeebo className='text-left text-sm'>
+                  $45.99
+                </HeadingHeebo>
+              </div>
             </div>
           </div>
         </div>
