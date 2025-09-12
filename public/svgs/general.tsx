@@ -126,3 +126,67 @@ export const RemoveCardIcon = () => (
     </defs>
   </svg>
 );
+
+export const AshForwardIcon = () => (
+  <svg
+    width={9}
+    height={14}
+    viewBox='0 0 9 14'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M0.887536 0.119081C0.670943 -0.0531216 0.33621 -0.035902 0.139308 0.153522C-0.0575933 0.342946 -0.0379038 0.635694 0.178688 0.807897L7.79879 6.83503C7.99569 6.99001 7.99569 7.21388 7.79879 7.36886L0.178688 13.1894C-0.0379038 13.3616 -0.0575933 13.6543 0.119618 13.8437C0.31652 14.0331 0.651253 14.0504 0.867845 13.8954L8.48795 8.05768C9.15741 7.54107 9.1771 6.68005 8.50764 6.14621L0.887536 0.119081Z'
+      fill='#C5C5C5'
+    />
+  </svg>
+);
+
+export const AccuracyIcon = () => (
+  <svg
+    width={27}
+    height={27}
+    viewBox='0 0 27 27'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M23.2224 13.5009C23.2224 18.8705 18.8694 23.2234 13.4997 23.2234C8.13008 23.2234 3.7771 18.8705 3.7771 13.5009C3.7771 8.13125 8.13008 3.77832 13.4997 3.77832C18.8694 3.77832 23.2224 8.13125 23.2224 13.5009Z'
+      stroke='#474747'
+      strokeWidth={1.5}
+    />
+    <path
+      d='M23.2229 13.501H26.0008'
+      stroke='#474747'
+      strokeWidth={1.5}
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+    <path
+      d='M1 13.5H3.7779'
+      stroke='#474747'
+      strokeWidth={1.5}
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+    <path
+      d='M13.5007 23.2227V26.0005'
+      stroke='#474747'
+      strokeWidth={1.5}
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+    <path
+      d='M13.5007 1V3.77787'
+      stroke='#474747'
+      strokeWidth={1.5}
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+    <path
+      d='M17.6682 13.5008C17.6682 15.8021 15.8027 17.6676 13.5013 17.6676C11.2 17.6676 9.33447 15.8021 9.33447 13.5008C9.33447 11.1995 11.2 9.33398 13.5013 9.33398C15.8027 9.33398 17.6682 11.1995 17.6682 13.5008Z'
+      stroke='#474747'
+      strokeWidth={1.5}
+    />
+  </svg>
+);
