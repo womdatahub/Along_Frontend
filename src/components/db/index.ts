@@ -1,1 +1,1 @@
-export * from "./DBNavBar";
+export * from "./db-nav-bar";
