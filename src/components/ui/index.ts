@@ -8,3 +8,4 @@ export * from "./popover";
 export * from "./select";
 export * from "./card";
 export * from "./switch";
+export * from "./dialog";
