@@ -61,70 +61,73 @@ const Page = () => {
                 Learn more
               </Button>
             </div>
-            <HeadingHeebo className='w-fit text-left'>Payment</HeadingHeebo>
-
-            <div className='flex gap-4'>
-              <Card className='flex flex-col gap-14 bg-[#1F364B] rounded-2xl justify-between w-full md:w-fit border-0 shadow-none'>
-                <CardContent className='flex gap-5'>
-                  <div className='flex flex-col justify-between w-[384px] gap-14'>
-                    <div className='flex justify-between items-center'>
+            <div className='flex gap-3 flex-col'>
+              <HeadingHeebo className='w-fit text-left'>Payment</HeadingHeebo>
+              <div className='flex gap-4'>
+                <Card className='flex flex-col gap-14 bg-[#1F364B] rounded-2xl justify-between w-full md:w-fit border-0 shadow-none'>
+                  <CardContent className='flex gap-5'>
+                    <div className='flex flex-col justify-between w-[384px] gap-14'>
+                      <div className='flex justify-between items-center'>
+                        <div className='flex flex-col'>
+                          <HeadingHeebo className='text-xl w-fit text-left font-bold text-white'>
+                            Mastercard
+                          </HeadingHeebo>
+                          <p className='text-white text-lg font-medium'>
+                            ***** ***** 3762
+                          </p>
+                          <p className='text-lightgreen text-xs'>
+                            Card details
+                          </p>
+                        </div>
+                        <Image
+                          src={"/images/credit-cards.png"}
+                          alt='credit-cards'
+                          width={61}
+                          height={77}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className='flex items-center justify-between'>
+                    <Button className='cursor-pointer rounded-full'>
+                      Add card
+                    </Button>
+                    <Button
+                      variant={"ghost"}
+                      className='flex gap-3 items-center text-destructive bg-transparent hover:bg-transparent cursor-pointer'
+                    >
+                      <RemoveCardIcon />
+                      Remove card
+                    </Button>
+                  </CardFooter>
+                </Card>
+                <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-[#E7ECED] border-0 shadow-none px-6'>
+                  <div className='flex flex-col gap-11'>
+                    <HeadingHeebo className='text-sm text-left'>
+                      Along wallet
+                    </HeadingHeebo>
+                    <div className='flex gap-4 justify-between'>
                       <div className='flex flex-col'>
-                        <HeadingHeebo className='text-xl w-fit text-left font-bold text-white'>
-                          Mastercard
+                        <p>Balance</p>
+                        <HeadingHeebo className='text-2xl text-left'>
+                          $4652.98
                         </HeadingHeebo>
-                        <p className='text-white text-lg font-medium'>
-                          ***** ***** 3762
-                        </p>
-                        <p className='text-lightgreen text-xs'>Card details</p>
                       </div>
                       <Image
-                        src={"/images/credit-cards.png"}
-                        alt='credit-cards'
-                        width={61}
-                        height={77}
+                        src='/images/wallet.png'
+                        alt='wallet'
+                        width={56}
+                        height={56}
+                        className={"w-14 h-fit -mt-10"}
                       />
                     </div>
+                    <Button className='cursor-pointer rounded-full w-fit'>
+                      {" "}
+                      Add fund
+                    </Button>
                   </div>
-                </CardContent>
-                <CardFooter className='flex items-center justify-between'>
-                  <Button className='cursor-pointer rounded-full'>
-                    Add card
-                  </Button>
-                  <Button
-                    variant={"ghost"}
-                    className='flex gap-3 items-center text-destructive bg-transparent hover:bg-transparent cursor-pointer'
-                  >
-                    <RemoveCardIcon />
-                    Remove card
-                  </Button>
-                </CardFooter>
-              </Card>
-              <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-[#E7ECED] border-0 shadow-none px-6'>
-                <div className='flex flex-col gap-11'>
-                  <HeadingHeebo className='text-sm text-left'>
-                    Along wallet
-                  </HeadingHeebo>
-                  <div className='flex gap-4 justify-between'>
-                    <div className='flex flex-col'>
-                      <p>Balance</p>
-                      <HeadingHeebo className='text-2xl text-left'>
-                        $4652.98
-                      </HeadingHeebo>
-                    </div>
-                    <Image
-                      src='/images/wallet.png'
-                      alt='wallet'
-                      width={56}
-                      height={56}
-                      className={"w-14 h-fit -mt-10"}
-                    />
-                  </div>
-                  <Button className='cursor-pointer rounded-full w-fit'>
-                    {" "}
-                    Add fund
-                  </Button>
-                </div>
-              </Card>
+                </Card>
+              </div>
             </div>
           </div>
           <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto relative pb-32'>
