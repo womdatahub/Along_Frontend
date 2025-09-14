@@ -29,32 +29,32 @@ const Page = () => {
           label='Car make'
           placeholder='Tesla'
           className='flex-1 '
-          inputClassName='bg-[#EFF1F1]'
+          inputClassName='bg-background-1'
         />
         <CustomAuthInput
           label='Car model'
           placeholder='Model Y'
           className='flex-1 '
-          inputClassName='bg-[#EFF1F1]'
+          inputClassName='bg-background-1'
         />
         <CustomAuthInput
           label='Car ID number'
           placeholder='0000000000000000000'
           className='flex-1 '
-          inputClassName='bg-[#EFF1F1]'
+          inputClassName='bg-background-1'
         />
         <div className='flex gap-4'>
           <CustomAuthInput
             label='Car color'
             placeholder='Beige white'
             className='flex-1 '
-            inputClassName='bg-[#EFF1F1]'
+            inputClassName='bg-background-1'
           />
           <CustomAuthInput
             label='Year'
             placeholder='2025'
             className='flex-1'
-            inputClassName='bg-[#EFF1F1]'
+            inputClassName='bg-background-1'
           />
         </div>
       </div>
@@ -72,7 +72,7 @@ const Page = () => {
             index={0}
             previews={previews}
             setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-[#EFF1F1] text-placeholder self-end w-full h-[80px]'
+            className='justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-[80px]'
             imageToastDescription='Front of the driver license'
           >
             <div className='flex gap-2 justify-center items-center'>
@@ -85,7 +85,7 @@ const Page = () => {
             index={1}
             previews={previews}
             setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-[#EFF1F1] text-placeholder self-end w-full h-[80px]'
+            className='justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-[80px]'
             imageToastDescription='Back of the driver license'
           >
             <div className='flex gap-2 justify-center items-center'>
@@ -98,7 +98,7 @@ const Page = () => {
             index={2}
             previews={previews}
             setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-[#EFF1F1] text-placeholder self-end w-full h-[80px]'
+            className='justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-[80px]'
             imageToastDescription='Back of the driver license'
           >
             <div className='flex gap-2 justify-center items-center'>
@@ -114,7 +114,7 @@ const Page = () => {
             index={3}
             previews={previews}
             setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-[#EFF1F1] text-placeholder self-end w-full h-[80px]'
+            className='justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-[80px]'
             imageToastDescription='Front of the driver license'
           >
             <div className='flex flex-col gap-2 justify-center items-center'>
@@ -132,7 +132,7 @@ const Page = () => {
             index={4}
             previews={previews}
             setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-[#EFF1F1] text-placeholder self-end w-full h-[80px]'
+            className='justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-[80px]'
             imageToastDescription='Front of the driver license'
           >
             <div className='flex flex-col gap-2 justify-center items-center'>

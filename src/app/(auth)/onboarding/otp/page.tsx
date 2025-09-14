@@ -13,7 +13,7 @@ const Page = () => {
   const [otpValue, setValue] = useState("");
   return (
     <div className='flex flex-col gap-2 justify-center items-center h-full'>
-      <div className='flex flex-col gap-14 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
+      <div className='flex flex-col gap-14 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
         <HeadingHeebo>Let’s get you verified.</HeadingHeebo>
         <div className='flex flex-col gap-5'>
           <p className='text-center text-sm'>

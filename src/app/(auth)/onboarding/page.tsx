@@ -8,7 +8,7 @@ const Page = () => {
   const router = useRouter();
   return (
     <div className='flex justify-center items-center h-full'>
-      <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black text-4xl'>
+      <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black text-4xl'>
         <HeadingHeebo>Let’s get you onboard</HeadingHeebo>
         <input
           className='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'

@@ -10,7 +10,7 @@ const Page = () => {
   const router = useRouter();
   const [selected, setSelected] = useState("");
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-[#EFF1F1] text-black'>
+    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <HeadingHeebo>Register a User</HeadingHeebo>
       <div className='flex flex-col gap-4'>
         <p className='text-center text-sm'>

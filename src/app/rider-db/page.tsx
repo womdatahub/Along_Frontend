@@ -131,7 +131,7 @@ const Page = () => {
             </div>
           </div>
           <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto relative pb-32'>
-            <HeadingHeebo className='text-left sticky top-0 bg-[#EFF1F1] pb-2'>
+            <HeadingHeebo className='text-left sticky top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (

@@ -15,7 +15,7 @@ const Page = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
 
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] -mt-10 px-8 py-10 bg-[#EFF1F1] text-black'>
+    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] -mt-10 px-8 py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-1'>
         <HeadingHeebo>Lets get you started</HeadingHeebo>
         <p className='text-sm text-center'>
