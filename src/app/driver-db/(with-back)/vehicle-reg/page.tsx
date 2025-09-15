@@ -2,7 +2,7 @@
 
 import { Button, CustomAuthInput } from "@/components";
 import { HeadingHeebo } from "@/components";
-import { UploadingImagesReusableComponent } from "@/components/shared/UploadingImagesReusableComponent";
+import { UploadingImagesReusableComponent } from "@/components/shared/uploading-images-reusable-component";
 import { ImageType } from "@/types";
 import { UploadImageIcon } from "@public/svgs";
 import { useState } from "react";

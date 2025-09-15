@@ -1,6 +1,6 @@
 "use client";
 import { AuthBackAndContinueButton, CustomAuthInput } from "@/components";
-import { UploadingImagesReusableComponent } from "@/components/shared/UploadingImagesReusableComponent";
+import { UploadingImagesReusableComponent } from "@/components";
 import { ImageType } from "@/types";
 import {
   AddPhotoIcon,
