@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export const Services = () => {
@@ -5,17 +6,17 @@ export const Services = () => {
     {
       title: "Rent a ride",
       desc: "Perfect for daily use, events, or business trips. Flexible hourly, daily, rates.",
-      img: "<RentARideHeroIcon />",
+      img: "/images/rent-ride-small-car.png",
     },
     {
       title: "Schedule ride",
       desc: "Book ahead for peace of mind. special occasions, or planned journeys.",
-      img: "<ScheduleARideHeroIcon />",
+      img: "/images/schedule-ride-small-car.png",
     },
     {
       title: "Logistics",
       desc: "Secure package handling with tracking updates.",
-      img: "<LogisticsHeroIcon />,",
+      img: "/images/logistics.png",
     },
   ];
 
@@ -41,7 +42,13 @@ export const Services = () => {
                     <h3 className='font-bold text-lg'>{s.title}</h3>
                     <p className='font-light text-[9px]'>{s.desc}</p>
                   </div>
-                  {s.img}
+                  <Image
+                    src={s.img}
+                    alt=''
+                    width={103}
+                    height={72}
+                    className='h-[72px] w-[100px] object-cover'
+                  />
                 </div>
                 <Link href='/' className='text-primary font-bold text-xs'>
                   Details

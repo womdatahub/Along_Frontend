@@ -1,12 +1,40 @@
+import { Button, LogoComponent } from "@/components";
+import { WhiteForwardIcon } from "@public/svgs";
+import Image from "next/image";
+
 export const Footer = () => {
   return (
     <footer className='bg-teal-700 text-white py-10 px-6'>
-      <div className='max-w-6xl mx-auto grid md:grid-cols-3 gap-8'>
-        <div>
-          <h2 className='text-xl font-bold'>along</h2>
-          <div className='flex gap-3 mt-4'>
-            <button className='bg-black px-4 py-2 rounded'>Android</button>
-            <button className='bg-black px-4 py-2 rounded'>Apple</button>
+      <div className='max-w-7xl mx-auto grid md:grid-cols-3 gap-8'>
+        <div className='flex flex-col gap-11'>
+          <LogoComponent type2 />
+          <div className='flex gap-4'>
+            <Button className='border-white border-2 flex items-center gap-8 justify-between bg-transparent hover:bg-transparent font-semibold text-lg h-12 rounded-full'>
+              <div className='flex gap-4 items-center'>
+                <Image
+                  src={"/images/android.png"}
+                  alt='app-download'
+                  width={28}
+                  height={32}
+                />
+                {/* <AndroidWhiteIcon width={60} height={60} viewBox='0 0 60 60' /> */}
+                Android
+              </div>
+              <WhiteForwardIcon />
+            </Button>
+            <Button className='border-white border-2 flex items-center gap-8 justify-between bg-transparent hover:bg-transparent font-semibold text-lg h-12 rounded-full'>
+              <div className='flex gap-4 items-center'>
+                <Image
+                  src={"/images/ios.png"}
+                  alt='app-download'
+                  width={28}
+                  height={32}
+                />
+                {/* <IOSWhiteIcon width={60} height={60} viewBox='0 0 60 60' /> */}
+                Apple
+              </div>
+              <WhiteForwardIcon />
+            </Button>
           </div>
         </div>
         <div>

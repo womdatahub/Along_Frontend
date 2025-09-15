@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // import { FastHeroIcon } from "@public/svgs";
 export const Features = () => {
   return (
@@ -10,6 +12,7 @@ export const Features = () => {
             you moving without delay.
           </p>
         </div>
+        <Image src={"/images/young-man.png"} alt='' width={237} height={337} />
         {/* <FastHeroIcon /> */}
       </div>
     </section>

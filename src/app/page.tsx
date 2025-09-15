@@ -18,9 +18,9 @@ export default function Home() {
       <Features />
       <Services />
       <HowItWorks />
+      <Updates />
       <AppDownload />
       <FAQ />
-      <Updates />
       <Footer />
     </div>
   );
