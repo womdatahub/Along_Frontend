@@ -2,3 +2,4 @@ export * from "./DatePicker";
 export * from "./LogoComponent";
 export * from "./SelectDropdown";
 export * from "./HeadingHeebo";
+export * from "./driver-info-accordion";
