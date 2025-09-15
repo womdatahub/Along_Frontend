@@ -47,7 +47,7 @@ const Page = () => {
                 </div>
                 <div
                   className={cn(
-                    "size-4 bg-[#BBCCCF80]",
+                    "size-4 bg-primaryLight",
                     selectedOptions.includes(item.state) && "bg-primary"
                   )}
                 />
@@ -59,7 +59,7 @@ const Page = () => {
             <div
               onClick={() => setSelectedOptions(items.map((i) => i.state))}
               className={cn(
-                "size-4 bg-[#BBCCCF80] cursor-pointer",
+                "size-4 bg-primaryLight cursor-pointer",
                 selectedOptions.length === 3 && "bg-primary"
               )}
             />
