@@ -1,14 +1,11 @@
 "use client";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  DriverInfoAccordion,
   HeadingHeebo,
 } from "@/components";
 import { cn } from "@/lib";
@@ -22,7 +19,8 @@ const Page = () => {
   const [selectedVehicleType, setSelectedVehicleType] = useState("");
 
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
+    // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
+    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>
       <div className='flex gap-4 '>
         <div className='flex flex-col gap-10 w-1/2'>
           <div className='flex flex-col'>
@@ -96,23 +94,23 @@ const Page = () => {
                     </p>
                   </div>
                   <div className='flex flex-col gap-1'>
-                    {items.map((i) => {
+                    {carTypes.map((car) => {
                       return (
                         <Button
                           // disabled
                           onClick={() => {
                             setSelectedVehicleType(
-                              i.name.toLowerCase().replace(" ", "-")
+                              car.name.toLowerCase().replace(" ", "-")
                             );
                             setTimeout(() => {
                               setOpen(false);
                             }, 2000);
                           }}
-                          key={i.name}
+                          key={car.name}
                           className={cn(
                             "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black",
                             selectedVehicleType ===
-                              i.name.toLowerCase().replace(" ", "-") &&
+                              car.name.toLowerCase().replace(" ", "-") &&
                               "bg-primary"
                           )}
                         >
@@ -123,8 +121,8 @@ const Page = () => {
                             height={40}
                           />
                           <div className='flex flex-col group-hover:text-white duration-150'>
-                            <p className='font-semibold text-sm'>{i.name}</p>
-                            <p className='text-xs'>{i.seat} Persons</p>
+                            <p className='font-semibold text-sm'>{car.name}</p>
+                            <p className='text-xs'>{car.seat} Persons</p>
                           </div>
                         </Button>
                       );
@@ -135,84 +133,7 @@ const Page = () => {
             </Dialog>
           </div>
           <div className='flex flex-col gap-8'>
-            <Accordion
-              type='single'
-              collapsible
-              className='w-full flex flex-col gap-4'
-              defaultValue='item-1'
-            >
-              <AccordionItem
-                value='item-1'
-                className='border-b-0 bg-white rounded-2xl '
-              >
-                <AccordionTrigger className='hover:no-underline cursor-pointer pr-4 flex gap-8 justify-between'>
-                  <Image
-                    src={"/images/small-car.png"}
-                    alt={"car"}
-                    width={40}
-                    height={40}
-                  />
-                  <div className='flex flex-col'>
-                    <p className='font-semibold text-base'>
-                      Tesla Model 3 - 2023
-                    </p>
-                    <p className='text-sm text-[#858585]'>Mark Spencer</p>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className='flex flex-col gap-4 text-balance px-4'>
-                  <p>
-                    Our flagship product combines cutting-edge technology with
-                    sleek design. Built with premium materials, it offers
-                    unparalleled performance and reliability.
-                  </p>
-                  <p>
-                    Key features include advanced processing capabilities, and
-                    an intuitive user interface designed for both beginners and
-                    experts.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem
-                value='item-2'
-                className='border-b-0 bg-white rounded-2xl '
-              >
-                <AccordionTrigger className='hover:no-underline cursor-pointer pr-4'>
-                  Shipping Details
-                </AccordionTrigger>
-                <AccordionContent className='flex flex-col gap-4 text-balance px-4'>
-                  <p>
-                    We offer worldwide shipping through trusted courier
-                    partners. Standard delivery takes 3-5 business days, while
-                    express shipping ensures delivery within 1-2 business days.
-                  </p>
-                  <p>
-                    All orders are carefully packaged and fully insured. Track
-                    your shipment in real-time through our dedicated tracking
-                    portal.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem
-                value='item-3'
-                className='border-b-0 bg-white rounded-2xl '
-              >
-                <AccordionTrigger className='hover:no-underline cursor-pointer pr-4'>
-                  Return Policy
-                </AccordionTrigger>
-                <AccordionContent className='flex flex-col gap-4 text-balance px-4'>
-                  <p>
-                    We stand behind our products with a comprehensive 30-day
-                    return policy. If you&apos;re not completely satisfied,
-                    simply return the item in its original condition.
-                  </p>
-                  <p>
-                    Our hassle-free return process includes free return shipping
-                    and full refunds processed within 48 hours of receiving the
-                    returned item.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <DriverInfoAccordion driverInfo={driverInfo} />
           </div>
         </div>
 
@@ -223,7 +144,7 @@ const Page = () => {
 };
 export default Page;
 
-const items = [
+const carTypes = [
   {
     name: "Economy",
     seat: 4,
@@ -243,5 +164,95 @@ const items = [
   {
     name: "Luxury XL",
     seat: 6,
+  },
+];
+
+const driverInfo = [
+  {
+    name: "Mark Spencer",
+    carName: "Tesla Model 3 - 2023",
+    price: 2,
+    image: "",
+    rating: 4.8,
+    completedRides: 453,
+    distanceTraveled: 234,
+    passengerCapacity: 3,
+    petsAllowed: false,
+    carConditions: [
+      {
+        title: "Type",
+        content: "Sedan EV",
+      },
+      {
+        title: "Comfort",
+        content: "Fully Air-conditioned",
+      },
+      {
+        title: "Safety",
+        content: "Passenger/Rear Airbag",
+      },
+      {
+        title: "License",
+        content: "LA23 76 NYC",
+      },
+    ],
+  },
+  {
+    name: "Stephen Malcolm",
+    image: "",
+    rating: 4.6,
+    carName: "Toyota Camry - 2024",
+    price: 4,
+    completedRides: 231,
+    distanceTraveled: 234,
+    passengerCapacity: 3,
+    petsAllowed: false,
+    carConditions: [
+      {
+        title: "Type",
+        content: "Sedan EV",
+      },
+      {
+        title: "Comfort",
+        content: "Fully Air-conditioned",
+      },
+      {
+        title: "Safety",
+        content: "Passenger/Rear Airbag",
+      },
+      {
+        title: "License",
+        content: "LA23 76 NYC",
+      },
+    ],
+  },
+  {
+    name: "Mary Bucher",
+    image: "",
+    carName: "Audi A8 - 2025",
+    price: 6,
+    rating: 4.8,
+    completedRides: 453,
+    distanceTraveled: 234,
+    passengerCapacity: 4,
+    petsAllowed: false,
+    carConditions: [
+      {
+        title: "Type",
+        content: "Sedan EV",
+      },
+      {
+        title: "Comfort",
+        content: "Fully Air-conditioned",
+      },
+      {
+        title: "Safety",
+        content: "Passenger/Rear Airbag",
+      },
+      {
+        title: "License",
+        content: "LA23 76 NYC",
+      },
+    ],
   },
 ];
