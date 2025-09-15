@@ -137,7 +137,7 @@ const Page = () => {
           </div>
         </div>
 
-        <div className='bg-red-400 w-full h-full min-h-40'></div>
+        <div className='bg-red-400 w-full h-full min-h-40 sticky top-0'></div>
       </div>
     </div>
   );

@@ -89,7 +89,7 @@ export const DriverInfoAccordion = ({ driverInfo }: Props) => {
                 </HeadingHeebo>
                 <div className='flex rounded-2xl p-3 gap-4 items-center justify-between bg-primaryLight2'>
                   <div className='flex gap-4 items-center'>
-                    <div className='p-1 rounded-full bg-white'>
+                    <div className='p-[2px] rounded-full bg-white'>
                       <Image
                         src='/images/profile.jpg'
                         alt='profile-image'
@@ -147,7 +147,9 @@ export const DriverInfoAccordion = ({ driverInfo }: Props) => {
                   </p>
                 </div>
               </div>
-              <Button className='w-fit rounded-2xl'>Book</Button>
+              <Button className='w-fit rounded-2xl hover:cursor-pointer'>
+                Book
+              </Button>
             </AccordionContent>
           </AccordionItem>
         );
