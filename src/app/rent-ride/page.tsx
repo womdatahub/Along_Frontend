@@ -12,12 +12,16 @@ import { cn } from "@/lib";
 import { AccuracyIcon, EditIcon, WhiteForwardIcon } from "@public/svgs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
-  const [selectedVehicleType, setSelectedVehicleType] = useState("");
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const vehicleType = searchParams.get("vehicleType");
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>
@@ -35,13 +39,13 @@ const Page = () => {
           <div
             className={cn(
               "flex items-center gap-8 rounded-2xl px-2",
-              selectedVehicleType && "bg-primaryLight"
+              vehicleType && "bg-primaryLight"
             )}
           >
             <div
               className={cn(
                 "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl",
-                selectedVehicleType && "bg-transparent"
+                vehicleType && "bg-transparent"
               )}
             >
               <AccuracyIcon />
@@ -55,7 +59,7 @@ const Page = () => {
 
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                {selectedVehicleType ? (
+                {vehicleType ? (
                   <Button
                     variant={"default"}
                     className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer'
@@ -95,23 +99,21 @@ const Page = () => {
                   </div>
                   <div className='flex flex-col gap-1'>
                     {carTypes.map((car) => {
+                      const title = car.name.toLowerCase().replace(/\s+/g, "-");
                       return (
                         <Button
                           // disabled
                           onClick={() => {
-                            setSelectedVehicleType(
-                              car.name.toLowerCase().replace(" ", "-")
-                            );
-                            setTimeout(() => {
-                              setOpen(false);
-                            }, 2000);
+                            router.push(`/rent-ride?vehicleType=${title}`);
+
+                            // setTimeout(() => {
+                            setOpen(false);
+                            // }, 2000);
                           }}
                           key={car.name}
                           className={cn(
                             "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                            selectedVehicleType ===
-                              car.name.toLowerCase().replace(" ", "-") &&
-                              "bg-primary"
+                            vehicleType === title && "bg-primary"
                           )}
                         >
                           <Image

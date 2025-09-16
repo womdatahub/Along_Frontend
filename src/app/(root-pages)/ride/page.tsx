@@ -98,7 +98,6 @@ const Page = () => {
                           const title = r.title
                             .toLowerCase()
                             .replace(/\s+/g, "-");
-                          console.log(title, "title here");
                           return (
                             <Dialog key={r.title}>
                               <DialogTrigger asChild>
