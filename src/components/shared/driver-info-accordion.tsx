@@ -31,8 +31,9 @@ type Props = {
       content: string;
     }[];
   }[];
+  func: (value: string) => void;
 };
-export const DriverInfoAccordion = ({ driverInfo }: Props) => {
+export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
   return (
     <Accordion
       type='single'
@@ -147,7 +148,16 @@ export const DriverInfoAccordion = ({ driverInfo }: Props) => {
                   </p>
                 </div>
               </div>
-              <Button className='w-fit rounded-2xl hover:cursor-pointer'>
+              <Button
+                onClick={() =>
+                  func(
+                    info.carConditions[info.carConditions.length - 1].content
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")
+                  )
+                }
+                className='w-fit rounded-2xl hover:cursor-pointer'
+              >
                 Book
               </Button>
             </AccordionContent>
