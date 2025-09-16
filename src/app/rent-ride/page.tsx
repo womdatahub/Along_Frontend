@@ -108,7 +108,7 @@ const Page = () => {
                           }}
                           key={car.name}
                           className={cn(
-                            "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black",
+                            "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
                             selectedVehicleType ===
                               car.name.toLowerCase().replace(" ", "-") &&
                               "bg-primary"
