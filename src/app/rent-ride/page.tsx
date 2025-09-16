@@ -22,6 +22,11 @@ const Page = () => {
   const router = useRouter();
 
   const vehicleType = searchParams.get("vehicleType");
+
+  const func = (driver: string) =>
+    router.push(
+      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${driver}`
+    );
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>
@@ -135,7 +140,7 @@ const Page = () => {
             </Dialog>
           </div>
           <div className='flex flex-col gap-8'>
-            <DriverInfoAccordion driverInfo={driverInfo} />
+            <DriverInfoAccordion driverInfo={driverInfo} func={func} />
           </div>
         </div>
 
