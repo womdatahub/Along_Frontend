@@ -7,7 +7,7 @@ export const Updates = () => {
   ];
 
   return (
-    <section className='px-6 py-16 bg-white text-black'>
+    <section className='px-6 pb-24 bg-white text-black'>
       <div className='flex flex-col gap-4 max-w-6xl mx-auto'>
         <div className='flex gap-2 flex-col font-heebo font-light text-lg'>
           <HeadingHeebo className='text-left'>On the Horizon</HeadingHeebo>
