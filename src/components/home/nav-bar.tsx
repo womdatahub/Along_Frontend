@@ -33,20 +33,12 @@ export const Navbar = () => {
         </Link>
 
         {/* Desktop Menu */}
-        <ul className='hidden md:flex gap-14 text-black text-xl'>
-          <li>
-            <Link href='#'>About</Link>
-          </li>
-          <li>
-            <Link href='#'>Ride</Link>
-          </li>
-          <li>
-            <Link href='#'>Drive</Link>
-          </li>
-          <li>
-            <Link href='#'>Help</Link>
-          </li>
-        </ul>
+        <div className='hidden md:flex gap-14 text-black text-xl'>
+          <Link href='/about'>About</Link>
+          <Link href='#'>Ride</Link>
+          <Link href='#'>Drive</Link>
+          <Link href='#'>Help</Link>
+        </div>
 
         {/* Mobile Toggle */}
         {/* <button
