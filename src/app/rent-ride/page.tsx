@@ -11,7 +11,7 @@ import {
   SelectDropdown,
   Switch,
 } from "@/components";
-import { cn, formatDateToDDMMYYYY } from "@/lib";
+import { cn, formatDateToDDMMYYYY, useGetCurrentLocation } from "@/lib";
 import {
   AccuracyIcon,
   EditIcon,
@@ -32,6 +32,10 @@ const Page = () => {
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("hours");
   const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const { loading, error, longitude, latitude } = useGetCurrentLocation();
+
+  console.log(loading, error, longitude, latitude);
 
   const searchParams = useSearchParams();
   const router = useRouter();
