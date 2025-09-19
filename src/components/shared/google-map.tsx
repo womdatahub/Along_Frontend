@@ -56,5 +56,13 @@ export const GoogleMapAutoComplete = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: ["places"],
+  });
+
+  if (!isLoaded) {
+    return <div>GoogleMaps is instantiating</div>;
+  }
   return <Autocomplete>{children}</Autocomplete>;
 };
