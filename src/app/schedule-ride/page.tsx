@@ -6,10 +6,16 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  GoogleMapAutoComplete,
   HeadingHeebo,
 } from "@/components";
 import { cn, formatDateToDDMMYYYY } from "@/lib";
-import { CalenderIcon } from "@public/svgs";
+import {
+  CalenderIcon,
+  DestinationAddressIcon,
+  EditIcon,
+  PickupAddressIcon,
+} from "@public/svgs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import { useState } from "react";
@@ -27,7 +33,7 @@ const Page = () => {
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>
       <div className='flex gap-20 h-full'>
-        <div className='flex flex-col gap-10 min-w-[40%] h-full'>
+        <div className='flex flex-col gap-10 min-w-[378px] h-full'>
           <div className='flex flex-col'>
             <HeadingHeebo className='text-left font-extrabold text-4xl'>
               Scheduled ride
@@ -38,7 +44,7 @@ const Page = () => {
               early meetings, or medical appointments. cars
             </p>
           </div>
-          <div className={cn("flex items-center gap-8 rounded-2xl px-2")}>
+          <div className={cn("flex flex-col gap-8 rounded-2xl")}>
             <Dialog open={issDateDialogOpen} onOpenChange={setIsDateDialogOpen}>
               <DialogTrigger asChild>
                 <div className='rounded-2xl max-w-[378px] bg-white items-center justify-between px-7 py-3 w-full flex gap-4 hover:cursor-pointer'>
@@ -138,6 +144,42 @@ const Page = () => {
                 </div>
               </DialogContent>
             </Dialog>
+
+            <div className='flex bg-gray-2 rounded-2xl items-center justify-between h-14 w-full gap-6 px-6'>
+              <CalenderIcon />
+              <div className='flex flex-col text-sm flex-1'>
+                <p className='text-[#B1B2B4]'>From date</p>
+                <p className='font-bold'>01 Apr 2025</p>
+              </div>
+              <div className='flex flex-col text-sm flex-1'>
+                <p className='text-[#B1B2B4]'>To date</p>
+                <p className='font-bold'>01 Apr 2025</p>
+              </div>
+              <EditIcon />
+            </div>
+            <div className='flex flex-col gap-1'>
+              <p className='text-sm font-bold ml-6'>Set locations</p>
+              <div className='flex flex-col gap-4 bg-white rounded-2xl justify-between w-full px-6 py-6'>
+                <div className='flex gap-4 items-center border-b pb-4'>
+                  <PickupAddressIcon />
+                  <GoogleMapAutoComplete>
+                    <input
+                      placeholder='Pick up location'
+                      className='text-sm font-bold border-none outline-none w-full flex-1 items-center'
+                    />
+                  </GoogleMapAutoComplete>
+                </div>
+                <div className='flex gap-4 items-center'>
+                  <DestinationAddressIcon />
+                  <GoogleMapAutoComplete>
+                    <input
+                      placeholder='Your destination'
+                      className='text-sm font-bold border-none outline-none w-full flex-1 items-center'
+                    />
+                  </GoogleMapAutoComplete>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
