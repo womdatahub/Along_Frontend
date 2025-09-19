@@ -31,7 +31,7 @@ const Page = () => {
   const [open, setOpen] = useState(false);
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("hours");
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const { loading, error, longitude, latitude } = useGetCurrentLocation();
 
@@ -411,8 +411,15 @@ const Page = () => {
                           >
                             <DialogTrigger asChild>
                               <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
-                                <p className='text-black font-medium text-xs'>
-                                  {formatDateToDDMMYYYY(date as Date)}
+                                <p
+                                  className={cn(
+                                    "font-medium text-xs",
+                                    date ? "text-black" : "text-placeholder"
+                                  )}
+                                >
+                                  {date
+                                    ? formatDateToDDMMYYYY(date as Date)
+                                    : "Choose a date"}
                                 </p>
                                 <Return24Icon />
                               </div>
