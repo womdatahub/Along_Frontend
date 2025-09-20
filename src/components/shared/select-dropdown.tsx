@@ -13,12 +13,14 @@ type Props = {
   options: string[];
   withoutIcon?: boolean;
   triggerClassName?: string;
+  groupClassName?: string;
 };
 export const SelectDropdown = ({
   triggerLabel,
   options,
   withoutIcon,
   triggerClassName,
+  groupClassName,
 }: Props) => {
   return (
     <Select>
@@ -35,7 +37,7 @@ export const SelectDropdown = ({
         />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup className='max-h-40'>
+        <SelectGroup className={cn("max-h-40", groupClassName)}>
           {options.map((option) => {
             return (
               <SelectItem key={option} value={option}>
