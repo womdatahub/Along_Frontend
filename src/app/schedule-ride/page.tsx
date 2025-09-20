@@ -8,6 +8,7 @@ import {
   DialogTrigger,
   GoogleMapAutoComplete,
   HeadingHeebo,
+  SelectDropdown,
 } from "@/components";
 import { cn, formatDateToDDMMYYYY } from "@/lib";
 import {
@@ -157,28 +158,101 @@ const Page = () => {
               </div>
               <EditIcon />
             </div>
-            <div className='flex flex-col gap-1'>
-              <p className='text-sm font-bold ml-6'>Set locations</p>
-              <div className='flex flex-col gap-4 bg-white rounded-2xl justify-between w-full px-6 py-6'>
-                <div className='flex gap-4 items-center border-b pb-4'>
-                  <PickupAddressIcon />
-                  <GoogleMapAutoComplete>
-                    <input
-                      placeholder='Pick up location'
-                      className='text-sm font-bold border-none outline-none w-full flex-1 items-center'
-                    />
-                  </GoogleMapAutoComplete>
-                </div>
-                <div className='flex gap-4 items-center'>
-                  <DestinationAddressIcon />
-                  <GoogleMapAutoComplete>
-                    <input
-                      placeholder='Your destination'
-                      className='text-sm font-bold border-none outline-none w-full flex-1 items-center'
-                    />
-                  </GoogleMapAutoComplete>
+            <div className='flex flex-col gap-5'>
+              <div className='flex flex-col gap-1'>
+                <p className='text-sm font-bold ml-6'>Set locations</p>
+                <div className='flex flex-col gap-4 bg-white rounded-2xl justify-between w-full px-6 py-6'>
+                  <div className='flex gap-4 items-center border-b pb-4'>
+                    <PickupAddressIcon />
+                    <GoogleMapAutoComplete>
+                      <input
+                        placeholder='Pick up location'
+                        className='text-sm font-bold border-none outline-none w-full flex-1 items-center'
+                      />
+                    </GoogleMapAutoComplete>
+                  </div>
+                  <div className='flex gap-4 items-center'>
+                    <DestinationAddressIcon />
+                    <GoogleMapAutoComplete>
+                      <input
+                        placeholder='Your destination'
+                        className='text-sm font-bold border-none outline-none w-full flex-1 items-center'
+                      />
+                    </GoogleMapAutoComplete>
+                  </div>
                 </div>
               </div>
+              <div className='flex flex-col gap-1'>
+                <p className='text-sm font-bold ml-6'>Vehicle option</p>
+                <div className=' bg-white rounded-2xl w-full px-6 py-6 flex gap-4 items-center'>
+                  <PickupAddressIcon />
+                  <p>Vehicle Type</p>
+                </div>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-1'>
+                  <p className='text-sm font-bold ml-6'>Pickup time</p>
+                  <div className=' bg-white rounded-2xl w-full px-6 py-6 flex gap-4 items-center'>
+                    <PickupAddressIcon />
+                    <p>Set time</p>
+                  </div>
+                </div>
+                <div className='flex justify-between items-center font-bold text-sm px-3'>
+                  <p>Round trip</p>
+                  <p>Yes</p>
+                </div>
+              </div>
+            </div>
+            <div className='flex flex-col gap-5'>
+              <HeadingHeebo className='font-fustat font-semibold text-xl text-left'>
+                Passenger Details
+              </HeadingHeebo>
+              <SelectDropdown
+                options={[
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10",
+                ].map((v) => `${v} passenger${v === "1" ? "" : "s"}`)}
+                triggerLabel='Number of passengers'
+              />
+              <div className='flex gap-4'>
+                <div className='flex justify-center flex-col gap-[1px] items-center rounded-2xl bg-[#D9E0E0] h-16 flex-1 text-[10px]'>
+                  <Image
+                    src='/images/pets-icon.png'
+                    alt='woman-bg'
+                    width={2000}
+                    height={2000}
+                    className='object-contain w-6 h-6'
+                  />
+                  <p>Pets</p>
+                  <div className='w-7 h-1 rounded-full bg-[#979797]' />
+                </div>
+                <div className='flex justify-center flex-col gap-[1px] items-center rounded-2xl bg-[#D9E0E0] h flex-1 text-[10px]'>
+                  <Image
+                    src='/images/luggage-icon.png'
+                    alt='woman-bg'
+                    width={2000}
+                    height={2000}
+                    className='object-contain w-4 h-6'
+                  />
+                  <p>Luggage</p>
+                  <div className='w-7 h-1 rounded-full bg-[#0DAC47]' />
+                </div>
+              </div>
+            </div>
+            <div className='flex flex-col gap-9 my-10'>
+              <div className='flex justify-between items-center font-bold text-sm px-3'>
+                <p>Ride amount</p>
+                <p>$55.92</p>
+              </div>
+              <Button>Proceed to payment</Button>
             </div>
           </div>
         </div>
