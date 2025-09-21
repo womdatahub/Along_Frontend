@@ -12,7 +12,7 @@ import {
 
 export default function Home() {
   return (
-    <div className='font-fustat'>
+    <div className='font-fustat overflow-x-hidden'>
       <Navbar />
       <Hero />
       <Features />

@@ -9,15 +9,19 @@ export const AppDownload = () => {
   return (
     <section className='px-6 py-4 bg-primary text-white font-heebo'>
       <div className='flex items-center gap-10 max-w-6xl mx-auto'>
-        <div className='flex flex-col gap-2 w-1/2'>
+        <div className='flex flex-col gap-2 md:w-1/2'>
           <HeadingHeebo className='text-left font-extrabold text-4xl'>
             Get more from the app
           </HeadingHeebo>
           <p className='text-lg font-light'>
-            Experience stress-free travel with fast bookings, <br /> reliable
-            drivers, and comfortable rides.
+            Experience stress-free travel with fast bookings,{" "}
+            <br className='hidden md:flex' /> reliable drivers, and comfortable
+            rides.
           </p>
-          <div className='flex gap-4'>
+          <div
+            className='flex
+           gap-2 md:gap-4'
+          >
             <Button className='border-white border-2 flex items-center gap-4 justify-between bg-transparent hover:bg-transparent font-semibold text-2xl h-20 rounded-3xl'>
               <div className='flex gap-4 items-center'>
                 <Image
@@ -52,6 +56,7 @@ export const AppDownload = () => {
           alt='app-download'
           width={528}
           height={589}
+          className='hidden md:flex'
         />
       </div>
     </section>

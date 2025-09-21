@@ -387,7 +387,7 @@ export const HowItWorks = () => {
         </div>
 
         {/* TEXT */}
-        <div className='flex flex-col gap-6 w-2/3'>
+        <div className='flex flex-col gap-6 md:w-2/3'>
           <h2 className='text-4xl font-extrabold'>How It Works</h2>
 
           <div className='relativ'>

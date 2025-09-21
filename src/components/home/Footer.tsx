@@ -94,7 +94,7 @@ export const Footer = () => {
         </div>
       </div>
       <div className='bg-white text-black px-6 py-6'>
-        <div className='max-w-7xl mx-auto flex justify-between items-center font-heebo text-xs'>
+        <div className='max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-4 items-center font-heebo text-xs'>
           <p>©2025 Along Inc. All Rights Reserved</p>
           <div className='flex items-center gap-8'>
             <p>Privacy & Policy</p>

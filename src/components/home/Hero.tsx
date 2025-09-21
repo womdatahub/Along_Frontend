@@ -2,7 +2,7 @@ import { LocationIcon } from "@public/svgs";
 
 export const Hero = () => {
   return (
-    <div className='pt-16 bg-white'>
+    <div className='pt-16 w-screen'>
       <section
         className='relative h-[90vh] flex items-end bg-cover bg-center pb-20'
         style={{ backgroundImage: "url('/images/hero-1.png')" }}

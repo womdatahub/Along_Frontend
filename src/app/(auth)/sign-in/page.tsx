@@ -2,8 +2,9 @@ import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 
 const Page = () => {
   return (
+    // px-4 md:px-0
     <div className='flex justify-center items-center h-full'>
-      <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black text-4xl'>
+      <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-4 md:px-8 py-10 bg-background-1 text-black text-4xl'>
         <p className='font-semibold text-2xl text-center'>
           Sign in to your account
         </p>

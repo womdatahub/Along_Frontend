@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fustat, Heebo } from "next/font/google";
-import { CheckWindowSize, Toaster } from "@/components";
+import {
+  // CheckWindowSize,
+  Toaster,
+} from "@/components";
 // import { AuthProvider } from "@/store";
 
 import "./globals.css";
@@ -43,7 +46,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat`}
       >
         {/* <AuthProvider>{children}</AuthProvider> */}
-        <CheckWindowSize>{children}</CheckWindowSize>
+        {/* <CheckWindowSize>{children}</CheckWindowSize> */}
+        {children}
         <Toaster position='bottom-right' richColors />
       </body>
     </html>

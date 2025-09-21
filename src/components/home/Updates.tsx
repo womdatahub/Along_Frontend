@@ -11,7 +11,7 @@ export const Updates = () => {
       <div className='flex flex-col gap-4 max-w-6xl mx-auto'>
         <div className='flex gap-2 flex-col font-heebo font-light text-lg'>
           <HeadingHeebo className='text-left'>On the Horizon</HeadingHeebo>
-          <p className='w-2/3'>
+          <p className='md:w-2/3'>
             Stay in the know with what’s next. From new features and service
             updates to fresh insights, our “Upcoming” section keeps you ahead of
             the curve. Discover what we’re building, improvements on the way,
