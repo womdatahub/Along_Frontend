@@ -1,5 +1,5 @@
 "use client";
-import { Footer, Navbar } from "@/components/home";
+import { Footer, Navbar } from "@/components";
 
 const Layout = ({
   children,
