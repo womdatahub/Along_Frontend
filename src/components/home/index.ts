@@ -1,9 +1,9 @@
-export * from "./nav-bar";
-export * from "./hero";
-export * from "./features";
-export * from "./services";
-export * from "./how-it-works";
-export * from "./app-download";
-export * from "./faq";
-export * from "./updates";
-export * from "./footer";
+export { default as Navbar } from "./nav-bar";
+export { default as Hero } from "./hero";
+export { default as Features } from "./features";
+export { default as Services } from "./services";
+export { default as HowItWorks } from "./how-it-works";
+export { default as AppDownload } from "./app-download";
+export { default as Faq } from "./faq";
+export { default as Updates } from "./updates";
+export { default as Footer } from "./footer";
