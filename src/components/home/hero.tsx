@@ -1,6 +1,6 @@
 import { LocationIcon } from "@public/svgs";
 
-export const Hero = () => {
+export default function Hero = () => {
   return (
     <div className='pt-16 w-screen'>
       <section
