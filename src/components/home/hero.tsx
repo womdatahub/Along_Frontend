@@ -34,9 +34,9 @@ export const Hero = () => {
                   />
                 </GoogleMapAutoComplete>
               </div>
-              <Button className='bg-primary px-6 py-2 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+              <div className='bg-primary px-6 py-2 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
                 Go
-              </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 "use client";
-import { GoogleMapAutoComplete, HeadingHeebo } from "@/components";
+import { GoogleMapAutoComplete, GoogleMaps, HeadingHeebo } from "@/components";
 import Image from "next/image";
 
 import {
@@ -231,7 +231,11 @@ const Ride = () => {
         </div>
       </section>
       <section className='py-36 px-6 text-center'>
-        <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between'></div>
+        <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between h-full'>
+          <div className='h-[40vw] w-full'>
+            <GoogleMaps />
+          </div>
+        </div>
       </section>
     </div>
   );

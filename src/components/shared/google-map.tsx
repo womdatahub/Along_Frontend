@@ -26,7 +26,11 @@ export const GoogleMaps = () => {
   });
 
   if (!isLoaded) {
-    return <div>GoogleMaps is instantiating</div>;
+    return (
+      <div className='h-full w-full justify-center flex items-center animate-pulse text-sm text-placeholder'>
+        GoogleMaps is instantiating
+      </div>
+    );
   }
 
   return (
@@ -37,6 +41,7 @@ export const GoogleMaps = () => {
         mapContainerStyle={{
           width: "100%",
           height: "100%",
+          background: "red",
         }}
         options={{
           zoomControl: false,

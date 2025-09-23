@@ -8,6 +8,7 @@ import {
   DialogTrigger,
   DriverInfoAccordion,
   GoogleMapAutoComplete,
+  GoogleMaps,
   HeadingHeebo,
   SelectDropdown,
   Switch,
@@ -545,7 +546,9 @@ const RentRide = () => {
           )}
         </div>
 
-        <div className='bg-red- w-full h-full min-h-40 sticky top-0' />
+        {/* <div className='bg-red- w-full h-full min-h-40 sticky top-0' /> */}
+
+        <GoogleMaps />
       </div>
     </div>
   );
