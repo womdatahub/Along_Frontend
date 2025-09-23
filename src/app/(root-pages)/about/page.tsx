@@ -4,7 +4,7 @@ import Image from "next/image";
 const page = () => {
   return (
     <div className='font-fustat'>
-      <section className='pt-[272px] px-6 text-center bg-background-1 h-[844px]'>
+      <section className='pt-14 md:pt-[272px] px-4 md:px-6 text-center bg-background-1 h-fit md:h-[844px]'>
         <div className='flex gap-20 max-w-6xl mx-auto items-center justify-between'>
           <div className='flex flex-col gap-10 w-1/2'>
             <HeadingHeebo className='font-extrabold text-[67px] text-left'>
@@ -40,7 +40,7 @@ const page = () => {
           </div>
         </div>
       </section>
-      <section className='py-36 px-6 text-center bg-gradient-to-b from-[#8DC13D] via-[#026270] to-[#0E4A7A]'>
+      <section className='py-14 md:py-36 md:px-6 text-center bg-gradient-to-b from-[#8DC13D] via-[#026270] to-[#0E4A7A]'>
         <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between'>
           <div className='flex gap-20 items-center text-white justify-between'>
             <div className='flex flex-col gap-1 w-1/2'>
@@ -84,7 +84,7 @@ const page = () => {
           </div>
         </div>
       </section>
-      <section className='py-36 px-6 bg-background-1'>
+      <section className='py-14 md:py-36 md:px-6 bg-background-1'>
         <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between'>
           <HeadingHeebo className='text-[40px] font-extrabold'>
             What makes us different
