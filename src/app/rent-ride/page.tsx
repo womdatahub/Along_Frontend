@@ -545,7 +545,7 @@ const RentRide = () => {
           )}
         </div>
 
-        <div className='bg-red-400 w-full h-full min-h-40 sticky top-0' />
+        <div className='bg-red- w-full h-full min-h-40 sticky top-0' />
       </div>
     </div>
   );
