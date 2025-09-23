@@ -1,3 +1,4 @@
+import { LogisticsIcon } from "@public/svgs";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,11 +14,11 @@ export const Services = () => {
       desc: "Book ahead for peace of mind. special occasions, or planned journeys.",
       img: "/images/schedule-ride-small-car.png",
     },
-    {
-      title: "Logistics",
-      desc: "Secure package handling with tracking updates.",
-      img: "/images/logistics.png",
-    },
+    // {
+    //   title: "Logistics",
+    //   desc: "Secure package handling with tracking updates.",
+    //   img: "/images/logistics.png",
+    // },
   ];
 
   return (
@@ -56,6 +57,29 @@ export const Services = () => {
               </div>
             </div>
           ))}
+          <div className='pt-8 pb-4 px-6 bg-[#E7EDED] rounded-xl shadow hover:shadow-lg transition'>
+            <div className='flex flex-col justify-between'>
+              <div className='flex gap-4 justify-between'>
+                <div className='flex flex-col w-[70%]'>
+                  <h3 className='font-bold text-lg'>Logistics</h3>
+                  <p className='font-light text-[9px]'>
+                    Secure package handling with tracking updates.
+                  </p>
+                </div>
+                <LogisticsIcon />
+                {/* <Image
+                    src={s.img}
+                    alt=''
+                    width={103}
+                    height={72}
+                    className='h-[72px] w-[100px] object-cover'
+                  /> */}
+              </div>
+              <Link href='/' className='text-primary font-bold text-xs'>
+                Details
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
