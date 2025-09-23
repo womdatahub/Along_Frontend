@@ -33,6 +33,44 @@ const heebo = Heebo({
 export const metadata: Metadata = {
   title: "Along Cities",
   description: "Along Cities, your best ride solution.",
+  openGraph: {
+    title: "Along Cities",
+    description: "Along Cities, your best ride solution.",
+    url: "https://alongcities.com",
+    siteName: "Along Cities",
+    images: [
+      {
+        url: "https://alongcities.com/meta-1.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Along Cities Preview",
+      },
+      {
+        url: "https://alongcities.com/meta-2.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Along Cities Preview",
+      },
+      {
+        url: "https://alongcities.com/meta-3.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Along Cities Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Along Cities",
+    description: "Along Cities, your best ride solution.",
+    images: [
+      "https://alongcities.com/meta-1.jpg",
+      "https://alongcities.com/meta-2.jpg",
+      "https://alongcities.com/meta-3.jpg",
+    ],
+  },
 };
 
 export default function RootLayout({

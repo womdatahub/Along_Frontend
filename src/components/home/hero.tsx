@@ -1,5 +1,5 @@
 import { LocationIcon } from "@public/svgs";
-import { Button, GoogleMapAutoComplete } from "@/components";
+import { GoogleMapAutoComplete } from "@/components";
 
 export const Hero = () => {
   return (
