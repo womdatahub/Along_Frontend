@@ -1,9 +1,9 @@
-export * from "./nav-bar";
-export * from "./hero";
-export * from "./features";
-export * from "./services";
-export * from "./how-it-works";
-export * from "./app-download";
-export * from "./faq";
-export * from "./updates";
-export * from "./footer";
+export { Navbar } from "./nav-bar";
+export { Hero } from "./hero";          // after fixing Hero syntax, ensure it's named or default, see note below
+export { Features } from "./features";
+export { Services } from "./services";
+export { HowItWorks } from "./how-it-works";
+export { AppDownload } from "./app-download";
+export { Faq } from "./faq";
+export { Updates } from "./updates";
+export { Footer } from "./footer";
