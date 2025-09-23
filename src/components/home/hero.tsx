@@ -1,4 +1,5 @@
 import { LocationIcon } from "@public/svgs";
+import { Button, GoogleMapAutoComplete } from "@/components";
 
 export const Hero = () => {
   return (
@@ -25,15 +26,17 @@ export const Hero = () => {
                 <div className='self-center'>
                   <LocationIcon />
                 </div>
-                <input
-                  type='text'
-                  placeholder='Enter your location'
-                  className='flex-1 pt-3 pb-1 outline-none text-gray-700 my-2 md:my-4 border-b border-b-primary md:max-w-1/2'
-                />
+                <GoogleMapAutoComplete>
+                  <input
+                    type='text'
+                    placeholder='Enter your location'
+                    className='flex-1 pt-3 pb-1 outline-none text-gray-700 my-2 md:my-4 border-b border-b-primary min-w-1/2 md:max-w-1/2'
+                  />
+                </GoogleMapAutoComplete>
               </div>
-              <button className='bg-primary px-6 py-2 md:py-4 w-24 md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+              <Button className='bg-primary px-6 py-2 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
                 Go
-              </button>
+              </Button>
             </div>
           </div>
         </div>

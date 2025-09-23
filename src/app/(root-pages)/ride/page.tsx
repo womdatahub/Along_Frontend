@@ -1,5 +1,5 @@
 "use client";
-import { HeadingHeebo } from "@/components";
+import { GoogleMapAutoComplete, HeadingHeebo } from "@/components";
 import Image from "next/image";
 
 import {
@@ -63,12 +63,14 @@ const Ride = () => {
                 )}
               >
                 <AccuracyIcon />
-                <input
-                  className={cn(
-                    "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full md:w-[375px]"
-                  )}
-                  placeholder='Pick up location'
-                />
+                <GoogleMapAutoComplete>
+                  <input
+                    className={cn(
+                      "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full md:w-[375px]"
+                    )}
+                    placeholder='Pick up location'
+                  />
+                </GoogleMapAutoComplete>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <Button
@@ -228,7 +230,7 @@ const Ride = () => {
           </div>
         </div>
       </section>
-      <section className='py-36 px-6 text-center bg-red-500'>
+      <section className='py-36 px-6 text-center'>
         <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between'></div>
       </section>
     </div>

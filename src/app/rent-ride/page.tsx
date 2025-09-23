@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DriverInfoAccordion,
+  GoogleMapAutoComplete,
   HeadingHeebo,
   SelectDropdown,
   Switch,
@@ -86,12 +87,15 @@ const RentRide = () => {
                 )}
               >
                 <AccuracyIcon />
-                <input
-                  className={cn(
-                    "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full flex-1"
-                  )}
-                  placeholder='Pick up location'
-                />
+
+                <GoogleMapAutoComplete>
+                  <input
+                    className={cn(
+                      "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full flex-1"
+                    )}
+                    placeholder='Pick up location'
+                  />
+                </GoogleMapAutoComplete>
               </div>
 
               <Dialog open={open} onOpenChange={setOpen}>
