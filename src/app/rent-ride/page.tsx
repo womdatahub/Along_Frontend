@@ -11,7 +11,7 @@ import {
   SelectDropdown,
   Switch,
 } from "@/components";
-import { cn, formatDateToDDMMYYYY, useGetCurrentLocation } from "@/lib";
+import { cn, formatDateToDDMMYYYY } from "@/lib";
 import {
   AccuracyIcon,
   EditIcon,
@@ -25,17 +25,24 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RentRide />
+    </Suspense>
+  );
+};
+const RentRide = () => {
   const [open, setOpen] = useState(false);
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("hours");
   const [date, setDate] = useState<Date | undefined>(undefined);
 
-  const { loading, error, longitude, latitude } = useGetCurrentLocation();
+  // const { loading, error, longitude, latitude } = useGetCurrentLocation();
 
-  console.log(loading, error, longitude, latitude);
+  // console.log(loading, error, longitude, latitude);
 
   const searchParams = useSearchParams();
   const router = useRouter();
