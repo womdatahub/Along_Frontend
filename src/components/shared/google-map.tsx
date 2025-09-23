@@ -62,7 +62,11 @@ export const GoogleMapAutoComplete = ({
   });
 
   if (!isLoaded) {
-    return <div>GoogleMaps is instantiating</div>;
+    return (
+      <div className='h-full flex items-center animate-pulse text-sm text-placeholder'>
+        GoogleMaps AutoComplete is instantiating
+      </div>
+    );
   }
-  return <Autocomplete>{children}</Autocomplete>;
+  return <Autocomplete className='w-full'>{children}</Autocomplete>;
 };
