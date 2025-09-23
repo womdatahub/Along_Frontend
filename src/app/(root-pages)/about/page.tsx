@@ -5,7 +5,7 @@ const page = () => {
   return (
     <div className='font-fustat'>
       <section className='pt-14 md:pt-[272px] px-4 md:px-6 text-center bg-background-1 h-fit md:h-[844px]'>
-        <div className='flex gap-20 max-w-6xl mx-auto items-center justify-between'>
+        <div className='flex  gap-20 max-w-6xl mx-auto items-center justify-between'>
           <div className='flex flex-col gap-10 w-1/2'>
             <HeadingHeebo className='font-extrabold text-[67px] text-left'>
               About Us
