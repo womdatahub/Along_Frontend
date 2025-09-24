@@ -40,19 +40,7 @@ export const metadata: Metadata = {
     siteName: "Along Cities",
     images: [
       {
-        url: "https://alongcities.com/meta-1.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Along Cities Preview",
-      },
-      {
-        url: "https://alongcities.com/meta-2.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Along Cities Preview",
-      },
-      {
-        url: "https://alongcities.com/meta-3.jpg",
+        url: "https://alongcities.com/images/meta-3.jpg",
         width: 1200,
         height: 630,
         alt: "Along Cities Preview",
@@ -65,11 +53,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Along Cities",
     description: "Along Cities, your best ride solution.",
-    images: [
-      "https://alongcities.com/meta-1.jpg",
-      "https://alongcities.com/meta-2.jpg",
-      "https://alongcities.com/meta-3.jpg",
-    ],
+    images: ["https://alongcities.com/images/meta-3.jpg"],
   },
 };
 
