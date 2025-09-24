@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     siteName: "Along Cities",
     images: [
       {
-        url: "https://alongcities.com/images/meta-3.jpg",
+        url: "https://alongcities.com/images/meta-3.jpg?v=2",
         width: 1200,
         height: 630,
         alt: "Along Cities Preview",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: "Along Cities",
     description:
       "Along Cities is your smart, reliable, and comfortable ride solution—connecting people and places with ease. Whether you're commuting to work, exploring new destinations, or just getting across town, we make every journey smoother, safer, and more enjoyable. Ride with confidence, ride with Along Cities.",
-    images: ["https://alongcities.com/images/meta-3.jpg"],
+    images: ["https://alongcities.com/images/meta-3.jpg?v=2"],
   },
 };
 
