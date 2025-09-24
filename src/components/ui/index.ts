@@ -9,3 +9,5 @@ export * from "./select";
 export * from "./card";
 export * from "./switch";
 export * from "./dialog";
+export * from "./textarea";
+export * from "./input";
