@@ -1,6 +1,26 @@
+"use client";
+import { AddInput, Button } from "@/components";
+import { signInSchema, TSignInValidator } from "@/lib";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Page = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TSignInValidator>({
+    defaultValues: {
+      email: "",
+    },
+    resolver: zodResolver(signInSchema),
+  });
+
+  const onSubmit = async (values: TSignInValidator) => {
+    console.log(values, errors);
+  };
+
   return (
     // px-4 md:px-0
     <div className='flex justify-center items-center h-full'>
@@ -8,13 +28,24 @@ const Page = () => {
         <p className='font-semibold text-2xl text-center'>
           Sign in to your account
         </p>
-        <input
-          className='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
+        <AddInput
+          id='email'
+          errors={errors}
           placeholder='Enter phone number, email'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          // className='gap-2 w-full'
+          inputClassName='bg-white h-16 rounded-2xl text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
         />
-        <button className='bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          className='bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'
+        >
           Continue
-        </button>
+        </Button>
         <div className='flex flex-col gap-9 mt-5'>
           <p className='text-xs font-semibold text-center'>or continue with</p>
           <div className='flex gap-14 items-center justify-center'>

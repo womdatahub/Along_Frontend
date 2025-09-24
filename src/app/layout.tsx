@@ -68,7 +68,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/80 selection:text-primary-foreground`}
       >
         {/* <AuthProvider>{children}</AuthProvider> */}
         {/* <CheckWindowSize>{children}</CheckWindowSize> */}
