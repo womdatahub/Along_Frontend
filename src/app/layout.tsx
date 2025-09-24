@@ -32,10 +32,12 @@ const heebo = Heebo({
 });
 export const metadata: Metadata = {
   title: "Along Cities",
-  description: "Along Cities, your best ride solution.",
+  description:
+    "Along Cities is your smart, reliable, and comfortable ride solution—connecting people and places with ease. Whether you're commuting to work, exploring new destinations, or just getting across town, we make every journey smoother, safer, and more enjoyable. Ride with confidence, ride with Along Cities.",
   openGraph: {
     title: "Along Cities",
-    description: "Along Cities, your best ride solution.",
+    description:
+      "Along Cities is your smart, reliable, and comfortable ride solution—connecting people and places with ease. Whether you're commuting to work, exploring new destinations, or just getting across town, we make every journey smoother, safer, and more enjoyable. Ride with confidence, ride with Along Cities.",
     url: "https://alongcities.com",
     siteName: "Along Cities",
     images: [
@@ -52,7 +54,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Along Cities",
-    description: "Along Cities, your best ride solution.",
+    description:
+      "Along Cities is your smart, reliable, and comfortable ride solution—connecting people and places with ease. Whether you're commuting to work, exploring new destinations, or just getting across town, we make every journey smoother, safer, and more enjoyable. Ride with confidence, ride with Along Cities.",
     images: ["/images/meta-3.jpg"],
   },
 };
