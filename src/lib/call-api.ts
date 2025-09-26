@@ -50,9 +50,10 @@ export const callApi = async <T>(
       url: endpoint,
       ...(data && { data }),
       headers: {
+        Host: "http://localhost:3000",
+        origin: "http://localhost:3000",
         "x-referrer":
-          process.env.NEXT_PUBLIC_FRONTEND_URL ??
-          "https://www.adminstore.shoppergetit.com",
+          process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000",
         ...(isObject(data)
           ? {
               "Content-Type": "application/json",

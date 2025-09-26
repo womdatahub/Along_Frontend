@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import type { SelectorFn } from "@/types";
-import { callApi } from "@/lib";
+import { apiStr, callApi, USER } from "@/lib";
 import { toast } from "sonner";
 // import { callApi } from "@/lib";
 
@@ -84,7 +84,7 @@ export const useSession = create<Session>()(() => ({
 
   actions: {
     login: async (loginData) => {
-      const path = "/user/login";
+      const path = apiStr(USER, "/user/login");
       const { data, error } = await callApi(path, loginData);
 
       if (error) {
@@ -97,7 +97,8 @@ export const useSession = create<Session>()(() => ({
     },
     logOut: async () => {},
     registerUser: async (registerUserData) => {
-      const path = "/user/register";
+      const path = apiStr(USER, "/user/register");
+
       const { data, error } = await callApi(path, registerUserData);
 
       if (error) {
@@ -109,7 +110,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     verifyEmail: async (verifyEmailData) => {
-      const path = "/user/verify-email";
+      const path = apiStr(USER, "/ser/verify-email");
+
       const { data, error } = await callApi(path, verifyEmailData, "PATCH");
 
       if (error) {
@@ -121,7 +123,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     verifyOtp: async () => {
-      const path = "";
+      const path = apiStr(USER, "/user/verify-otp");
+
       const { data, error } = await callApi(path, {});
 
       if (error) {
@@ -133,7 +136,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     resendVerificationOTP: async (resendVerificationOTPData) => {
-      const path = "/user/resend-verification-otp";
+      const path = apiStr(USER, "/user/resend-verification-otp");
+
       const { data, error } = await callApi(path, resendVerificationOTPData);
 
       if (error) {
@@ -145,7 +149,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     registerDriver: async (registerDriverData) => {
-      const path = "/user/driver";
+      const path = apiStr(USER, "/user/driver");
+
       const { data, error } = await callApi(path, registerDriverData);
 
       if (error) {
@@ -159,7 +164,8 @@ export const useSession = create<Session>()(() => ({
     addVerificationDocumentsAndServices: async (
       addVerificationDocumentsAndServicesData
     ) => {
-      const path = "/user/documents-services";
+      const path = apiStr(USER, "/user/documents-services");
+
       const { data, error } = await callApi(
         path,
         addVerificationDocumentsAndServicesData,
@@ -175,7 +181,8 @@ export const useSession = create<Session>()(() => ({
       }
     }, // PATCH
     registerVehicle: async (registerVehicleData) => {
-      const path = "/user/documents-services";
+      const path = apiStr(USER, "/user/documents-services");
+
       const { data, error } = await callApi(path, registerVehicleData, "PATCH");
 
       if (error) {
@@ -187,7 +194,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     registerRider: async (registerRiderData) => {
-      const path = "/user/rider";
+      const path = apiStr(USER, "/user/rider");
+
       const { data, error } = await callApi(path, registerRiderData);
 
       if (error) {
@@ -199,7 +207,7 @@ export const useSession = create<Session>()(() => ({
       }
     },
     registerBankAccount: async (registerBankAccountData) => {
-      const path = "/user/bank-details";
+      const path = "/user/api/v1/user/bank-details";
       const { data, error } = await callApi(path, registerBankAccountData);
 
       if (error) {
@@ -211,7 +219,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     updateDriverDetails: async (updateDriverDetailsData) => {
-      const path = "/user/driver";
+      const path = apiStr(USER, "/user/driver");
+
       const { data, error } = await callApi(
         path,
         updateDriverDetailsData,
@@ -227,7 +236,8 @@ export const useSession = create<Session>()(() => ({
       }
     },
     updateRiderDetails: async (updateRiderDetailsData) => {
-      const path = "/user/rider";
+      const path = apiStr(USER, "/user/rider");
+
       const { data, error } = await callApi(
         path,
         updateRiderDetailsData,
