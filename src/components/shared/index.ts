@@ -8,3 +8,4 @@ export * from "./check-window-size";
 export * from "./google-map";
 export * from "./add-input";
 export * from "./radar-map";
+export * from "./btn-loader";

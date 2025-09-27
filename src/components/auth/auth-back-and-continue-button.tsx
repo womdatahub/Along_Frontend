@@ -23,7 +23,12 @@ export const AuthBackAndContinueButton = ({
         }}
         className='flex gap-3 items-center cursor-pointer bg-transparent text-black hover:bg-transparent border-0 shadow-none'
       >
-        <div className='flex justify-center items-center rounded-full bg-primary w-14 aspect-square rotate-180'>
+        <div
+          className={cn(
+            "flex justify-center items-center rounded-full bg-primary w-14 aspect-square rotate-180",
+            backActive ? "bg-primary" : "bg-inactive"
+          )}
+        >
           <WhiteGreaterThanIcon />
         </div>
         <p className='text-sm'>Back</p>

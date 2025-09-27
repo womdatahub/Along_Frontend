@@ -49,7 +49,7 @@ const Page = () => {
           </div>
         </div>
         <AuthBackAndContinueButton
-          backActive
+          backActive={false}
           continueActive={otpValue.length === 4}
           continuePath='/onboarding/user-type'
         />

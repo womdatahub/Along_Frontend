@@ -79,7 +79,7 @@ const initialState = {
   isLoading: false,
 };
 
-export const useSession = create<Session>()(() => ({
+export const useSession = create<Session>()((set, get) => ({
   ...initialState,
 
   actions: {
@@ -97,17 +97,18 @@ export const useSession = create<Session>()(() => ({
     },
     logOut: async () => {},
     registerUser: async (registerUserData) => {
+      set({ isLoading: true });
       const path = apiStr(USER, "/user/register");
 
-      const { data, error } = await callApi(path, registerUserData);
+      const { error } = await callApi(path, registerUserData);
 
       if (error) {
         toast.error(error.message);
+        set({ isLoading: false });
         return false;
       }
-      if (data) {
-        console.log(data, path);
-      }
+
+      set({ isLoading: false });
       return true;
     },
     verifyEmail: async (verifyEmailData) => {
