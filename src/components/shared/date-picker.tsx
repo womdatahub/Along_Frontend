@@ -30,7 +30,7 @@ export const DatePicker = ({
   placeholder,
 }: Props) => {
   return (
-    <div className='flex flex-col gap-3'>
+    <div className='flex flex-col gap-1'>
       <Label htmlFor='date' className='font-medium text-sm ml-5'>
         {label}
       </Label>
@@ -40,7 +40,7 @@ export const DatePicker = ({
             variant='outline'
             id='date'
             className={cn(
-              "justify-between font-normal placeholder:text-placeholder bg-white h-16 rounded-2xl px-4 text-sm hover:cursor-pointer focus:outline-none focus:ring-0 hover:bg-white",
+              "w-full justify-between font-normal placeholder:text-placeholder bg-white h-16 rounded-2xl px-4 text-sm hover:cursor-pointer focus:outline-none focus:ring-0 hover:bg-white",
               date ? "text-black" : "text-placeholder"
             )}
           >

@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components";
 
 type Props = {
-  continuePath: string;
+  continueFnc: () => void;
   backActive: boolean;
   continueActive: boolean;
 };
 export const AuthBackAndContinueButton = ({
   continueActive,
   backActive,
-  continuePath,
+  continueFnc,
 }: Props) => {
   const router = useRouter();
   return (
@@ -35,7 +35,7 @@ export const AuthBackAndContinueButton = ({
       </Button>
       <Button
         onClick={() => {
-          if (continueActive) router.push(continuePath);
+          if (continueActive) continueFnc();
         }}
         className={cn(
           "flex gap-3 items-center cursor-pointer bg-transparent text-black hover:bg-transparent border-0 shadow-none",

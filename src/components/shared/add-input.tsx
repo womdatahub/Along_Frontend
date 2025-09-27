@@ -10,7 +10,7 @@ import {
 import { Input, Textarea } from "@/components";
 
 import { cn } from "@/lib";
-interface Props<T extends FieldValues> {
+export interface AddInputProps<T extends FieldValues> {
   id: Path<T>;
   type?: string;
   width?: string;
@@ -27,7 +27,7 @@ interface Props<T extends FieldValues> {
   labelClassName?: string;
 }
 
-const AddInput = <T extends FieldValues>(props: Props<T>) => {
+const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
   const {
     id,
     type = "text",
@@ -45,11 +45,11 @@ const AddInput = <T extends FieldValues>(props: Props<T>) => {
   } = props;
 
   return (
-    <div className={cn("flex flex-col gap-8", `w-${width}`, className)}>
+    <div className={cn("flex flex-col gap-1", `w-${width}`, className)}>
       {label && (
         <label
           htmlFor={id}
-          className={cn("text-base flex gap-2 items-center", labelClassName)}
+          className={cn("text-sm font-semibold ml-5", labelClassName)}
         >
           <span>{label}</span>
         </label>
@@ -78,7 +78,7 @@ const AddInput = <T extends FieldValues>(props: Props<T>) => {
 
 export { AddInput };
 
-const AddTextarea = <T extends FieldValues>(props: Props<T>) => {
+const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
   const {
     id,
     label,

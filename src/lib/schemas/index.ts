@@ -4,6 +4,8 @@ import * as z from "zod";
 export const signInSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
 });
+
+// onboarding schema
 export const onboardingSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
   password: z
@@ -13,6 +15,15 @@ export const onboardingSchema = z.object({
       message:
         "Password must include letters, numbers, and special characters (!@#$%^&*)",
     }),
+});
+
+export const registerRiderSchema = z.object({
+  firstName: z.string({ message: "Invalid first Name" }).min(1, {
+    message: "First name is required",
+  }),
+  lastName: z.string({ message: "Invalid last Name" }).min(1, {
+    message: "Last name is required",
+  }),
 });
 
 // create account
@@ -40,4 +51,6 @@ export const createAccountSchema = z
 
 export type TSignInValidator = z.infer<typeof signInSchema>;
 export type TOnboardingValidator = z.infer<typeof onboardingSchema>;
+export type TRegisterRiderValidator = z.infer<typeof registerRiderSchema>;
+
 export type TCreateAccountValidator = z.infer<typeof createAccountSchema>;

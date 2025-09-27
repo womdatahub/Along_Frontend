@@ -1,18 +1,55 @@
 "use client";
 
 import {
+  AddInput,
   AuthBackAndContinueButton,
-  CustomAuthInput,
   DatePicker,
   SelectDropdown,
 } from "@/components";
 import { HeadingHeebo } from "@/components";
+import { TRegisterRiderValidator, registerRiderSchema } from "@/lib";
+import { useSession } from "@/store";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [selected, setSelected] = useState<string>("");
+
+  const {
+    // actions: { registerRider },
+  } = useSession((state) => state);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TRegisterRiderValidator>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+    },
+    resolver: zodResolver(registerRiderSchema),
+  });
+
+  const onSubmit = async (values: TRegisterRiderValidator) => {
+    if (!date || !selected) return;
+    console.log({
+      ...values,
+      dateOfBirth: date.toISOString(),
+      gender: selected,
+    });
+    // await registerRider({
+    //   ...values,
+    //   dateOfBirth: date.toISOString(),
+    //   gender: selected as "male" | "female",
+    //   mobileNumber: "", // This is not on the design ooo
+    // }).then((val) => {
+    //   if (val === false) return;
+    // });
+  };
 
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] -mt-10 px-8 py-10 bg-background-1 text-black'>
@@ -33,8 +70,28 @@ const Page = () => {
       </div>
 
       <div className='flex flex-col gap-4'>
-        <CustomAuthInput label='First Name' placeholder='John' />
-        <CustomAuthInput label='Last Name' placeholder='Doe' />
+        <AddInput
+          id='firstName'
+          errors={errors}
+          placeholder='John'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
+          label='First Name'
+        />
+        <AddInput
+          id='lastName'
+          errors={errors}
+          placeholder='Doe'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
+          label='Last Name'
+        />
 
         <DatePicker
           date={date}
@@ -50,6 +107,8 @@ const Page = () => {
           <SelectDropdown
             triggerLabel='Select gender'
             options={["Male", "Female"]}
+            selected={selected}
+            setSelected={setSelected}
           />
         </div>
       </div>
@@ -57,7 +116,9 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive
-        continuePath='/onboarding/user-type'
+        continueFnc={() => {
+          handleSubmit(onSubmit)();
+        }}
       />
     </div>
   );

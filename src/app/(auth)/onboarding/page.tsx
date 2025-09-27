@@ -6,7 +6,6 @@ import { onboardingSchema, TOnboardingValidator } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
-import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -32,7 +31,7 @@ const Page = () => {
     console.log(values, errors);
     await registerUser({ ...values, type: "email" }).then((val) => {
       if (val === false) return;
-      router.push("/onboarding/otp");
+      router.push("/onboarding/otp?email=" + values.email);
     });
   };
 

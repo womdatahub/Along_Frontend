@@ -14,6 +14,8 @@ type Props = {
   withoutIcon?: boolean;
   triggerClassName?: string;
   groupClassName?: string;
+  selected: string;
+  setSelected: React.Dispatch<React.SetStateAction<string>>;
 };
 export const SelectDropdown = ({
   triggerLabel,
@@ -21,9 +23,11 @@ export const SelectDropdown = ({
   withoutIcon,
   triggerClassName,
   groupClassName,
+  selected,
+  setSelected,
 }: Props) => {
   return (
-    <Select>
+    <Select onValueChange={setSelected} defaultValue={selected}>
       <SelectTrigger
         withoutIcon={withoutIcon}
         className={cn(
@@ -40,7 +44,7 @@ export const SelectDropdown = ({
         <SelectGroup className={cn("max-h-40", groupClassName)}>
           {options.map((option) => {
             return (
-              <SelectItem key={option} value={option}>
+              <SelectItem key={option} value={option.toLowerCase()}>
                 {option}
               </SelectItem>
             );

@@ -14,7 +14,7 @@ type Session = {
       password: string;
       type: "email" | "phone";
     }) => Promise<boolean>;
-    verifyEmail: (data: { email: string; otp: string }) => Promise<void>;
+    verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
     login: (data: { email: string; password: string }) => Promise<void>;
     logOut: () => Promise<void>;
     verifyOtp: () => Promise<void>;
@@ -52,7 +52,7 @@ type Session = {
       dateOfBirth: string;
       gender: "male" | "female";
       mobileNumber: string;
-    }) => Promise<void>;
+    }) => Promise<boolean>;
     registerBankAccount: (data: {
       bankName: string;
       routingNumber: string;
@@ -79,7 +79,7 @@ const initialState = {
   isLoading: false,
 };
 
-export const useSession = create<Session>()((set, get) => ({
+export const useSession = create<Session>()((set) => ({
   ...initialState,
 
   actions: {
@@ -100,29 +100,37 @@ export const useSession = create<Session>()((set, get) => ({
       set({ isLoading: true });
       const path = apiStr(USER, "/user/register");
 
-      const { error } = await callApi(path, registerUserData);
+      const { data, error } = await callApi(path, registerUserData);
 
       if (error) {
         toast.error(error.message);
         set({ isLoading: false });
         return false;
       }
+      if (data) {
+        toast.success(data.message);
+      }
 
       set({ isLoading: false });
       return true;
     },
     verifyEmail: async (verifyEmailData) => {
-      const path = apiStr(USER, "/ser/verify-email");
+      set({ isLoading: true });
+      const path = apiStr(USER, "/user/verify-email");
 
       const { data, error } = await callApi(path, verifyEmailData, "PATCH");
 
       if (error) {
         toast.error(error.message);
-        return;
+        set({ isLoading: false });
+        return false;
       }
       if (data) {
+        toast.success(data.message);
         console.log(data, path);
       }
+      set({ isLoading: false });
+      return true;
     },
     verifyOtp: async () => {
       const path = apiStr(USER, "/user/verify-otp");
@@ -147,6 +155,7 @@ export const useSession = create<Session>()((set, get) => ({
         return;
       }
       if (data) {
+        toast.success(data.message);
         console.log(data, path);
       }
     },
@@ -196,17 +205,22 @@ export const useSession = create<Session>()((set, get) => ({
       }
     },
     registerRider: async (registerRiderData) => {
+      set({ isLoading: true });
       const path = apiStr(USER, "/user/rider");
 
       const { data, error } = await callApi(path, registerRiderData);
 
       if (error) {
         toast.error(error.message);
-        return;
+        set({ isLoading: false });
+        return false;
       }
       if (data) {
         console.log(data, path);
+        toast.success(data.message);
       }
+      set({ isLoading: false });
+      return true;
     },
     registerBankAccount: async (registerBankAccountData) => {
       const path = "/user/api/v1/user/bank-details";

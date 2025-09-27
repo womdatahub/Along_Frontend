@@ -1,21 +1,39 @@
 "use client";
 import {
   AuthBackAndContinueButton,
+  Button,
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components";
 import { HeadingHeebo } from "@/components";
+import { useSession } from "@/store";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 
 const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OTPVerification />
+    </Suspense>
+  );
+};
+const OTPVerification = () => {
   const [otpValue, setValue] = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const email: string | null = searchParams.get("email");
+
+  const {
+    isLoading,
+    actions: { resendVerificationOTP, verifyEmail },
+  } = useSession((state) => state);
   return (
     <div className='flex flex-col gap-2 justify-center items-center h-full'>
       <div className='flex flex-col gap-14 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
         <HeadingHeebo>Let’s get you verified.</HeadingHeebo>
-        <div className='flex flex-col gap-5'>
+        <div className='flex flex-col gap-4'>
           <p className='text-center text-sm'>
             Enter the 4-digit verification code sent to you.
           </p>
@@ -26,7 +44,10 @@ const Page = () => {
               onChange={(value) => setValue(value)}
               pattern={REGEXP_ONLY_DIGITS}
               autoFocus
-              onComplete={() => {}}
+              onComplete={() => {
+                if (!email || otpValue.length <= 3) return;
+                verifyEmail({ email: email!, otp: otpValue });
+              }}
             >
               <InputOTPGroup className='gap-7'>
                 {[0, 1, 2, 3].map((v) => {
@@ -41,17 +62,41 @@ const Page = () => {
               </InputOTPGroup>
             </InputOTP>
           </div>
-          <div className='flex flex-col text-center'>
-            <p className='text-sm'>Didn’t get the code?</p>
-            <button className='text-icons text-lg font-semibold hover:cursor-pointer'>
-              Resend
-            </button>
+          <div className='flex flex-col gap-7'>
+            <div className='flex gap-1 justify-center items-center text-center'>
+              <p className='text-sm'>Send to email</p>
+              <Button
+                variant={"link"}
+                className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline'
+              >
+                Send
+              </Button>
+            </div>
+            <div className='flex gap-1 justify-center items-center text-center'>
+              <p className='text-sm'>Didn’t get the code?</p>
+              <Button
+                variant={"link"}
+                className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline'
+                onClick={() => {
+                  if (!email) return;
+                  resendVerificationOTP({ email: email });
+                }}
+              >
+                Resend
+              </Button>
+            </div>
           </div>
         </div>
         <AuthBackAndContinueButton
           backActive={false}
-          continueActive={otpValue.length === 4}
-          continuePath='/onboarding/user-type'
+          continueActive={otpValue.length === 4 && !isLoading}
+          continueFnc={() => {
+            if (!email || otpValue.length <= 3) return;
+            verifyEmail({ email: email!, otp: otpValue }).then((val) => {
+              if (val === false) return;
+              router.push("/onboarding/user-type");
+            });
+          }}
         />
       </div>
       <p className='text-base text-gray'>
