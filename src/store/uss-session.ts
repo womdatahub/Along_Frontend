@@ -13,7 +13,7 @@ type Session = {
       email: string;
       password: string;
       type: "email" | "phone";
-    }) => Promise<void>;
+    }) => Promise<boolean>;
     verifyEmail: (data: { email: string; otp: string }) => Promise<void>;
     login: (data: { email: string; password: string }) => Promise<void>;
     logOut: () => Promise<void>;
@@ -103,11 +103,12 @@ export const useSession = create<Session>()(() => ({
 
       if (error) {
         toast.error(error.message);
-        return;
+        return false;
       }
       if (data) {
         console.log(data, path);
       }
+      return true;
     },
     verifyEmail: async (verifyEmailData) => {
       const path = apiStr(USER, "/ser/verify-email");

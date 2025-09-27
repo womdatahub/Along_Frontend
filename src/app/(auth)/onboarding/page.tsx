@@ -1,22 +1,68 @@
 "use client";
-import { Button } from "@/components";
+import { AddInput, Button } from "@/components";
 import { HeadingHeebo } from "@/components";
+import { onboardingSchema, TOnboardingValidator } from "@/lib";
+import { useSession } from "@/store";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
 const Page = () => {
   const router = useRouter();
+  const {
+    actions: { registerUser },
+  } = useSession((state) => state);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TOnboardingValidator>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(onboardingSchema),
+  });
+
+  const onSubmit = async (values: TOnboardingValidator) => {
+    console.log(values, errors);
+    await registerUser({ ...values, type: "email" })
+      .then(() => router.push("/onboarding/otp"))
+      .catch((e) => console.log(e));
+    // router.push("/onboarding/otp");
+  };
+
   return (
     <div className='flex justify-center items-center h-full'>
       <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black text-4xl'>
         <HeadingHeebo>Let’s get you onboard</HeadingHeebo>
-        <input
-          className='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
+        <AddInput
+          id='email'
+          errors={errors}
           placeholder='Enter phone number, email'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          inputClassName='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
         />
+        <AddInput
+          id='password'
+          errors={errors}
+          placeholder='Password'
+          register={register}
+          disabled={false}
+          required
+          type='password'
+          inputClassName='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
+        />
+
         <Button
           variant='default'
-          onClick={() => router.push("/onboarding/otp")}
+          onClick={() => {
+            handleSubmit(onSubmit)();
+          }}
           className='bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'
         >
           Continue
