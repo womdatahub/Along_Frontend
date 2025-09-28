@@ -27,7 +27,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASEURL,
-  // withCredentials: true,
+  withCredentials: true,
 });
 
 export const callApi = async <T>(
@@ -50,6 +50,7 @@ export const callApi = async <T>(
       url: endpoint,
       ...(data && { data }),
       headers: {
+        platform: process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "web-platform",
         "x-referrer":
           process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000",
         ...(isObject(data)
