@@ -1,2 +1,2 @@
 export * from "./auth-provider";
-export * from "./uss-session";
+export * from "./use-session";
