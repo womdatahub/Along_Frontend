@@ -41,6 +41,10 @@ const RentRide = () => {
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("hours");
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [selectedHours, setSelectedHours] = useState<string>("");
+  const [selectedHoursLength, setSelectedHoursLength] = useState<string>("");
+  const [selectedMins, setSelectedMins] = useState<string>("");
+  const [selectAmOrPm, setSelectAmOrPm] = useState<string>("");
 
   // const { loading, error, longitude, latitude } = useGetCurrentLocation();
 
@@ -319,6 +323,8 @@ const RentRide = () => {
                                       "12 Hours",
                                     ]}
                                     triggerLabel='Select hours'
+                                    selected={selectedHoursLength}
+                                    setSelected={setSelectedHoursLength}
                                   />
                                 </div>
                               </RentRideDialogComponent>
@@ -370,6 +376,8 @@ const RentRide = () => {
                                           triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                           triggerLabel='1'
                                           withoutIcon
+                                          selected={selectedHours}
+                                          setSelected={setSelectedHours}
                                         />
                                       </div>
                                       <div className='w-[1px] h-4 bg-primaryLight2 self-center' />
@@ -393,6 +401,8 @@ const RentRide = () => {
                                           triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                           triggerLabel='1'
                                           withoutIcon
+                                          selected={selectedMins}
+                                          setSelected={setSelectedMins}
                                         />
                                       </div>
                                     </div>
@@ -402,6 +412,8 @@ const RentRide = () => {
                                         triggerClassName='hover:cursor-pointer w-fit min-h-4'
                                         triggerLabel='AM'
                                         withoutIcon
+                                        selected={selectAmOrPm}
+                                        setSelected={setSelectAmOrPm}
                                       />
                                     </div>
                                   </div>

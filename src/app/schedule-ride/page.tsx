@@ -29,6 +29,7 @@ const Page = () => {
     from: new Date(2025, 5, 9),
     to: new Date(2025, 5, 26),
   });
+  const [selected, setSelected] = useState<string>("");
   const [isOneWay, setISOneWay] = useState(true);
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
@@ -221,6 +222,8 @@ const Page = () => {
                   "10",
                 ].map((v) => `${v} passenger${v === "1" ? "" : "s"}`)}
                 triggerLabel='Number of passengers'
+                selected={selected}
+                setSelected={setSelected}
               />
               <div className='flex gap-4'>
                 <div className='flex justify-center flex-col gap-[1px] items-center rounded-2xl bg-[#D9E0E0] h-16 flex-1 text-[10px]'>
