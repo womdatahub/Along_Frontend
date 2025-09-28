@@ -51,7 +51,7 @@ export const Services = () => {
                     className='h-[72px] w-[100px] object-cover'
                   />
                 </div>
-                <Link href='/' className='text-primary font-bold text-xs'>
+                <Link href='/ride' className='text-primary font-bold text-xs'>
                   Details
                 </Link>
               </div>
@@ -75,7 +75,7 @@ export const Services = () => {
                     className='h-[72px] w-[100px] object-cover'
                   /> */}
               </div>
-              <Link href='/' className='text-primary font-bold text-xs'>
+              <Link href='/ride' className='text-primary font-bold text-xs'>
                 Details
               </Link>
             </div>

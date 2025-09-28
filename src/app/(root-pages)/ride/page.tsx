@@ -1,5 +1,12 @@
 "use client";
-import { GoogleMapAutoComplete, GoogleMaps, HeadingHeebo } from "@/components";
+import {
+  AddressResult,
+  GoogleMapAutoComplete,
+  GoogleMaps,
+  HeadingHeebo,
+  RadarAutocomplete,
+  RadarMap,
+} from "@/components";
 import Image from "next/image";
 
 import {
@@ -24,6 +31,9 @@ const Page = () => {
 };
 const Ride = () => {
   const [open, setOpen] = useState(false);
+  const [autoCompleteAddress, setAutoCompleteAddress] = useState<
+    AddressResult | undefined
+  >(undefined);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -52,25 +62,28 @@ const Ride = () => {
             </div>
             <div
               className={cn(
-                "flex items-center gap-8 rounded-2xl px-2"
+                "flex items-center gap-8 rounded-2xl"
                 // selectedVehicleType && "bg-primaryLight"
               )}
             >
               <div
                 className={cn(
-                  "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl"
+                  "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl w-full"
                   //   selectedVehicleType && "bg-transparent"
                 )}
               >
                 <AccuracyIcon />
-                <GoogleMapAutoComplete>
+                <RadarAutocomplete
+                  setAutoCompleteAddress={setAutoCompleteAddress}
+                />
+                {/* <GoogleMapAutoComplete>
                   <input
                     className={cn(
                       "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full md:w-[375px]"
                     )}
                     placeholder='Pick up location'
                   />
-                </GoogleMapAutoComplete>
+                </GoogleMapAutoComplete> */}
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <Button
@@ -233,7 +246,23 @@ const Ride = () => {
       <section className='py-36 px-6 text-center'>
         <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between h-full'>
           <div className='h-[40vw] w-full'>
-            <GoogleMaps />
+            {/* <GoogleMaps /> */}
+            <RadarMap
+              pickup={
+                autoCompleteAddress?.latitude
+                  ? [
+                      autoCompleteAddress?.longitude ?? 0,
+                      autoCompleteAddress?.latitude ?? 0,
+                    ]
+                  : undefined
+              }
+              pickupName={autoCompleteAddress?.formattedAddress ?? ""}
+              // drop={[
+              //   autoCompleteAddressDrop.longitude,
+              //   autoCompleteAddressDrop.latitude,
+              // ]}
+              // dropName={autoCompleteAddressDrop.formattedAddress}
+            />
           </div>
         </div>
       </section>
