@@ -75,6 +75,7 @@ const Ride = () => {
                 <AccuracyIcon />
                 <RadarAutocomplete
                   setAutoCompleteAddress={setAutoCompleteAddress}
+                  placeholder='Pick up location'
                 />
                 {/* <GoogleMapAutoComplete>
                   <input

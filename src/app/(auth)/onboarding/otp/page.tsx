@@ -29,6 +29,14 @@ const OTPVerification = () => {
     isLoading,
     actions: { resendVerificationOTP, verifyEmail },
   } = useSession((state) => state);
+
+  const continueFnc = async () => {
+    if (!email || otpValue.length <= 3) return;
+    await verifyEmail({ email: email!, otp: otpValue }).then((val) => {
+      if (val === false) return;
+      router.push("/onboarding/user-type");
+    });
+  };
   return (
     <div className='flex flex-col gap-2 justify-center items-center h-full'>
       <div className='flex flex-col gap-14 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
@@ -44,10 +52,7 @@ const OTPVerification = () => {
               onChange={(value) => setValue(value)}
               pattern={REGEXP_ONLY_DIGITS}
               autoFocus
-              onComplete={() => {
-                if (!email || otpValue.length <= 3) return;
-                verifyEmail({ email: email!, otp: otpValue });
-              }}
+              onComplete={continueFnc}
             >
               <InputOTPGroup className='gap-7'>
                 {[0, 1, 2, 3].map((v) => {
@@ -79,6 +84,7 @@ const OTPVerification = () => {
                 className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline'
                 onClick={() => {
                   if (!email) return;
+
                   resendVerificationOTP({ email: email });
                 }}
               >
@@ -90,13 +96,7 @@ const OTPVerification = () => {
         <AuthBackAndContinueButton
           backActive={false}
           continueActive={otpValue.length === 4 && !isLoading}
-          continueFnc={() => {
-            if (!email || otpValue.length <= 3) return;
-            verifyEmail({ email: email!, otp: otpValue }).then((val) => {
-              if (val === false) return;
-              router.push("/onboarding/user-type");
-            });
-          }}
+          continueFnc={continueFnc}
         />
       </div>
       <p className='text-base text-gray'>

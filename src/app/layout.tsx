@@ -33,6 +33,15 @@ const heebo = Heebo({
 });
 export const metadata: Metadata = {
   title: "Along Cities",
+  keywords: [
+    "along",
+    "cities",
+    "along city",
+    "along cities",
+    "aolng",
+    "alongcities",
+    "alongcities.com",
+  ],
   description:
     "Along Cities is your smart, reliable, and comfortable ride solution—connecting people and places with ease. Whether you're commuting to work, exploring new destinations, or just getting across town, we make every journey smoother, safer, and more enjoyable. Ride with confidence, ride with Along Cities. ✨ Join the Journey, Ride Along.",
   openGraph: {
@@ -73,7 +82,6 @@ export default function RootLayout({
       >
         {/* <AuthProvider>{children}</AuthProvider> */}
         <CheckWindowSize>{children}</CheckWindowSize>
-        {children}
         <Toaster position='bottom-right' richColors />
       </body>
     </html>
