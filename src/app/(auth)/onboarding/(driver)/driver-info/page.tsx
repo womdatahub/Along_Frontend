@@ -102,7 +102,8 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive
-        continuePath='/onboarding/vehicle-info'
+        continueFnc={() => {}}
+        //         continuePath='/onboarding/vehicle-info'
       />
     </div>
   );

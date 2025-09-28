@@ -69,7 +69,8 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive={selectedOptions.length > 0}
-        continuePath='/onboarding/driver-info'
+        continueFnc={() => {}}
+        // continuePath='/onboarding/driver-info'
       />
     </div>
   );
