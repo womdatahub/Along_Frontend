@@ -1,7 +1,12 @@
+"use client";
 import { LocationIcon } from "@public/svgs";
-import { GoogleMapAutoComplete } from "@/components";
+import { AddressResult, RadarAutocomplete } from "@/components";
+import { useState } from "react";
 
 export const Hero = () => {
+  const [autoCompleteAddress, setAutoCompleteAddress] = useState<
+    AddressResult | undefined
+  >(undefined);
   return (
     <div className='pt-16 w-screen'>
       <section
@@ -21,18 +26,17 @@ export const Hero = () => {
           </div>
           <div className='flex gap-4 flex-col text-left md:ml-10 z-10'>
             <p className='text-2xl font-bold text-white'>Make a trip.</p>
-            <div className='flex bg-white rounded-lg overflow-hidden gap-4 md:gap-8 justify-between text-black pl-4 md:pl-8'>
+            <div className='flex bg-white rounded-lg overflow- gap-4 md:gap-8 justify-between text-black pl-4 md:pl-8'>
               <div className='flex gap-4 md:gap-8 flex-1'>
                 <div className='self-center'>
                   <LocationIcon />
                 </div>
-                <GoogleMapAutoComplete>
-                  <input
-                    type='text'
+                <div className='flex-1 pt-3 pb-1 outline-none text-gray-700 my-2 md:my-4 border-b border-b-primary min-w-1/2 md:max-w-1/2'>
+                  <RadarAutocomplete
+                    setAutoCompleteAddress={setAutoCompleteAddress}
                     placeholder='Enter your location'
-                    className='flex-1 pt-3 pb-1 outline-none text-gray-700 my-2 md:my-4 border-b border-b-primary min-w-1/2 md:max-w-1/2'
                   />
-                </GoogleMapAutoComplete>
+                </div>
               </div>
               <div className='bg-primary px-6 py-2 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
                 Go

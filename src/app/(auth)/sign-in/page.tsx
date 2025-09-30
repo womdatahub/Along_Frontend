@@ -4,11 +4,11 @@ import { signInSchema, TSignInValidator } from "@/lib";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "@/store";
 
 const Page = () => {
-  // const router = useRouter();
+  const router = useRouter();
   const {
     isLoading,
     actions: { login },
@@ -31,7 +31,7 @@ const Page = () => {
     await login(values).then((val) => {
       if (val === false) return;
       console.log("val from login", val);
-      // router.push("" + values.email);
+      router.push("/onboarding/rider");
     });
   };
 
@@ -64,7 +64,6 @@ const Page = () => {
           disabled={false}
           required
           type='password'
-          // inputClassName='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
           inputClassName='bg-white h-16 rounded-2xl text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
         />
 

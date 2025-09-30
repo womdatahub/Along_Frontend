@@ -57,6 +57,8 @@ export const callApi = async <T>(
           ? {
               "Content-Type": "application/json",
               Accept: "application/json",
+              // Authorization:
+              //   "Bearer " + localStorage.getItem("alongAccessToken"),
             }
           : {
               "Content-Type": "multipart/form-data",
