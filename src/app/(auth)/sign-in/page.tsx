@@ -1,11 +1,19 @@
 "use client";
-import { AddInput, Button } from "@/components";
+import { AddInput, ButtonWithLoader } from "@/components";
 import { signInSchema, TSignInValidator } from "@/lib";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+// import { useRouter } from "next/navigation";
+import { useSession } from "@/store";
 
 const Page = () => {
+  // const router = useRouter();
+  const {
+    isLoading,
+    actions: { login },
+  } = useSession((state) => state);
+
   const {
     register,
     handleSubmit,
@@ -13,18 +21,27 @@ const Page = () => {
   } = useForm<TSignInValidator>({
     defaultValues: {
       email: "",
+      password: "",
     },
     resolver: zodResolver(signInSchema),
   });
 
   const onSubmit = async (values: TSignInValidator) => {
     console.log(values, errors);
+    await login(values).then((val) => {
+      if (val === false) return;
+      console.log("val from login", val);
+      // router.push("" + values.email);
+    });
   };
 
   return (
     // px-4 md:px-0
     <div className='flex justify-center items-center h-full'>
-      <div className='flex flex-col gap-6 rounded-[20px] w-[500px] px-4 md:px-8 py-10 bg-background-1 text-black text-4xl'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='flex flex-col gap-6 rounded-[20px] w-[500px] px-4 md:px-8 py-10 bg-background-1 text-black text-4xl'
+      >
         <p className='font-semibold text-2xl text-center'>
           Sign in to your account
         </p>
@@ -39,13 +56,26 @@ const Page = () => {
           // className='gap-2 w-full'
           inputClassName='bg-white h-16 rounded-2xl text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
         />
+        <AddInput
+          id='password'
+          errors={errors}
+          placeholder='Password'
+          register={register}
+          disabled={false}
+          required
+          type='password'
+          // inputClassName='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
+          inputClassName='bg-white h-16 rounded-2xl text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
+        />
 
-        <Button
-          onClick={handleSubmit(onSubmit)}
+        <ButtonWithLoader
+          isLoading={isLoading}
+          text='Continue'
+          type='submit'
+          variant='default'
           className='bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'
-        >
-          Continue
-        </Button>
+        />
+
         <div className='flex flex-col gap-9 mt-5'>
           <p className='text-xs font-semibold text-center'>or continue with</p>
           <div className='flex gap-14 items-center justify-center'>
@@ -66,7 +96,7 @@ const Page = () => {
             messages, which may sometimes be sent automatically.
           </p>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

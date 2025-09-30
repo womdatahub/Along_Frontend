@@ -84,7 +84,6 @@ const OTPVerification = () => {
                 className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline'
                 onClick={() => {
                   if (!email) return;
-
                   resendVerificationOTP({ email: email });
                 }}
               >

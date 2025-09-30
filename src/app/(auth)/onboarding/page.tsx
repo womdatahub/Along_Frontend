@@ -1,7 +1,6 @@
 "use client";
-import { AddInput, Button } from "@/components";
-import { HeadingHeebo } from "@/components";
-import { BtnLoader } from "@/components";
+
+import { ButtonWithLoader, HeadingHeebo, AddInput } from "@/components";
 import { onboardingSchema, TOnboardingValidator } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,14 +62,14 @@ const Page = () => {
           inputClassName='bg-white h-16 rounded-2xl text-center text-lg focus:outline-none focus:ring-0'
         />
 
-        <Button
+        <ButtonWithLoader
+          isLoading={isLoading}
+          text='Continue'
           type='submit'
           variant='default'
-          disabled={isLoading}
           className='bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'
-        >
-          <BtnLoader isLoading={isLoading}>Continue</BtnLoader>
-        </Button>
+        />
+
         <div className='flex flex-col gap-9 mt-5'>
           <p className='text-xs font-semibold text-center'>or sign in with</p>
           <div className='flex gap-14 items-center justify-center'>

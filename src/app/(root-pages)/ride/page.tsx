@@ -1,8 +1,6 @@
 "use client";
 import {
   AddressResult,
-  GoogleMapAutoComplete,
-  GoogleMaps,
   HeadingHeebo,
   RadarAutocomplete,
   RadarMap,

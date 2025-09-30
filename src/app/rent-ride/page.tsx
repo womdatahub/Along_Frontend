@@ -1,5 +1,6 @@
 "use client";
 import {
+  AddressResult,
   Button,
   Calendar,
   Dialog,
@@ -10,6 +11,8 @@ import {
   GoogleMapAutoComplete,
   GoogleMaps,
   HeadingHeebo,
+  RadarAutocomplete,
+  RadarMap,
   SelectDropdown,
   Switch,
 } from "@/components";
@@ -45,6 +48,9 @@ const RentRide = () => {
   const [selectedHoursLength, setSelectedHoursLength] = useState<string>("");
   const [selectedMins, setSelectedMins] = useState<string>("");
   const [selectAmOrPm, setSelectAmOrPm] = useState<string>("");
+  const [autoCompleteAddress, setAutoCompleteAddress] = useState<
+    AddressResult | undefined
+  >(undefined);
 
   // const { loading, error, longitude, latitude } = useGetCurrentLocation();
 
@@ -93,14 +99,17 @@ const RentRide = () => {
               >
                 <AccuracyIcon />
 
-                <GoogleMapAutoComplete>
+                <RadarAutocomplete
+                  setAutoCompleteAddress={setAutoCompleteAddress}
+                />
+                {/* <GoogleMapAutoComplete>
                   <input
                     className={cn(
                       "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full flex-1"
                     )}
                     placeholder='Pick up location'
                   />
-                </GoogleMapAutoComplete>
+                </GoogleMapAutoComplete> */}
               </div>
 
               <Dialog open={open} onOpenChange={setOpen}>
@@ -560,7 +569,8 @@ const RentRide = () => {
 
         {/* <div className='bg-red- w-full h-full min-h-40 sticky top-0' /> */}
 
-        <GoogleMaps />
+        {/* <GoogleMaps /> */}
+        <RadarMap />
       </div>
     </div>
   );

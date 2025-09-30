@@ -15,7 +15,7 @@ type Session = {
       type: "email" | "phone";
     }) => Promise<boolean>;
     verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
-    login: (data: { email: string; password: string }) => Promise<void>;
+    login: (data: { email: string; password: string }) => Promise<boolean>;
     logOut: () => Promise<void>;
     verifyOtp: () => Promise<void>;
     resendVerificationOTP: (data: { email: string }) => Promise<void>;
@@ -84,16 +84,21 @@ export const useSession = create<Session>()((set) => ({
 
   actions: {
     login: async (loginData) => {
+      set({ isLoading: true });
       const path = apiStr(USER, "/user/login");
       const { data, error } = await callApi(path, loginData);
 
       if (error) {
         toast.error(error.message);
-        return;
+        set({ isLoading: false });
+        return false;
       }
       if (data) {
         console.log(data, path);
+        toast.success(data.message);
       }
+      set({ isLoading: false });
+      return true;
     },
     logOut: async () => {},
     registerUser: async (registerUserData) => {

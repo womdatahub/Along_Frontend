@@ -3,6 +3,13 @@ import * as z from "zod";
 // signIn schema
 export const signInSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, "Password must have at least 8 characters!")
+    .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/, {
+      message:
+        "Password must include letters, numbers, and special characters (!@#$%^&*)",
+    }),
 });
 
 // onboarding schema
@@ -23,6 +30,9 @@ export const registerRiderSchema = z.object({
   }),
   lastName: z.string({ message: "Invalid last Name" }).min(1, {
     message: "Last name is required",
+  }),
+  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
+    message: "Mobile number is required",
   }),
 });
 

@@ -11,6 +11,7 @@ import { TRegisterRiderValidator, registerRiderSchema } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -19,8 +20,10 @@ const Page = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selected, setSelected] = useState<string>("");
 
+  const router = useRouter();
+
   const {
-    // actions: { registerRider },
+    actions: { registerRider },
   } = useSession((state) => state);
   const {
     register,
@@ -30,6 +33,7 @@ const Page = () => {
     defaultValues: {
       firstName: "",
       lastName: "",
+      mobileNumber: "",
     },
     resolver: zodResolver(registerRiderSchema),
   });
@@ -41,14 +45,14 @@ const Page = () => {
       dateOfBirth: date.toISOString(),
       gender: selected,
     });
-    // await registerRider({
-    //   ...values,
-    //   dateOfBirth: date.toISOString(),
-    //   gender: selected as "male" | "female",
-    //   mobileNumber: "", // This is not on the design ooo
-    // }).then((val) => {
-    //   if (val === false) return;
-    // });
+    await registerRider({
+      ...values,
+      dateOfBirth: date.toISOString(),
+      gender: selected as "male" | "female",
+    }).then((val) => {
+      if (val === false) return;
+      router.push("/rider-db");
+    });
   };
 
   return (
@@ -91,6 +95,17 @@ const Page = () => {
           type='text'
           inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
           label='Last Name'
+        />
+        <AddInput
+          id='mobileNumber'
+          errors={errors}
+          placeholder='+234 000 000 0000'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
+          label='Mobile Number'
         />
 
         <DatePicker
