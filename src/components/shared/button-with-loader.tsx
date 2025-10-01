@@ -6,8 +6,10 @@ type Props = ButtonProps & {
   text: string;
 };
 const ButtonWithLoader = (props: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const rest = (({ isLoading, text, ...rest }) => rest)(props);
   return (
-    <Button disabled={props.isLoading} {...props}>
+    <Button disabled={props.isLoading} {...rest}>
       <BtnLoader isLoading={props.isLoading}>{props.text}</BtnLoader>
     </Button>
   );
