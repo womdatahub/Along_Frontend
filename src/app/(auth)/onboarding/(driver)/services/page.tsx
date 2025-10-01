@@ -3,10 +3,13 @@ import { AuthBackAndContinueButton } from "@/components";
 import { HeadingHeebo } from "@/components";
 import { cn } from "@/lib";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  const router = useRouter();
 
   const toggleOption = (option: string) => {
     if (selectedOptions.includes(option)) {
@@ -69,7 +72,9 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive={selectedOptions.length > 0}
-        continueFnc={() => {}}
+        continueFnc={() => {
+          router.push("/onboarding/driver-info");
+        }}
         // continuePath='/onboarding/driver-info'
       />
     </div>

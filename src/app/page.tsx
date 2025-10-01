@@ -10,24 +10,8 @@ import {
   Updates,
   Footer,
 } from "@/components";
-import { useSession } from "@/store";
-import { useEffect } from "react";
 
 export default function Home() {
-  const {
-    actions: { login },
-  } = useSession((state) => state);
-
-  useEffect(() => {
-    const logger = async () => {
-      await login({
-        email: "javascriptwonder@gmail.com",
-        password: "se3di$God",
-      });
-    };
-    logger();
-  }, []);
-
   return (
     <div className='font-fustat overflow-x-hidden'>
       <Navbar />

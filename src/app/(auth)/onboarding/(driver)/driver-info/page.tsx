@@ -7,6 +7,7 @@ import {
   DriverInformationIcon,
   UploadImageIcon,
 } from "@public/svgs";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
@@ -16,6 +17,7 @@ const Page = () => {
     null,
     null,
   ]);
+  const router = useRouter();
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-5'>
@@ -102,7 +104,9 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive
-        continueFnc={() => {}}
+        continueFnc={() => {
+          router.push("/onboarding/vehicle-info");
+        }}
         //         continuePath='/onboarding/vehicle-info'
       />
     </div>

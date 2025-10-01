@@ -5,6 +5,7 @@ import { HeadingHeebo } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components/shared/uploading-images-reusable-component";
 import { ImageType } from "@/types";
 import { UploadImageIcon } from "@public/svgs";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
@@ -15,6 +16,8 @@ const Page = () => {
     null,
     null,
   ]);
+
+  const router = useRouter();
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-2'>
@@ -127,7 +130,9 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive={true}
-        continueFnc={() => {}}
+        continueFnc={() => {
+          router.push("/driver-db");
+        }}
         // continuePath='/onboarding/driver-info'
       />
     </div>
