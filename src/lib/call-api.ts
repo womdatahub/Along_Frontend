@@ -50,7 +50,7 @@ export const callApi = async <T>(
       url: endpoint,
       ...(data && { data }),
       headers: {
-        platform: process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "web-platform",
+        platform: process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "",
         "x-referrer":
           process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000",
         ...(isObject(data)
@@ -58,7 +58,8 @@ export const callApi = async <T>(
               "Content-Type": "application/json",
               Accept: "application/json",
               // Authorization:
-              //   "Bearer " + localStorage.getItem("alongAccessToken"),
+              //   "Bearer " +
+              //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGQ3OTVmY2NlNDIzNzdlMmYzOGRiMmQiLCJyb2xlIjoidXNlciIsImlhdCI6MTc1OTIzMTkwNiwiZXhwIjoxNzkwNzg5NTA2fQ.G1JlmZlZuPQHWjiolMMeNSb47VYIvQZsz37o5mWZuOA",
             }
           : {
               "Content-Type": "multipart/form-data",
