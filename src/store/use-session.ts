@@ -71,6 +71,19 @@ type Session = {
       gender: "male" | "female";
       profilePicture: string;
     }) => Promise<void>;
+    createRideProfile: (data: {
+      currentLocation: string;
+      longitude: number;
+      latitude: number;
+      ratePerHour: number;
+      luggageCapacity: number;
+      passangerCapacity: number;
+      allowPets: boolean;
+    }) => Promise<void>;
+    fetchUserDetails: () => Promise<void>;
+    fetchVehicleViaClass: () => Promise<void>;
+    fetchVehicleViaDriverID: () => Promise<void>;
+    fetchVehicleID: () => Promise<void>;
   };
 };
 
