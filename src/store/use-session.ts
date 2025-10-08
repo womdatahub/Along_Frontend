@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import type { SelectorFn } from "@/types";
-import { apiStr, callApi, USER } from "@/lib";
+import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
 // import { callApi } from "@/lib";
 
@@ -98,7 +98,7 @@ export const useSession = create<Session>()((set) => ({
   actions: {
     login: async (loginData) => {
       set({ isLoading: true });
-      const path = apiStr(USER, "/user/login");
+      const path = userApiStr("/user/login");
       const { data, error } = await callApi(path, loginData);
 
       if (error) {
@@ -116,7 +116,7 @@ export const useSession = create<Session>()((set) => ({
     logOut: async () => {},
     registerUser: async (registerUserData) => {
       set({ isLoading: true });
-      const path = apiStr(USER, "/user/register");
+      const path = userApiStr("/user/register");
 
       const { data, error } = await callApi(path, registerUserData);
 
@@ -134,7 +134,7 @@ export const useSession = create<Session>()((set) => ({
     },
     verifyEmail: async (verifyEmailData) => {
       set({ isLoading: true });
-      const path = apiStr(USER, "/user/verify-email");
+      const path = userApiStr("/user/verify-email");
 
       const { data, error } = await callApi(path, verifyEmailData, "PATCH");
 
@@ -151,7 +151,7 @@ export const useSession = create<Session>()((set) => ({
       return true;
     },
     verifyOtp: async () => {
-      const path = apiStr(USER, "/user/verify-otp");
+      const path = userApiStr("/user/verify-otp");
 
       const { data, error } = await callApi(path, {});
 
@@ -164,7 +164,7 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     resendVerificationOTP: async (resendVerificationOTPData) => {
-      const path = apiStr(USER, "/user/resend-verification-otp");
+      const path = userApiStr("/user/resend-verification-otp");
 
       const { data, error } = await callApi(path, resendVerificationOTPData);
 
@@ -178,7 +178,7 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     registerDriver: async (registerDriverData) => {
-      const path = apiStr(USER, "/user/driver");
+      const path = userApiStr("/user/driver");
 
       const { data, error } = await callApi(path, registerDriverData);
 
@@ -193,7 +193,7 @@ export const useSession = create<Session>()((set) => ({
     addVerificationDocumentsAndServices: async (
       addVerificationDocumentsAndServicesData
     ) => {
-      const path = apiStr(USER, "/user/documents-services");
+      const path = userApiStr("/user/documents-services");
 
       const { data, error } = await callApi(
         path,
@@ -210,7 +210,7 @@ export const useSession = create<Session>()((set) => ({
       }
     }, // PATCH
     registerVehicle: async (registerVehicleData) => {
-      const path = apiStr(USER, "/user/documents-services");
+      const path = userApiStr("/user/documents-services");
 
       const { data, error } = await callApi(path, registerVehicleData, "PATCH");
 
@@ -224,7 +224,7 @@ export const useSession = create<Session>()((set) => ({
     },
     registerRider: async (registerRiderData) => {
       set({ isLoading: true });
-      const path = apiStr(USER, "/user/rider");
+      const path = userApiStr("/user/rider");
 
       const { data, error } = await callApi(path, registerRiderData);
 
@@ -253,7 +253,7 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     updateDriverDetails: async (updateDriverDetailsData) => {
-      const path = apiStr(USER, "/user/driver");
+      const path = userApiStr("/user/driver");
 
       const { data, error } = await callApi(
         path,
@@ -270,13 +270,82 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     updateRiderDetails: async (updateRiderDetailsData) => {
-      const path = apiStr(USER, "/user/rider");
+      const path = userApiStr("/user/rider");
 
       const { data, error } = await callApi(
         path,
         updateRiderDetailsData,
         "PATCH"
       );
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    createRideProfile: async (createRideProfileData) => {
+      const path = userApiStr("/user/rider");
+
+      const { data, error } = await callApi(
+        path,
+        createRideProfileData,
+        "PATCH"
+      );
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    fetchUserDetails: async () => {
+      const path = userApiStr("/user/rider");
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    fetchVehicleViaClass: async () => {
+      const path = userApiStr("/user/rider");
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    fetchVehicleViaDriverID: async () => {
+      const path = userApiStr("/user/rider");
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    fetchVehicleID: async () => {
+      const path = userApiStr("/user/rider");
+
+      const { data, error } = await callApi(path);
 
       if (error) {
         toast.error(error.message);
