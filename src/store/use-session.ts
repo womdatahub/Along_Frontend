@@ -81,9 +81,9 @@ type Session = {
       allowPets: boolean;
     }) => Promise<void>;
     fetchUserDetails: () => Promise<void>;
-    fetchVehicleViaClass: () => Promise<void>;
-    fetchVehicleViaDriverID: () => Promise<void>;
-    fetchVehicleID: () => Promise<void>;
+    fetchVehicleViaClass: (vehicleClass: string) => Promise<void>;
+    fetchVehicleViaDriverID: (driverID: string) => Promise<void>;
+    fetchVehicleID: (vehicleID: string) => Promise<void>;
   };
 };
 
@@ -287,7 +287,7 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     createRideProfile: async (createRideProfileData) => {
-      const path = userApiStr("/user/rider");
+      const path = userApiStr("/user/driver/profile/create");
 
       const { data, error } = await callApi(
         path,
@@ -304,7 +304,7 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     fetchUserDetails: async () => {
-      const path = userApiStr("/user/rider");
+      const path = userApiStr("/user/profile");
 
       const { data, error } = await callApi(path);
 
@@ -316,8 +316,8 @@ export const useSession = create<Session>()((set) => ({
         console.log(data, path);
       }
     },
-    fetchVehicleViaClass: async () => {
-      const path = userApiStr("/user/rider");
+    fetchVehicleViaClass: async (vehicleClass) => {
+      const path = userApiStr(`/vehicle/class?vehicleClass=${vehicleClass}`);
 
       const { data, error } = await callApi(path);
 
@@ -329,8 +329,8 @@ export const useSession = create<Session>()((set) => ({
         console.log(data, path);
       }
     },
-    fetchVehicleViaDriverID: async () => {
-      const path = userApiStr("/user/rider");
+    fetchVehicleViaDriverID: async (driverID) => {
+      const path = userApiStr(`/vehicle/driver/${driverID}`);
 
       const { data, error } = await callApi(path);
 
@@ -342,8 +342,8 @@ export const useSession = create<Session>()((set) => ({
         console.log(data, path);
       }
     },
-    fetchVehicleID: async () => {
-      const path = userApiStr("/user/rider");
+    fetchVehicleID: async (vehicleID) => {
+      const path = userApiStr(`/vehicle/${vehicleID}`);
 
       const { data, error } = await callApi(path);
 
