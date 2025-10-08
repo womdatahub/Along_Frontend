@@ -43,22 +43,8 @@ type UseRideType = {
     }) => Promise<void>;
     getMatchStatus: () => Promise<void>;
     getMatchHistory: () => Promise<void>;
+    getAllMatchesAdmin: () => Promise<void>;
     deleteMatchHistory: () => Promise<void>;
-    createSoloRide: (
-      data: CreateRideBase & {
-        class: "luxury";
-      }
-    ) => Promise<void>;
-    createSharedRide: (data: CreateRideBase) => Promise<void>;
-    createRushedRide: (data: CreateRideBase) => Promise<void>;
-    getRide: () => Promise<void>;
-    updateRide: (data: {
-      vehicleClass: string;
-      initialCost: number;
-    }) => Promise<void>;
-    getAllRides: () => Promise<void>;
-    cancelRide: () => Promise<void>;
-    deleteRideData: () => Promise<void>;
   };
 };
 
@@ -67,16 +53,16 @@ const initialState = {
   isLoading: false,
 };
 
-export const useRide = create<UseRideType>()(() => ({
+export const useRideMatching = create<UseRideType>()(() => ({
   ...initialState,
 
   actions: {},
 }));
 
-export const useRides = <TResult>(
+export const useRideMatchings = <TResult>(
   selector: SelectorFn<UseRideType, TResult>
 ) => {
-  const state = useRide(selector);
+  const state = useRideMatching(selector);
 
   return state;
 };
