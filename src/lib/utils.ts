@@ -13,10 +13,13 @@ export const formatDateToDDMMYYYY = (date: Date) => {
   return `${day}-${month}-${year}`;
 };
 
-export const apiStr = (type: "user" | "rental" | "instant", value: string) => {
+const apiStr = (type: "user" | "rental" | "instant", value: string) => {
   return `/${type}/api/v1${value}`;
 };
-
 export const USER = "user";
 export const INSTANT = "instant";
 export const RENTAL = "rental";
+
+export const userApiStr = (value: string) => apiStr(USER, value);
+export const instantApiStr = (value: string) => apiStr(INSTANT, value);
+export const rentalApiStr = (value: string) => apiStr(RENTAL, value);
