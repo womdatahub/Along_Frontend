@@ -4,7 +4,8 @@ import { ApiResponse } from "@/types";
 
 import { toast } from "sonner";
 
-const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const cookie = process.env.NEXT_PUBLIC_FRONTEND_COOKIE ?? "";
 
 if (!BASEURL) {
   throw new Error("add BASEURL to your env file");
@@ -28,6 +29,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASEURL,
   withCredentials: true,
+  timeout: 10000,
 });
 
 export const callApi = async <T>(
@@ -57,9 +59,7 @@ export const callApi = async <T>(
           ? {
               "Content-Type": "application/json",
               Accept: "application/json",
-              // Authorization:
-              //   "Bearer " +
-              //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGQ3OTVmY2NlNDIzNzdlMmYzOGRiMmQiLCJyb2xlIjoidXNlciIsImlhdCI6MTc1OTIzMTkwNiwiZXhwIjoxNzkwNzg5NTA2fQ.G1JlmZlZuPQHWjiolMMeNSb47VYIvQZsz37o5mWZuOA",
+              // Authorization: "Bearer " + cookie,
             }
           : {
               "Content-Type": "multipart/form-data",

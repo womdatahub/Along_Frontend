@@ -31,7 +31,7 @@ const Page = () => {
     await login(values).then((val) => {
       if (val === false) return;
       console.log("val from login", val);
-      router.push("/onboarding/rider");
+      router.push("/rider-db");
     });
   };
 

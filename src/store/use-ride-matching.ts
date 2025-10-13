@@ -1,24 +1,9 @@
 import { create } from "zustand";
-
 import type { SelectorFn } from "@/types";
-// import { apiStr, callApi, USER } from "@/lib";
-// import { toast } from "sonner";
+import { callApi, matchingApiStr } from "@/lib";
+import { toast } from "sonner";
 
-type CreateRideBase = {
-  rideType: "shared"; // [solo, shared, rushed]
-  adults: number;
-  children: number;
-  pickUpLat: number;
-  pickUpLong: number;
-  pickUpAddress: string;
-  dropOffLat: number;
-  dropOffLong: number;
-  dropOffAddress: string;
-  luggage: string;
-  pet: string;
-};
-
-type UseRideType = {
+type useRideMatchingType = {
   user: string;
   actions: {
     matchRide: (data: {
@@ -27,8 +12,8 @@ type UseRideType = {
       rideType: "instant" | "scheduled" | "rush";
     }) => Promise<void>;
     retryMatch: (data: { rideId: string }) => Promise<void>;
-    getMatchedByID: () => Promise<void>;
-    cancelMatch: () => Promise<void>;
+    getMatchedByID: (ID: string) => Promise<void>;
+    cancelMatch: (ID: string) => Promise<void>;
     acceptOrRejectMatch: (data: {
       response: "accept" | "reject";
       reason?: string;
@@ -41,10 +26,10 @@ type UseRideType = {
         address: string;
       };
     }) => Promise<void>;
-    getMatchStatus: () => Promise<void>;
+    getMatchStatus: (ID: string) => Promise<void>;
     getMatchHistory: () => Promise<void>;
     getAllMatchesAdmin: () => Promise<void>;
-    deleteMatchHistory: () => Promise<void>;
+    deleteMatchHistory: (ID: string) => Promise<void>;
   };
 };
 
@@ -53,14 +38,145 @@ const initialState = {
   isLoading: false,
 };
 
-export const useRideMatching = create<UseRideType>()(() => ({
+export const useRideMatching = create<useRideMatchingType>()(() => ({
   ...initialState,
 
-  actions: {},
+  actions: {
+    matchRide: async (matchRideData) => {
+      const path = matchingApiStr("");
+
+      const { data, error } = await callApi(path, matchRideData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    retryMatch: async (retryMatchData) => {
+      const path = matchingApiStr("");
+
+      const { data, error } = await callApi(path, retryMatchData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    getMatchedByID: async (ID) => {
+      const path = matchingApiStr(`/${ID}`);
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    cancelMatch: async (ID) => {
+      const path = matchingApiStr(`/${ID}`);
+
+      const { data, error } = await callApi(path, {}, "DELETE");
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    acceptOrRejectMatch: async (acceptOrRejectMatchData) => {
+      const path = matchingApiStr("/respond");
+
+      const { data, error } = await callApi(path, acceptOrRejectMatchData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    updateDriverAvailability: async (updateDriverAvailabilityData) => {
+      const path = matchingApiStr("/driver/availability");
+
+      const { data, error } = await callApi(path, updateDriverAvailabilityData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    getMatchStatus: async (ID) => {
+      const path = matchingApiStr(`/status/${ID}`);
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    getMatchHistory: async () => {
+      const path = matchingApiStr("/history");
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    getAllMatchesAdmin: async () => {
+      const path = matchingApiStr("/history");
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    deleteMatchHistory: async (ID) => {
+      const path = matchingApiStr(`/history/${ID}`);
+
+      const { data, error } = await callApi(path, {}, "DELETE");
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+  },
 }));
 
 export const useRideMatchings = <TResult>(
-  selector: SelectorFn<UseRideType, TResult>
+  selector: SelectorFn<useRideMatchingType, TResult>
 ) => {
   const state = useRideMatching(selector);
 

@@ -1,3 +1,4 @@
+"use client";
 import {
   Button,
   Card,
@@ -6,6 +7,7 @@ import {
   HeadingHeebo,
 } from "@/components";
 import { cn } from "@/lib";
+import { useSession } from "@/store";
 import {
   AccuracyIcon,
   LocationPointerSvg,
@@ -14,8 +16,16 @@ import {
 } from "@public/svgs";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const Page = () => {
+  const {
+    actions: { fetchUserDetails },
+  } = useSession((state) => state);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>

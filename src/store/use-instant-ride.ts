@@ -1,8 +1,8 @@
 import { create } from "zustand";
-
 import type { SelectorFn } from "@/types";
-// import { apiStr, callApi, USER } from "@/lib";
-// import { toast } from "sonner";
+import { callApi, instantApiStr } from "@/lib";
+import { toast } from "sonner";
+
 
 type CreateRideBase = {
   rideType: "shared"; // [solo, shared, rushed]
@@ -16,26 +16,26 @@ type CreateRideBase = {
   dropOffAddress: string;
   luggage: string;
   pet: string;
+  class: string;
 };
 
 type InstantRideType = {
   user: string;
   actions: {
-    createSoloRide: (
-      data: CreateRideBase & {
-        class: "luxury";
-      }
+    createSoloRide: (data: CreateRideBase) => Promise<void>;
+    createSharedRide: (data: Omit<CreateRideBase, "class">) => Promise<void>;
+    createRushedRide: (data: Omit<CreateRideBase, "class">) => Promise<void>;
+    getRide: (rideID: string) => Promise<void>;
+    updateRide: (
+      data: {
+        vehicleClass: string;
+        initialCost: number;
+      },
+      rideID: string
     ) => Promise<void>;
-    createSharedRide: (data: CreateRideBase) => Promise<void>;
-    createRushedRide: (data: CreateRideBase) => Promise<void>;
-    getRide: () => Promise<void>;
-    updateRide: (data: {
-      vehicleClass: string;
-      initialCost: number;
-    }) => Promise<void>;
-    getAllRides: () => Promise<void>;
-    cancelRide: () => Promise<void>;
-    deleteRideData: () => Promise<void>;
+    getAllRides: (status: string) => Promise<void>;
+    cancelRide: (rideID: string) => Promise<void>;
+    deleteRideData: (rideID: string) => Promise<void>;
   };
 };
 
@@ -44,16 +44,120 @@ const initialState = {
   isLoading: false,
 };
 
-export const useRide = create<InstantRideType>()(() => ({
+export const useInstantRide = create<InstantRideType>()(() => ({
   ...initialState,
 
-  actions: {},
+  actions: {
+    createSoloRide: async (soloRideData) => {
+      const path = instantApiStr("");
+
+      const { data, error } = await callApi(path, soloRideData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    createSharedRide: async (sharedRideData) => {
+      const path = instantApiStr("");
+
+      const { data, error } = await callApi(path, sharedRideData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    createRushedRide: async (rushedRideData) => {
+      const path = instantApiStr("");
+
+      const { data, error } = await callApi(path, rushedRideData);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    getRide: async (rideID) => {
+      const path = instantApiStr(`/${rideID}`);
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    updateRide: async (updateRideData, rideID) => {
+      const path = instantApiStr(`/${rideID}`);
+
+      const { data, error } = await callApi(path, updateRideData, "PATCH");
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+
+    getAllRides: async (status) => {
+      const path = instantApiStr(`?status=${status}`);
+
+      const { data, error } = await callApi(path);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    cancelRide: async (rideID) => {
+      const path = instantApiStr(`/${rideID}`);
+      const { data, error } = await callApi(path, {}, "DELETE");
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+    deleteRideData: async (rideID) => {
+      const path = instantApiStr(`/${rideID}/delete`);
+      const { data, error } = await callApi(path, {}, "DELETE");
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+      }
+    },
+  },
 }));
 
-export const useRides = <TResult>(
+export const useInstantRides = <TResult>(
   selector: SelectorFn<InstantRideType, TResult>
 ) => {
-  const state = useRide(selector);
+  const state = useInstantRide(selector);
 
   return state;
 };

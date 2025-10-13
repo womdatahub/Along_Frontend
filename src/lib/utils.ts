@@ -13,13 +13,18 @@ export const formatDateToDDMMYYYY = (date: Date) => {
   return `${day}-${month}-${year}`;
 };
 
-const apiStr = (type: "user" | "rental" | "instant", value: string) => {
+const apiStr = (type: ApiBase, value: string) => {
   return `/${type}/api/v1${value}`;
 };
-export const USER = "user";
-export const INSTANT = "instant";
-export const RENTAL = "rental";
 
-export const userApiStr = (value: string) => apiStr(USER, value);
-export const instantApiStr = (value: string) => apiStr(INSTANT, value);
-export const rentalApiStr = (value: string) => apiStr(RENTAL, value);
+export enum ApiBase {
+  USER = "user",
+  INSTANT = "instant",
+  RENTAL = "rental",
+  MATCH = "match",
+}
+
+export const userApiStr = (value: string) => apiStr(ApiBase.USER, value);
+export const instantApiStr = (value: string) => apiStr(ApiBase.INSTANT, value);
+export const rentalApiStr = (value: string) => apiStr(ApiBase.RENTAL, value);
+export const matchingApiStr = (value: string) => apiStr(ApiBase.MATCH, value);
