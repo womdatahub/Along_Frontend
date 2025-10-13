@@ -3,7 +3,6 @@ import type { SelectorFn } from "@/types";
 import { callApi, instantApiStr } from "@/lib";
 import { toast } from "sonner";
 
-
 type CreateRideBase = {
   rideType: "shared"; // [solo, shared, rushed]
   adults: number;
@@ -21,6 +20,7 @@ type CreateRideBase = {
 
 type InstantRideType = {
   user: string;
+  isLoading: boolean;
   actions: {
     createSoloRide: (data: CreateRideBase) => Promise<void>;
     createSharedRide: (data: Omit<CreateRideBase, "class">) => Promise<void>;
