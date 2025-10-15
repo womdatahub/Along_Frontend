@@ -6,8 +6,8 @@ import { toast } from "sonner";
 type useRideMatchingType = {
   user: string;
   isLoading: boolean;
-  matchedRide: MatchedRide | null;
-  matchHistory: MatchedRide[];
+  // matchedRide: MatchedRide | null;
+  // matchHistory: MatchedRide[];
   actions: {
     matchRide: (data: {
       rideId: string;
@@ -39,8 +39,8 @@ type useRideMatchingType = {
 const initialState = {
   user: "",
   isLoading: false,
-  matchedRide: null,
-  matchHistory: [],
+  // matchedRide: null,
+  // matchHistory: [],
 };
 
 export const useRideMatching = create<useRideMatchingType>()(() => ({
