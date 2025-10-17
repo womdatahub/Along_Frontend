@@ -1,5 +1,4 @@
 "use client";
-
 import {
   FieldErrors,
   FieldValues,
@@ -10,6 +9,7 @@ import {
 import { Input, Textarea } from "@/components";
 
 import { cn } from "@/lib";
+import { useState } from "react";
 export interface AddInputProps<T extends FieldValues> {
   id: Path<T>;
   type?: string;
@@ -25,6 +25,8 @@ export interface AddInputProps<T extends FieldValues> {
   inputClassName?: string;
   onblur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   labelClassName?: string;
+  icon?: React.ReactNode;
+  iconAndInputWrapperClassName?: string;
 }
 
 const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
@@ -42,7 +44,11 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
     inputClassName,
     onblur,
     labelClassName,
+    icon,
+    iconAndInputWrapperClassName,
   } = props;
+
+  const [realType, setRealType] = useState(type);
 
   return (
     <div className={cn("flex flex-col gap-1", `w-${width}`, className)}>
@@ -55,19 +61,36 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
         </label>
       )}
       <div className='flex flex-col gap-1'>
-        <Input
-          id={id}
-          type={type}
-          disabled={disabled}
-          {...register(id, { required })}
-          onBlur={onblur}
-          placeholder={placeholder}
+        <div
           className={cn(
-            "pl-5 rounded-lg",
-            inputClassName,
+            "flex gap-2 items-center px-6",
+            iconAndInputWrapperClassName,
             errors[id] && "border border-red-400"
           )}
-        />
+        >
+          {icon && <div className='flex items-center'>{icon}</div>}
+          <Input
+            id={id}
+            type={realType}
+            disabled={disabled}
+            {...register(id, { required })}
+            onBlur={onblur}
+            placeholder={placeholder}
+            className={cn("rounded-lg", inputClassName)}
+          />
+          {type === "password" && (
+            <button
+              type='button'
+              onClick={() =>
+                setRealType(realType === "password" ? "text" : "password")
+              }
+              className='text-sm text-primary font-medium cursor-pointer'
+            >
+              {realType === "password" ? "Show" : "Hide"}
+            </button>
+          )}
+        </div>
+
         {errors[id]?.message && (
           <p className='text-xs text-red-400 ml-4'>{`${errors[id].message}`}</p>
         )}
