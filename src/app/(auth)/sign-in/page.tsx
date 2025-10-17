@@ -54,7 +54,8 @@ const Page = () => {
           required
           type='text'
           // className='gap-2 w-full'
-          inputClassName='bg-white h-16 rounded-2xl text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
         />
         <AddInput
           id='password'
@@ -64,7 +65,8 @@ const Page = () => {
           disabled={false}
           required
           type='password'
-          inputClassName='bg-white h-16 rounded-2xl text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='text-center text-lg font-fustat focus:outline-none focus:ring-0 border-0'
         />
 
         <ButtonWithLoader
