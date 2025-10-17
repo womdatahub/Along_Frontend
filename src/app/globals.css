@@ -149,6 +149,15 @@
   display: none;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+  box-shadow: 0 0 0px 1000px #fff inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+
 /* border: 1px solid #ccc; */
 /* .radar-autocomplete-input {
   border-radius: 8px;
