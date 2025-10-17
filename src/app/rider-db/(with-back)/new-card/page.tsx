@@ -15,14 +15,14 @@ const Page = () => {
           <CustomAuthInput
             label='Holder Name'
             placeholder='000 000 00000 0000'
-            inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-[#707072] h-10 bg-[#C9C9C930]'
+            inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-gray-5 h-10 bg-[#C9C9C930]'
             labelClassName='font-heebo font-medium text-sm  ml-2 '
           />
 
           <CustomAuthInput
             label='Card Number'
             placeholder='000 000 00000 0000'
-            inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-[#707072] h-10 bg-[#C9C9C930]'
+            inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-gray-5 h-10 bg-[#C9C9C930]'
             labelClassName='font-heebo font-medium text-sm  ml-2'
           />
           <div className='flex gap-4'>
@@ -30,14 +30,14 @@ const Page = () => {
               label='Expiry Date'
               placeholder='MM/YY'
               className='flex-1'
-              inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-[#707072] h-10 bg-[#C9C9C930]'
+              inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-gray-5 h-10 bg-[#C9C9C930]'
               labelClassName='font-heebo font-medium text-sm  ml-2'
             />
 
             <CustomAuthInput
               label='CVC'
               placeholder='000'
-              inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-[#707072] h-10 bg-[#C9C9C930]'
+              inputClassName='font-heebo placeholder:font-heebo rounded-2xl placeholder:font-light placeholder:text-gray-5 h-10 bg-[#C9C9C930]'
               labelClassName='font-heebo font-medium text-sm  ml-2'
             />
           </div>

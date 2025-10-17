@@ -14,20 +14,18 @@ const Page = () => {
       <Card className='w-full md:w-[446px] rounded-2xl shadow-none'>
         <CardContent className='flex flex-col gap-3'>
           <div className='flex flex-col gap-1 font-heebo'>
-            <p className='text-[10px] text-[#707072] font-heebo'>
+            <p className='text-[10px] text-gray-5 font-heebo'>
               Pick up location
             </p>
             <p className='font-bold text-lg'>Monte Calo Crescent, New Jersey</p>
           </div>
           <div className='flex gap-4 items-center'>
             <div className='flex flex-col gap-1 font-heebo'>
-              <p className='text-[10px] text-[#707072] font-heebo'>Date</p>
+              <p className='text-[10px] text-gray-5 font-heebo'>Date</p>
               <p className='font-bold text-sm'>Mon 23, August 2025 </p>
             </div>
             <div className='flex flex-col gap-1 font-heebo'>
-              <p className='text-[10px] text-[#707072] font-heebo'>
-                Pick up time
-              </p>
+              <p className='text-[10px] text-gray-5 font-heebo'>Pick up time</p>
               <p className='font-bold text-sm'>12 : 35 PM</p>
             </div>
           </div>

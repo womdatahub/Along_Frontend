@@ -53,7 +53,7 @@ const Page = () => {
         </div>
         <HeadingHeebo className='text-left mt-5'>Menu</HeadingHeebo>
         <div className='flex gap-10 items-stretch h-[calc(100vh-200px)]'>
-          <div className='flex flex-col gap-10 border-r border-r-[#707072] pr-10 mb-32 w-fit whitespace-nowrap'>
+          <div className='flex flex-col gap-10 border-r border-r-gray-5 pr-10 mb-32 w-fit whitespace-nowrap'>
             <Link href={"/rider-db/ride-details"}>Rent a car</Link>
             <Link href={"/rider-db/ride-details"}>Schedule a ride</Link>
             <Link href={"/onboarding"}>Drive</Link>

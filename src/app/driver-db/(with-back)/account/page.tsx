@@ -16,7 +16,7 @@ const Page = () => {
           <Button
             onClick={() => setActive("personal-info")}
             className={cn(
-              "text-sm text-[#707072] hover:text-primary bg-transparent hover:bg-transparent border-0 shadow-none cursor-pointer p-0 h-fit",
+              "text-sm text-gray-5 hover:text-primary bg-transparent hover:bg-transparent border-0 shadow-none cursor-pointer p-0 h-fit",
               active === "personal-info" && "text-primary font-bold underline"
             )}
           >
@@ -25,7 +25,7 @@ const Page = () => {
           <Button
             onClick={() => setActive("security")}
             className={cn(
-              "text-sm text-[#707072] hover:text-primary bg-transparent hover:bg-transparent border-0 shadow-none cursor-pointer p-0 h-fit",
+              "text-sm text-gray-5 hover:text-primary bg-transparent hover:bg-transparent border-0 shadow-none cursor-pointer p-0 h-fit",
               active === "security" && "text-primary font-bold underline"
             )}
           >
@@ -42,20 +42,20 @@ const Page = () => {
               <div className='flex gap-4 flex-col'>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-[#707072]'>Phone number</p>
+                    <p className=' font-light text-gray-5'>Phone number</p>
                     <p className='font-semibold'>+1 67 988 90098</p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-[#707072]'>Email address</p>
+                    <p className=' font-light text-gray-5'>Email address</p>
                     <p className='font-semibold'>michael.cynthia@gmail.com</p>
                   </div>
                 </ContainerWithArrow>
 
                 <ContainerWithArrow withoutBottomBorder>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-[#707072]'>Address</p>
+                    <p className=' font-light text-gray-5'>Address</p>
                     <p className='font-semibold'>Cabbagetown, Candeler Park</p>
                   </div>
                 </ContainerWithArrow>
@@ -66,13 +66,13 @@ const Page = () => {
               <div className='flex gap-4 flex-col'>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-[#707072]'>Password</p>
+                    <p className=' font-light text-gray-5'>Password</p>
                     <p className='font-semibold'>******************</p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-[#707072]'>
+                    <p className=' font-light text-gray-5'>
                       Enable 2-step verification
                     </p>
                     <p className='font-semibold'>
@@ -82,7 +82,7 @@ const Page = () => {
                 </ContainerWithArrow>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-[#707072]'>Passkeys</p>
+                    <p className=' font-light text-gray-5'>Passkeys</p>
                     <p className='font-semibold'>Set up passkey</p>
                   </div>
                 </ContainerWithArrow>
