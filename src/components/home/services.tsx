@@ -8,17 +8,14 @@ export const Services = () => {
       title: "Rent a ride",
       desc: "Perfect for daily use, events, or business trips. Flexible hourly, daily, rates.",
       img: "/images/rent-ride-small-car.png",
+      path: "/ride",
     },
     {
       title: "Schedule ride",
       desc: "Book ahead for peace of mind. special occasions, or planned journeys.",
       img: "/images/schedule-ride-small-car.png",
+      path: "/schedule-ride",
     },
-    // {
-    //   title: "Logistics",
-    //   desc: "Secure package handling with tracking updates.",
-    //   img: "/images/logistics.png",
-    // },
   ];
 
   return (
@@ -51,7 +48,7 @@ export const Services = () => {
                     className='h-[72px] w-[100px] object-cover'
                   />
                 </div>
-                <Link href='/ride' className='text-primary font-bold text-xs'>
+                <Link href={s.path} className='text-primary font-bold text-xs'>
                   Details
                 </Link>
               </div>
@@ -67,13 +64,6 @@ export const Services = () => {
                   </p>
                 </div>
                 <LogisticsIcon />
-                {/* <Image
-                    src={s.img}
-                    alt=''
-                    width={103}
-                    height={72}
-                    className='h-[72px] w-[100px] object-cover'
-                  /> */}
               </div>
               <Link href='/ride' className='text-primary font-bold text-xs'>
                 Details
