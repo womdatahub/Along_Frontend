@@ -5,7 +5,7 @@ import { ApiResponse } from "@/types";
 import { toast } from "sonner";
 
 const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const cookie = process.env.NEXT_PUBLIC_FRONTEND_COOKIE ?? "";
+// const cookie = process.env.NEXT_PUBLIC_FRONTEND_COOKIE ?? "";
 
 if (!BASEURL) {
   throw new Error("add BASEURL to your env file");
@@ -29,7 +29,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASEURL,
   withCredentials: true,
-  timeout: 10000,
+  // timeout: 10000,
 });
 
 export const callApi = async <T>(
