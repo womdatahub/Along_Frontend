@@ -1,4 +1,4 @@
-import { Button, HeadingHeebo, LogoComponent } from "@/components";
+import { Button, LogoComponent } from "@/components";
 import {
   WhiteFacebookIcon,
   WhiteForwardIcon,
@@ -45,11 +45,9 @@ export const Footer = () => {
               </Button>
             </div>
           </div>
-          <div>
-            <HeadingHeebo className='font-semibold mb-3 text-left text-white text-2xl'>
-              Quick Links
-            </HeadingHeebo>
-            <div className='space-y-2 flex flex-col gap-4'>
+
+          <div className='flex flex-col gap-8'>
+            <div className='flex gap-20'>
               <Link href='#' className='font-heebo text-sm font-semibold'>
                 About
               </Link>
@@ -59,37 +57,24 @@ export const Footer = () => {
               <Link href='#' className='font-heebo text-sm font-semibold'>
                 Drive
               </Link>
-            </div>
-          </div>
-          <div>
-            <HeadingHeebo className='font-semibold mb-3 text-left text-white text-2xl'>
-              Get in Touch
-            </HeadingHeebo>
-            <div className='space-y-2 flex flex-col gap-4'>
               <Link href='#' className='font-heebo text-sm font-semibold'>
-                About
-              </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
-                Ride
-              </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
-                Drive
+                Support
               </Link>
             </div>
-          </div>
-          <div className='flex items-center gap-4'>
-            <Link href='https://www.x.com' target='_blank'>
-              <WhiteXIcon />
-            </Link>
-            <Link href='https://www.instagram.com' target='_blank'>
-              <WhiteInstagramIcon />
-            </Link>
-            <Link href='https://www.facebook.com' target='_blank'>
-              <WhiteFacebookIcon />
-            </Link>
-            <Link href='https://www.linkedin.com' target='_blank'>
-              <WhiteLinkedInIcon />
-            </Link>
+            <div className='self-end flex items-center gap-10'>
+              <Link href='https://www.x.com' target='_blank'>
+                <WhiteXIcon />
+              </Link>
+              <Link href='https://www.instagram.com' target='_blank'>
+                <WhiteInstagramIcon />
+              </Link>
+              <Link href='https://www.facebook.com' target='_blank'>
+                <WhiteFacebookIcon />
+              </Link>
+              <Link href='https://www.linkedin.com' target='_blank'>
+                <WhiteLinkedInIcon />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -9,20 +9,24 @@ import {
 export const FAQ = () => {
   const faqs = [
     {
-      q: "How do I pay for my ride or logistics service?",
-      a: "We accept multiple payment options including cash, card, and digital wallets.",
+      q: "How does Along Ride Sharing work?",
+      a: "We connect riders in small towns with private drivers traveling through their area. You can book a ride easily via our app or website, choosing a driver heading to your destination.",
     },
     {
-      q: "What if my driver doesn't show up?",
-      a: "Our support ensures replacement drivers and refunds if needed.",
+      q: " Is it safe to ride with private drivers?",
+      a: "Absolutely. All drivers are thoroughly vetted, and rides are tracked in real-time for your safety.",
     },
     {
-      q: "Do you operate 24/7?",
-      a: "Yes, our services are available round the clock.",
+      q: "How can I become a driver?",
+      a: "You can sign up on our website or app. We require a valid driver's license, insurance, and a background check to ensure safety for all users.",
     },
     {
-      q: "How safe are your rides?",
-      a: "All drivers are verified and rides are tracked for safety.",
+      q: "What areas do you serve?",
+      a: "We currently operate in numerous small towns and suburban areas across the United States, with plans to expand further.",
+    },
+    {
+      q: "Do you offer multilingual support?",
+      a: "Yes, our platform supports multiple languages to cater to a diverse user base.",
     },
   ];
 
