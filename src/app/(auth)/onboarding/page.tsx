@@ -1,16 +1,18 @@
 "use client";
 
 import { ButtonWithLoader, HeadingHeebo, AddInput } from "@/components";
-import { onboardingSchema, TOnboardingValidator } from "@/lib";
+import { cn, onboardingSchema, TOnboardingValidator } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const Page = () => {
   const router = useRouter();
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const {
     isLoading,
     actions: { registerUser },
@@ -153,9 +155,19 @@ const Page = () => {
               );
             })}
           </div>
-          <p className='font-fustat text-xs text-center text-primary'>
-            Terms and Conditions apply
-          </p>
+          <div className='flex gap-3 items-center'>
+            <p className='font-fustat text-xs text-center text-primary'>
+              Terms and Conditions apply
+            </p>
+            <div
+              className={cn(
+                "size-1 bg-white rounded-[2px] cursor-pointer",
+                isTermsAccepted && "bg-primary"
+              )}
+              onClick={() => setIsTermsAccepted((prev) => !prev)}
+            />
+          </div>
+
           <p className='text-gray text-xs font-light text-center'>
             By continuing, you agree that Along and its affiliates may contact
             you at the number you provide via calls, WhatsApp, or SMS/RCS

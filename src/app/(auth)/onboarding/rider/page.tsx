@@ -82,7 +82,8 @@ const Page = () => {
           disabled={false}
           required
           type='text'
-          inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='text-lg focus:outline-none focus:ring-0'
           label='First Name'
         />
         <AddInput
@@ -93,7 +94,8 @@ const Page = () => {
           disabled={false}
           required
           type='text'
-          inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='text-lg focus:outline-none focus:ring-0'
           label='Last Name'
         />
         <AddInput
@@ -104,7 +106,8 @@ const Page = () => {
           disabled={false}
           required
           type='text'
-          inputClassName='bg-white h-16 rounded-2xl text-lg focus:outline-none focus:ring-0'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='text-lg focus:outline-none focus:ring-0'
           label='Mobile Number'
         />
 
