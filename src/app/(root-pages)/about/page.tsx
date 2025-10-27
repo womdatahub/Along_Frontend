@@ -4,7 +4,7 @@ import Image from "next/image";
 const page = () => {
   return (
     <div className='font-fustat'>
-      <section className='pt-14 md:pt-[272px] px-4 md:px-6 text-center bg-background-1 h-fit md:h-[844px]'>
+      <section className='pt-14 px-4 md:px-6 text-center bg-background-1 h-fit md:h-[844px'>
         <div className='flex  gap-20 max-w-6xl mx-auto items-center justify-between'>
           <div className='flex flex-col gap-10 w-1/2'>
             <HeadingHeebo className='font-extrabold text-[67px] text-left'>
@@ -22,26 +22,19 @@ const page = () => {
               freedom to travel on their own schedule.
             </p>
           </div>
-          <div className='flex w-1/2 relative'>
+          <div className='flex'>
             <Image
-              src='/images/about-woman-bg.png'
+              src='/images/about-us-woman.png'
               alt='woman-bg'
-              width={600}
-              height={600}
-              className='z-10 object-contain'
-            />
-            <Image
-              src='/images/about-woman.png'
-              alt='woman'
-              width={490}
-              height={700}
-              className='z-20 absolute w-[490px] h-[700px] object-contain -top-32'
+              width={710}
+              height={863}
+              className='z-10 object-contain w-full h-[863px]'
             />
           </div>
         </div>
       </section>
       <section className='py-14 md:py-36 md:px-6 text-center bg-gradient-to-b from-[#8DC13D] via-[#026270] to-[#0E4A7A]'>
-        <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between'>
+        <div className='flex flex-col gap-16 max-w-6xl mx-auto items-center justify-between'>
           <div className='flex gap-20 items-center text-white justify-between'>
             <div className='flex flex-col gap-1 w-1/2'>
               <HeadingHeebo className='text-left text-[40px]'>
@@ -56,20 +49,20 @@ const page = () => {
               </p>
             </div>
             <Image
-              src='/images/mission.png'
+              src='/images/about-mission.png'
               alt='mission'
-              width={422}
-              height={535}
-              className='object-contain w-[422px] h-[535px]'
+              width={606}
+              height={732}
+              className='object-contain w-[50%] h-[732px]'
             />
           </div>
           <div className='flex gap-20 items-center text-white justify-between'>
             <Image
-              src='/images/vision.png'
+              src='/images/about-vision.png'
               alt='mission'
-              width={422}
-              height={535}
-              className='object-contain w-[422px] h-[535px]'
+              width={606}
+              height={732}
+              className='object-contain w-[50%] h-[732px]'
             />
             <div className='flex flex-col gap-1 w-1/2'>
               <HeadingHeebo className='text-left text-[40px]'>
@@ -84,28 +77,30 @@ const page = () => {
           </div>
         </div>
       </section>
-      <section className='py-14 md:py-36 md:px-6 bg-background-1'>
-        <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between'>
-          <HeadingHeebo className='text-[40px] font-extrabold'>
+      <section
+        className='py-14 md:py-36 md:px-6 relative text-white flex items-center justify-center'
+        style={{
+          backgroundImage: "url('/images/what-makes-us.png')",
+          height: "80vh",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className='absolute inset-0 bg-black/40' />
+
+        <div className='flex flex-col gap-8 max-w-6xl items-center justify-center'>
+          <HeadingHeebo className='text-[40px] font-extrabold z-10'>
             What makes us different
           </HeadingHeebo>
-          <div className='flex gap-20 items-center justify-between'>
-            <Image
-              src='/images/what-makes-us-different.png'
-              alt='mission'
-              width={496}
-              height={496}
-              className='object-contain w-[496px] aspect-square'
-            />
-            <div className='flex flex-col gap-1 w-1/2'>
-              <HeadingHeebo className='text-left text-lg'>
-                Inclusive Services
-              </HeadingHeebo>
-              <p className='text-left  font-light text-lg w-2/3'>
-                We don’t just focus on rides; we also offer logistics, package
-                delivery, and rental options.
-              </p>
-            </div>
+          <div className='flex flex-col gap-1 max-w-[400px] z-10'>
+            <HeadingHeebo className='text-center text-lg'>
+              Inclusive Services
+            </HeadingHeebo>
+            <p className='text-center  font-light text-lg'>
+              We don’t just focus on rides; we also offer logistics, package
+              delivery, and rental options.
+            </p>
           </div>
         </div>
       </section>
