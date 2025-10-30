@@ -63,7 +63,7 @@ const Page = () => {
           Tell us a bit about yourself to help us set up your account.
         </p>
       </div>
-      <div className='flex gap-4 px-4 py-7 rounded-lg bg-icons items-center'>
+      <div className='flex gap-4 px-4 py-7 rounded-lg bg-[#87C4C4] items-center'>
         <Image
           src='/images/passenger.png'
           alt={"driver"}

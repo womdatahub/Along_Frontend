@@ -22,8 +22,8 @@ const Page = () => {
             router.push("/onboarding/rider");
           }}
           className={cn(
-            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-icons transition-colors duration-500 items-center",
-            selected === "rider" && "bg-icons'"
+            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-[#87C4C4] transition-colors duration-500 items-center",
+            selected === "rider" && "bg-[#87C4C4]"
           )}
         >
           <Image
@@ -40,8 +40,8 @@ const Page = () => {
             router.push("/onboarding/terms");
           }}
           className={cn(
-            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-icons transition-colors duration-500 items-center",
-            selected === "driver" && "bg-icons'"
+            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-[#87C4C4] transition-colors duration-500 items-center",
+            selected === "driver" && "bg-[#87C4C4]"
           )}
         >
           <Image

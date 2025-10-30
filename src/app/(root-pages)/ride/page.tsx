@@ -246,7 +246,7 @@ const Ride = () => {
         <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between h-full'>
           <div className='h-[40vw] w-full'>
             {/* <GoogleMaps /> */}
-            <RadarMap
+            {/* <RadarMap
               pickup={
                 autoCompleteAddress?.latitude
                   ? [
@@ -261,7 +261,7 @@ const Ride = () => {
               //   autoCompleteAddressDrop.latitude,
               // ]}
               // dropName={autoCompleteAddressDrop.formattedAddress}
-            />
+            /> */}
           </div>
         </div>
       </section>

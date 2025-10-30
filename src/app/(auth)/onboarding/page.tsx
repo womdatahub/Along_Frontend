@@ -31,10 +31,12 @@ const Page = () => {
 
   const onSubmit = async (values: TOnboardingValidator) => {
     console.log(values, errors);
-    await registerUser({ ...values, type: "email" }).then((val) => {
-      if (val === false) return;
-      router.push("/onboarding/otp?email=" + values.email);
-    });
+    // await registerUser({ ...values, type: "email" }).then((val) => {
+    //   if (val === false) return;
+    //   router.push("/onboarding/otp?email=" + values.email);
+    // });
+          router.push("/onboarding/otp?email=" + values.email);
+
   };
 
   return (
