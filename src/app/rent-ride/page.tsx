@@ -8,11 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DriverInfoAccordion,
-  GoogleMapAutoComplete,
-  GoogleMaps,
   HeadingHeebo,
   RadarAutocomplete,
-  RadarMap,
+  // RadarMap,
   SelectDropdown,
   Switch,
 } from "@/components";
@@ -70,15 +68,15 @@ const RentRide = () => {
     );
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>
-      <div className='flex gap-4 h-full'>
-        <div className='flex flex-col gap-10 min-w-[40%] h-full'>
-          <div className='flex flex-col'>
-            <HeadingHeebo className='text-left font-extrabold text-4xl'>
+    <div className="px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll">
+      <div className="flex gap-4 h-full">
+        <div className="flex flex-col gap-10 min-w-[40%] h-full">
+          <div className="flex flex-col">
+            <HeadingHeebo className="text-left font-extrabold text-4xl">
               Rent a ride
             </HeadingHeebo>
             {!selectedDriver && (
-              <p className='text-sm'>
+              <p className="text-sm">
                 To proceed, enter your pick up location to see <br /> available
                 cars
               </p>
@@ -117,23 +115,23 @@ const RentRide = () => {
                   {vehicleType ? (
                     <Button
                       variant={"default"}
-                      className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer'
+                      className="bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer"
                     >
                       <EditIcon />
                     </Button>
                   ) : (
                     <Button
                       variant={"default"}
-                      className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
+                      className="bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0"
                     >
-                      <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
+                      <div className="bg-primary rounded-full size-10 flex items-center justify-center">
                         <WhiteForwardIcon />
                       </div>
                     </Button>
                   )}
                 </DialogTrigger>
                 <DialogContent
-                  className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
+                  className="sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1"
                   showCloseButton={false}
                 >
                   <VisuallyHidden>
@@ -142,17 +140,17 @@ const RentRide = () => {
                       Luxury or Luxury XL
                     </DialogTitle>
                   </VisuallyHidden>
-                  <div className='flex flex-col gap-6'>
-                    <div className='flex flex-col pl-7'>
-                      <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
+                  <div className="flex flex-col gap-6">
+                    <div className="flex flex-col pl-7">
+                      <HeadingHeebo className="text-primary font-semibold text-xl text-left">
                         Vehicle type
                       </HeadingHeebo>
-                      <p className='text-sm'>
+                      <p className="text-sm">
                         Please select a vehicle option to continue <br /> your
                         booking
                       </p>
                     </div>
-                    <div className='flex flex-col gap-1'>
+                    <div className="flex flex-col gap-1">
                       {carTypes.map((car) => {
                         const title = car.name
                           .toLowerCase()
@@ -179,11 +177,11 @@ const RentRide = () => {
                               width={40}
                               height={40}
                             />
-                            <div className='flex flex-col group-hover:text-white duration-150'>
-                              <p className='font-semibold text-sm'>
+                            <div className="flex flex-col group-hover:text-white duration-150">
+                              <p className="font-semibold text-sm">
                                 {car.name}
                               </p>
-                              <p className='text-xs'>{car.seat} Persons</p>
+                              <p className="text-xs">{car.seat} Persons</p>
                             </div>
                           </Button>
                         );
@@ -195,60 +193,60 @@ const RentRide = () => {
             </div>
           )}
           {vehicleType && !selectedDriver && (
-            <div className='flex flex-col gap-8'>
+            <div className="flex flex-col gap-8">
               <DriverInfoAccordion driverInfo={driverInfo} func={func} />
             </div>
           )}
           {vehicleType && selectedDriver && (
-            <section className='min-w-[40%] h-full flex flex-col justify-between'>
-              <section className='flex flex-col gap-11'>
-                <div className='flex rounded-2xl p-3 gap-4 items-center justify-between bg-primaryLight2 w-full'>
-                  <div className='flex gap-7 items-center'>
+            <section className="min-w-[40%] h-full flex flex-col justify-between">
+              <section className="flex flex-col gap-11">
+                <div className="flex rounded-2xl p-3 gap-4 items-center justify-between bg-primaryLight2 w-full">
+                  <div className="flex gap-7 items-center">
                     <Image
                       src={"/images/small-car.png"}
                       alt={"car"}
                       width={40}
                       height={40}
-                      className='w-[100px]'
+                      className="w-[100px]"
                     />
-                    <div className='flex flex-col'>
-                      <p className=' text-xs font-semibold'>
+                    <div className="flex flex-col">
+                      <p className=" text-xs font-semibold">
                         Tesla Model 3 - 2023
                       </p>
-                      <p className=' text-sm font-extrabold'>
+                      <p className=" text-sm font-extrabold">
                         Tesla Model 3 - 2023
                       </p>
                     </div>
                   </div>
-                  <div className='flex flex-col items-center'>
-                    <div className='p-[2px] rounded-full bg-white'>
+                  <div className="flex flex-col items-center">
+                    <div className="p-[2px] rounded-full bg-white">
                       <Image
-                        src='/images/profile.jpg'
-                        alt='profile-image'
-                        className='rounded-full w-[66px] object-cover aspect-square'
+                        src="/images/profile.jpg"
+                        alt="profile-image"
+                        className="rounded-full w-[66px] object-cover aspect-square"
                         width={40}
                         height={40}
                       />
                     </div>
-                    <p className=' text-xs font-semibold'>Mark Spencer</p>
+                    <p className=" text-xs font-semibold">Mark Spencer</p>
                   </div>
                 </div>
-                <div className='flex flex-col gap-8'>
-                  <div className='flex flex-col gap-4'>
-                    <p className='text-sm font-bold'>Pick up location</p>
-                    <div className='flex justify-between w-full gap-4'>
-                      <div className='flex gap-4'>
+                <div className="flex flex-col gap-8">
+                  <div className="flex flex-col gap-4">
+                    <p className="text-sm font-bold">Pick up location</p>
+                    <div className="flex justify-between w-full gap-4">
+                      <div className="flex gap-4">
                         <LocationFlagIcon />
-                        <div className='flex flex-col text-sm font-bold'>
+                        <div className="flex flex-col text-sm font-bold">
                           <p>Long Beach</p>
-                          <p className='font-normal'>
+                          <p className="font-normal">
                             Cabbagetown, Candler Park
                           </p>
-                          <p className='text-xs'>California</p>
+                          <p className="text-xs">California</p>
                         </div>
                       </div>
                       <Button
-                        className='bg-primaryLight2 text-black hover:bg-primaryLight2 rounded-full px-8'
+                        className="bg-primaryLight2 text-black hover:bg-primaryLight2 rounded-full px-8"
                         asChild
                       >
                         <Link
@@ -265,32 +263,32 @@ const RentRide = () => {
                     </div>
                   </div>
                   {!isReview && (
-                    <div className='flex flex-col gap-3'>
-                      <div className='flex gap-4 w-full items-center'>
-                        <div className='flex flex-col gap-1 w-full'>
-                          <p className='pl-4 font-bold text-sm'>Duration</p>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex gap-4 w-full items-center">
+                        <div className="flex flex-col gap-1 w-full">
+                          <p className="pl-4 font-bold text-sm">Duration</p>
                           <Dialog>
                             <DialogTrigger asChild>
-                              <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
-                                <p className='text-icons font-medium text-xs'>
+                              <div className="rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer">
+                                <p className="text-icons font-medium text-xs">
                                   Choose rent duration
                                 </p>
                                 <Return24Icon />
                               </div>
                             </DialogTrigger>
                             <DialogContent
-                              className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              className="sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1"
                               showCloseButton={false}
                             >
                               <VisuallyHidden>
                                 <DialogTitle>Choose rent duration</DialogTitle>
                               </VisuallyHidden>
                               <RentRideDialogComponent
-                                title='Rent duration'
-                                subTitle='Choose how long to ride'
+                                title="Rent duration"
+                                subTitle="Choose how long to ride"
                               >
-                                <div className='flex flex-col gap-2 py-9 px-4'>
-                                  <div className='flex gap-3'>
+                                <div className="flex flex-col gap-2 py-9 px-4">
+                                  <div className="flex gap-3">
                                     <Button
                                       className={cn(
                                         "text-primary-deep text-sm font-bold bg-transparent hover:bg-transparent w-fit h-fit p-0 underline",
@@ -331,7 +329,7 @@ const RentRide = () => {
                                       "11 Hours",
                                       "12 Hours",
                                     ]}
-                                    triggerLabel='Select hours'
+                                    triggerLabel="Select hours"
                                     selected={selectedHoursLength}
                                     setSelected={setSelectedHoursLength}
                                   />
@@ -340,33 +338,33 @@ const RentRide = () => {
                             </DialogContent>
                           </Dialog>
                         </div>
-                        <div className='flex flex-col gap-1 w-full'>
-                          <p className='pl-4 font-bold text-sm'>Pick up time</p>
+                        <div className="flex flex-col gap-1 w-full">
+                          <p className="pl-4 font-bold text-sm">Pick up time</p>
                           <Dialog>
                             <DialogTrigger asChild>
-                              <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
-                                <p className='text-icons font-medium text-xs'>
+                              <div className="rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer">
+                                <p className="text-icons font-medium text-xs">
                                   Choose a pick up time
                                 </p>
                                 <TimerIcon />
                               </div>
                             </DialogTrigger>
                             <DialogContent
-                              className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              className="sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1"
                               showCloseButton={false}
                             >
                               <VisuallyHidden>
                                 <DialogTitle>Choose a pick up time</DialogTitle>
                               </VisuallyHidden>
                               <RentRideDialogComponent
-                                title='Pick up time'
-                                subTitle='Choose the time you’d like to be picked up'
+                                title="Pick up time"
+                                subTitle="Choose the time you’d like to be picked up"
                               >
-                                <div className='flex flex-col gap-2 py-9 px-4'>
-                                  <div className='flex p-4 gap-4'>
-                                    <div className='flex bg-white rounded-[10px] h-12'>
-                                      <div className='flex p-4 gap-2 items-center'>
-                                        <p className='text-sm'>Hour</p>
+                                <div className="flex flex-col gap-2 py-9 px-4">
+                                  <div className="flex p-4 gap-4">
+                                    <div className="flex bg-white rounded-[10px] h-12">
+                                      <div className="flex p-4 gap-2 items-center">
+                                        <p className="text-sm">Hour</p>
                                         <SelectDropdown
                                           options={[
                                             "1",
@@ -382,16 +380,16 @@ const RentRide = () => {
                                             "11",
                                             "12",
                                           ]}
-                                          triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
-                                          triggerLabel='1'
+                                          triggerClassName="bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg"
+                                          triggerLabel="1"
                                           withoutIcon
                                           selected={selectedHours}
                                           setSelected={setSelectedHours}
                                         />
                                       </div>
-                                      <div className='w-[1px] h-4 bg-primaryLight2 self-center' />
-                                      <div className='flex p-4 gap-2 items-center'>
-                                        <p className='text-sm'>Min</p>
+                                      <div className="w-[1px] h-4 bg-primaryLight2 self-center" />
+                                      <div className="flex p-4 gap-2 items-center">
+                                        <p className="text-sm">Min</p>
                                         <SelectDropdown
                                           options={[
                                             "1",
@@ -407,26 +405,26 @@ const RentRide = () => {
                                             "11",
                                             "12",
                                           ]}
-                                          triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
-                                          triggerLabel='1'
+                                          triggerClassName="bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg"
+                                          triggerLabel="1"
                                           withoutIcon
                                           selected={selectedMins}
                                           setSelected={setSelectedMins}
                                         />
                                       </div>
                                     </div>
-                                    <div className='bg-white rounded-[10px] h-12 flex items-center justify-center'>
+                                    <div className="bg-white rounded-[10px] h-12 flex items-center justify-center">
                                       <SelectDropdown
                                         options={["AM", "PM"]}
-                                        triggerClassName='hover:cursor-pointer w-fit min-h-4'
-                                        triggerLabel='AM'
+                                        triggerClassName="hover:cursor-pointer w-fit min-h-4"
+                                        triggerLabel="AM"
                                         withoutIcon
                                         selected={selectAmOrPm}
                                         setSelected={setSelectAmOrPm}
                                       />
                                     </div>
                                   </div>
-                                  <Button className='rounded-full self-center'>
+                                  <Button className="rounded-full self-center">
                                     OK
                                   </Button>
                                 </div>
@@ -436,14 +434,14 @@ const RentRide = () => {
                         </div>
                       </div>
                       {isLater && (
-                        <div className='flex flex-col gap-1 w-full'>
-                          <p className='pl-4 font-bold text-sm'>Select date</p>
+                        <div className="flex flex-col gap-1 w-full">
+                          <p className="pl-4 font-bold text-sm">Select date</p>
                           <Dialog
                             open={isDateDialogOpen}
                             onOpenChange={setIsDateDialogOpen}
                           >
                             <DialogTrigger asChild>
-                              <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
+                              <div className="rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer">
                                 <p
                                   className={cn(
                                     "font-medium text-xs",
@@ -458,7 +456,7 @@ const RentRide = () => {
                               </div>
                             </DialogTrigger>
                             <DialogContent
-                              className='sm:max-w-[425px] w-fit p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              className="sm:max-w-[425px] w-fit p-0  rounded-[20px] overflow-hidden bg-background-1"
                               showCloseButton={false}
                             >
                               <VisuallyHidden>
@@ -466,30 +464,30 @@ const RentRide = () => {
                               </VisuallyHidden>
                               <RentRideDialogComponent
                                 title={formatDateToDDMMYYYY(date as Date)}
-                                subTitle=''
+                                subTitle=""
                                 isTitleCentered
                               >
-                                <div className='flex flex-col gap-5 justify-center items-center bg-white w-fit pb-6 px-4'>
+                                <div className="flex flex-col gap-5 justify-center items-center bg-white w-fit pb-6 px-4">
                                   <Calendar
-                                    mode='single'
+                                    mode="single"
                                     defaultMonth={date}
                                     selected={date}
                                     onSelect={setDate}
                                     disabled={{
                                       before: new Date(),
                                     }}
-                                    className='bg-transparent'
+                                    className="bg-transparent"
                                   />
-                                  <div className='flex gap-10 items-center font-bold'>
+                                  <div className="flex gap-10 items-center font-bold">
                                     <Button
                                       onClick={() => setDate(new Date())}
-                                      className='bg-transparent hover:bg-transparent w-fit h-fit p-0 text-black'
+                                      className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-black"
                                     >
                                       CANCEL
                                     </Button>
                                     <Button
                                       onClick={() => setIsDateDialogOpen(false)}
-                                      className='bg-transparent hover:bg-transparent w-fit h-fit p-0 text-primary'
+                                      className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-primary"
                                     >
                                       SELECT
                                     </Button>
@@ -500,26 +498,26 @@ const RentRide = () => {
                           </Dialog>
                         </div>
                       )}
-                      <div className='flex items-center justify-between gap-4 w-full'>
-                        <div className='flex items-center gap-3'>
-                          <p className='text-sm font-semibold'>
+                      <div className="flex items-center justify-between gap-4 w-full">
+                        <div className="flex items-center gap-3">
+                          <p className="text-sm font-semibold">
                             Time Flexibility
                           </p>
                           <MoreInfoIcon />
                         </div>
-                        <Switch color='primary' />
+                        <Switch color="primary" />
                       </div>
                     </div>
                   )}
                   {isReview && (
-                    <div className='flex flex-col gap-5 border-t border-primaryLight2 pt-8'>
+                    <div className="flex flex-col gap-5 border-t border-primaryLight2 pt-8">
                       {reviewDetails.map((review) => {
                         return (
                           <div
                             key={review.title}
-                            className='flex justify-between gap-4 font-semibold text-sm'
+                            className="flex justify-between gap-4 font-semibold text-sm"
                           >
-                            <div className='flex items-center gap-3'>
+                            <div className="flex items-center gap-3">
                               <p>I</p>
                               <p>{review.title}</p>
                             </div>
@@ -531,8 +529,8 @@ const RentRide = () => {
                   )}
                 </div>
               </section>
-              <div className='flex gap-6 items-center'>
-                <Button className='items-end' asChild={!isReview}>
+              <div className="flex gap-6 items-center">
+                <Button className="items-end" asChild={!isReview}>
                   {isReview ? (
                     "Proceed to payment"
                   ) : (
@@ -551,12 +549,12 @@ const RentRide = () => {
                   )}
                 </Button>
                 {isReview && (
-                  <div className='flex flex-col w-1/3'>
-                    <div className='flex justify-between gap-4 font-bold text-base'>
+                  <div className="flex flex-col w-1/3">
+                    <div className="flex justify-between gap-4 font-bold text-base">
                       <p>Total</p>
                       <p>$55.92</p>
                     </div>
-                    <div className='flex justify-between gap-4 font-semibold text-sm text-icons'>
+                    <div className="flex justify-between gap-4 font-semibold text-sm text-icons">
                       <p>Tax</p>
                       <p>$2.92</p>
                     </div>
@@ -696,15 +694,15 @@ type RentRideDialogComponentProps = {
   children: React.ReactNode;
   isTitleCentered?: boolean;
 };
-const RentRideDialogComponent = ({
+export const RentRideDialogComponent = ({
   title,
   subTitle,
   children,
   isTitleCentered,
 }: RentRideDialogComponentProps) => {
   return (
-    <div className='flex flex-col bg-background-1'>
-      <div className='flex flex-col bg-primaryLight2 p-4'>
+    <div className="flex flex-col bg-background-1">
+      <div className="flex flex-col bg-primaryLight2 p-4">
         <HeadingHeebo
           className={cn(
             "text-left font-semibold text-xl text-primary-deep",
@@ -713,7 +711,7 @@ const RentRideDialogComponent = ({
         >
           {title}
         </HeadingHeebo>
-        <p className='text-[10px]'>{subTitle}</p>
+        <p className="text-[10px]">{subTitle}</p>
       </div>
       {children}
     </div>

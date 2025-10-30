@@ -3,7 +3,7 @@ import {
   AddressResult,
   HeadingHeebo,
   RadarAutocomplete,
-  RadarMap,
+  // RadarMap,
 } from "@/components";
 import Image from "next/image";
 
@@ -39,20 +39,20 @@ const Ride = () => {
   const rentalType = searchParams.get("rentalType");
 
   return (
-    <div className='font-fustat'>
-      <section className='pt-[272px] px-6 text-center bg-background-1 h-[844px]'>
-        <div className='flex gap-20 max-w-6xl mx-auto items-center justify-between'>
-          <div className='flex flex-col gap-2 w-1/2'>
-            <HeadingHeebo className='font-extrabold text-[67px] text-left'>
+    <div className="font-fustat">
+      <section className="pt-[272px] px-6 text-center bg-background-1 h-[844px]">
+        <div className="flex gap-20 max-w-6xl mx-auto items-center justify-between">
+          <div className="flex flex-col gap-2 w-1/2">
+            <HeadingHeebo className="font-extrabold text-[67px] text-left">
               Rent a ride
             </HeadingHeebo>
-            <div className='flex flex-col gap-6'>
-              <p className='font-heebo font-light text-lg text-left'>
+            <div className="flex flex-col gap-6">
+              <p className="font-heebo font-light text-lg text-left">
                 Need a car for a few hours or even the whole day? Ride options
                 gives you flexibility without the headaches of traditional
                 rentals
               </p>
-              <p className='font-heebo font-light text-lg text-left'>
+              <p className="font-heebo font-light text-lg text-left">
                 Pay for only the time you need. choose from Sedans, SUVs or
                 Vans. Drivers are vetted, professional and friendly. Transparent
                 prices - No surprises
@@ -73,7 +73,7 @@ const Ride = () => {
                 <AccuracyIcon />
                 <RadarAutocomplete
                   setAutoCompleteAddress={setAutoCompleteAddress}
-                  placeholder='Pick up location'
+                  placeholder="Pick up location"
                 />
                 {/* <GoogleMapAutoComplete>
                   <input
@@ -87,15 +87,15 @@ const Ride = () => {
                   <DialogTrigger asChild>
                     <Button
                       variant={"default"}
-                      className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
+                      className="bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0"
                     >
-                      <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
+                      <div className="bg-primary rounded-full size-10 flex items-center justify-center">
                         <WhiteForwardIcon />
                       </div>
                     </Button>
                   </DialogTrigger>
                   <DialogContent
-                    className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
+                    className="sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1"
                     showCloseButton={false}
                   >
                     <VisuallyHidden>
@@ -104,17 +104,17 @@ const Ride = () => {
                         Luxury or Luxury XL
                       </DialogTitle>
                     </VisuallyHidden>
-                    <div className='flex flex-col gap-6'>
-                      <div className='flex flex-col pl-7'>
-                        <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
+                    <div className="flex flex-col gap-6">
+                      <div className="flex flex-col pl-7">
+                        <HeadingHeebo className="text-primary font-semibold text-xl text-left">
                           Ride rental
                         </HeadingHeebo>
-                        <p className='text-sm'>
+                        <p className="text-sm">
                           Please select a ride rental option to continue <br />
                           your booking
                         </p>
                       </div>
-                      <div className='flex flex-col gap-1'>
+                      <div className="flex flex-col gap-1">
                         {rideRental.map((r) => {
                           const title = r.title
                             .toLowerCase()
@@ -143,8 +143,8 @@ const Ride = () => {
                                     width={40}
                                     height={40}
                                   />
-                                  <div className='flex flex-col group-hover:text-white duration-150'>
-                                    <p className='font-semibold text-sm'>
+                                  <div className="flex flex-col group-hover:text-white duration-150">
+                                    <p className="font-semibold text-sm">
                                       {r.title}
                                     </p>
                                     {/* <p className='text-xs'>{car.seat} Persons</p> */}
@@ -152,7 +152,7 @@ const Ride = () => {
                                 </Button>
                               </DialogTrigger>
                               <DialogContent
-                                className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
+                                className="sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1"
                                 showCloseButton={false}
                               >
                                 <VisuallyHidden>
@@ -161,17 +161,17 @@ const Ride = () => {
                                     Comfort XL, Luxury or Luxury XL
                                   </DialogTitle>
                                 </VisuallyHidden>
-                                <div className='flex flex-col gap-6'>
-                                  <div className='flex flex-col pl-7'>
-                                    <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
+                                <div className="flex flex-col gap-6">
+                                  <div className="flex flex-col pl-7">
+                                    <HeadingHeebo className="text-primary font-semibold text-xl text-left">
                                       Vehicle type
                                     </HeadingHeebo>
-                                    <p className='text-sm'>
+                                    <p className="text-sm">
                                       Please select a vehicle option to continue{" "}
                                       <br /> your booking
                                     </p>
                                   </div>
-                                  <div className='flex flex-col gap-1'>
+                                  <div className="flex flex-col gap-1">
                                     {carTypes.map((car) => {
                                       const title = car.name
                                         .toLowerCase()
@@ -200,11 +200,11 @@ const Ride = () => {
                                             width={40}
                                             height={40}
                                           />
-                                          <div className='flex flex-col group-hover:text-white duration-150'>
-                                            <p className='font-semibold text-sm'>
+                                          <div className="flex flex-col group-hover:text-white duration-150">
+                                            <p className="font-semibold text-sm">
                                               {car.name}
                                             </p>
-                                            <p className='text-xs'>
+                                            <p className="text-xs">
                                               {car.seat} Persons
                                             </p>
                                           </div>
@@ -224,27 +224,27 @@ const Ride = () => {
               </div>
             </div>
           </div>
-          <div className='flex w-1/2 relative'>
+          <div className="flex w-1/2 relative">
             <Image
-              src='/images/about-woman-bg.png'
-              alt='woman-bg'
+              src="/images/about-woman-bg.png"
+              alt="woman-bg"
               width={600}
               height={600}
-              className='z-10 object-contain'
+              className="z-10 object-contain"
             />
             <Image
-              src='/images/about-woman.png'
-              alt='woman'
+              src="/images/about-woman.png"
+              alt="woman"
               width={490}
               height={700}
-              className='z-20 absolute w-[490px] h-[700px] object-contain -top-32'
+              className="z-20 absolute w-[490px] h-[700px] object-contain -top-32"
             />
           </div>
         </div>
       </section>
-      <section className='py-36 px-6 text-center'>
-        <div className='flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between h-full'>
-          <div className='h-[40vw] w-full'>
+      <section className="py-36 px-6 text-center">
+        <div className="flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between h-full">
+          <div className="h-[40vw] w-full">
             {/* <GoogleMaps /> */}
             {/* <RadarMap
               pickup={
