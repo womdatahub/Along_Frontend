@@ -108,24 +108,7 @@ const Page = () => {
             </div>
           </UploadingImagesReusableComponent>
         </div>
-        <div className='flex flex-col gap-1'>
-          <label className='font-semibold text-sm ml-5'>
-            Insurance document
-          </label>
-          <UploadingImagesReusableComponent
-            key={4}
-            index={4}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-            imageToastDescription='Front of the driver license'
-          >
-            <div className='flex flex-col gap-2 justify-center items-center'>
-              <UploadImageIcon />
-              <p className='text-sm font-medium'>Upload Photo</p>
-            </div>
-          </UploadingImagesReusableComponent>
-        </div>
+       
       </div>
       <AuthBackAndContinueButton
         backActive
