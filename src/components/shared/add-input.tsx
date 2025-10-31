@@ -117,7 +117,7 @@ const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
     inputClassName,
   } = props;
   return (
-    <div className={cn("w-full flex flex-col gap-3", className)}>
+    <div className={cn("w-full flex flex-col gap-3 bg-white", className)}>
       <label htmlFor={id} className="text-base">
         {label}
       </label>
@@ -129,7 +129,8 @@ const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
         className={cn(
           "pl-5 rounded-lg",
           inputClassName,
-          errors[id] && "border border-red-400"
+          errors[id] && "border border-red-400",
+          "focus:outline-none focus:ring-0 border-0  shadow-none"
         )}
       />
       {errors[id]?.message && (
