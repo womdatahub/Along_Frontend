@@ -26,18 +26,18 @@ export const Navbar = () => {
         scrolled ? "bg-white/50" : "bg-white"
       }`}
     >
-      <div className='flex justify-between items-center h-20 px-4 md:px-0 max-w-7xl mx-auto '>
+      <div className="flex justify-between items-center h-20 px-4 md:px-0 max-w-6xl mx-auto ">
         {/* Logo */}
-        <Link href='/'>
+        <Link href="/">
           <LogoIcon />
         </Link>
 
         {/* Desktop Menu */}
-        <div className='hidden md:flex gap-14 text-black text-xl'>
-          <Link href='/about'>About</Link>
-          <Link href='/onboarding'>Ride</Link>
-          <Link href='/onboarding'>Drive</Link>
-          <Link href='#'>Help</Link>
+        <div className="hidden md:flex gap-14 text-black text-xl">
+          <Link href="/about">About</Link>
+          <Link href="/onboarding">Ride</Link>
+          <Link href="/onboarding">Drive</Link>
+          <Link href="#">Help</Link>
         </div>
 
         {/* Mobile Toggle */}

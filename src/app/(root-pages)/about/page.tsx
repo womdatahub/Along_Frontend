@@ -1,6 +1,6 @@
 "use client";
 
-import { AddInput, AddTextarea, HeadingHeebo } from "@/components";
+import { AddInput, AddTextarea, Button, HeadingHeebo } from "@/components";
 import { TOnboardingValidator, onboardingSchema } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -181,6 +181,7 @@ const Page = () => {
                 iconAndInputWrapperClassName="bg-white rounded-none px-2"
                 inputClassName="placeholder:text-placeholder text-sm  h-30 font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
               />
+              <Button className="rounded-none w-2/3 self-center">Submit</Button>
             </div>
           </div>
         </div>
