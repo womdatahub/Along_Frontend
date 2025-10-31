@@ -1,9 +1,22 @@
 import { HeadingHeebo } from "@/components";
+import { cn } from "@/lib";
 export const Updates = () => {
   const updates = [
-    { title: "Update Alert", img: "/images/horizon-1.png" },
-    { title: "Update Alert", img: "/images/horizon-2.png" },
-    { title: "Update Alert", img: "/images/horizon-3.png" },
+    {
+      title: "Update Alert",
+      img: "/images/horizon-1.png",
+      textColor: "text-white",
+    },
+    {
+      title: "Update Alert",
+      img: "/images/horizon-2.png",
+      textColor: "text-white",
+    },
+    {
+      title: "Update Alert",
+      img: "/images/horizon-3.png",
+      textColor: "text-black",
+    },
   ];
 
   return (
@@ -31,8 +44,8 @@ export const Updates = () => {
               }}
             >
               <div className="w-full h-full" />
-              <div className="h-full">
-                <HeadingHeebo className="font-semibold text-black text-left">
+              <div className={cn("h-full", u.textColor)}>
+                <HeadingHeebo className="font-semibold text-left">
                   {u.title}
                 </HeadingHeebo>
                 <p className="font-light text-[9px]">
