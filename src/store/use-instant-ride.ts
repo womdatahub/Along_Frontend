@@ -46,7 +46,6 @@ const initialState = {
 
 export const useInstantRide = create<InstantRideType>()(() => ({
   ...initialState,
-
   actions: {
     createSoloRide: async (soloRideData) => {
       const path = instantApiStr("");
