@@ -14,6 +14,7 @@ export const signInSchema = z.object({
 
 // onboarding schema
 export const onboardingSchema = z.object({
+  referralCode: z.string().optional(),
   email: z.email({ message: "Invalid email address" }),
   password: z
     .string()
@@ -22,6 +23,14 @@ export const onboardingSchema = z.object({
       message:
         "Password must include letters, numbers, and special characters (!@#$%^&*)",
     }),
+});
+export const hearFromYouSchema = z.object({
+  fullName: z.string(),
+  email: z.email({ message: "Invalid email address" }),
+  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
+    message: "Mobile number is required",
+  }),
+  yourMessage: z.string().min(1, { message: "Message cannot be empty" }),
 });
 
 export const registerRiderSchema = z.object({
@@ -62,5 +71,5 @@ export const createAccountSchema = z
 export type TSignInValidator = z.infer<typeof signInSchema>;
 export type TOnboardingValidator = z.infer<typeof onboardingSchema>;
 export type TRegisterRiderValidator = z.infer<typeof registerRiderSchema>;
-
+export type THearFromYouValidator = z.infer<typeof hearFromYouSchema>;
 export type TCreateAccountValidator = z.infer<typeof createAccountSchema>;

@@ -25,6 +25,7 @@ const Page = () => {
     defaultValues: {
       email: "",
       password: "",
+      referralCode: "",
     },
     resolver: zodResolver(onboardingSchema),
   });
@@ -131,7 +132,7 @@ const Page = () => {
           inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
         />
         <AddInput
-          id="email"
+          id="referralCode"
           errors={errors}
           placeholder="Referral Code (Optional)"
           register={register}
