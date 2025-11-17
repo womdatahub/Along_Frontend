@@ -1,7 +1,12 @@
 "use client";
 
 import { AddInput, AddTextarea, Button, HeadingHeebo } from "@/components";
-import { TOnboardingValidator, onboardingSchema } from "@/lib";
+import {
+  THearFromYouValidator,
+  // TOnboardingValidator,
+  hearFromYouSchema,
+  // onboardingSchema,
+} from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -9,15 +14,26 @@ import { useForm } from "react-hook-form";
 const Page = () => {
   const {
     register,
-    // handleSubmit,
+    handleSubmit,
     formState: { errors },
-  } = useForm<TOnboardingValidator>({
+  } = useForm<THearFromYouValidator>({
     defaultValues: {
       email: "",
-      password: "",
+      fullName: "",
+      mobileNumber: "",
+      yourMessage: "",
     },
-    resolver: zodResolver(onboardingSchema),
+    resolver: zodResolver(hearFromYouSchema),
   });
+
+  const onSubmit = async (values: THearFromYouValidator) => {
+    console.log(values, errors);
+    // await registerUser({ ...values, type: "email" }).then((val) => {
+    //   if (val === false) return;
+    //   router.push("/onboarding/otp?email=" + values.email);
+    // });
+  };
+
   return (
     <div className="font-fustat">
       <section className="pt-14 px-4 md:px-6 text-center bg-background-1 h-fit md:h-[844px">
@@ -126,13 +142,16 @@ const Page = () => {
           <HeadingHeebo className="text-[40px] font-extrabold z-10">
             Have a question?
           </HeadingHeebo>
-          <div className="flex flex-col gap-6 max-w-[400px] z-10">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-6 max-w-[400px] z-10"
+          >
             <HeadingHeebo className="text-center text-lg font-normal">
               Please fill out the form. We’d love to hear from you
             </HeadingHeebo>
             <div className="flex flex-col gap-6">
               <AddInput
-                id="email"
+                id="fullName"
                 errors={errors}
                 placeholder="Full Name"
                 register={register}
@@ -144,7 +163,7 @@ const Page = () => {
               />
               <div className="flex gap-4">
                 <AddInput
-                  id="email"
+                  id="mobileNumber"
                   errors={errors}
                   placeholder="Phone Number"
                   register={register}
@@ -170,7 +189,7 @@ const Page = () => {
               </div>
 
               <AddTextarea
-                id="email"
+                id="yourMessage"
                 errors={errors}
                 placeholder="Your Message"
                 register={register}
@@ -181,9 +200,11 @@ const Page = () => {
                 iconAndInputWrapperClassName="bg-white rounded-none px-2"
                 inputClassName="placeholder:text-placeholder text-sm  h-30 font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
               />
-              <Button className="rounded-none w-2/3 self-center">Submit</Button>
+              <Button type="submit" className="rounded-none w-2/3 self-center">
+                Submit
+              </Button>
             </div>
-          </div>
+          </form>
         </div>
       </section>
     </div>
