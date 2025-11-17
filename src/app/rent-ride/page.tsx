@@ -10,7 +10,7 @@ import {
   DriverInfoAccordion,
   HeadingHeebo,
   RadarAutocomplete,
-  // RadarMap,
+  RadarMap,
   SelectDropdown,
   Switch,
 } from "@/components";
@@ -568,7 +568,7 @@ const RentRide = () => {
         {/* <div className='bg-red- w-full h-full min-h-40 sticky top-0' /> */}
 
         {/* <GoogleMaps /> */}
-        {/* <RadarMap /> */}
+        <RadarMap />
       </div>
     </div>
   );
