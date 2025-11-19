@@ -2,6 +2,7 @@
 
 import { Button } from "@/components";
 // import { useRouter } from "next/navigation";
+
 const terms = [
   {
     title: "Acceptance of Terms",
