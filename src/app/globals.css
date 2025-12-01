@@ -37,7 +37,6 @@
   --font-heebo: 'Heebo', sans-serif;
   --font-fustat: 'Fustat', serif;
 
-
   /* Shadcn colors */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -157,7 +156,6 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #000 !important;
 }
 
-
 /* border: 1px solid #ccc; */
 /* .radar-autocomplete-input {
   border-radius: 8px;
@@ -166,8 +164,6 @@ input:-webkit-autofill:focus {
   background-color: #f5f5f5;
 }
 */
-
-
 
 .radar-autocomplete-input {
   all: unset;
@@ -185,7 +181,7 @@ input:-webkit-autofill:focus {
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
-  
+
 }
 
 .radar-autocomplete-search-icon {
