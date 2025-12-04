@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/";
+import { Card, CardContent, CardTitle } from "@/components/";
 import { cn } from "@/lib";
 
 const Page = () => {
@@ -64,36 +64,36 @@ const Page = () => {
             <CardContent className="px-0 h-[250px]"></CardContent>
           </Card>
           <div className="grid grid-cols-2 gap-6 flex-wrap">
+            <Card className="px-4 py-7 gap-1">
+              <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
+                Active trips
+              </CardTitle>
+              <CardContent className="px-0">
+                <p className="font-bold text-4xl">3,550</p>
+              </CardContent>
+            </Card>
+            <Card className="px-4 py-7 gap-1">
+              <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
+                Scheduled Trips
+              </CardTitle>
+              <CardContent className="px-0">
+                <p className="font-bold text-4xl">320</p>
+              </CardContent>
+            </Card>
+            <Card className="px-4 py-7 gap-1">
+              <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
+                Rush SLA Met
+              </CardTitle>
+              <CardContent className="px-0">
+                <p className="font-bold text-4xl">78%</p>
+              </CardContent>
+            </Card>
             <Card className="px-4 py-7 gap-1 ">
               <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
-                Active trips
+                Open SOS
               </CardTitle>
               <CardContent className="px-0">
-                <p className="font-bold text-4xl">3939</p>
-              </CardContent>
-            </Card>
-            <Card className="px-4 py-7 gap-1">
-              <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
-                Active trips
-              </CardTitle>
-              <CardContent className="px-0">
-                <p className="font-bold text-4xl">3939</p>
-              </CardContent>
-            </Card>
-            <Card className="px-4 py-7 gap-1">
-              <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
-                Active trips
-              </CardTitle>
-              <CardContent className="px-0">
-                <p className="font-bold text-4xl">3939</p>
-              </CardContent>
-            </Card>
-            <Card className="px-4 py-7 gap-1">
-              <CardTitle className="p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]">
-                Active trips
-              </CardTitle>
-              <CardContent className="px-0">
-                <p className="font-bold text-4xl">3939</p>
+                <p className="font-bold text-4xl">14</p>
               </CardContent>
             </Card>
           </div>
