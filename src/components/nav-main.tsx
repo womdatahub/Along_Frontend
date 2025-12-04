@@ -24,11 +24,10 @@ export const NavMain = () => {
 
 type SMenuButtonProps = {
   path: string;
-  key: number;
   Icon: (props: SVGProps<SVGElement>) => JSX.Element;
   text: string;
 };
-const SMenuButton = ({ path, key, Icon, text }: SMenuButtonProps) => {
+const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
   const pathname = usePathname();
   let isActive = (() => {
     if (path === "/admin") {
@@ -41,7 +40,7 @@ const SMenuButton = ({ path, key, Icon, text }: SMenuButtonProps) => {
 
   return (
     <SidebarMenuButton
-      key={key}
+      // key={path}
       className={cn(
         "group hover:bg-white text-white hover:text-primary h-12 rounded-full px-8",
         isActive && "bg-white text-primary"
