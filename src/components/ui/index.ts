@@ -11,3 +11,5 @@ export * from "./switch";
 export * from "./dialog";
 export * from "./textarea";
 export * from "./input";
+export * from "./empty";
+export * from "./table";
