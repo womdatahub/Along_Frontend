@@ -7,6 +7,7 @@ import {
   Empty,
   EmptyHeader,
   EmptyTitle,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -16,9 +17,10 @@ import {
 } from "@/components/";
 import { cn } from "@/lib";
 import { AdminSearchIcon } from "@public/svgs";
+import Image from "next/image";
 import { useState } from "react";
 
-// const isEmpty = false;
+const isEmpty = false;
 const Page = () => {
   const [userORRoles, setUserOrRoles] = useState<"user" | "roles">("user");
   return (
@@ -59,31 +61,98 @@ const Page = () => {
           </Button>
         </div>
       </div>
-      <Card>
-        <CardHeader>
-          <div className="flex border-b font-medium text-2xl pb-4">
-            <p>Roles</p>
-          </div>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-6 pb-6">
-          {roles.map((r) => {
-            return (
-              <div
-                key={r.role}
-                className="flex bg-[#F4F4F4] justify-between items-center gap-5 rounded-2xl p-6"
-              >
-                <div className="flex flex-col gap-1">
-                  <p className="text-xl font-bold">{r.role}</p>
-                  <p className="text-sm font-light">{r.permission}</p>
+
+      {userORRoles === "user" ? (
+        <Card className="p-0 rounded-md">
+          <CardContent className="p-0 ">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]">
+                  <TableHead className="text-[#768B8F]">User</TableHead>
+                  <TableHead className="text-[#768B8F]">Role</TableHead>
+                  <TableHead className="text-[#768B8F]">Permissions</TableHead>
+                  <TableHead className="text-[#768B8F]">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              {isEmpty ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={4} className="p-10">
+                      <Empty>
+                        <EmptyHeader>
+                          <EmptyTitle>No information found</EmptyTitle>
+                        </EmptyHeader>
+                      </Empty>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : (
+                <TableBody>
+                  {users.map((user, i) => {
+                    return (
+                      <TableRow key={i} className="last:border-b-0">
+                        <TableCell className="text-sm font-medium py-5">
+                          <div className="flex items-center gap-2">
+                            <Image
+                              src="/images/about-vision.png"
+                              alt="Profile image"
+                              className="rounded-full size-12 object-cover"
+                              width={42}
+                              height={42}
+                            />
+                            <div className="flex flex-col">
+                              <p className="font-medium text-xl">{user.name}</p>
+                              <p className="text-sm font-light">{user.email}</p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          <p className="bg-[#E0E6E6] px-3 py-1 rounded-full w-fit">
+                            {user.role}
+                          </p>
+                        </TableCell>
+                        <TableCell>
+                          <Switch checked={user.isActive} />
+                        </TableCell>
+                        <TableCell>
+                          <Button className="rounded-full">Edit Role</Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              )}
+            </Table>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <div className="flex border-b font-medium text-2xl pb-4">
+              <p>Roles</p>
+            </div>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-6 pb-6">
+            {roles.map((r) => {
+              return (
+                <div
+                  key={r.role}
+                  className="flex bg-[#F4F4F4] justify-between items-center gap-5 rounded-2xl p-6"
+                >
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xl font-bold">{r.role}</p>
+                    <p className="text-sm font-light">{r.permission}</p>
+                  </div>
+                  <Button className="bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full">
+                    Edit permission
+                  </Button>
                 </div>
-                <Button className="bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full">
-                  Edit permission
-                </Button>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
     </section>
   );
 };
@@ -140,5 +209,36 @@ const roles = [
   {
     role: "Compliance",
     permission: "Assign compliance role to a user",
+  },
+];
+
+const users = [
+  {
+    name: "Mary Jane",
+    email: "maryjane@gmail.com",
+    role: "Super Admin",
+    isActive: true,
+    avatar: "/images/user1.png",
+  },
+  {
+    name: "Derek Lawson",
+    email: "derek.lawson@example.com",
+    role: "Admin",
+    isActive: false,
+    avatar: "/images/user2.png",
+  },
+  {
+    name: "Fatima Bello",
+    email: "fatima.bello@example.com",
+    role: "Moderator",
+    isActive: true,
+    avatar: "/images/user3.png",
+  },
+  {
+    name: "Kelvin Torres",
+    email: "kelvin.torres@example.com",
+    role: "Viewer",
+    isActive: false,
+    avatar: "/images/user4.png",
   },
 ];
