@@ -13,7 +13,6 @@ import {
 } from "@/components/";
 import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
 import Image from "next/image";
-
 const isEmpty = false;
 const Page = () => {
   return (
