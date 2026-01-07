@@ -33,7 +33,7 @@ export const FAQ = () => {
   return (
     <section className='py-16 px-6 bg-background-1 overflow-hidden'>
       <div className='flex flex-col gap-10 max-w-4xl mx-auto relative'>
-        <HeadingHeebo className='text-4xl font-extrabold text-left'>
+        <HeadingHeebo className='text-2xl md:text-4xl font-extrabold text-left'>
           Frequently Asked Questions
         </HeadingHeebo>
         <Accordion

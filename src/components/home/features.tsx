@@ -96,7 +96,7 @@ export const Features = () => {
         <div
           key={currentIndex}
           className={clsx(
-            "flex gap-20 items-center justify-between w-full max-w-5xl px-4 absolute transition-all duration-400",
+            "flex flex-col md:flex-row gap-10 md:gap-20 items-center justify-between w-full max-w-5xl px-4 absolute transition-all duration-400",
             direction === "right" && animating && "animate-slide-out-left",
             direction === "left" && animating && "animate-slide-out-right",
             !animating &&
@@ -106,10 +106,10 @@ export const Features = () => {
           )}
         >
           <div className='flex flex-col gap-4 text-left w-full md:w-1/2'>
-            <h2 className='text-4xl font-extrabold text-black'>
+            <h2 className='text-2xl md:text-4xl font-extrabold text-black'>
               {currentSlide.title}
             </h2>
-            <p className='text-black font-light text-xl'>
+            <p className='text-black font-light text-lg md:text-xl'>
               {currentSlide.description}
             </p>
           </div>
