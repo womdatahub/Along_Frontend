@@ -22,8 +22,10 @@ export const Services = () => {
     <section className='px-6 py-16 bg-white text-black'>
       <div className='flex flex-col gap-4 max-w-6xl mx-auto'>
         <div className='flex flex-col gap-4 md:w-1/3'>
-          <h2 className='text-4xl font-extrabold'>Anytime, Anywhere</h2>
-          <p className='font-light text-xl'>
+          <h2 className='text-2xl md:text-4xl font-extrabold'>
+            Anytime, Anywhere
+          </h2>
+          <p className='font-light text-lg md:text-xl'>
             Experience stress-free travel with fast bookings, reliable drivers,
             and comfortable rides.
           </p>
@@ -42,7 +44,7 @@ export const Services = () => {
                   </div>
                   <Image
                     src={s.img}
-                    alt=''
+                    alt='placeholder'
                     width={103}
                     height={72}
                     className='h-[72px] w-[100px] object-cover'

@@ -16,10 +16,10 @@ export const Hero = () => {
         <div className='absolute inset-0 bg-black/40' />
         <div className='flex flex-col  justify-center gap-6 md:gap-16 px-4 md:px-0 max-w-7xl mx-auto text-center w-full mt-24'>
           <div className='relative z-10 text-left text-white'>
-            <h1 className='text-5xl md:text-6xl font-bold mb-4'>
+            <h1 className='text-3xl md:text-6xl font-bold mb-4'>
               Your ride, your ways
             </h1>
-            <p className='mb-6 text-xl'>
+            <p className='mb-6 text-lg md:text-xl'>
               Travel on your terms with flexible options, <br /> comfort, and
               control every step of the <br /> journey.
             </p>
@@ -38,7 +38,7 @@ export const Hero = () => {
                   />
                 </div>
               </div>
-              <div className='bg-primary px-6 py-2 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+              <div className='bg-primary px-6 py-4 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
                 Go
               </div>
             </div>
