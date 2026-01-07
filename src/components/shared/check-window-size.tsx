@@ -1,21 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { usePathname } from "next/navigation";
 
 export const CheckWindowSize = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 650);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  if (isMobile) {
+  if (isMobile && pathname !== "/") {
     return (
       <div className='flex items-center justify-center h-screen w-screen'>
         <p className='text-lg font-semibold text-center px-4 animate-pulse'>
