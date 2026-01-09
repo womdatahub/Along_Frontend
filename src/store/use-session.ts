@@ -312,7 +312,7 @@ export const useSession = create<Session>()((set) => ({
         toast.error(error.message);
         return;
       }
-      
+
       if (data) {
         console.log(data, path);
       }

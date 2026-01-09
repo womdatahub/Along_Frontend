@@ -1,6 +1,6 @@
 "use client";
 
-import { HeadingHeebo } from "@/components";
+import { AuthBackAndContinueButton, HeadingHeebo } from "@/components";
 import { cn } from "@/lib";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const Page = () => {
   const router = useRouter();
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState<"rider" | "terms" | "">("");
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <HeadingHeebo>Register a User</HeadingHeebo>
@@ -19,7 +19,6 @@ const Page = () => {
         <button
           onClick={() => {
             setSelected("rider");
-            router.push("/onboarding/rider");
           }}
           className={cn(
             "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-[#87C4C4] transition-colors duration-500 items-center",
@@ -36,12 +35,11 @@ const Page = () => {
         </button>
         <button
           onClick={() => {
-            setSelected("driver");
-            router.push("/onboarding/terms");
+            setSelected("terms");
           }}
           className={cn(
             "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-[#87C4C4] transition-colors duration-500 items-center",
-            selected === "driver" && "bg-[#87C4C4]"
+            selected === "terms" && "bg-[#87C4C4]"
           )}
         >
           <Image
@@ -53,6 +51,13 @@ const Page = () => {
           <p className='font-semibold text-base'>Driver</p>
         </button>
       </div>
+      <AuthBackAndContinueButton
+        backActive
+        continueActive={!!selected}
+        continueFnc={() => {
+          router.push(`/onboarding/${selected}`);
+        }}
+      />
     </div>
   );
 };

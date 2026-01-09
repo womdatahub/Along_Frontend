@@ -83,7 +83,7 @@ const Page = () => {
           required
           type='text'
           iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='text-lg focus:outline-none focus:ring-0'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
           label='First Name'
         />
         <AddInput
@@ -95,7 +95,7 @@ const Page = () => {
           required
           type='text'
           iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='text-lg focus:outline-none focus:ring-0'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
           label='Last Name'
         />
         <AddInput
@@ -107,8 +107,8 @@ const Page = () => {
           required
           type='text'
           iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='text-lg focus:outline-none focus:ring-0'
           label='Mobile Number'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
         />
 
         <DatePicker

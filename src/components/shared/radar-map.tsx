@@ -180,3 +180,38 @@ const RadarAutocomplete = ({
 };
 
 export { RadarAutocomplete };
+
+// CHANGE THESE
+const AUTOCOMPLETE_URL = "https://api.radar.io/v1/search/autocomplete";
+
+type RadarAutocompleteResult = {
+  address: {
+    formattedAddress: string;
+    placeLabel: string;
+  };
+  geometry: { coordinates: [number, number] };
+};
+const radarAutocompleteManual = async (
+  query: string
+): Promise<RadarAutocompleteResult[]> => {
+  if (!query || query.length < 3) return [];
+
+  const { data, status } = await axios(
+    `${AUTOCOMPLETE_URL}?query=${encodeURIComponent(
+      query
+    )}&layers=address,place`,
+    {
+      headers: {
+        Authorization: publishableKey,
+      },
+    }
+  );
+
+  if (status !== 200) {
+    throw new Error(`Radar autocomplete failed with: ${status} code`);
+  }
+  console.log(data);
+  return data.addresses ?? [];
+};
+
+export { radarAutocompleteManual };
