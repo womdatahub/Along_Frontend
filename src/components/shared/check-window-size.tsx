@@ -10,7 +10,7 @@ export const CheckWindowSize = ({
   const isMobile = useIsMobile();
   const pathname = usePathname();
 
-  if (isMobile && pathname !== "/") {
+  if (isMobile && pathname !== "/" && pathname !== "/about") {
     return (
       <div className='flex items-center justify-center h-screen w-screen'>
         <p className='text-lg font-semibold text-center px-4 animate-pulse'>

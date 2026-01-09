@@ -1,12 +1,19 @@
 "use client";
 import { LocationIcon } from "@public/svgs";
-import { AddressResult, RadarAutocomplete } from "@/components";
+import {
+  AddressResult,
+  Button,
+  RadarAutocomplete,
+  // radarAutocompleteManual,
+} from "@/components";
 import { useState } from "react";
 
 export const Hero = () => {
   const [autoCompleteAddress, setAutoCompleteAddress] = useState<
     AddressResult | undefined
   >(undefined);
+  // const [destination, setDestination] = useState<string>("");
+  // console.log(destination);
   return (
     <div className='pt-16 w-screen'>
       <section
@@ -26,8 +33,8 @@ export const Hero = () => {
           </div>
           <div className='flex gap-4 flex-col text-left md:ml-10 z-10'>
             <p className='text-2xl font-bold text-white'>Make a trip.</p>
-            <div className='flex bg-white rounded-lg overflow- gap-4 md:gap-8 justify-between text-black pl-4 md:pl-8'>
-              <div className='flex gap-4 md:gap-8 flex-1'>
+            <div className='flex bg-white rounded-lg overflow- gap-2 md:gap-8 justify-between text-black pl-2 md:pl-8'>
+              <div className='flex gap-2 md:gap-8 flex-1'>
                 <div className='self-center'>
                   <LocationIcon />
                 </div>
@@ -36,11 +43,21 @@ export const Hero = () => {
                     setAutoCompleteAddress={setAutoCompleteAddress}
                     placeholder='Enter your location'
                   />
+                  {/* <input
+                    name='destination'
+                    type='text'
+                    placeholder='Enter your destination'
+                    value={destination}
+                    onChange={(e) => {
+                      setDestination(e.target.value);
+                      radarAutocompleteManual(e.target.value);
+                    }}
+                  /> */}
                 </div>
               </div>
-              <div className='bg-primary px-6 py-4 md:py-6 w-24 h-full rounded-l-none md:w-40 text-white text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+              <Button className='bg-primary px-6 md:px-6 py-4 md:py-6 w-fit h-full rounded-l-none md:w-40 text-white text-base md:text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
                 Go
-              </div>
+              </Button>
             </div>
           </div>
         </div>
