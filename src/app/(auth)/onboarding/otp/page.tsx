@@ -93,7 +93,7 @@ const OTPVerification = () => {
           </div>
         </div>
         <AuthBackAndContinueButton
-          backActive={false}
+          backActive={true}
           continueActive={otpValue.length === 4 && !isLoading}
           continueFnc={continueFnc}
         />

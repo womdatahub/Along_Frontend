@@ -12,6 +12,7 @@ type Session = {
     registerUser: (data: {
       email: string;
       password: string;
+      phoneNumber: string;
       type: "email" | "phone";
     }) => Promise<boolean>;
     verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
@@ -115,6 +116,7 @@ export const useSession = create<Session>()((set) => ({
     },
     logOut: async () => {},
     registerUser: async (registerUserData) => {
+      console.log("this ran reisteruser");
       set({ isLoading: true });
       const path = userApiStr("/user/register");
 

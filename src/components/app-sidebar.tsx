@@ -8,16 +8,19 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { AdminLogoIcon } from "@public/svgs";
+import Link from "next/link";
 
 export const AppSidebar = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="bg-[#768B8F] pt-9 px-12">
-        <AdminLogoIcon />
+    <Sidebar collapsible='icon' {...props}>
+      <SidebarHeader className='bg-[#768B8F] pt-9 px-12'>
+        <Link href='/'>
+          <AdminLogoIcon />
+        </Link>
       </SidebarHeader>
-      <SidebarContent className="bg-[#768B8F]">
+      <SidebarContent className='bg-[#768B8F]'>
         <NavMain />
       </SidebarContent>
     </Sidebar>
