@@ -5,7 +5,7 @@ import {
   // CheckWindowSize,
   Toaster,
 } from "@/components";
-import { AuthProvider } from "@/store";
+// import { AuthProvider } from "@/store";
 
 import "./globals.css";
 
@@ -80,7 +80,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/80 selection:text-primary-foreground`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        {children}
         {/* <CheckWindowSize> */}
         {children}
         {/* </CheckWindowSize> */}
