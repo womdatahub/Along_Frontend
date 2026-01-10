@@ -315,17 +315,20 @@ export const useSession = create<Session>()((set) => ({
       }
     },
     fetchUserDetails: async () => {
+      set({ isLoading: true });
       const path = userApiStr("/user/profile");
 
       const { data, error } = await callApi(path);
 
       if (error) {
+        set({ isLoading: false });
         toast.error(error.message);
         return;
       }
 
       if (data) {
         console.log(data, path);
+        set({ isLoading: false });
       }
     },
     fetchVehicleViaClass: async (vehicleClass) => {
