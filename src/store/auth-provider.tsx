@@ -33,11 +33,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isLoading,
     actions: { fetchUserDetails },
   } = useSession(
-    useShallow((state) => ({
-      user: state.user,
-      isLoading: state.isLoading,
-      actions: state.actions,
-    }))
+    (state) => state
+    // useShallow((state) => ({
+    //   user: state.user,
+    //   isLoading: state.isLoading,
+    //   actions: state.actions,
+    // }))
   );
 
   // call getSession on mount once
@@ -75,6 +76,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
     );
+
+  if (!user) {
+    toast.error("You are not logged in");
+    router.push("/onboarding");
+    return null;
+  }
 
   return <Provider value={{}}>{children}</Provider>;
 };
