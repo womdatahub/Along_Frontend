@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { LogoIcon } from "@public/svgs";
 import Link from "next/link";
+import Image from "next/image";
 
 export const Navbar = () => {
   // const [menuOpen, setMenuOpen] = useState(false);
@@ -26,18 +27,30 @@ export const Navbar = () => {
         scrolled ? "bg-white/50" : "bg-white"
       }`}
     >
-      <div className="flex justify-between items-center h-20 px-4 md:px-0 max-w-6xl mx-auto ">
+      <div className='flex justify-between items-center h-20 px-4 md:px-0 max-w-6xl mx-auto '>
         {/* Logo */}
-        <Link href="/">
+        <Link href='/'>
           <LogoIcon />
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex gap-14 text-black text-xl">
-          <Link href="/about">About</Link>
-          <Link href="/onboarding">Ride</Link>
-          <Link href="/onboarding">Drive</Link>
-          <Link href="#">Help</Link>
+        <div className='hidden md:flex gap-14 text-black text-xl'>
+          <Link href='/about'>About</Link>
+          <Link href='/onboarding'>Ride</Link>
+          <Link href='/onboarding'>Drive</Link>
+          <Link href='#'>Help</Link>
+          <Link
+            href='/sign-in'
+            className='font-semibold flex items-center gap-2.5'
+          >
+            <Image
+              alt='profile img'
+              src='/images/account.png'
+              width={30}
+              height={30}
+            />
+            Sign in
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
