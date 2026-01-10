@@ -17,14 +17,14 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib";
 
-const Hero = () => {
+export const Hero = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Page />
     </Suspense>
   );
 };
-export const Page = () => {
+const Page = () => {
   const [autoCompleteAddress, setAutoCompleteAddress] = useState<
     AddressResult | undefined
   >(undefined);
