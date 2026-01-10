@@ -116,11 +116,14 @@ export const useSession = create<Session>()((set) => ({
     },
     logOut: async () => {},
     registerUser: async (registerUserData) => {
-      console.log("this ran reisteruser");
+      // console.log("this ran reisteruser");
       set({ isLoading: true });
       const path = userApiStr("/user/register");
+      const rest = (({ phoneNumber, ...rest }) => rest)(registerUserData);
 
-      const { data, error } = await callApi(path, registerUserData);
+      const { data, error } = await callApi(path, {
+        ...rest,
+      });
 
       if (error) {
         toast.error(error.message);
