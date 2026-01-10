@@ -45,14 +45,13 @@ const Page = () => {
       dateOfBirth: date.toISOString(),
       gender: selected,
     });
-    await registerRider({
+    const isSuccess = await registerRider({
       ...values,
       dateOfBirth: date.toISOString(),
       gender: selected as "male" | "female",
-    }).then((val) => {
-      if (val === false) return;
-      router.push("/rider-db");
     });
+    if (isSuccess === false) return;
+    router.push("/rider-db");
   };
 
   return (
