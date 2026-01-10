@@ -11,13 +11,20 @@ import {
   RadarAutocomplete,
   // radarAutocompleteManual,
 } from "@/components";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib";
 
-export const Hero = () => {
+const Hero = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Page />
+    </Suspense>
+  );
+};
+export const Page = () => {
   const [autoCompleteAddress, setAutoCompleteAddress] = useState<
     AddressResult | undefined
   >(undefined);

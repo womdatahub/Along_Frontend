@@ -178,6 +178,7 @@ const Page = () => {
         </div>
         <ButtonWithLoader
           isLoading={isLoading}
+          disabled={!isTermsAccepted}
           text='Continue'
           type='submit'
           variant='default'
