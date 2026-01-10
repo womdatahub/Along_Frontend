@@ -4,6 +4,8 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components";
 import { motion, AnimatePresence } from "framer-motion";
+// import { useRouter } from "next/navigation";
+import Link from "next/link";
 // import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const HowItWorks = () => {
@@ -34,6 +36,8 @@ export const HowItWorks = () => {
   }, [resetTimer]);
 
   const activeStep = steps[activeIndex];
+
+  // const router = useRouter();
 
   return (
     <section className='py-16 px-6 bg-white overflow-hidden'>
@@ -82,8 +86,12 @@ export const HowItWorks = () => {
             </AnimatePresence>
           </div>
 
-          <Button className='bg-primary px-6 py-2 text-white rounded-lg'>
-            Book Now
+          <Button
+            className='bg-primary px-6 py-2 text-white rounded-lg'
+            asChild
+            // onClick={() => router.push("/onboarding")}
+          >
+            <Link href='/onboarding'> Book Now</Link>
           </Button>
         </div>
 

@@ -8,7 +8,9 @@ import { toast } from "sonner";
 type Session = {
   user: string;
   isLoading: boolean;
+  services: string[];
   actions: {
+    setServices: (services: string[]) => void;
     registerUser: (data: {
       email: string;
       password: string;
@@ -91,12 +93,16 @@ type Session = {
 const initialState = {
   user: "",
   isLoading: false,
+  services: [],
 };
 
 export const useSession = create<Session>()((set) => ({
   ...initialState,
 
   actions: {
+    setServices: (services) => {
+      set({ services });
+    },
     login: async (loginData) => {
       set({ isLoading: true });
       const path = userApiStr("/user/login");

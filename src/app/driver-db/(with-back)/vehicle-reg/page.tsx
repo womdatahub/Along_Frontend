@@ -8,13 +8,9 @@ import { UploadImageIcon } from "@public/svgs";
 import { useState } from "react";
 
 const Page = () => {
-  const [previews, setPreviews] = useState<(ImageType | null)[]>([
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [previews, setPreviews] = useState<
+    ({ image: ImageType; uri: string } | null)[]
+  >([null, null, null, null, null]);
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-white text-black mb-32'>
       <div className='flex flex-col gap-2'>

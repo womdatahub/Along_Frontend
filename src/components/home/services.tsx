@@ -8,13 +8,13 @@ export const Services = () => {
       title: "Rent a ride",
       desc: "Perfect for daily use, events, or business trips. Flexible hourly, daily, rates.",
       img: "/images/rent-ride-small-car.png",
-      path: "/ride",
+      path: "/onboarding",
     },
     {
       title: "Schedule ride",
       desc: "Book ahead for peace of mind. special occasions, or planned journeys.",
       img: "/images/schedule-ride-small-car.png",
-      path: "/schedule-ride",
+      path: "/onboarding",
     },
   ];
 
@@ -50,6 +50,7 @@ export const Services = () => {
                     className='h-[72px] w-[100px] object-cover'
                   />
                 </div>
+
                 <Link href={s.path} className='text-primary font-bold text-xs'>
                   Details
                 </Link>
@@ -67,8 +68,8 @@ export const Services = () => {
                 </div>
                 <LogisticsIcon />
               </div>
-              <Link href='/ride' className='text-primary font-bold text-xs'>
-                Details
+              <Link href='/' className='text-primary font-bold text-xs'>
+                Coming soon
               </Link>
             </div>
           </div>

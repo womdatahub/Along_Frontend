@@ -11,12 +11,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
-  const [previews, setPreviews] = useState<(ImageType | null)[]>([
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [previews, setPreviews] = useState<
+    ({ image: ImageType; uri: string } | null)[]
+  >([null, null, null, null]);
   const router = useRouter();
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>

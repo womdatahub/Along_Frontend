@@ -2,20 +2,23 @@
 import { AuthBackAndContinueButton } from "@/components";
 import { HeadingHeebo } from "@/components";
 import { cn } from "@/lib";
+import { useSession } from "@/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 const Page = () => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const {
+    services,
+    actions: { setServices },
+  } = useSession((state) => state);
 
   const router = useRouter();
 
   const toggleOption = (option: string) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((opt) => opt !== option));
+    if (services.includes(option)) {
+      setServices(services.filter((opt) => opt !== option));
     } else {
-      setSelectedOptions([...selectedOptions, option]);
+      setServices([...services, option]);
     }
   };
   return (
@@ -51,7 +54,7 @@ const Page = () => {
                 <div
                   className={cn(
                     "size-4 bg-primaryLight",
-                    selectedOptions.includes(item.state) && "bg-primary"
+                    services.includes(item.state) && "bg-primary"
                   )}
                 />
               </button>
@@ -60,10 +63,10 @@ const Page = () => {
           <div className='flex justify-between items-center gap-3 px-4 mt-3'>
             <p>Select all</p>
             <div
-              onClick={() => setSelectedOptions(items.map((i) => i.state))}
+              onClick={() => setServices(items.map((i) => i.state))}
               className={cn(
                 "size-4 bg-primaryLight cursor-pointer",
-                selectedOptions.length === 3 && "bg-primary"
+                services.length === 3 && "bg-primary"
               )}
             />
           </div>
@@ -71,7 +74,7 @@ const Page = () => {
       </div>
       <AuthBackAndContinueButton
         backActive
-        continueActive={selectedOptions.length > 0}
+        continueActive={services.length > 0}
         continueFnc={() => {
           router.push("/onboarding/driver-info");
         }}

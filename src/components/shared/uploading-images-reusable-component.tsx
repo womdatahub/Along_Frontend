@@ -9,10 +9,13 @@ import { ImageType } from "@/types";
 type Props = {
   children: React.ReactNode;
   index: number;
-  previews: (ImageType | null)[];
-  setPreviews: React.Dispatch<React.SetStateAction<(ImageType | null)[]>>;
+  previews: ({ image: ImageType; uri: string } | null)[];
+  setPreviews: React.Dispatch<
+    React.SetStateAction<({ image: ImageType; uri: string } | null)[]>
+  >;
   className?: string;
   imageToastDescription: string;
+  // uploadToBucketFunction?:(image: ImageType) => void
 };
 export const UploadingImagesReusableComponent = ({
   children,
@@ -29,9 +32,12 @@ export const UploadingImagesReusableComponent = ({
         prev.map((item, id) =>
           id === index
             ? {
-                imageFile: file.result,
-                imageName: acceptedFiles[0].name,
-                imageSize: acceptedFiles[0].size,
+                image: {
+                  imageFile: file.result,
+                  imageName: acceptedFiles[0].name,
+                  imageSize: acceptedFiles[0].size,
+                },
+                uri: "",
               }
             : item
         )
@@ -65,9 +71,9 @@ export const UploadingImagesReusableComponent = ({
         className
       )}
     >
-      {previews[index]?.imageFile ? (
+      {previews[index]?.image.imageFile ? (
         <Image
-          src={(previews[index].imageFile as string) ?? ""}
+          src={(previews[index].image.imageFile as string) ?? ""}
           alt='image'
           width={100}
           height={100}

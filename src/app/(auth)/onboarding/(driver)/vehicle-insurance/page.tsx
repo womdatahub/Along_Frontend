@@ -16,7 +16,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 const Page = () => {
-  const [previews, setPreviews] = useState<(ImageType | null)[]>([null]);
+  const [previews, setPreviews] = useState<
+    ({ image: ImageType; uri: string } | null)[]
+  >([null]);
 
   const {
     register,
@@ -31,21 +33,21 @@ const Page = () => {
   });
   const router = useRouter();
   return (
-    <div className="flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black">
-      <div className="flex flex-col gap-2">
+    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
+      <div className='flex flex-col gap-2'>
         <HeadingHeebo>Vehicle Insurance</HeadingHeebo>
       </div>
-      <div className="flex flex-col gap-8">
+      <div className='flex flex-col gap-8'>
         <CustomAuthInput
-          label="Name of Insurance company"
-          placeholder="American insurance"
+          label='Name of Insurance company'
+          placeholder='American insurance'
         />
         <CustomAuthInput
-          label="Insurance policy number"
-          placeholder="00000000000000"
+          label='Insurance policy number'
+          placeholder='00000000000000'
         />
 
-        <div className="flex gap-4">
+        <div className='flex gap-4'>
           {/* <div className="flex flex-col gap-1 flex-1">
             <label className="font-semibold text-sm ml-5">
               Issued date
@@ -189,37 +191,37 @@ const Page = () => {
             </Dialog>
           </div> */}
           <AddInput
-            id="email"
+            id='email'
             errors={errors}
-            placeholder="Phone Number"
+            placeholder='Phone Number'
             register={register}
             disabled={false}
             required
-            type="text"
+            type='text'
             isReverse
             icon={<CalenderIcon />}
-            iconAndInputWrapperClassName="bg-white rounded-2xl h-16 px-2"
-            inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16 px-2'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
           />
 
           <AddInput
-            id="email"
+            id='email'
             errors={errors}
-            placeholder="Phone Number"
+            placeholder='Phone Number'
             register={register}
             disabled={false}
             required
-            type="text"
+            type='text'
             isReverse
             icon={<CalenderIcon />}
-            iconAndInputWrapperClassName="bg-white rounded-2xl h-16 px-2"
-            inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16 px-2'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
           />
         </div>
       </div>
-      <div className="flex flex-col gap-8 mb-8 text-center">
-        <div className="flex flex-col gap-1">
-          <label className="font-semibold text-sm ml-5">
+      <div className='flex flex-col gap-8 mb-8 text-center'>
+        <div className='flex flex-col gap-1'>
+          <label className='font-semibold text-sm ml-5'>
             Insurance document
           </label>
           <UploadingImagesReusableComponent
@@ -227,12 +229,12 @@ const Page = () => {
             index={0}
             previews={previews}
             setPreviews={setPreviews}
-            className="justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]"
-            imageToastDescription="Front of the driver license"
+            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
+            imageToastDescription='Front of the driver license'
           >
-            <div className="flex flex-col gap-2 justify-center items-center">
+            <div className='flex flex-col gap-2 justify-center items-center'>
               <UploadImageIcon />
-              <p className="text-sm font-medium">Upload Photo</p>
+              <p className='text-sm font-medium'>Upload Photo</p>
             </div>
           </UploadingImagesReusableComponent>
         </div>

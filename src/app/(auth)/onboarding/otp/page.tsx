@@ -26,7 +26,7 @@ const OTPVerification = () => {
   const email: string | null = searchParams.get("email");
 
   const {
-    isLoading,
+    // isLoading,
     actions: { resendVerificationOTP, verifyEmail },
   } = useSession((state) => state);
 
@@ -92,11 +92,11 @@ const OTPVerification = () => {
             </div>
           </div>
         </div>
-        <AuthBackAndContinueButton
+        {/* <AuthBackAndContinueButton
           backActive={true}
           continueActive={otpValue.length === 4 && !isLoading}
           continueFnc={continueFnc}
-        />
+        /> */}
       </div>
       <p className='text-base text-gray'>
         If you don’t see the code, check your spam folder too.
