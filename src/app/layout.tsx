@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fustat, Heebo } from "next/font/google";
 import {
-  CheckWindowSize,
+  // CheckWindowSize,
   // CheckWindowSize,
   Toaster,
 } from "@/components";
-// import { AuthProvider } from "@/store";
+import { AuthProvider } from "@/store";
 
 import "./globals.css";
 
@@ -80,7 +80,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/80 selection:text-primary-foreground`}
       >
-        {/* <AuthProvider>{children}</AuthProvider> */}
+        <AuthProvider>{children}</AuthProvider>
         {/* <CheckWindowSize> */}
         {children}
         {/* </CheckWindowSize> */}

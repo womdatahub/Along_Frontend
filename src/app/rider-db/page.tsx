@@ -16,9 +16,11 @@ import {
 } from "@public/svgs";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const Page = () => {
+  const router = useRouter();
   const {
     actions: { fetchUserDetails },
   } = useSession((state) => state);
@@ -147,7 +149,8 @@ const Page = () => {
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
               <div
                 key={item}
-                className='flex gap-3 pb-5 border-b border-b-[#D3D3D3]'
+                className='flex gap-3 pb-5 border-b border-b-[#D3D3D3] hover:cursor-pointer'
+                onClick={() => router.push("/rider-db/ride-details")}
               >
                 <div className='mt-5'>
                   <LocationPointerSvg />

@@ -4,12 +4,15 @@ import { LogoComponent } from "@/components";
 import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useEffect } from "react";
 import { toast } from "sonner";
+import { useSession } from "./use-session";
+import { useShallow } from "zustand/shallow";
 
 const Context = createContext({});
 const { Provider } = Context;
 
 const unprotectedRoutes = [
   "/",
+  "/about",
   "/sign-in",
   "/onboarding",
   "/onboarding/otp",
@@ -22,18 +25,30 @@ const unprotectedRoutes = [
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const user = "";
-  const loading = false;
   const pathName = usePathname();
   const router = useRouter();
 
+  const {
+    user,
+    isLoading,
+    actions: { fetchUserDetails },
+  } = useSession(
+    useShallow((state) => ({
+      user: state.user,
+      isLoading: state.isLoading,
+      actions: state.actions,
+    }))
+  );
+
   // call getSession on mount once
   useEffect(() => {
-    // getSession();
+    fetchUserDetails();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (isLoading) return;
 
     if (unprotectedRoutes.includes(pathName) && user) {
       router.push("/");
@@ -49,9 +64,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       router.push("/sign-in");
       return;
     }
-  }, [loading, user, pathName, router]);
+  }, [isLoading, user, pathName, router]);
 
-  if (loading)
+  if (isLoading)
     return (
       <div className='flex items-center justify-center w-screen h-screen'>
         <div className='flex flex-col items-center space-y-3'>
