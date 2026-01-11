@@ -82,7 +82,7 @@ export default function RootLayout({
       >
         {children}
         {/* <CheckWindowSize> */}
-        {children}
+        {/* {children} */}
         {/* </CheckWindowSize> */}
         <Toaster position='bottom-right' richColors />
       </body>
