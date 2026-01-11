@@ -10,6 +10,10 @@ type Session = {
   isLoading: boolean;
   services: string[];
   actions: {
+    uploadImages: (data: {
+      uploadType: "profile" | "vehicle" | "verification_document";
+      imageFile: string | ArrayBuffer | File | null;
+    }) => Promise<string>;
     setServices: (services: string[]) => void;
     registerUser: (data: {
       email: string;
@@ -31,13 +35,12 @@ type Session = {
       secondEmergencyContact: string;
     }) => Promise<void>;
     addVerificationDocumentsAndServices: (data: {
-      driverSocialSecurityNumber: string;
+      driverSocialSecurityNumberUri: string;
       driverProfilePictureUri: string;
       driverLincenseFrontViewUri: string;
       driverLincenseBackViewUri: string;
       advancedVerificationUri: string;
-      services: string[];
-    }) => Promise<void>;
+    }) => Promise<boolean>;
     registerVehicle: (data: {
       vehicleMake: string;
       vehicleIdentificationNumber: string;
@@ -48,7 +51,7 @@ type Session = {
       vehicleBackViewImageUri: string;
       vehicleSideViewImageUri: string;
       insuranceDocumentUri: string;
-    }) => Promise<void>;
+    }) => Promise<boolean>;
     registerRider: (data: {
       firstName: string;
       lastName: string;
@@ -96,10 +99,41 @@ const initialState = {
   services: [],
 };
 
-export const useSession = create<Session>()((set) => ({
+export const useSession = create<Session>()((set, get) => ({
   ...initialState,
 
   actions: {
+    uploadImages: async (d) => {
+      if (!d.imageFile) {
+        throw new Error("Image file is required");
+      }
+      const formData = new FormData();
+      formData.append("uploadType", d.uploadType);
+      if (d.imageFile instanceof ArrayBuffer) {
+        formData.append("image", new Blob([d.imageFile]));
+      } else {
+        formData.append("image", d.imageFile);
+      }
+
+      const { data, error } = await callApi(
+        userApiStr("/user/uploads"),
+        {
+          image: d.imageFile,
+          uploadType: d.uploadType,
+        },
+        "PATCH"
+      );
+
+      if (error) {
+        toast.error(error.message ?? "Failed to upload image");
+        return "";
+      }
+      if (data) {
+        console.log(data, "userApiStr('/user/upload')");
+      }
+      return "";
+    },
+
     setServices: (services) => {
       set({ services });
     },
@@ -205,20 +239,25 @@ export const useSession = create<Session>()((set) => ({
       addVerificationDocumentsAndServicesData
     ) => {
       const path = userApiStr("/user/documents-services");
-
       const { data, error } = await callApi(
         path,
-        addVerificationDocumentsAndServicesData,
+        {
+          ...addVerificationDocumentsAndServicesData,
+          services: get().services,
+        },
         "PATCH"
       );
 
       if (error) {
         toast.error(error.message);
-        return;
+        return false;
       }
       if (data) {
+        toast.success("Documents and services added successfully");
         console.log(data, path);
       }
+
+      return true;
     }, // PATCH
     registerVehicle: async (registerVehicleData) => {
       const path = userApiStr("/user/documents-services");
@@ -227,11 +266,13 @@ export const useSession = create<Session>()((set) => ({
 
       if (error) {
         toast.error(error.message);
-        return;
+        return false;
       }
       if (data) {
+        toast.success("Vehicle information added successfully");
         console.log(data, path);
       }
+      return true;
     },
     registerRider: async (registerRiderData) => {
       set({ isLoading: true });
