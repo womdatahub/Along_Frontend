@@ -1,7 +1,13 @@
 "use client";
-import { AuthBackAndContinueButton, CustomAuthInput } from "@/components";
+import { AddInput, AuthBackAndContinueButton } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components";
+import {
+  socialSecurityNumberSchema,
+  TSocialSecurityNumberSchemaValidator,
+} from "@/lib";
+import { useSession } from "@/store";
 import { ImageType } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AddPhotoIcon,
   DriverInformationIcon,
@@ -9,12 +15,63 @@ import {
 } from "@public/svgs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const Page = () => {
   const [previews, setPreviews] = useState<
     ({ image: ImageType; uri: string } | null)[]
   >([null, null, null, null]);
+  const [imagesUri, setImagesUri] = useState<string[]>([]);
+  const {
+    actions: { uploadImages, addVerificationDocumentsAndServices },
+  } = useSession((state) => state);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TSocialSecurityNumberSchemaValidator>({
+    defaultValues: {
+      socialSecurityNumber: "",
+    },
+    resolver: zodResolver(socialSecurityNumberSchema),
+  });
   const router = useRouter();
+
+  const onSubmit = async (v: TSocialSecurityNumberSchemaValidator) => {
+    console.log(v, errors);
+    if (previews.includes(null)) {
+      toast.error("All images are required");
+      return;
+    }
+    const uri = await uploadImages({
+      uploadType: "profile",
+      imageFile: previews[0]?.image.imageFile as ImageType["imageFile"],
+    });
+    if (!uri) return;
+    setImagesUri((prev) => [...prev, uri]);
+
+    for (let i = 0; i < previews.length; i++) {
+      if (i === 0) return;
+      const uri = await uploadImages({
+        uploadType: "verification_document",
+        imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
+      });
+      if (!uri) return;
+      setImagesUri((prev) => [...prev, uri]);
+    }
+
+    const isSuccess = await addVerificationDocumentsAndServices({
+      driverSocialSecurityNumberUri: v.socialSecurityNumber,
+      driverProfilePictureUri: imagesUri[0],
+      driverLincenseFrontViewUri: imagesUri[1],
+      driverLincenseBackViewUri: imagesUri[2],
+      advancedVerificationUri: imagesUri[3],
+    });
+    if (!isSuccess) return;
+    router.push("/onboarding/vehicle-info");
+  };
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-5'>
@@ -37,9 +94,21 @@ const Page = () => {
             </div>
           </UploadingImagesReusableComponent>
         </div>
-        <CustomAuthInput
+        {/* <CustomAuthInput
           label='Social Security Number'
           placeholder='000 000 00000'
+        /> */}
+        <AddInput
+          label='Social Security Number'
+          id='socialSecurityNumber'
+          errors={errors}
+          placeholder='000 000 00000'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
         />
         <div className='flex flex-col gap-1'>
           <label className='font-semibold text-sm ml-5'>Driver’s License</label>
@@ -100,11 +169,8 @@ const Page = () => {
 
       <AuthBackAndContinueButton
         backActive
-        continueActive
-        continueFnc={() => {
-          router.push("/onboarding/vehicle-info");
-        }}
-        //         continuePath='/onboarding/vehicle-info'
+        continueActive={!previews.includes(null)}
+        continueFnc={handleSubmit(onSubmit)}
       />
     </div>
   );
