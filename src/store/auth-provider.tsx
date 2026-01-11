@@ -33,12 +33,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isLoading,
     actions: { fetchUserDetails },
   } = useSession(
-    (state) => state
-    // useShallow((state) => ({
-    //   user: state.user,
-    //   isLoading: state.isLoading,
-    //   actions: state.actions,
-    // }))
+    useShallow((state) => ({
+      user: state.user,
+      isLoading: state.isLoading,
+      actions: state.actions,
+    }))
   );
 
   // call getSession on mount once
