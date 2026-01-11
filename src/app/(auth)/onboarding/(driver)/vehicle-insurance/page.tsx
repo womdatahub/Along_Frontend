@@ -38,13 +38,32 @@ const Page = () => {
         <HeadingHeebo>Vehicle Insurance</HeadingHeebo>
       </div>
       <div className='flex flex-col gap-8'>
-        <CustomAuthInput
+        <AddInput
+          id='email'
+          errors={errors}
           label='Name of Insurance company'
           placeholder='American insurance'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          isReverse
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16 px-2'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
         />
-        <CustomAuthInput
+
+        <AddInput
+          id='email'
+          errors={errors}
           label='Insurance policy number'
           placeholder='00000000000000'
+          register={register}
+          disabled={false}
+          required
+          type='text'
+          isReverse
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16 px-2'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
         />
 
         <div className='flex gap-4'>
@@ -192,8 +211,9 @@ const Page = () => {
           </div> */}
           <AddInput
             id='email'
+            label='Issued date'
             errors={errors}
-            placeholder='Phone Number'
+            placeholder='DD/MM/YYY'
             register={register}
             disabled={false}
             required
@@ -206,6 +226,7 @@ const Page = () => {
 
           <AddInput
             id='email'
+            label='Expiry date'
             errors={errors}
             placeholder='Phone Number'
             register={register}

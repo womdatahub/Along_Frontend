@@ -27,6 +27,26 @@ export const onboardingSchema = z.object({
     message: "Mobile number is required",
   }),
 });
+export const socialSecurityNumberSchema = z.object({
+  socialSecurityNumber: z
+    .string()
+    .min(1, "Social security number is required!"),
+});
+export const vehicleRegistrationSchema = z.object({
+  vehicleMake: z.string().min(1, "Car make is required!"),
+  vehicleModel: z.string().min(1, "Car model is required!"),
+  vehicleColor: z.string().min(1, "Car color is required!"),
+  vehicleYear: z.string().min(1, "Car year is required!"),
+  vehicleIdentificationNumber: z.string().min(1, "Car ID Number is required!"),
+});
+export const vehicleInsuranceSchema = z.object({
+  vehicleMake: z.string().min(1, "Car make is required!"),
+  vehicleModel: z.string().min(1, "Car model is required!"),
+  vehicleColor: z.string().min(1, "Car color is required!"),
+  vehicleYear: z.string().min(1, "Car year is required!"),
+  vehicleIdentificationNumber: z.string().min(1, "Car ID Number is required!"),
+});
+
 export const hearFromYouSchema = z.object({
   fullName: z.string(),
   email: z.email({ message: "Invalid email address" }),
@@ -76,3 +96,9 @@ export type TOnboardingValidator = z.infer<typeof onboardingSchema>;
 export type TRegisterRiderValidator = z.infer<typeof registerRiderSchema>;
 export type THearFromYouValidator = z.infer<typeof hearFromYouSchema>;
 export type TCreateAccountValidator = z.infer<typeof createAccountSchema>;
+export type TSocialSecurityNumberSchemaValidator = z.infer<
+  typeof socialSecurityNumberSchema
+>;
+export type TVehicleRegistrationSchemaValidator = z.infer<
+  typeof vehicleRegistrationSchema
+>;
