@@ -8,6 +8,7 @@ import {
   DialogTrigger,
   // GoogleMapAutoComplete,
   HeadingHeebo,
+  LoadingComponent,
   RadarAutocomplete,
   SelectDropdown,
 } from "@/components";
@@ -23,13 +24,20 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useShallow } from "zustand/shallow";
 import { RentRideDialogComponent } from "../rent-ride/page";
 
 const Page = () => {
+  return (
+    <Suspense fallback={<LoadingComponent />}>
+      <ScheduleRidePage />
+    </Suspense>
+  );
+};
+const ScheduleRidePage = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [issDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
