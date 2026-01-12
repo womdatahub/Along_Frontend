@@ -1,10 +1,5 @@
 "use client";
-import {
-  AddressResult,
-  HeadingHeebo,
-  RadarAutocomplete,
-  RadarMap,
-} from "@/components";
+import { HeadingHeebo, RadarAutocomplete, RadarMap } from "@/components";
 import Image from "next/image";
 
 import {
@@ -19,6 +14,7 @@ import { AccuracyIcon, WhiteForwardIcon } from "@public/svgs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AddressResult } from "@/types";
 
 const Page = () => {
   return (
@@ -72,7 +68,7 @@ const Ride = () => {
               >
                 <AccuracyIcon />
                 <RadarAutocomplete
-                  setAutoCompleteAddress={setAutoCompleteAddress}
+                  // setAutoCompleteAddress={setAutoCompleteAddress}
                   placeholder='Pick up location'
                 />
                 {/* <GoogleMapAutoComplete>

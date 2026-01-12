@@ -1,7 +1,6 @@
 "use client";
 import { LocationIcon } from "@public/svgs";
 import {
-  AddressResult,
   Button,
   Dialog,
   DialogContent,
@@ -11,11 +10,12 @@ import {
   RadarAutocomplete,
   // radarAutocompleteManual,
 } from "@/components";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib";
+import { useRadarMap } from "@/store";
 
 export const Hero = () => {
   return (
@@ -25,10 +25,6 @@ export const Hero = () => {
   );
 };
 const Page = () => {
-  const [autoCompleteAddress, setAutoCompleteAddress] = useState<
-    AddressResult | undefined
-  >(undefined);
-
   // const [destination, setDestination] = useState<string>("");
   // console.log(destination);
 
@@ -36,6 +32,8 @@ const Page = () => {
   const router = useRouter();
 
   const service = searchParams.get("service");
+
+  const { autoCompleteAddress, actions:{setAutoCompleteAddress} } = useRadarMap((state) => state);
 
   return (
     <div className='pt-16 w-screen'>

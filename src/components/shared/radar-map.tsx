@@ -4,6 +4,7 @@ import axios from "axios";
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
 import AutocompleteUI from "radar-sdk-js/dist/ui/autocomplete";
+import { AddressResult } from "@/types";
 
 const mapContainerId = "map";
 const publishableKey = process.env.NEXT_PUBLIC_RADAR_API_KEY || "";
@@ -120,34 +121,15 @@ const RadarMap = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
 
 export { RadarMap };
 
-export type AddressResult = {
-  addressLabel: string;
-  city: string;
-  country: string;
-  countryCode: string;
-  countryFlag: string;
-  county: string;
-  distance: number;
-  formattedAddress: string;
-  geometry: {
-    type: "Point";
-    coordinates: [number, number]; // [longitude, latitude]
-  };
-  latitude: number;
-  longitude: number;
-  state: string;
-  layer: string; // e.g. "locality"
-};
-
 type RadarAutoCompleteProps = {
-  setAutoCompleteAddress: React.Dispatch<
-    React.SetStateAction<AddressResult | undefined>
-  >;
   placeholder?: string;
+  defaultValue?: string;
+  setAutoCompleteAddress: (address: AddressResult) => void;
 };
 const RadarAutocomplete = ({
-  setAutoCompleteAddress,
   placeholder,
+  defaultValue,
+  setAutoCompleteAddress,
 }: RadarAutoCompleteProps) => {
   const autocompleteRef = useRef<AutocompleteUI>(null);
 
@@ -168,6 +150,7 @@ const RadarAutocomplete = ({
       ) as HTMLInputElement;
       if (input) {
         input.placeholder = placeholder || "Enter your address here";
+        input.value = defaultValue || "";
       }
     }, 100);
     return () => {
