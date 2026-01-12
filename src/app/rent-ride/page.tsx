@@ -31,7 +31,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
 const Page = () => {
@@ -80,11 +80,18 @@ const RentRide = () => {
   } = useRental(
     useShallow((state) => ({
       actions: state.actions,
+      availableVehicles: state.availableVehicles,
     }))
   );
 
   useEffect(() => {
-    retrieveAvailableVehicles();
+    retrieveAvailableVehicles({
+      vehicleType: vehicleType as string,
+      longitude: `${autoCompleteAddress?.longitude ?? 0}`,
+      latitude: `${autoCompleteAddress?.latitude ?? 0}`,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(availableVehicles, "available vehicles");
