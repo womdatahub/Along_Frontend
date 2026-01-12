@@ -14,8 +14,9 @@ type RadarMapProps = {
   drop?: [number, number];
   dropName?: string;
 };
-const RadarMap = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
+const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
   console.log(pickup, "pickup");
+
   useEffect(() => {
     Radar.initialize(publishableKey);
 
@@ -110,6 +111,7 @@ const RadarMap = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickup, drop]);
+  // [pickup?.[0], pickup?.[1], drop?.[0], drop?.[1]] correct one that prevents rerender
 
   return (
     <div
@@ -119,47 +121,54 @@ const RadarMap = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
   );
 };
 
-export { RadarMap };
+export const RadarMap = React.memo(Map);
 
 type RadarAutoCompleteProps = {
   placeholder?: string;
   defaultValue?: string;
+  containerID?: string;
   setAutoCompleteAddress: (address: AddressResult) => void;
 };
+// type RadarAutoCompleteProps = {
+//   placeholder?: string;
+//   defaultValue?: string;
+//   setAutoCompleteAddress: (addr: AddressResult) => void;
+// };
+
 const RadarAutocomplete = ({
   placeholder,
   defaultValue,
   setAutoCompleteAddress,
 }: RadarAutoCompleteProps) => {
-  const autocompleteRef = useRef<AutocompleteUI>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const autocompleteRef = useRef<AutocompleteUI | null>(null);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     Radar.initialize(publishableKey);
 
     autocompleteRef.current = Radar.ui.autocomplete({
-      container: "autocomplete",
-      width: "600px",
-      onSelection: (address: AddressResult) => {
-        setAutoCompleteAddress(address);
-      },
+      container: containerRef.current, // ✅ DOM node
+      width: "100%",
+      onSelection: setAutoCompleteAddress,
     });
 
-    setTimeout(() => {
-      const input = document.querySelector(
-        ".radar-autocomplete-input"
-      ) as HTMLInputElement;
-      if (input) {
-        input.placeholder = placeholder || "Enter your address here";
-        input.value = defaultValue || "";
-      }
-    }, 100);
+    const input = containerRef.current.querySelector(
+      ".radar-autocomplete-input"
+    ) as HTMLInputElement | null;
+
+    if (input) {
+      input.placeholder = placeholder ?? "Enter your address here";
+      input.value = defaultValue ?? "";
+    }
+
     return () => {
       autocompleteRef.current?.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [placeholder, defaultValue, setAutoCompleteAddress]);
 
-  return <div id='autocomplete' className='flex-1' />;
+  return <div ref={containerRef} className='flex-1' />;
 };
 
 export { RadarAutocomplete };

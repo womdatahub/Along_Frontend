@@ -14,7 +14,7 @@ import { AccuracyIcon, WhiteForwardIcon } from "@public/svgs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AddressResult } from "@/types";
+import { AddressResult, carTypes } from "@/types";
 
 const Page = () => {
   return (
@@ -68,7 +68,7 @@ const Ride = () => {
               >
                 <AccuracyIcon />
                 <RadarAutocomplete
-                  // setAutoCompleteAddress={setAutoCompleteAddress}
+                  setAutoCompleteAddress={setAutoCompleteAddress}
                   placeholder='Pick up location'
                 />
                 {/* <GoogleMapAutoComplete>
@@ -266,29 +266,6 @@ const Ride = () => {
   );
 };
 export default Page;
-
-const carTypes = [
-  {
-    name: "Economy",
-    seat: 4,
-  },
-  {
-    name: "Comfort",
-    seat: 4,
-  },
-  {
-    name: "Comfort XL",
-    seat: 4,
-  },
-  {
-    name: "Luxury",
-    seat: 4,
-  },
-  {
-    name: "Luxury XL",
-    seat: 6,
-  },
-];
 
 const rideRental = [
   { title: "Rent instant ride", image: "/images/instant-ride.png" },

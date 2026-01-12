@@ -15,6 +15,7 @@ import {
 } from "@/components";
 import { cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap } from "@/store";
+import { carTypes } from "@/types";
 import {
   AccuracyIcon,
   EditIcon,
@@ -45,7 +46,8 @@ const RentRide = () => {
   const [selectedHours, setSelectedHours] = useState<string>("");
   const [selectedHoursLength, setSelectedHoursLength] = useState<string>("");
   const [selectedMins, setSelectedMins] = useState<string>("");
-  const [selectAmOrPm, setSelectAmOrPm] = useState<string>("");
+  const [selectAmOrPm, setSelectAmOrPm] = useState<string>("am");
+  const [pickupModalOpen, setPickupModalOpen] = useState(false);
 
   // const { loading, error, longitude, latitude } = useGetCurrentLocation();
 
@@ -57,14 +59,15 @@ const RentRide = () => {
   const vehicleType = searchParams.get("vehicleType");
   const selectedDriver = searchParams.get("selectedDriver");
   const isReview = !!searchParams.get("isReview");
-  const isLater = !!searchParams.get("isLater");
+  const isLater = !!!searchParams.get("isLater");
 
   const func = (driver: string) =>
     router.push(
-      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${driver}`
+      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${driver}&isLater=${isLater}`
     );
 
   const {
+    autoCompleteAddress,
     actions: { setAutoCompleteAddress },
   } = useRadarMap((state) => state);
   return (
@@ -100,6 +103,10 @@ const RentRide = () => {
 
                 <RadarAutocomplete
                   setAutoCompleteAddress={setAutoCompleteAddress}
+                  defaultValue={
+                    autoCompleteAddress &&
+                    `${autoCompleteAddress?.formattedAddress}`
+                  }
                 />
                 {/* <GoogleMapAutoComplete>
                   <input
@@ -123,6 +130,7 @@ const RentRide = () => {
                   ) : (
                     <Button
                       variant={"default"}
+                      disabled={!autoCompleteAddress}
                       className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
                     >
                       <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
@@ -169,7 +177,7 @@ const RentRide = () => {
                             key={car.name}
                             className={cn(
                               "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                              vehicleType === title && "bg-primary"
+                              vehicleType === title && "bg-primary text-white"
                             )}
                           >
                             <Image
@@ -255,6 +263,7 @@ const RentRide = () => {
                             pathname: "/rent-ride",
                             query: {
                               vehicleType,
+                              isLater,
                             },
                           }}
                         >
@@ -271,8 +280,15 @@ const RentRide = () => {
                           <Dialog>
                             <DialogTrigger asChild>
                               <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
-                                <p className='text-icons font-medium text-xs'>
-                                  Choose rent duration
+                                <p
+                                  className={cn(
+                                    "text-icons font-medium text-xs",
+                                    selectedHoursLength && "text-black"
+                                  )}
+                                >
+                                  {selectedHoursLength
+                                    ? selectedHoursLength
+                                    : "Choose rent duration"}
                                 </p>
                                 <Return24Icon />
                               </div>
@@ -341,11 +357,24 @@ const RentRide = () => {
                         </div>
                         <div className='flex flex-col gap-1 w-full'>
                           <p className='pl-4 font-bold text-sm'>Pick up time</p>
-                          <Dialog>
+                          <Dialog
+                            open={pickupModalOpen}
+                            onOpenChange={setPickupModalOpen}
+                          >
                             <DialogTrigger asChild>
                               <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
-                                <p className='text-icons font-medium text-xs'>
-                                  Choose a pick up time
+                                <p
+                                  className={cn(
+                                    "text-icons font-medium text-xs",
+                                    selectedHours &&
+                                      selectedMins &&
+                                      selectAmOrPm &&
+                                      "text-black"
+                                  )}
+                                >
+                                  {selectedHours && selectedMins && selectAmOrPm
+                                    ? `${selectedHours} : ${selectedMins} ${selectAmOrPm}`
+                                    : "Choose a pick up time"}
                                 </p>
                                 <TimerIcon />
                               </div>
@@ -367,20 +396,9 @@ const RentRide = () => {
                                       <div className='flex p-4 gap-2 items-center'>
                                         <p className='text-sm'>Hour</p>
                                         <SelectDropdown
-                                          options={[
-                                            "1",
-                                            "2",
-                                            "3",
-                                            "4",
-                                            "5",
-                                            "6",
-                                            "7",
-                                            "8",
-                                            "9",
-                                            "10",
-                                            "11",
-                                            "12",
-                                          ]}
+                                          options={Array(12)
+                                            .fill(0)
+                                            .map((_, i) => `${i + 1}`)}
                                           triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                           triggerLabel='1'
                                           withoutIcon
@@ -392,20 +410,12 @@ const RentRide = () => {
                                       <div className='flex p-4 gap-2 items-center'>
                                         <p className='text-sm'>Min</p>
                                         <SelectDropdown
-                                          options={[
-                                            "1",
-                                            "2",
-                                            "3",
-                                            "4",
-                                            "5",
-                                            "6",
-                                            "7",
-                                            "8",
-                                            "9",
-                                            "10",
-                                            "11",
-                                            "12",
-                                          ]}
+                                          options={Array(60)
+                                            .fill(0)
+                                            .map(
+                                              (_, i) =>
+                                                `${i <= 10 ? "0" : ""}${i + 1}`
+                                            )}
                                           triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                           triggerLabel='1'
                                           withoutIcon
@@ -425,7 +435,10 @@ const RentRide = () => {
                                       />
                                     </div>
                                   </div>
-                                  <Button className='rounded-full self-center'>
+                                  <Button
+                                    onClick={() => setPickupModalOpen(false)}
+                                    className='rounded-full self-center'
+                                  >
                                     OK
                                   </Button>
                                 </div>
@@ -464,7 +477,9 @@ const RentRide = () => {
                                 <DialogTitle>Choose rent date</DialogTitle>
                               </VisuallyHidden>
                               <RentRideDialogComponent
-                                title={formatDateToDDMMYYYY(date as Date)}
+                                title={
+                                  date ? formatDateToDDMMYYYY(date as Date) : ""
+                                }
                                 subTitle=''
                                 isTitleCentered
                               >
@@ -542,6 +557,7 @@ const RentRide = () => {
                           vehicleType,
                           selectedDriver,
                           isReview: true,
+                          isLater,
                         },
                       }}
                     >
@@ -569,35 +585,17 @@ const RentRide = () => {
         {/* <div className='bg-red- w-full h-full min-h-40 sticky top-0' /> */}
 
         {/* <GoogleMaps /> */}
-        <RadarMap />
+        <RadarMap
+          pickup={[
+            autoCompleteAddress?.longitude ?? 0,
+            autoCompleteAddress?.latitude ?? 0,
+          ]}
+        />
       </div>
     </div>
   );
 };
 export default Page;
-
-const carTypes = [
-  {
-    name: "Economy",
-    seat: 4,
-  },
-  {
-    name: "Comfort",
-    seat: 4,
-  },
-  {
-    name: "Comfort XL",
-    seat: 4,
-  },
-  {
-    name: "Luxury",
-    seat: 4,
-  },
-  {
-    name: "Luxury XL",
-    seat: 6,
-  },
-];
 
 const driverInfo = [
   {

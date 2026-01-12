@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib";
 import { useRadarMap } from "@/store";
+import { carTypes } from "@/types";
 
 export const Hero = () => {
   return (
@@ -33,7 +34,10 @@ const Page = () => {
 
   const service = searchParams.get("service");
 
-  const { autoCompleteAddress, actions:{setAutoCompleteAddress} } = useRadarMap((state) => state);
+  const {
+    autoCompleteAddress,
+    actions: { setAutoCompleteAddress },
+  } = useRadarMap((state) => state);
 
   return (
     <div className='pt-16 w-screen'>
@@ -63,6 +67,10 @@ const Page = () => {
                   <RadarAutocomplete
                     setAutoCompleteAddress={setAutoCompleteAddress}
                     placeholder='Enter your location'
+                    defaultValue={
+                      autoCompleteAddress &&
+                      `${autoCompleteAddress?.formattedAddress}`
+                    }
                   />
                   {/* <input
                     name='destination'
@@ -104,7 +112,7 @@ const Page = () => {
                     </div>
                     <div className='flex flex-col gap-4'>
                       <div className='flex flex-col gap-1'>
-                        {items.map((item, i) => {
+                        {modalItems.map((item, i) => {
                           return (
                             <ServiceDialog
                               key={i}
@@ -112,6 +120,10 @@ const Page = () => {
                                 <button
                                   key={item.state}
                                   onClick={() => {
+                                    if (item.state === "scheduled") {
+                                      router.push("/schedule-ride");
+                                      return;
+                                    }
                                     router.push(
                                       `?service=${item.state.toLowerCase()}`
                                     );
@@ -136,6 +148,37 @@ const Page = () => {
                                 </button>
                               }
                             />
+                          );
+                        })}
+                        {nonModalItems.map((item, i) => {
+                          return (
+                            <button
+                              key={item.state}
+                              disabled={item.disabled}
+                              onClick={() => {
+                                if (item.state === "scheduled") {
+                                  router.push("/schedule-ride");
+                                  return;
+                                }
+                              }}
+                              className={cn(
+                                "disabled:cursor-not-allowed flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
+                                service === item.state &&
+                                  "bg-primary/70 text-white"
+                              )}
+                            >
+                              <div className='flex gap-4 items-center'>
+                                <Image
+                                  src={item.img}
+                                  alt={item.state}
+                                  width={40}
+                                  height={40}
+                                />
+                                <p className='font-medium text-xs'>
+                                  {item.title}
+                                </p>
+                              </div>
+                            </button>
                           );
                         })}
                       </div>
@@ -242,9 +285,11 @@ const ServiceDialog = ({ trigger }: ServiceDialogType) => {
                             <Button
                               // disabled
                               onClick={() => {
-                                router.push(
-                                  `?service=${service}&rentalType=${rentalType}&vehicleType=${title}`
-                                );
+                                const path = `/rent-ride?isLater=${
+                                  rentalType === "rent-for-later"
+                                }&rentalType=${rentalType}&vehicleType=${title}`;
+
+                                router.push(path);
                               }}
                               key={car.name}
                               className={cn(
@@ -280,48 +325,29 @@ const ServiceDialog = ({ trigger }: ServiceDialogType) => {
   );
 };
 
-const carTypes = [
-  {
-    name: "Economy",
-    seat: 4,
-  },
-  {
-    name: "Comfort",
-    seat: 4,
-  },
-  {
-    name: "Comfort XL",
-    seat: 4,
-  },
-  {
-    name: "Luxury",
-    seat: 4,
-  },
-  {
-    name: "Luxury XL",
-    seat: 6,
-  },
-];
-
 const rideRental = [
   { title: "Rent instant ride", image: "/images/instant-ride.png" },
   { title: "Rent for later", image: "/images/later-ride.png" },
 ];
 
-const items = [
+const modalItems = [
   {
     state: "rental",
     title: "Ride Rental",
     img: "/images/rental.png",
   },
+];
+const nonModalItems = [
   {
     state: "scheduled",
     title: "Scheduled Ride",
     img: "/images/scheduled.png",
+    disabled: false,
   },
   {
     state: "logistics",
     title: "Logistics",
     img: "/images/logistics.png",
+    disabled: true,
   },
 ];
