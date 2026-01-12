@@ -12,6 +12,7 @@ import {
   RadarMap,
   SelectDropdown,
   Switch,
+  LoadingComponent,
 } from "@/components";
 import { cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap } from "@/store";
@@ -33,7 +34,7 @@ import { Suspense, useState } from "react";
 
 const Page = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingComponent />}>
       <RentRide />
     </Suspense>
   );

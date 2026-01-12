@@ -1,10 +1,10 @@
 "use client";
 import {
-  AuthBackAndContinueButton,
   Button,
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
+  LoadingComponent,
 } from "@/components";
 import { HeadingHeebo } from "@/components";
 import { useSession } from "@/store";
@@ -14,7 +14,7 @@ import { Suspense, useState } from "react";
 
 const Page = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingComponent />}>
       <OTPVerification />
     </Suspense>
   );

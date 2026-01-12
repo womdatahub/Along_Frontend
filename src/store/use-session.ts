@@ -116,12 +116,15 @@ export const useSession = create<Session>()((set, get) => ({
       }
 
       const { data, error } = await callApi(
-        userApiStr("/user/uploads"),
-        {
-          image: d.imageFile,
-          uploadType: d.uploadType,
-        },
+        userApiStr("/user/upload"), // "/api/v1/user/uploads",
+        formData,
         "PATCH"
+        // userApiStr("/user/uploads"),
+        // {
+        //   image: d.imageFile,
+        //   uploadType: d.uploadType,
+        // },
+        // "PATCH"
       );
 
       if (error) {

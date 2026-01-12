@@ -43,6 +43,9 @@ const Page = () => {
   const [selectedMins, setSelectedMins] = useState<string>("");
   const [selectAmOrPm, setSelectAmOrPm] = useState<string>("am");
 
+  const searchParams = useSearchParams();
+  const vehicleType = searchParams.get("vehicleType");
+
   const {
     autoCompleteAddress,
     toAutoCompleteAddress,
@@ -54,12 +57,6 @@ const Page = () => {
       actions: state.actions,
     }))
   );
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const vehicleType = searchParams.get("vehicleType");
-  const rentalType = searchParams.get("rentalType");
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>

@@ -150,7 +150,7 @@ const Page = () => {
                             />
                           );
                         })}
-                        {nonModalItems.map((item, i) => {
+                        {nonModalItems.map((item) => {
                           return (
                             <button
                               key={item.state}

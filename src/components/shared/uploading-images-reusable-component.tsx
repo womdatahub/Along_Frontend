@@ -54,7 +54,7 @@ export const UploadingImagesReusableComponent = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxFiles: 1,
-    maxSize: 3145728,
+    maxSize: 50 * 1024 * 1024,
     accept: {
       "image/jpeg": [],
       "image/png": [],

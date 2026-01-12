@@ -1,11 +1,11 @@
 "use client";
 
-import { LogoComponent } from "@/components";
 import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useEffect } from "react";
 import { toast } from "sonner";
 import { useSession } from "./use-session";
 import { useShallow } from "zustand/shallow";
+import { LoadingComponent } from "@/components";
 
 const Context = createContext({});
 const { Provider } = Context;
@@ -66,15 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isLoading, user, pathName, router]);
 
-  if (isLoading)
-    return (
-      <div className='flex items-center justify-center w-screen h-screen'>
-        <div className='flex flex-col items-center space-y-3'>
-          <LogoComponent withoutLink />
-          <p className='text-sm animate-pulse'>Loading Account...</p>
-        </div>
-      </div>
-    );
+  if (isLoading) return <LoadingComponent />;
 
   if (!user) {
     toast.error("You are not logged in");

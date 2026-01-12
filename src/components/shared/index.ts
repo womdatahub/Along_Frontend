@@ -10,3 +10,4 @@ export * from "./add-input";
 export * from "./radar-map";
 export * from "./btn-loader";
 export * from "./button-with-loader";
+export * from "./loading-component";
