@@ -16,6 +16,7 @@ import {
 } from "@/components";
 import { cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap } from "@/store";
+import { useRental } from "@/store/use-rental";
 import { carTypes } from "@/types";
 import {
   AccuracyIcon,
@@ -31,6 +32,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
   return (
@@ -71,6 +73,21 @@ const RentRide = () => {
     autoCompleteAddress,
     actions: { setAutoCompleteAddress },
   } = useRadarMap((state) => state);
+
+  const {
+    availableVehicles,
+    actions: { retrieveAvailableVehicles },
+  } = useRental(
+    useShallow((state) => ({
+      actions: state.actions,
+    }))
+  );
+
+  useEffect(() => {
+    retrieveAvailableVehicles();
+  }, []);
+
+  console.log(availableVehicles, "available vehicles");
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
