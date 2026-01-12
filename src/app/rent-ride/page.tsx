@@ -72,7 +72,7 @@ const RentRide = () => {
   } = useRadarMap((state) => state);
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-y-scroll'>
+    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
       <div className='flex gap-4 h-full'>
         <div className='flex flex-col gap-10 min-w-[40%] h-full'>
           <div className='flex flex-col'>
