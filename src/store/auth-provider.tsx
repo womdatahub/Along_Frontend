@@ -18,10 +18,10 @@ const unprotectedRoutes = [
   "/onboarding/otp",
   "/onboarding/rider",
   "/onboarding/user-type",
-  "/onboarding/driver/terms",
-  "/onboarding/driver/services",
-  "/onboarding/driver/driver-info",
-  "/onboarding/driver/vehicle-info",
+  "/onboarding/terms",
+  "/onboarding/services",
+  "/onboarding/driver-info",
+  "/onboarding/vehicle-info",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
