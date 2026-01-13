@@ -8,6 +8,7 @@ import {
 // import { AuthProvider } from "@/store";
 
 import "./globals.css";
+import { AuthProvider } from "@/store";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,7 +81,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/80 selection:text-primary-foreground`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
         {/* <CheckWindowSize> */}
         {/* {children} */}
         {/* </CheckWindowSize> */}

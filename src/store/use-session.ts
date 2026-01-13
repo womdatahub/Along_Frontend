@@ -9,7 +9,9 @@ type Session = {
   user: string;
   isLoading: boolean;
   services: string[];
+  routeBeforeRedirect: string;
   actions: {
+    setRouteBeforeRedirect: (route: string) => void;
     uploadImages: (data: {
       uploadType: "profile" | "vehicle" | "verification_document";
       imageFile: string | ArrayBuffer | File | null;
@@ -35,7 +37,7 @@ type Session = {
       secondEmergencyContact: string;
     }) => Promise<void>;
     addVerificationDocumentsAndServices: (data: {
-      driverSocialSecurityNumberUri: string;
+      driverSocialSecurityNumber: string;
       driverProfilePictureUri: string;
       driverLincenseFrontViewUri: string;
       driverLincenseBackViewUri: string;
@@ -97,12 +99,16 @@ const initialState = {
   user: "",
   isLoading: false,
   services: [],
+  routeBeforeRedirect: "",
 };
 
 export const useSession = create<Session>()((set, get) => ({
   ...initialState,
 
   actions: {
+    setRouteBeforeRedirect: (route) => {
+      set({ routeBeforeRedirect: route });
+    },
     uploadImages: async (d) => {
       if (!d.imageFile) {
         throw new Error("Image file is required");
@@ -117,8 +123,8 @@ export const useSession = create<Session>()((set, get) => ({
 
       const { data, error } = await callApi(
         userApiStr("/user/upload"), // "/api/v1/user/uploads",
-        formData,
-        "PATCH"
+        formData
+        // "PATCH"
         // userApiStr("/user/uploads"),
         // {
         //   image: d.imageFile,

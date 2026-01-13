@@ -12,7 +12,8 @@ const Page = () => {
   const router = useRouter();
   const {
     isLoading,
-    actions: { login },
+    routeBeforeRedirect,
+    actions: { login, setRouteBeforeRedirect },
   } = useSession((state) => state);
 
   const {
@@ -32,6 +33,11 @@ const Page = () => {
     await login(values).then((val) => {
       if (val === false) return;
       console.log("val from login", val);
+      if (routeBeforeRedirect) {
+        router.push(routeBeforeRedirect);
+        setRouteBeforeRedirect("");
+        return;
+      }
       router.push("/rider-db");
     });
   };

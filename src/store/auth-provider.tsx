@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSession } from "./use-session";
 import { useShallow } from "zustand/shallow";
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const {
     user,
     isLoading,
-    actions: { fetchUserDetails },
+    actions: { fetchUserDetails, setRouteBeforeRedirect },
   } = useSession(
     useShallow((state) => ({
       user: state.user,
@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // call getSession on mount once
   useEffect(() => {
+    if (unprotectedRoutes.includes(pathName)) return;
     fetchUserDetails();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,18 +62,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       pathName !== "/sign-in"
     ) {
       toast.error("You are not logged in");
+      setRouteBeforeRedirect(pathName);
       router.push("/sign-in");
       return;
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, user, pathName, router]);
 
   if (isLoading) return <LoadingComponent />;
 
-  if (!user) {
-    toast.error("You are not logged in");
-    router.push("/onboarding");
-    return null;
-  }
+  // if (!user) {
+  //   toast.error("You are not logged in");
+  //   setRouteBeforeRedirect(pathName);
+  //   router.push("/sign-in");
+  //   return null;
+  // }
 
   return <Provider value={{}}>{children}</Provider>;
 };

@@ -85,14 +85,19 @@ const RentRide = () => {
   );
 
   useEffect(() => {
+    if (!autoCompleteAddress) return;
     retrieveAvailableVehicles({
-      vehicleType: vehicleType as string,
-      longitude: `${autoCompleteAddress?.longitude ?? 0}`,
-      latitude: `${autoCompleteAddress?.latitude ?? 0}`,
+      vehicleClass: vehicleType ? (vehicleType as string) : "economy",
+      longitude: `${autoCompleteAddress.longitude}`,
+      latitude: `${autoCompleteAddress.latitude}`,
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    vehicleType,
+    autoCompleteAddress?.longitude,
+    autoCompleteAddress?.latitude,
+  ]);
 
   console.log(availableVehicles, "available vehicles");
   return (
@@ -133,14 +138,6 @@ const RentRide = () => {
                     `${autoCompleteAddress?.formattedAddress}`
                   }
                 />
-                {/* <GoogleMapAutoComplete>
-                  <input
-                    className={cn(
-                      "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full flex-1"
-                    )}
-                    placeholder='Pick up location'
-                  />
-                </GoogleMapAutoComplete> */}
               </div>
 
               <Dialog open={open} onOpenChange={setOpen}>
