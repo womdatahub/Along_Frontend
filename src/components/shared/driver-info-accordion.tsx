@@ -6,6 +6,7 @@ import {
   Button,
   HeadingHeebo,
 } from "@/components";
+import { VehicleLocation } from "@/types";
 import {
   DistanceTraveledIcon,
   FilledGreenStarIcon,
@@ -31,9 +32,10 @@ type Props = {
       content: string;
     }[];
   }[];
-  func: (value: string) => void;
+  vehicle: VehicleLocation;
+  func: ( selectedDriver: VehicleLocation) => void;
 };
-export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
+export const DriverInfoAccordion = ({ driverInfo, vehicle, func }: Props) => {
   return (
     <Accordion
       type='single'
@@ -45,7 +47,9 @@ export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
         return (
           <AccordionItem
             key={i}
-            value={`${info.name}-${info.carName}-${info.price}`}
+            value={` 
+            ${vehicle.driverInfo.firstName} ${vehicle.driverInfo.lastName}-
+            ${vehicle.vehicleInfo.vehicleModel}`}
             className='border-b-0 bg-white rounded-2xl '
           >
             <AccordionTrigger className='hover:no-underline cursor-pointer pr-4 py-2 items-center'>
@@ -59,11 +63,21 @@ export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
                     className='w-[100px]'
                   />
                   <div className='flex flex-col'>
-                    <p className='font-semibold text-base'>{info.carName}</p>
-                    <p className='text-sm text-[#858585]'>{info.name}</p>
+                    <p className='font-semibold text-base'>
+                      {vehicle.vehicleInfo.vehicleMake}
+                      {/* {info.carName} */}
+                    </p>
+                    <p className='text-sm text-[#858585]'>
+                      {`${vehicle.driverInfo.firstName} ${vehicle.driverInfo.lastName}  `}{" "}
+                      {/* {info.name} */}
+                    </p>
                   </div>
                 </div>
-                <p className='font-extrabold text-lg'>${info.price}.00/hr</p>
+                <p className='font-extrabold text-lg'>
+                  ${vehicle.driverInfo.rideProfile.ratePerHour}
+                  {/* {info.price} */}
+                  .00/hr
+                </p>
               </div>
             </AccordionTrigger>
             <AccordionContent className='flex flex-col gap-10 px-4'>
@@ -92,7 +106,7 @@ export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
                   <div className='flex gap-4 items-center'>
                     <div className='p-[2px] rounded-full bg-white'>
                       <Image
-                        src='/images/profile.jpg'
+                        src={"/images/profile.jpg"}
                         alt='profile-image'
                         className='rounded-full w-[66px] object-cover aspect-square'
                         width={40}
@@ -100,12 +114,17 @@ export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
                       />
                     </div>
                     <HeadingHeebo className='font-fustat text-xl font-semibold text-left'>
-                      {info.name}
+                      {`${vehicle.driverInfo.firstName} ${vehicle.driverInfo.lastName}  `}{" "}
+                      {/* {info.name} */}
                     </HeadingHeebo>
                   </div>
                   <div className='flex items-center gap-2 text-lg'>
                     <FilledGreenStarIcon />
-                    <p>{info.rating} Rating</p>
+                    <p>
+                      {vehicle.driverInfo.rating.numberOfRatings}
+                      {/* {info.rating}{" "} */}
+                      Rating
+                    </p>
                   </div>
                 </div>
               </div>
@@ -136,7 +155,11 @@ export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
                     <PassengerCapacityIcon />
                     <p className='font-semibold text-sm'>Passenger Capacity</p>
                   </div>
-                  <p className='text-base'>{info.passengerCapacity} Persons</p>
+                  <p className='text-base'>
+                    {vehicle.capacity}
+                    {/* {info.passengerCapacity}  */}
+                    Persons
+                  </p>
                 </div>
                 <div className='flex justify-between gap-6 items-center border-b border-b-[#EDEDED] pb-3'>
                   <div className='flex gap-6 items-center'>
@@ -144,16 +167,20 @@ export const DriverInfoAccordion = ({ driverInfo, func }: Props) => {
                     <p className='font-semibold text-sm'>Pets</p>
                   </div>
                   <p className='text-base'>
-                    {info.petsAllowed ? "Allowed" : "Not allowed"}
+                    {vehicle.driverInfo.rideProfile.allowPets
+                      ? "Allowed"
+                      : "Not allowed"}
+                    {/* {info.petsAllowed ? "Allowed" : "Not allowed"} */}
                   </p>
                 </div>
               </div>
               <Button
                 onClick={() =>
                   func(
-                    info.carConditions[info.carConditions.length - 1].content
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")
+                    vehicle
+                    // info.carConditions[info.carConditions.length - 1].content
+                    //   .toLowerCase()
+                    //   .replace(/\s+/g, "-")
                   )
                 }
                 className='w-fit rounded-2xl hover:cursor-pointer'

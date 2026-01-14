@@ -17,7 +17,7 @@ import {
 import { cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap } from "@/store";
 import { useRental } from "@/store/use-rental";
-import { carTypes } from "@/types";
+import { carTypes, VehicleLocation } from "@/types";
 import {
   AccuracyIcon,
   EditIcon,
@@ -51,10 +51,8 @@ const RentRide = () => {
   const [selectedMins, setSelectedMins] = useState<string>("");
   const [selectAmOrPm, setSelectAmOrPm] = useState<string>("am");
   const [pickupModalOpen, setPickupModalOpen] = useState(false);
-
-  // const { loading, error, longitude, latitude } = useGetCurrentLocation();
-
-  // console.log(loading, error, longitude, latitude);
+  const [selectedDriverDetails, setSelectedDriverDetails] =
+    useState<VehicleLocation | null>(null);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -64,19 +62,20 @@ const RentRide = () => {
   const isReview = !!searchParams.get("isReview");
   const isLater = !!!searchParams.get("isLater");
 
-  const func = (driver: string) =>
+  const func = (selectedDriver: VehicleLocation) => {
+    setSelectedDriverDetails(selectedDriver);
     router.push(
-      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${driver}&isLater=${isLater}`
+      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver.vehicleId}&isLater=${isLater}`
     );
+  };
 
   const {
     autoCompleteAddress,
     actions: { setAutoCompleteAddress },
   } = useRadarMap((state) => state);
-
   const {
     availableVehicles,
-    actions: { retrieveAvailableVehicles },
+    actions: { retrieveAvailableVehicles, rentAndCreateIntent },
   } = useRental(
     useShallow((state) => ({
       actions: state.actions,
@@ -99,7 +98,6 @@ const RentRide = () => {
     autoCompleteAddress?.latitude,
   ]);
 
-  console.log(availableVehicles, "available vehicles");
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
@@ -225,7 +223,11 @@ const RentRide = () => {
           )}
           {vehicleType && !selectedDriver && (
             <div className='flex flex-col gap-8'>
-              <DriverInfoAccordion driverInfo={driverInfo} func={func} />
+              <DriverInfoAccordion
+                driverInfo={driverInfo}
+                vehicle={availableVehicles[0]}
+                func={func}
+              />
             </div>
           )}
           {vehicleType && selectedDriver && (
@@ -259,7 +261,10 @@ const RentRide = () => {
                         height={40}
                       />
                     </div>
-                    <p className=' text-xs font-semibold'>Mark Spencer</p>
+                    <p className=' text-xs font-semibold'>
+                      {selectedDriverDetails?.driverInfo.firstName}{" "}
+                      {selectedDriverDetails?.driverInfo.lastName}
+                    </p>
                   </div>
                 </div>
                 <div className='flex flex-col gap-8'>
@@ -269,11 +274,13 @@ const RentRide = () => {
                       <div className='flex gap-4'>
                         <LocationFlagIcon />
                         <div className='flex flex-col text-sm font-bold'>
-                          <p>Long Beach</p>
+                          <p>{autoCompleteAddress?.formattedAddress}</p>
                           <p className='font-normal'>
-                            Cabbagetown, Candler Park
+                            {autoCompleteAddress?.county}
                           </p>
-                          <p className='text-xs'>California</p>
+                          <p className='text-xs'>
+                            {autoCompleteAddress?.country}
+                          </p>
                         </div>
                       </div>
                       <Button
@@ -568,7 +575,27 @@ const RentRide = () => {
                 </div>
               </section>
               <div className='flex gap-6 items-center'>
-                <Button className='items-end' asChild={!isReview}>
+                <Button
+                  className='items-end'
+                  asChild={!isReview}
+                  onClick={() => {
+                    if (
+                      // !isReview ||
+                      !autoCompleteAddress ||
+                      !selectedDriverDetails
+                    )
+                      return;
+                    rentAndCreateIntent({
+                      days: [],
+                      duration: 1,
+                      flexibility: false,
+                      vehicleId: selectedDriverDetails.vehicleId,
+                      pickUpLat: autoCompleteAddress.latitude,
+                      pickUpLong: autoCompleteAddress.longitude,
+                      pickUpAddress: autoCompleteAddress.formattedAddress,
+                    });
+                  }}
+                >
                   {isReview ? (
                     "Proceed to payment"
                   ) : (
