@@ -371,14 +371,14 @@ export const useSession = create<Session>()((set, get) => ({
       const { data, error } = await callApi(path);
 
       if (error) {
-        set({ isLoading: false });
+        set({ isLoading: false, user: "rider" });
         toast.error(error.message);
         return;
       }
 
       if (data) {
         console.log(data, path);
-        set({ isLoading: false });
+        set({ isLoading: false, user: "rider" });
       }
     },
     fetchVehicleViaClass: async (vehicleClass) => {
