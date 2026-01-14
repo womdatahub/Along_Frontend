@@ -1,22 +1,30 @@
 import { create } from "zustand";
-import type { SelectorFn, VehicleLocation } from "@/types";
+import type {
+  RentAndCreateIntentResponseType,
+  RentAndCreateIntentType,
+  SelectorFn,
+  VehicleLocation,
+} from "@/types";
 import { callApi, rentalApiStr } from "@/lib";
 import { toast } from "sonner";
 
 type RentalStoreType = {
   availableVehicles: VehicleLocation[];
+  intent: RentAndCreateIntentResponseType | undefined;
   actions: {
     retrieveAvailableVehicles: (queries: {
       [key: string]: string;
     }) => Promise<void>;
+    rentAndCreateIntent: (data: RentAndCreateIntentType) => Promise<void>;
   };
 };
 
 const initialState = {
   availableVehicles: [],
+  intent: undefined,
 };
 
-export const useRental = create<RentalStoreType>()(() => ({
+export const useRental = create<RentalStoreType>()((set) => ({
   ...initialState,
   actions: {
     retrieveAvailableVehicles: async (queries) => {
@@ -34,6 +42,20 @@ export const useRental = create<RentalStoreType>()(() => ({
       }
       if (data) {
         console.log(data, path);
+      }
+    },
+    rentAndCreateIntent: async (data) => {
+      const path = rentalApiStr("/rider/rent");
+      const { data: response, error } =
+        await callApi<RentAndCreateIntentResponseType>(path, data);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (response) {
+        toast.success(response.message);
+        set({ intent: response.data });
+        console.log(response, path);
       }
     },
   },
