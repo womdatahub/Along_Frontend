@@ -99,7 +99,7 @@ type Session = {
 
 const initialState = {
   user: "",
-  isFetchingUserSessionLoading: true,
+  isFetchingUserSessionLoading: false,
   isLoading: false,
   services: [],
   routeBeforeRedirect: "",
