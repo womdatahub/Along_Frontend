@@ -2,22 +2,24 @@
 import { LocationIcon } from "@public/svgs";
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-  HeadingHeebo,
+  CompleteHeroServiceDialog,
+  // Dialog,
+  // DialogContent,
+  // DialogTitle,
+  // DialogTrigger,
+  // HeadingHeebo,
   RadarAutocomplete,
-  ServiceDialog,
+  // ServiceDialog,
   // radarAutocompleteManual,
 } from "@/components";
 import { Suspense } from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { cn } from "@/lib";
-import { useRadarMap } from "@/store";
-import { modalItems, nonModalItems } from "@/lib";
+// import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+// import Image from "next/image";
+// import { useRouter, useSearchParams } from "next/navigation";
+// import { cn } from "@/lib";
+import { useRadarMap, useSession } from "@/store";
+import { useShallow } from "zustand/shallow";
+// import { modalItems, nonModalItems } from "@/lib";
 
 export const Hero = () => {
   return (
@@ -30,15 +32,28 @@ const Page = () => {
   // const [destination, setDestination] = useState<string>("");
   // console.log(destination);
 
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  // const searchParams = useSearchParams();
+  // const router = useRouter();
 
-  const service = searchParams.get("service");
+  // const service = searchParams.get("service");
 
   const {
     autoCompleteAddress,
     actions: { setAutoCompleteAddress },
-  } = useRadarMap((state) => state);
+  } = useRadarMap(
+    useShallow((state) => ({
+      autoCompleteAddress: state.autoCompleteAddress,
+      actions: state.actions,
+    }))
+  );
+
+  const {
+    // userRole
+  } = useSession(
+    useShallow((state) => ({
+      userRole: state.userRole,
+    }))
+  );
 
   return (
     <div className='pt-16 w-screen'>
@@ -86,7 +101,14 @@ const Page = () => {
                 </div>
               </div>
 
-              <Dialog>
+              <CompleteHeroServiceDialog
+                trigger={
+                  <Button className='bg-primary px-6 md:px-6 py-4 md:py-6 w-fit h-full rounded-l-none md:w-40 text-white text-base md:text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+                    Go
+                  </Button>
+                }
+              />
+              {/* <Dialog>
                 <DialogTrigger
                   asChild
                   disabled={autoCompleteAddress === undefined}
@@ -186,7 +208,7 @@ const Page = () => {
                     </div>
                   </div>
                 </DialogContent>
-              </Dialog>
+              </Dialog> */}
             </div>
           </div>
         </div>

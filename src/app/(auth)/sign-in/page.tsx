@@ -1,4 +1,5 @@
 "use client";
+
 import { AddInput, ButtonWithLoader } from "@/components";
 import { signInSchema, TSignInValidator } from "@/lib";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
@@ -7,12 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/store";
 import Link from "next/link";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const Page = () => {
   const router = useRouter();
   const {
-    userRole,
+    // userRole,
     isLoading,
     routeBeforeRedirect,
     actions: { login, setRouteBeforeRedirect },
@@ -40,8 +41,6 @@ const Page = () => {
     }
     // router.push(`${userRole.toLowerCase()}-db`);
   };
-
-
 
   return (
     // px-4 md:px-0
