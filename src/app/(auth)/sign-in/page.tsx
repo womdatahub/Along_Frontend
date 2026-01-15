@@ -11,6 +11,7 @@ import Link from "next/link";
 const Page = () => {
   const router = useRouter();
   const {
+    userRole,
     isLoading,
     routeBeforeRedirect,
     actions: { login, setRouteBeforeRedirect },
@@ -29,16 +30,14 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TSignInValidator) => {
-    console.log(values, errors);
     await login(values).then((val) => {
       if (val === false) return;
-      console.log("val from login", val);
       if (routeBeforeRedirect) {
         router.push(routeBeforeRedirect);
         setRouteBeforeRedirect("");
         return;
       }
-      router.push("/rider-db");
+      router.push(`${userRole.toLowerCase()}-db`);
     });
   };
 
