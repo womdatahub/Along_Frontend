@@ -14,10 +14,10 @@ import {
   Switch,
   LoadingComponent,
 } from "@/components";
-import { cn, formatDateToDDMMYYYY } from "@/lib";
+import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap } from "@/store";
 import { useRental } from "@/store/use-rental";
-import { carTypes, VehicleLocation } from "@/types";
+import { VehicleLocation } from "@/types";
 import {
   AccuracyIcon,
   EditIcon,
@@ -74,7 +74,6 @@ const RentRide = () => {
     actions: { setAutoCompleteAddress },
   } = useRadarMap((state) => state);
   const {
-    availableVehicles,
     actions: { retrieveAvailableVehicles, rentAndCreateIntent },
   } = useRental(
     useShallow((state) => ({
@@ -225,7 +224,7 @@ const RentRide = () => {
             <div className='flex flex-col gap-8'>
               <DriverInfoAccordion
                 driverInfo={driverInfo}
-                vehicle={availableVehicles[0]}
+                vehicle={dummyVehicleLocation}
                 func={func}
               />
             </div>
@@ -631,9 +630,6 @@ const RentRide = () => {
           )}
         </div>
 
-        {/* <div className='bg-red- w-full h-full min-h-40 sticky top-0' /> */}
-
-        {/* <GoogleMaps /> */}
         <RadarMap
           pickup={[
             autoCompleteAddress?.longitude ?? 0,
@@ -780,3 +776,57 @@ const reviewDetails = [
     value: "Yes",
   },
 ];
+
+const dummyVehicleLocation: VehicleLocation = {
+  _id: "loc_001",
+  vehicleId: "veh_001",
+  driverId: "drv_001",
+  latitude: 6.5244,
+  longitude: 3.3792,
+  address: "Victoria Island, Lagos, Nigeria",
+  capacity: 4,
+  status: "available",
+  createdAt: "2025-01-05T10:12:30.000Z",
+  updatedAt: "2025-01-05T10:12:30.000Z",
+  __v: 0,
+  vehicleInfo: {
+    vehicleMake: "Toyota",
+    vehicleModel: "Camry XE",
+    vehicleClass: "economy",
+    vehicleYear: "2024",
+    vehicleColor: "White",
+    vehicleFrontViewImageUri: "https://example.com/vehicle/front.jpg",
+    vehicleBackViewImageUri: "https://example.com/vehicle/back.jpg",
+    vehicleSideViewImageUri: "https://example.com/vehicle/side.jpg",
+    vehicleIdentificationNumber: "894WRJKJ480943NRD",
+  },
+  driverInfo: {
+    _id: "drv_001",
+    email: "jeff@example.com",
+    role: "driver",
+    userId: "usr_001",
+    firstName: "Jeff",
+    lastName: "Azaman",
+    acceptanceRate: 0.85,
+    rating: {
+      totalRating: 123,
+      numberOfRatings: 4.7,
+    },
+    gender: "male",
+    services: ["scheduled_ride"],
+    rideProfile: {
+      currentLocation: {
+        location: "Victoria Island, Lagos, Nigeria",
+        latitude: 6.5244,
+        longitude: 3.3792,
+      },
+      ratePerHour: "1500",
+      allowPets: false,
+      luggageCapacity: 3,
+    },
+    createdAt: "2025-01-01T09:00:00.000Z",
+    updatedAt: "2025-01-05T10:00:00.000Z",
+    __v: 0,
+    age: 26,
+  },
+};

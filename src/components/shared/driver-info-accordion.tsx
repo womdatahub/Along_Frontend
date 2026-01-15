@@ -33,7 +33,7 @@ type Props = {
     }[];
   }[];
   vehicle: VehicleLocation;
-  func: ( selectedDriver: VehicleLocation) => void;
+  func: (selectedDriver: VehicleLocation) => void;
 };
 export const DriverInfoAccordion = ({ driverInfo, vehicle, func }: Props) => {
   return (
@@ -64,6 +64,7 @@ export const DriverInfoAccordion = ({ driverInfo, vehicle, func }: Props) => {
                   />
                   <div className='flex flex-col'>
                     <p className='font-semibold text-base'>
+                      {vehicle.vehicleInfo.vehicleModel} -{" "}
                       {vehicle.vehicleInfo.vehicleMake}
                       {/* {info.carName} */}
                     </p>
