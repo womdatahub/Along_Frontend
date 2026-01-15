@@ -1,13 +1,16 @@
 "use client";
+
 import {
   Button,
   Card,
   CardContent,
   CardFooter,
+  CompleteHeroServiceDialog,
   HeadingHeebo,
+  RadarAutocomplete,
 } from "@/components";
-import { cn } from "@/lib";
-import { useSession } from "@/store";
+// import { cn } from "@/lib";
+import { useRadarMap, useSession } from "@/store";
 import {
   AccuracyIcon,
   LocationPointerSvg,
@@ -17,17 +20,22 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const Page = () => {
   const router = useRouter();
   const {
-    actions: { fetchUserDetails },
+    // actions: { fetchUserDetails },
   } = useSession((state) => state);
+
+  const {
+    autoCompleteAddress,
+    actions: { setAutoCompleteAddress },
+  } = useRadarMap((state) => state);
 
   // useEffect(() => {
   // fetchUserDetails();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
@@ -35,23 +43,36 @@ const Page = () => {
         <div className='flex flex-col gap-2 w-fit'>
           <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
           <div className='flex items-center gap-8'>
-            <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl'>
+            <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl md:w-[375px]'>
               <AccuracyIcon />
-              <input
+              {/* <input
                 className={cn(
                   "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full md:w-[375px]"
                 )}
                 placeholder='Pick up location'
+              /> */}
+              <RadarAutocomplete
+                setAutoCompleteAddress={setAutoCompleteAddress}
+                placeholder='Enter your location'
+                defaultValue={
+                  autoCompleteAddress &&
+                  `${autoCompleteAddress?.formattedAddress}`
+                }
               />
             </div>
-            <Button
-              variant={"default"}
-              className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
-            >
-              <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
-                <WhiteForwardIcon />
-              </div>
-            </Button>
+
+            <CompleteHeroServiceDialog
+              trigger={
+                <Button
+                  variant={"default"}
+                  className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
+                >
+                  <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
+                    <WhiteForwardIcon />
+                  </div>
+                </Button>
+              }
+            />
           </div>
         </div>
         <HeadingHeebo className='text-left mt-5'>Menu</HeadingHeebo>

@@ -10,12 +10,110 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { cn } from "@/lib";
+import { cn, modalItems, nonModalItems } from "@/lib";
 import { carTypes, rideRental } from "@/lib";
+import { useRadarMap } from "@/store";
 type ServiceDialogType = {
   trigger: React.ReactNode;
 };
 
+export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const service = searchParams.get("service");
+
+  const { autoCompleteAddress } = useRadarMap((state) => state);
+  return (
+    <Dialog>
+      <DialogTrigger asChild disabled={autoCompleteAddress === undefined}>
+        {trigger}
+      </DialogTrigger>
+      <DialogContent
+        className='sm:max-w-[425px] p-0 bg-background-1'
+        showCloseButton={false}
+      >
+        <VisuallyHidden>
+          <DialogTitle>
+            Please select a service (s) you are interested in
+          </DialogTitle>
+        </VisuallyHidden>
+        <div className='flex flex-col gap-10 rounded-[20px] px-8 py-10 text-black'>
+          <div className='flex flex-col gap-2'>
+            <HeadingHeebo>Offered services</HeadingHeebo>
+            <p className='text-center text-sm'>
+              Please select a service (s) you are interested in
+            </p>
+          </div>
+          <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-1'>
+              {modalItems.map((item, i) => {
+                return (
+                  <ServiceDialog
+                    key={i}
+                    trigger={
+                      <button
+                        key={item.state}
+                        onClick={() => {
+                          if (item.state === "scheduled") {
+                            router.push("/schedule-ride");
+                            return;
+                          }
+                          router.push(`?service=${item.state.toLowerCase()}`);
+                        }}
+                        className={cn(
+                          "flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
+                          service === item.state && "bg-primary/70 text-white"
+                        )}
+                      >
+                        <div className='flex gap-4 items-center'>
+                          <Image
+                            src={item.img}
+                            alt={item.state}
+                            width={40}
+                            height={40}
+                          />
+                          <p className='font-medium text-xs'>{item.title}</p>
+                        </div>
+                      </button>
+                    }
+                  />
+                );
+              })}
+              {nonModalItems.map((item) => {
+                return (
+                  <button
+                    key={item.state}
+                    disabled={item.disabled}
+                    onClick={() => {
+                      if (item.state === "scheduled") {
+                        router.push("/schedule-ride");
+                        return;
+                      }
+                    }}
+                    className={cn(
+                      "disabled:cursor-not-allowed flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
+                      service === item.state && "bg-primary/70 text-white"
+                    )}
+                  >
+                    <div className='flex gap-4 items-center'>
+                      <Image
+                        src={item.img}
+                        alt={item.state}
+                        width={40}
+                        height={40}
+                      />
+                      <p className='font-medium text-xs'>{item.title}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -12,9 +12,8 @@ import {
   RadarAutocomplete,
   SelectDropdown,
 } from "@/components";
-import { cn, formatDateToDDMMYYYY } from "@/lib";
+import { cn, formatDateToDDMMYYYY, carTypes } from "@/lib";
 import { useRadarMap } from "@/store";
-import { carTypes } from "@/types";
 import {
   CalenderIcon,
   DestinationAddressIcon,
@@ -41,8 +40,8 @@ const ScheduleRidePage = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [issDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(2025, 5, 9),
-    to: new Date(2025, 5, 26),
+    from: new Date(),
+    to: new Date(),
   });
   const [selected, setSelected] = useState<string>("");
   const [isOneWay, setISOneWay] = useState(true);
@@ -87,11 +86,17 @@ const ScheduleRidePage = () => {
                   <p
                     className={cn(
                       "font-medium text-xs",
-                      date ? "text-black" : "text-placeholder"
+                      date || (dateRange?.from && dateRange?.to)
+                        ? "text-black"
+                        : "text-placeholder"
                     )}
                   >
-                    {date
+                    {isOneWay && date
                       ? formatDateToDDMMYYYY(date as Date)
+                      : !isOneWay && dateRange?.from && dateRange?.to
+                      ? `${formatDateToDDMMYYYY(
+                          dateRange.from as Date
+                        )} - ${formatDateToDDMMYYYY(dateRange.to as Date)}`
                       : "Choose a date"}
                   </p>
                   <CalenderIcon />
@@ -186,13 +191,23 @@ const ScheduleRidePage = () => {
               <div className='flex flex-col text-sm flex-1'>
                 <p className='text-[#B1B2B4]'>From date</p>
                 <p className='font-bold'>
-                  {formatDateToDDMMYYYY(date ? (date as Date) : new Date())}
+                  {isOneWay &&
+                    formatDateToDDMMYYYY(date ? (date as Date) : new Date())}
+                  {!isOneWay &&
+                    formatDateToDDMMYYYY(
+                      dateRange?.from ? (dateRange.from as Date) : new Date()
+                    )}
                 </p>
               </div>
               <div className='flex flex-col text-sm flex-1'>
                 <p className='text-[#B1B2B4]'>To date</p>
                 <p className='font-bold'>
-                  {formatDateToDDMMYYYY(date ? (date as Date) : new Date())}
+                  {isOneWay &&
+                    formatDateToDDMMYYYY(date ? (date as Date) : new Date())}
+                  {!isOneWay &&
+                    formatDateToDDMMYYYY(
+                      dateRange?.to ? (dateRange.to as Date) : new Date()
+                    )}
                 </p>
               </div>
               <EditIcon />
@@ -286,6 +301,7 @@ const ScheduleRidePage = () => {
                                   alt={"car"}
                                   width={40}
                                   height={40}
+                                  priority
                                 />
                                 <div className='flex flex-col group-hover:text-white duration-150'>
                                   <p className='font-semibold text-sm'>
@@ -399,7 +415,7 @@ const ScheduleRidePage = () => {
                 </div>
                 <div className='flex justify-between items-center font-bold text-sm px-3'>
                   <p>Round trip</p>
-                  <p>Yes</p>
+                  <p>{isOneWay ? "No" : "Yes"}</p>
                 </div>
               </div>
             </div>
@@ -431,6 +447,7 @@ const ScheduleRidePage = () => {
                     alt='woman-bg'
                     width={2000}
                     height={2000}
+                    priority
                     className='object-contain w-6 h-6'
                   />
                   <p>Pets</p>
@@ -439,9 +456,10 @@ const ScheduleRidePage = () => {
                 <div className='flex justify-center flex-col gap-[1px] items-center rounded-2xl bg-[#D9E0E0] h flex-1 text-[10px]'>
                   <Image
                     src='/images/luggage-icon.png'
-                    alt='woman-bg'
+                    alt='luggage icon'
                     width={2000}
                     height={2000}
+                    priority
                     className='object-contain w-4 h-6'
                   />
                   <p>Luggage</p>
@@ -462,9 +480,14 @@ const ScheduleRidePage = () => {
         <div className='flex w-full h-full min-h-40 sticky top-0'>
           <Image
             src='/images/scheduled-ride-img.png'
-            alt='woman-bg'
-            width={2000}
-            height={2000}
+            alt='scheduled-ride-img'
+            // width={2000}
+            // height={2000}
+            priority
+            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+            objectFit='cover'
+            fill
+            loading='eager'
             className='z-10 object-contain'
           />
         </div>
