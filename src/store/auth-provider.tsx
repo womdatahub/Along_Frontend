@@ -32,7 +32,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const {
     userRole,
     isFetchingUserSessionLoading,
-    actions: { fetchUserDetails, setRouteBeforeRedirect },
+    actions: {
+      fetchUserDetails,
+      setRouteBeforeRedirect,
+      setIsFetchingUserSessionLoading,
+    },
   } = useSession((state) => state);
 
   const isPublic = useMemo(() => publicRoutes.includes(pathname), [pathname]);
@@ -47,21 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isProtected = !isPublic && !isAuthOnly;
 
-  // Fetch session once (only when needed)
-  // useEffect(() => {
-  //   console.log("userRole", userRole);
-  //   if (isPublic || userRole) return;
-  //   fetchUserDetails();
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   useEffect(() => {
     if (isPublic) return;
     if (userRole) return;
-    // if (isFetchingUserSessionLoading) return;
+    // if (isAuthOnly) return;
 
-    fetchUserDetails();
+    fetchUserDetails(true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPublic, userRole]);
@@ -72,6 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // 🚫 Logged out → protected route
     if (!userRole && isProtected) {
       setRouteBeforeRedirect(pathname);
+      // setIsFetchingUserSessionLoading(false);
       toast.error("You are not logged in");
       router.replace("/sign-in");
       return;
@@ -90,10 +86,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // 🚫 Incomplete onboarding
-    if (userRole === "user") {
+    if (userRole === "user" && isProtected) {
+      console.log("onboarding process incomplete");
       toast.error(
         "Onboarding process incomplete. Please complete your onboarding process to continue!!"
       );
+      setIsFetchingUserSessionLoading(false);
       router.replace("/onboarding/user-type");
       return;
     }
@@ -101,25 +99,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetchingUserSessionLoading, userRole, pathname]);
 
-  // if (isFetchingUserSessionLoading && !isPublic) {
-  //   return <LoadingComponent />;
-  // }
-  // if (!userRole && isProtected) {
-  //   return <LoadingComponent />;
-  // }
-  // if (userRole && isAuthOnly) {
-  //   return <LoadingComponent />;
-  // }
-
   if (isFetchingUserSessionLoading && !isPublic) {
+    console.log("First IF Block");
     return <LoadingComponent />;
   }
 
   if (!userRole && isProtected) {
+    console.log("Second IF Block");
     return <LoadingComponent />;
   }
 
-  if (userRole && isAuthOnly) {
+  if (userRole && isAuthOnly && userRole !== "user") {
+    console.log("Third IF Block");
     return <LoadingComponent />;
   }
 

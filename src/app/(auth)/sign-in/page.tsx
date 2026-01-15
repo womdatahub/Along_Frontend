@@ -8,12 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/store";
 import Link from "next/link";
+import { toast } from "sonner";
 // import { useEffect } from "react";
 
 const Page = () => {
   const router = useRouter();
   const {
-    // userRole,
+    userRole,
     isLoading,
     routeBeforeRedirect,
     actions: { login, setRouteBeforeRedirect },
@@ -33,9 +34,21 @@ const Page = () => {
 
   const onSubmit = async (values: TSignInValidator) => {
     const val = await login(values);
-    if (val === false) return;
-    if (routeBeforeRedirect) {
-      router.push(routeBeforeRedirect);
+    if (!val) return;
+    console.log(
+      val,
+      userRole,
+      routeBeforeRedirect,
+      "val and userRole and routeBeforeRedirect"
+    );
+    if (val === "user") {
+      router.replace("/onboarding/user-type");
+      toast.error(
+        "Onboarding process incomplete. Please complete your onboarding process to continue!!"
+      );
+      return;
+    } else if (routeBeforeRedirect) {
+      router.replace(routeBeforeRedirect);
       setRouteBeforeRedirect("");
       return;
     }
@@ -95,8 +108,8 @@ const Page = () => {
               xmlns='http://www.w3.org/2000/svg'
             >
               <path
-                fill-rule='evenodd'
-                clip-rule='evenodd'
+                fillRule='evenodd'
+                clipRule='evenodd'
                 d='M4.8 9.6V5.6C4.8 2.5072 7.3072 0 10.4 0C13.4928 0 16 2.5072 16 5.6V9.6H18.4C19.7254 9.6 20.8 10.6745 20.8 12V12.88C22.6258 13.2506 24 14.8648 24 16.8C24 18.7352 22.6258 20.3494 20.8 20.72V21.6C20.8 22.9254 19.7254 24 18.4 24H2.4C1.07452 24 0 22.9254 0 21.6V12C0 10.6745 1.07452 9.6 2.4 9.6H4.8ZM6.4 5.6C6.4 3.39086 8.19086 1.6 10.4 1.6C12.6091 1.6 14.4 3.39086 14.4 5.6V9.6H6.4V5.6ZM13.6 14.4C12.2745 14.4 11.2 15.4745 11.2 16.8C11.2 18.1254 12.2745 19.2 13.6 19.2H20C21.3254 19.2 22.4 18.1254 22.4 16.8C22.4 15.4745 21.3254 14.4 20 14.4H13.6Z'
                 fill='#B2B2B2'
               />
