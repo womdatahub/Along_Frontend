@@ -30,15 +30,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const {
     user,
-    isLoading,
+    isFetchingUserSessionLoading,
     actions: { fetchUserDetails, setRouteBeforeRedirect },
-  } = useSession(
-    useShallow((state) => ({
-      user: state.user,
-      isLoading: state.isLoading,
-      actions: state.actions,
-    }))
-  );
+  } = useSession((state) => state);
+
+  console.log(user, "user");
 
   // call getSession on mount once
   useEffect(() => {
@@ -49,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isFetchingUserSessionLoading) return;
 
     if (unprotectedRoutes.includes(pathName) && user) {
       router.push("/");
@@ -61,6 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       !unprotectedRoutes.includes(pathName) &&
       pathName !== "/sign-in"
     ) {
+      console.log("entered here oo", user, pathName);
       toast.error("You are not logged in");
       setRouteBeforeRedirect(pathName);
       router.push("/sign-in");
@@ -68,9 +65,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, user, pathName, router]);
+  }, [isFetchingUserSessionLoading, user, pathName, router]);
 
-  if (isLoading) return <LoadingComponent />;
+  if (isFetchingUserSessionLoading) return <LoadingComponent />;
 
   // if (!user) {
   //   toast.error("You are not logged in");

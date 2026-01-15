@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { SelectorFn } from "@/types";
 import { callApi, userApiStr } from "@/lib";
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 
 type Session = {
   user: string;
+  isFetchingUserSessionLoading: boolean;
   isLoading: boolean;
   services: string[];
   routeBeforeRedirect: string;
@@ -97,331 +99,354 @@ type Session = {
 
 const initialState = {
   user: "",
+  isFetchingUserSessionLoading: false,
   isLoading: false,
   services: [],
   routeBeforeRedirect: "",
 };
 
-export const useSession = create<Session>()((set, get) => ({
-  ...initialState,
+export const useSession = create<Session>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
 
-  actions: {
-    setRouteBeforeRedirect: (route) => {
-      set({ routeBeforeRedirect: route });
-    },
-    uploadImages: async (d) => {
-      if (!d.imageFile) {
-        throw new Error("Image file is required");
-      }
-      const formData = new FormData();
-      formData.append("uploadType", d.uploadType);
-      if (d.imageFile instanceof ArrayBuffer) {
-        formData.append("image", new Blob([d.imageFile]));
-      } else {
-        formData.append("image", d.imageFile);
-      }
-
-      const { data, error } = await callApi(
-        userApiStr("/user/upload"), // "/api/v1/user/uploads",
-        formData
-        // "PATCH"
-        // userApiStr("/user/uploads"),
-        // {
-        //   image: d.imageFile,
-        //   uploadType: d.uploadType,
-        // },
-        // "PATCH"
-      );
-
-      if (error) {
-        toast.error(error.message ?? "Failed to upload image");
-        return "";
-      }
-      if (data) {
-        console.log(data, "userApiStr('/user/upload')");
-      }
-      return "";
-    },
-
-    setServices: (services) => {
-      set({ services });
-    },
-    login: async (loginData) => {
-      set({ isLoading: true });
-      const path = userApiStr("/user/login");
-      const { data, error } = await callApi(path, loginData);
-
-      if (error) {
-        toast.error(error.message);
-        set({ isLoading: false });
-        return false;
-      }
-      if (data) {
-        console.log(data, path);
-        toast.success(data.message);
-      }
-      set({ isLoading: false });
-      return true;
-    },
-    logOut: async () => {},
-    registerUser: async (registerUserData) => {
-      // console.log("this ran reisteruser");
-      set({ isLoading: true });
-      const path = userApiStr("/user/register");
-      const rest = (({ phoneNumber, ...rest }) => rest)(registerUserData);
-
-      const { data, error } = await callApi(path, {
-        ...rest,
-      });
-
-      if (error) {
-        toast.error(error.message);
-        set({ isLoading: false });
-        return false;
-      }
-      if (data) {
-        toast.success(data.message);
-      }
-
-      set({ isLoading: false });
-      return true;
-    },
-    verifyEmail: async (verifyEmailData) => {
-      set({ isLoading: true });
-      const path = userApiStr("/user/verify-email");
-
-      const { data, error } = await callApi(path, verifyEmailData, "PATCH");
-
-      if (error) {
-        toast.error(error.message);
-        set({ isLoading: false });
-        return false;
-      }
-      if (data) {
-        toast.success(data.message);
-        console.log(data, path);
-      }
-      set({ isLoading: false });
-      return true;
-    },
-    verifyOtp: async () => {
-      const path = userApiStr("/user/verify-otp");
-
-      const { data, error } = await callApi(path, {});
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    resendVerificationOTP: async (resendVerificationOTPData) => {
-      const path = userApiStr("/user/resend-verification-otp");
-
-      const { data, error } = await callApi(path, resendVerificationOTPData);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        toast.success(data.message);
-        console.log(data, path);
-      }
-    },
-    registerDriver: async (registerDriverData) => {
-      const path = userApiStr("/user/driver");
-
-      const { data, error } = await callApi(path, registerDriverData);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    }, //POST
-    addVerificationDocumentsAndServices: async (
-      addVerificationDocumentsAndServicesData
-    ) => {
-      const path = userApiStr("/user/documents-services");
-      const { data, error } = await callApi(
-        path,
-        {
-          ...addVerificationDocumentsAndServicesData,
-          services: get().services,
+      actions: {
+        setRouteBeforeRedirect: (route) => {
+          set({ routeBeforeRedirect: route });
         },
-        "PATCH"
-      );
+        uploadImages: async (d) => {
+          if (!d.imageFile) {
+            throw new Error("Image file is required");
+          }
+          const formData = new FormData();
+          formData.append("uploadType", d.uploadType);
+          if (d.imageFile instanceof ArrayBuffer) {
+            formData.append("image", new Blob([d.imageFile]));
+          } else {
+            formData.append("image", d.imageFile);
+          }
 
-      if (error) {
-        toast.error(error.message);
-        return false;
-      }
-      if (data) {
-        toast.success("Documents and services added successfully");
-        console.log(data, path);
-      }
+          const { data, error } = await callApi(
+            userApiStr("/user/upload"), // "/api/v1/user/uploads",
+            formData
+            // "PATCH"
+            // userApiStr("/user/uploads"),
+            // {
+            //   image: d.imageFile,
+            //   uploadType: d.uploadType,
+            // },
+            // "PATCH"
+          );
 
-      return true;
-    }, // PATCH
-    registerVehicle: async (registerVehicleData) => {
-      const path = userApiStr("/user/documents-services");
+          if (error) {
+            toast.error(error.message ?? "Failed to upload image");
+            return "";
+          }
+          if (data) {
+            console.log(data, "userApiStr('/user/upload')");
+          }
+          return "";
+        },
 
-      const { data, error } = await callApi(path, registerVehicleData, "PATCH");
+        setServices: (services) => {
+          set({ services });
+        },
+        login: async (loginData) => {
+          set({ isLoading: true });
+          const path = userApiStr("/user/login");
+          const { data, error } = await callApi(path, loginData);
 
-      if (error) {
-        toast.error(error.message);
-        return false;
-      }
-      if (data) {
-        toast.success("Vehicle information added successfully");
-        console.log(data, path);
-      }
-      return true;
-    },
-    registerRider: async (registerRiderData) => {
-      set({ isLoading: true });
-      const path = userApiStr("/user/rider");
+          if (error) {
+            toast.error(error.message);
+            set({ isLoading: false, user: "rider" });
+            return false;
+          }
+          if (data) {
+            await get().actions.fetchUserDetails();
+            console.log(data, path);
+            toast.success(data.message);
+          }
+          set({ isLoading: false, user: "rider" });
+          return true;
+        },
+        logOut: async () => {},
+        registerUser: async (registerUserData) => {
+          // console.log("this ran reisteruser");
+          set({ isLoading: true });
+          const path = userApiStr("/user/register");
+          const rest = (({ phoneNumber, ...rest }) => rest)(registerUserData);
 
-      const { data, error } = await callApi(path, registerRiderData);
+          const { data, error } = await callApi(path, {
+            ...rest,
+          });
 
-      if (error) {
-        toast.error(error.message);
-        set({ isLoading: false });
-        return false;
-      }
-      if (data) {
-        console.log(data, path);
-        toast.success(data.message);
-      }
-      set({ isLoading: false });
-      return true;
-    },
-    registerBankAccount: async (registerBankAccountData) => {
-      const path = "/user/api/v1/user/bank-details";
-      const { data, error } = await callApi(path, registerBankAccountData);
+          if (error) {
+            toast.error(error.message);
+            set({ isLoading: false });
+            return false;
+          }
+          if (data) {
+            toast.success(data.message);
+          }
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    updateDriverDetails: async (updateDriverDetailsData) => {
-      const path = userApiStr("/user/driver");
+          set({ isLoading: false });
+          return true;
+        },
+        verifyEmail: async (verifyEmailData) => {
+          set({ isLoading: true });
+          const path = userApiStr("/user/verify-email");
 
-      const { data, error } = await callApi(
-        path,
-        updateDriverDetailsData,
-        "PATCH"
-      );
+          const { data, error } = await callApi(path, verifyEmailData, "PATCH");
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    updateRiderDetails: async (updateRiderDetailsData) => {
-      const path = userApiStr("/user/rider");
+          if (error) {
+            toast.error(error.message);
+            set({ isLoading: false });
+            return false;
+          }
+          if (data) {
+            toast.success(data.message);
+            console.log(data, path);
+          }
+          set({ isLoading: false });
+          return true;
+        },
+        verifyOtp: async () => {
+          const path = userApiStr("/user/verify-otp");
 
-      const { data, error } = await callApi(
-        path,
-        updateRiderDetailsData,
-        "PATCH"
-      );
+          const { data, error } = await callApi(path, {});
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    createRideProfile: async (createRideProfileData) => {
-      const path = userApiStr("/user/driver/profile/create");
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        resendVerificationOTP: async (resendVerificationOTPData) => {
+          const path = userApiStr("/user/resend-verification-otp");
 
-      const { data, error } = await callApi(
-        path,
-        createRideProfileData,
-        "PATCH"
-      );
+          const { data, error } = await callApi(
+            path,
+            resendVerificationOTPData
+          );
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    fetchUserDetails: async () => {
-      set({ isLoading: true });
-      const path = userApiStr("/user/profile");
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            toast.success(data.message);
+            console.log(data, path);
+          }
+        },
+        registerDriver: async (registerDriverData) => {
+          const path = userApiStr("/user/driver");
 
-      const { data, error } = await callApi(path);
+          const { data, error } = await callApi(path, registerDriverData);
 
-      if (error) {
-        set({ isLoading: false, user: "rider" });
-        toast.error(error.message);
-        return;
-      }
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        }, //POST
+        addVerificationDocumentsAndServices: async (
+          addVerificationDocumentsAndServicesData
+        ) => {
+          const path = userApiStr("/user/documents-services");
+          const { data, error } = await callApi(
+            path,
+            {
+              ...addVerificationDocumentsAndServicesData,
+              services: get().services,
+            },
+            "PATCH"
+          );
 
-      if (data) {
-        console.log(data, path);
-        set({ isLoading: false, user: "rider" });
-      }
-    },
-    fetchVehicleViaClass: async (vehicleClass) => {
-      const path = userApiStr(`/vehicle/class?vehicleClass=${vehicleClass}`);
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+          if (data) {
+            toast.success("Documents and services added successfully");
+            console.log(data, path);
+          }
 
-      const { data, error } = await callApi(path);
+          return true;
+        }, // PATCH
+        registerVehicle: async (registerVehicleData) => {
+          const path = userApiStr("/user/documents-services");
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    fetchVehicleViaDriverID: async (driverID) => {
-      const path = userApiStr(`/vehicle/driver/${driverID}`);
+          const { data, error } = await callApi(
+            path,
+            registerVehicleData,
+            "PATCH"
+          );
 
-      const { data, error } = await callApi(path);
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+          if (data) {
+            toast.success("Vehicle information added successfully");
+            console.log(data, path);
+          }
+          return true;
+        },
+        registerRider: async (registerRiderData) => {
+          set({ isLoading: true });
+          const path = userApiStr("/user/rider");
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    fetchVehicleID: async (vehicleID) => {
-      const path = userApiStr(`/vehicle/${vehicleID}`);
+          const { data, error } = await callApi(path, registerRiderData);
 
-      const { data, error } = await callApi(path);
+          if (error) {
+            toast.error(error.message);
+            set({ isLoading: false });
+            return false;
+          }
+          if (data) {
+            console.log(data, path);
+            toast.success(data.message);
+          }
+          set({ isLoading: false });
+          return true;
+        },
+        registerBankAccount: async (registerBankAccountData) => {
+          const path = "/user/api/v1/user/bank-details";
+          const { data, error } = await callApi(path, registerBankAccountData);
 
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-  },
-}));
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        updateDriverDetails: async (updateDriverDetailsData) => {
+          const path = userApiStr("/user/driver");
+
+          const { data, error } = await callApi(
+            path,
+            updateDriverDetailsData,
+            "PATCH"
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        updateRiderDetails: async (updateRiderDetailsData) => {
+          const path = userApiStr("/user/rider");
+
+          const { data, error } = await callApi(
+            path,
+            updateRiderDetailsData,
+            "PATCH"
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        createRideProfile: async (createRideProfileData) => {
+          const path = userApiStr("/user/driver/profile/create");
+
+          const { data, error } = await callApi(
+            path,
+            createRideProfileData,
+            "PATCH"
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        fetchUserDetails: async () => {
+          set({ isFetchingUserSessionLoading: true });
+          const path = userApiStr("/user/profile");
+
+          const { data, error } = await callApi(path);
+
+          if (error) {
+            set({ user: "rider", isFetchingUserSessionLoading: false });
+            toast.error(error.message);
+            return;
+          }
+
+          if (data) {
+            console.log(data, path);
+            set({ user: "rider", isFetchingUserSessionLoading: false });
+          }
+        },
+        fetchVehicleViaClass: async (vehicleClass) => {
+          const path = userApiStr(
+            `/vehicle/class?vehicleClass=${vehicleClass}`
+          );
+
+          const { data, error } = await callApi(path);
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        fetchVehicleViaDriverID: async (driverID) => {
+          const path = userApiStr(`/vehicle/driver/${driverID}`);
+
+          const { data, error } = await callApi(path);
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+        fetchVehicleID: async (vehicleID) => {
+          const path = userApiStr(`/vehicle/${vehicleID}`);
+
+          const { data, error } = await callApi(path);
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+          if (data) {
+            console.log(data, path);
+          }
+        },
+      },
+    }),
+    {
+      name: "session-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        routeBeforeRedirect: state.routeBeforeRedirect,
+        // user: state.user,
+      }),
+    }
+  )
+);
 
 export const useSessions = <TResult>(
   selector: SelectorFn<Session, TResult>
