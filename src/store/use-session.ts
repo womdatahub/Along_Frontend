@@ -99,7 +99,7 @@ type Session = {
 
 const initialState = {
   user: "",
-  isFetchingUserSessionLoading: true,
+  isFetchingUserSessionLoading: false,
   isLoading: false,
   services: [],
   routeBeforeRedirect: "",
@@ -384,7 +384,7 @@ export const useSession = create<Session>()(
           const { data, error } = await callApi(path);
 
           if (error) {
-            set({ user: "rider", isFetchingUserSessionLoading: false });
+            set({ user: "", isFetchingUserSessionLoading: false });
             toast.error(error.message);
             return;
           }
