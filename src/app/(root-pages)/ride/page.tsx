@@ -9,12 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components";
-import { cn } from "@/lib";
+import { cn, carTypes } from "@/lib";
 import { AccuracyIcon, WhiteForwardIcon } from "@public/svgs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AddressResult, carTypes } from "@/types";
+import { AddressResult } from "@/types";
 
 const Page = () => {
   return (
