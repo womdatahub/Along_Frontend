@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/store";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const Page = () => {
   const router = useRouter();
@@ -30,16 +31,17 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TSignInValidator) => {
-    await login(values).then((val) => {
-      if (val === false) return;
-      if (routeBeforeRedirect) {
-        router.push(routeBeforeRedirect);
-        setRouteBeforeRedirect("");
-        return;
-      }
-      router.push(`${userRole.toLowerCase()}-db`);
-    });
+    const val = await login(values);
+    if (val === false) return;
+    if (routeBeforeRedirect) {
+      router.push(routeBeforeRedirect);
+      setRouteBeforeRedirect("");
+      return;
+    }
+    // router.push(`${userRole.toLowerCase()}-db`);
   };
+
+
 
   return (
     // px-4 md:px-0
