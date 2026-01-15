@@ -25,9 +25,10 @@ const Page = () => {
     actions: { fetchUserDetails },
   } = useSession((state) => state);
 
-  useEffect(() => {
-    fetchUserDetails();
-  }, []);
+  // useEffect(() => {
+  // fetchUserDetails();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>
