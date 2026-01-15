@@ -35,7 +35,7 @@ const Page = () => {
     formState: { errors },
   } = useForm<TOnboardingValidator>({
     defaultValues: {
-      phoneNumber: "",
+      mobileNumber: "",
       email: "",
       password: "",
       referralCode: "",
@@ -83,7 +83,7 @@ const Page = () => {
           inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
         />
         <AddInput
-          id='phoneNumber'
+          id='mobileNumber'
           errors={errors}
           placeholder='Phone Number'
           register={register}

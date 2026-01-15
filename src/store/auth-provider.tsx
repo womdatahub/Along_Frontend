@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const {
-    user,
+    userRole,
     isFetchingUserSessionLoading,
     actions: { fetchUserDetails, setRouteBeforeRedirect },
   } = useSession((state) => state);
@@ -130,18 +130,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isFetchingUserSessionLoading) return;
 
-    if (!user && !isUnprotected) {
+    if (!userRole && !isUnprotected) {
       setRouteBeforeRedirect(pathname);
       toast.error("You are not logged in");
-      router.replace("/sign-in"); // replace avoids history flicker
+      router.replace("/sign-in");
       return;
     }
 
-    if (user && isUnprotected && pathname === "/sign-in") {
+    if (userRole && isUnprotected && pathname === "/sign-in") {
+      // console.log("hjjjhjhjj", user, "user");
       router.replace("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetchingUserSessionLoading, user, pathname]);
+  }, [isFetchingUserSessionLoading, userRole, pathname]);
 
   /**
    * 🔒 HARD RENDER GATE
@@ -151,7 +152,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return <LoadingComponent />;
   }
 
-  if (!user && !isUnprotected) {
+  if (!userRole && !isUnprotected) {
     // prevents the 1–2s flash of protected UI
     return <LoadingComponent />; // or `null`
   }

@@ -23,7 +23,7 @@ export const onboardingSchema = z.object({
       message:
         "Password must include letters, numbers, and special characters (!@#$%^&*)",
     }),
-  phoneNumber: z.string({ message: "Invalid mobile number" }).min(1, {
+  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
     message: "Mobile number is required",
   }),
 });

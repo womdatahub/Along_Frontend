@@ -1,13 +1,16 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import type { SelectorFn } from "@/types";
+import type { DriverProfile, RiderProfile, SelectorFn } from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
 // import { callApi } from "@/lib";
 
 type Session = {
-  user: string;
+  userRole: string;
+  riderProfile: RiderProfile | undefined;
+  driverProfile: DriverProfile | undefined;
+  adminProfile: RiderProfile | undefined;
   isFetchingUserSessionLoading: boolean;
   isLoading: boolean;
   services: string[];
@@ -22,7 +25,7 @@ type Session = {
     registerUser: (data: {
       email: string;
       password: string;
-      phoneNumber: string;
+      mobileNumber: string;
       type: "email" | "phone";
     }) => Promise<boolean>;
     verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
@@ -98,11 +101,14 @@ type Session = {
 };
 
 const initialState = {
-  user: "",
+  userRole: "",
   isFetchingUserSessionLoading: false,
   isLoading: false,
   services: [],
   routeBeforeRedirect: "",
+  riderProfile: undefined,
+  driverProfile: undefined,
+  adminProfile: undefined,
 };
 
 export const useSession = create<Session>()(
@@ -158,7 +164,7 @@ export const useSession = create<Session>()(
 
           if (error) {
             toast.error(error.message);
-            set({ isLoading: false, user: "rider" });
+            set({ isLoading: false, userRole: "" });
             return false;
           }
           if (data) {
@@ -166,7 +172,7 @@ export const useSession = create<Session>()(
             console.log(data, path);
             toast.success(data.message);
           }
-          set({ isLoading: false, user: "rider" });
+          set({ isLoading: false });
           return true;
         },
         logOut: async () => {},
@@ -174,11 +180,8 @@ export const useSession = create<Session>()(
           // console.log("this ran reisteruser");
           set({ isLoading: true });
           const path = userApiStr("/user/register");
-          const rest = (({ phoneNumber, ...rest }) => rest)(registerUserData);
 
-          const { data, error } = await callApi(path, {
-            ...rest,
-          });
+          const { data, error } = await callApi(path, registerUserData);
 
           if (error) {
             toast.error(error.message);
@@ -381,17 +384,31 @@ export const useSession = create<Session>()(
           set({ isFetchingUserSessionLoading: true });
           const path = userApiStr("/user/profile");
 
-          const { data, error } = await callApi(path);
+          const { data, error } = await callApi<RiderProfile | DriverProfile>(
+            path
+          );
 
           if (error) {
-            set({ user: "", isFetchingUserSessionLoading: false });
+            set({ userRole: "", isFetchingUserSessionLoading: false });
             toast.error(error.message);
             return;
           }
 
           if (data) {
-            console.log(data, path);
-            set({ user: "rider", isFetchingUserSessionLoading: false });
+            if (data.data.role === "rider") {
+              set({
+                riderProfile: data.data as RiderProfile,
+                userRole: "rider",
+                isFetchingUserSessionLoading: false,
+              });
+            }
+            if (data.data.role === "driver") {
+              set({
+                driverProfile: data.data as DriverProfile,
+                userRole: "driver",
+                isFetchingUserSessionLoading: false,
+              });
+            }
           }
         },
         fetchVehicleViaClass: async (vehicleClass) => {
