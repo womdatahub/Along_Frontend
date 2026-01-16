@@ -3,10 +3,18 @@ import { useState, useEffect } from "react";
 import { LogoIcon } from "@public/svgs";
 import Link from "next/link";
 import Image from "next/image";
+import { useSession } from "@/store";
+import { useShallow } from "zustand/shallow";
 
 export const Navbar = () => {
-  // const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const { userRole } = useSession(
+    useShallow((state) => ({
+      userRole: state.userRole,
+    }))
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,11 +44,11 @@ export const Navbar = () => {
         {/* Desktop Menu */}
         <div className='hidden md:flex gap-14 text-black text-xl'>
           <Link href='/about'>About</Link>
-          <Link href='/onboarding'>Ride</Link>
+          <Link href='/rent-ride'>Ride</Link>
           <Link href='/onboarding'>Drive</Link>
           <Link href='#'>Help</Link>
           <Link
-            href='/sign-in'
+            href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
             className='font-semibold flex items-center gap-2.5'
           >
             <Image
@@ -49,38 +57,52 @@ export const Navbar = () => {
               width={30}
               height={30}
             />
-            Sign in
+            {!userRole && <p>Sign in</p>}
           </Link>
         </div>
 
         {/* Mobile Toggle */}
-        {/* <button
+        <button
           className='md:hidden text-gray-800 text-2xl'
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? "✖" : "☰"}
-        </button> */}
+        </button>
       </div>
 
       {/* Mobile Menu */}
-      {/* {menuOpen && (
+      {menuOpen && (
         <div className='md:hidden bg-white border-t border-gray-200'>
           <ul className='flex flex-col items-center gap-4 py-4 text-gray-700'>
-            <li>
-              <Link href='#'>About</Link>
+            <li onClick={() => setMenuOpen(false)}>
+              <Link href='/about'>About</Link>
             </li>
-            <li>
-              <Link href='#'>Ride</Link>
+            <li onClick={() => setMenuOpen(false)}>
+              <Link href='/rent-ride'>Ride</Link>
             </li>
-            <li>
-              <Link href='#'>Drive</Link>
+            <li onClick={() => setMenuOpen(false)}>
+              <Link href='/onboarding'>Drive</Link>
             </li>
-            <li>
+            <li onClick={() => setMenuOpen(false)}>
               <Link href='#'>Help</Link>
+            </li>
+            <li onClick={() => setMenuOpen(false)}>
+              <Link
+                href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
+                className='font-semibold flex items-center gap-2.5'
+              >
+                <Image
+                  alt='profile img'
+                  src='/images/account.png'
+                  width={30}
+                  height={30}
+                />
+                {!userRole && <p>Sign in</p>}
+              </Link>
             </li>
           </ul>
         </div>
-      )} */}
+      )}
     </nav>
   );
 };
