@@ -10,12 +10,11 @@ const Context = createContext({});
 const { Provider } = Context;
 
 // Public = accessible to everyone (even when logged in)
-const publicRoutes = ["/", "/about"];
+const publicRoutes = ["/", "/about", "/onboarding"];
 
 // Auth-only = should NOT be accessible once logged in
 const authOnlyRoutes = [
   "/sign-in",
-  "/onboarding",
   "/onboarding/otp",
   "/onboarding/rider",
   "/onboarding/user-type",
@@ -81,6 +80,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       if (userRole === "driver") {
         router.replace("/driver-db");
+        return;
+      }
+      if (userRole === "admin") {
+        router.replace("/admin");
         return;
       }
     }
