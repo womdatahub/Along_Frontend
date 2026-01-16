@@ -48,7 +48,9 @@ export const Navbar = () => {
           <Link href='/onboarding'>Drive</Link>
           <Link href='#'>Help</Link>
           <Link
-            href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
+            href={
+              userRole ? `/${userRole.toLowerCase()}-db/account` : "/sign-in"
+            }
             className='font-semibold flex items-center gap-2.5'
           >
             <Image

@@ -109,9 +109,11 @@ const Page = () => {
                           <p className='text-white text-lg font-medium'>
                             ***** ***** 3762
                           </p>
-                          <p className='text-lightgreen text-xs'>
-                            Card details
-                          </p>
+                          <Link href='/rider-db/cards'>
+                            <p className='text-lightgreen text-xs'>
+                              Card details
+                            </p>
+                          </Link>
                         </div>
                         <Image
                           src={"/images/credit-cards.png"}
@@ -127,8 +129,8 @@ const Page = () => {
                       <Link href='/rider-db/new-card'>Add card</Link>
                     </Button>
                     <Button
-                      variant={"ghost"}
-                      className='flex gap-3 items-center text-destructive bg-transparent hover:bg-transparent cursor-pointer'
+                      variant={"destructive"}
+                      className='bg-transparent hover:bg-transparent text-destructive cursor-pointer border-none shadow-none p-0 text-xs font-heebo flex items-center gap-2'
                     >
                       <RemoveCardIcon />
                       Remove card
@@ -155,9 +157,11 @@ const Page = () => {
                         className={"w-14 h-fit -mt-10"}
                       />
                     </div>
-                    <Button className='cursor-pointer rounded-full w-fit'>
-                      {" "}
-                      Add fund
+                    <Button
+                      asChild
+                      className='cursor-pointer rounded-full w-fit'
+                    >
+                      <Link href='/rider-db/wallets'>Add fund</Link>
                     </Button>
                   </div>
                 </Card>
