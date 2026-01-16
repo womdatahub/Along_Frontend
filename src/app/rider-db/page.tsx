@@ -123,8 +123,8 @@ const Page = () => {
                     </div>
                   </CardContent>
                   <CardFooter className='flex items-center justify-between'>
-                    <Button className='cursor-pointer rounded-full'>
-                      Add card
+                    <Button className='cursor-pointer rounded-full' asChild>
+                      <Link href='/rider-db/new-card'>Add card</Link>
                     </Button>
                     <Button
                       variant={"ghost"}
