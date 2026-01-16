@@ -1,5 +1,5 @@
 export type ImageType = {
-  imageFile: string | ArrayBuffer | File | null;
+  imageFile: File | Blob;
   imageName: string;
   imageSize: number;
   url?: string;
