@@ -27,6 +27,23 @@ export const onboardingSchema = z.object({
     message: "Mobile number is required",
   }),
 });
+export const driverBasicInfoSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  gender: z.enum(["male", "female"], {
+    message: "Please select a valid gender",
+  }),
+  firstEmergencyContact: z
+    .string()
+    .min(10, "Please enter a valid phone number")
+    .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
+  secondEmergencyContact: z
+    .string()
+    .min(10, "Please enter a valid phone number")
+    .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
+});
+
 export const socialSecurityNumberSchema = z.object({
   socialSecurityNumber: z
     .string()

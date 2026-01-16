@@ -69,15 +69,6 @@ const OTPVerification = () => {
           </div>
           <div className='flex flex-col gap-7'>
             <div className='flex gap-1 justify-center items-center text-center'>
-              <p className='text-sm'>Send to email</p>
-              <Button
-                variant={"link"}
-                className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline'
-              >
-                Send
-              </Button>
-            </div>
-            <div className='flex gap-1 justify-center items-center text-center'>
               <p className='text-sm'>Didn’t get the code?</p>
               <Button
                 variant={"link"}

@@ -75,10 +75,9 @@ const Page = () => {
       <AuthBackAndContinueButton
         backActive
         continueActive={services.length > 0}
-        continueFnc={() => {
-          router.push("/onboarding/driver-info");
+        continueFnc={async () => {
+          router.push("/onboarding/documents");
         }}
-        // continuePath='/onboarding/driver-info'
       />
     </div>
   );

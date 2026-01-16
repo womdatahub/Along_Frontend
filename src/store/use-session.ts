@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-import type { DriverProfile, RiderProfile, SelectorFn } from "@/types";
+import type { AdminProfile, DriverProfile, RiderProfile, SelectorFn, UserProfile } from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
 // import { callApi } from "@/lib";
@@ -10,7 +10,8 @@ type Session = {
   userRole: string;
   riderProfile: RiderProfile | undefined;
   driverProfile: DriverProfile | undefined;
-  adminProfile: RiderProfile | undefined;
+  adminProfile: AdminProfile | undefined;
+  userProfile: UserProfile | undefined;
   isFetchingUserSessionLoading: boolean;
   isLoading: boolean;
   services: string[];
@@ -41,7 +42,7 @@ type Session = {
       gender: "male" | "female";
       firstEmergencyContact: string;
       secondEmergencyContact: string;
-    }) => Promise<void>;
+    }) => Promise<boolean>;
     addVerificationDocumentsAndServices: (data: {
       driverSocialSecurityNumber: string;
       driverProfilePictureUri: string;
@@ -110,6 +111,7 @@ const initialState = {
   riderProfile: undefined,
   driverProfile: undefined,
   adminProfile: undefined,
+  userProfile: undefined,
 };
 
 export const useSession = create<Session>()(
@@ -180,7 +182,7 @@ export const useSession = create<Session>()(
         }
         return data?.data.userRole as string;
       },
-      logOut: async () => {},
+      logOut: async () => { },
       registerUser: async (registerUserData) => {
         // console.log("this ran reisteruser");
         set({ isLoading: true });
@@ -252,11 +254,13 @@ export const useSession = create<Session>()(
 
         if (error) {
           toast.error(error.message);
-          return;
+          return false;
         }
         if (data) {
           console.log(data, path);
+          return true
         }
+        return false;
       }, //POST
       addVerificationDocumentsAndServices: async (
         addVerificationDocumentsAndServicesData
@@ -398,19 +402,44 @@ export const useSession = create<Session>()(
 
         if (data) {
           if (shouldToast) toast.success(data.message);
-          if (data.data.role === "rider") {
-            set({
+          switch (data.data.role) {
+            case "admin": {
+              set({
+                adminProfile: data.data as AdminProfile,
+                userRole: "admin",
+                isFetchingUserSessionLoading: false,
+              })
+            }
+              break;
+            case "rider":
+              set({
               riderProfile: data.data as RiderProfile,
               userRole: "rider",
               isFetchingUserSessionLoading: false,
             });
-          }
-          if (data.data.role === "driver") {
-            set({
-              driverProfile: data.data as DriverProfile,
-              userRole: "driver",
-              isFetchingUserSessionLoading: false,
-            });
+              break;
+            case "driver":
+              set({
+                driverProfile: data.data as DriverProfile,
+                userRole: "driver",
+                isFetchingUserSessionLoading: false,
+              });
+              break;
+            case "user":
+              set({
+                userProfile: data.data as UserProfile,
+                userRole: "user",
+                isFetchingUserSessionLoading: false,
+              });
+              break;
+            default:
+              set({
+                userProfile: undefined,
+                driverProfile: undefined,
+                adminProfile: undefined,
+                riderProfile: undefined,
+                isFetchingUserSessionLoading: false,
+              })
           }
         }
       },

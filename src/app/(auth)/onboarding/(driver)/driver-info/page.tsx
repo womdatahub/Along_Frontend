@@ -1,178 +1,182 @@
 "use client";
-import { AddInput, AuthBackAndContinueButton } from "@/components";
-import { UploadingImagesReusableComponent } from "@/components";
-import {
-  socialSecurityNumberSchema,
-  TSocialSecurityNumberSchemaValidator,
-} from "@/lib";
+import { AddInput, AuthBackAndContinueButton, HeadingHeebo } from "@/components";
+import { cn } from "@/lib";
 import { useSession } from "@/store";
-import { ImageType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  AddPhotoIcon,
-  DriverInformationIcon,
-  UploadImageIcon,
-} from "@public/svgs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { driverBasicInfoSchema } from "@/lib";
+import { z } from "zod";
+
+type DriverBasicInfoSchema = z.infer<typeof driverBasicInfoSchema>;
 
 const Page = () => {
-  const [previews, setPreviews] = useState<
-    ({ image: ImageType; uri: string } | null)[]
-  >([null, null, null, null]);
-  const [imagesUri, setImagesUri] = useState<string[]>([]);
   const {
-    actions: { uploadImages, addVerificationDocumentsAndServices },
+    userProfile,
+    actions: { registerDriver },
   } = useSession((state) => state);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<TSocialSecurityNumberSchemaValidator>({
+    formState: { errors, isSubmitting },
+    setValue,
+    watch,
+  } = useForm<DriverBasicInfoSchema>({
+    resolver: zodResolver(driverBasicInfoSchema),
     defaultValues: {
-      socialSecurityNumber: "",
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      gender: undefined,
+      firstEmergencyContact: "",
+      secondEmergencyContact: "",
     },
-    resolver: zodResolver(socialSecurityNumberSchema),
   });
-  const router = useRouter();
 
-  const onSubmit = async (v: TSocialSecurityNumberSchemaValidator) => {
-    console.log(v, errors);
-    if (previews.includes(null)) {
-      toast.error("All images are required");
+  const router = useRouter();
+  const selectedGender = watch("gender");
+
+  const onSubmit = async (data: DriverBasicInfoSchema) => {
+    if (!userProfile?.email) {
+      toast.error("User email not found. Please log in again.");
       return;
     }
-    const uri = await uploadImages({
-      uploadType: "profile",
-      imageFile: previews[0]?.image.imageFile as ImageType["imageFile"],
-    });
-    if (!uri) return;
-    setImagesUri((prev) => [...prev, uri]);
 
-    for (let i = 0; i < previews.length; i++) {
-      if (i === 0) return;
-      const uri = await uploadImages({
-        uploadType: "verification_document",
-        imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
-      });
-      if (!uri) return;
-      setImagesUri((prev) => [...prev, uri]);
+    const driverData = {
+      ...data,
+      email: userProfile.email,
+    };
+
+    const isSuccess = await registerDriver(driverData);
+
+    if (!isSuccess) {
+      toast.error("Failed to register driver. Please try again.");
+      return;
     }
 
-    const isSuccess = await addVerificationDocumentsAndServices({
-      driverSocialSecurityNumber: v.socialSecurityNumber,
-      driverProfilePictureUri: imagesUri[0],
-      driverLincenseFrontViewUri: imagesUri[1],
-      driverLincenseBackViewUri: imagesUri[2],
-      advancedVerificationUri: imagesUri[3],
-    });
-    if (!isSuccess) return;
-    router.push("/onboarding/vehicle-info");
+    toast.success("Driver information saved successfully!");
+    router.push("/onboarding/offered-services");
   };
+
+  const genderOptions = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Other" },
+  ];
+
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
-      <div className='flex flex-col gap-5'>
-        <div className='flex flex-col'>
-          <div className='flex flex-col gap-1 justify-center items-center w-fit'>
-            <DriverInformationIcon />
-            <p className='font-semibold text-lg'>Driver Information</p>
-          </div>
-          <UploadingImagesReusableComponent
-            key={0}
-            index={0}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-[#FAFAFA] text-placeholder self-end w-[157px] h-[98px]'
-            imageToastDescription='Profile image'
-          >
-            <div className='flex flex-col gap-2 justify-center items-center'>
-              <AddPhotoIcon />
-              <p className='text-sm font-medium'>Profile photo</p>
-            </div>
-          </UploadingImagesReusableComponent>
-        </div>
-        {/* <CustomAuthInput
-          label='Social Security Number'
-          placeholder='000 000 00000'
-        /> */}
-        <AddInput
-          label='Social Security Number'
-          id='socialSecurityNumber'
-          errors={errors}
-          placeholder='000 000 00000'
-          register={register}
-          disabled={false}
-          required
-          type='text'
-          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
-        />
-        <div className='flex flex-col gap-1'>
-          <label className='font-semibold text-sm ml-5'>Driver’s License</label>
-          <div className='flex gap-5'>
-            <UploadingImagesReusableComponent
-              key={1}
-              index={1}
-              previews={previews}
-              setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-              imageToastDescription='Front of the driver license'
-            >
-              <div className='flex gap-2 justify-center items-center'>
-                <UploadImageIcon />
-                <p className='text-sm font-medium'>Front</p>
-              </div>
-            </UploadingImagesReusableComponent>
-            <UploadingImagesReusableComponent
-              key={2}
-              index={2}
-              previews={previews}
-              setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-              imageToastDescription='Back of the driver license'
-            >
-              <div className='flex gap-2 justify-center items-center'>
-                <UploadImageIcon />
-                <p className='text-sm font-medium'>Back</p>
-              </div>
-            </UploadingImagesReusableComponent>
-          </div>
-        </div>
-        <div className='flex flex-col gap-2'>
-          <div className='flex flex-col'>
-            <label className='font-semibold text-sm ml-5'>
-              Advanced Verification
-            </label>
-            <p className='font-medium text-sm ml-5 text-[#858585]'>
-              Please upload a picture of you holding <br />
-              your driver’s license
-            </p>
-          </div>
-          <UploadingImagesReusableComponent
-            key={3}
-            index={3}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-            imageToastDescription='Front of the driver license'
-          >
-            <div className='flex flex-col gap-2 justify-center items-center'>
-              <AddPhotoIcon />
-              <p className='text-sm font-medium'>Upload Photo</p>
-            </div>
-          </UploadingImagesReusableComponent>
-        </div>
+      <div className='flex flex-col gap-2'>
+        <HeadingHeebo>Driver Information</HeadingHeebo>
+        <p className='text-center text-sm text-gray-600'>
+          Please provide your basic information
+        </p>
       </div>
 
-      <AuthBackAndContinueButton
-        backActive
-        continueActive={!previews.includes(null)}
-        continueFnc={handleSubmit(onSubmit)}
-      />
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+        <div className='flex gap-4'>
+          <AddInput
+            label='First Name'
+            id='firstName'
+            errors={errors}
+            placeholder='Enter first name'
+            register={register}
+            disabled={isSubmitting}
+            required
+            type='text'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+
+          <AddInput
+            label='Last Name'
+            id='lastName'
+            errors={errors}
+            placeholder='Enter last name'
+            register={register}
+            disabled={isSubmitting}
+            required
+            type='text'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+        </div>
+
+        <AddInput
+          label='Date of Birth'
+          id='dateOfBirth'
+          errors={errors}
+          placeholder='Select date'
+          register={register}
+          disabled={isSubmitting}
+          required
+          type='date'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+        />
+
+        <div className='flex flex-col gap-2'>
+          <label className='font-semibold text-sm ml-5'>
+            Gender <span className='text-red-500'>*</span>
+          </label>
+          <div className='flex gap-3'>
+            {genderOptions.map((option) => (
+              <button
+                key={option.value}
+                type='button'
+                onClick={() => setValue("gender", option.value as any)}
+                className={cn(
+                  "flex-1 px-4 py-4 rounded-2xl bg-white border-2 border-transparent transition-all duration-200 text-sm font-medium",
+                  selectedGender === option.value
+                    ? "border-primary bg-primary/5"
+                    : "hover:border-gray-300"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          {errors.gender && (
+            <p className='text-red-500 text-xs ml-5'>{errors.gender.message}</p>
+          )}
+        </div>
+
+        <AddInput
+          label='First Emergency Contact'
+          id='firstEmergencyContact'
+          errors={errors}
+          placeholder='+234 000 000 0000'
+          register={register}
+          disabled={isSubmitting}
+          required
+          type='tel'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+        />
+
+        <AddInput
+          label='Second Emergency Contact'
+          id='secondEmergencyContact'
+          errors={errors}
+          placeholder='+234 000 000 0000'
+          register={register}
+          disabled={isSubmitting}
+          required
+          type='tel'
+          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+        />
+
+        <AuthBackAndContinueButton
+          backActive
+          continueActive={!isSubmitting}
+          continueFnc={handleSubmit(onSubmit)}
+        />
+      </form>
     </div>
   );
 };
+
 export default Page;

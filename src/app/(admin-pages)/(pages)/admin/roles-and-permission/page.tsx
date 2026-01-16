@@ -70,7 +70,7 @@ const Page = () => {
                 <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
                   <TableHead className='text-[#768B8F]'>User</TableHead>
                   <TableHead className='text-[#768B8F]'>Role</TableHead>
-                  <TableHead className='text-[#768B8F]'>Permissions</TableHead>
+                  <TableHead className='text-[#768B8F]'>Active</TableHead>
                   <TableHead className='text-[#768B8F]'>Action</TableHead>
                 </TableRow>
               </TableHeader>

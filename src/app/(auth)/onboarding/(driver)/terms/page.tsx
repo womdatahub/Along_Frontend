@@ -55,7 +55,7 @@ const Page = () => {
         <Button
           variant='link'
           className='text-primary font-bold hover:cursor-pointer'
-          onClick={() => router.push("/onboarding/services")}
+          onClick={() => router.push("/onboarding/driver-info")}
         >
           Accept
         </Button>

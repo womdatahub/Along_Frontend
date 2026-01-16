@@ -15,8 +15,8 @@ type Props = {
   >;
   className?: string;
   imageToastDescription: string;
-  // uploadToBucketFunction?:(image: ImageType) => void
 };
+
 export const UploadingImagesReusableComponent = ({
   children,
   className,
@@ -26,28 +26,31 @@ export const UploadingImagesReusableComponent = ({
   imageToastDescription,
 }: Props) => {
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
-    const file = new FileReader();
-    file.onload = function () {
-      setPreviews((prev) =>
-        prev.map((item, id) =>
-          id === index
-            ? {
-                image: {
-                  imageFile: file.result,
-                  imageName: acceptedFiles[0].name,
-                  imageSize: acceptedFiles[0].size,
-                },
-                uri: "",
-              }
-            : item
-        )
-      );
-    };
-    file.readAsDataURL(acceptedFiles[0]);
+    if (acceptedFiles.length === 0) return;
+
+    const file = acceptedFiles[0];
+
+    // Create object URL for preview
+    const objectUrl = URL.createObjectURL(file);
+
+    setPreviews((prev) =>
+      prev.map((item, id) =>
+        id === index
+          ? {
+            image: {
+              imageFile: file, // Store the actual File object
+              imageName: file.name,
+              imageSize: file.size,
+            },
+            uri: objectUrl, // Store the object URL for preview
+          }
+          : item
+      )
+    );
+
     toast.success("Success", {
       description: `${imageToastDescription} chosen successfully`,
     });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -61,7 +64,6 @@ export const UploadingImagesReusableComponent = ({
       "image/gif": [],
       "image/svg+xml": [],
     },
-    // noClick: !!fileName,
   });
 
   return (
@@ -71,9 +73,9 @@ export const UploadingImagesReusableComponent = ({
         className
       )}
     >
-      {previews[index]?.image.imageFile ? (
+      {previews[index]?.uri ? (
         <Image
-          src={(previews[index].image.imageFile as string) ?? ""}
+          src={previews[index].uri ?? ""}
           alt='image'
           width={100}
           height={100}
@@ -97,7 +99,6 @@ export const UploadingImagesReusableComponent = ({
               className=' size-full flex justify-center items-center'
             >
               <input {...getInputProps()} />
-
               {isDragActive ? (
                 <p className='text-sm'>Drop the file here</p>
               ) : (
