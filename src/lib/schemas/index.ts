@@ -91,6 +91,12 @@ export const createAccountSchema = z
     path: ["confirmPassword"],
   });
 
+export const updateMobileNumberSchema = z.object({
+  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
+    message: "Mobile number is required",
+  }),
+});
+
 export type TSignInValidator = z.infer<typeof signInSchema>;
 export type TOnboardingValidator = z.infer<typeof onboardingSchema>;
 export type TRegisterRiderValidator = z.infer<typeof registerRiderSchema>;
@@ -101,4 +107,7 @@ export type TSocialSecurityNumberSchemaValidator = z.infer<
 >;
 export type TVehicleRegistrationSchemaValidator = z.infer<
   typeof vehicleRegistrationSchema
+>;
+export type TUpdateMobileNumberSchemaValidator = z.infer<
+  typeof updateMobileNumberSchema
 >;
