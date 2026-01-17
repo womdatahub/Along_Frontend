@@ -220,6 +220,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
+          await get().actions.fetchUserDetails();
           toast.success(data.message);
           console.log(data, path);
         }
