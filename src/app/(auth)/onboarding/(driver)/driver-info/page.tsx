@@ -57,7 +57,7 @@ const Page = () => {
     }
 
     toast.success("Driver information saved successfully!");
-    router.push("/onboarding/offered-services");
+    router.push("/onboarding/services");
   };
 
   const genderOptions: { value: "male" | "female" | "other"; label: string }[] =
