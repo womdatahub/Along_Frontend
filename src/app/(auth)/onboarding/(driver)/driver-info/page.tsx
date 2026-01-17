@@ -1,15 +1,16 @@
 "use client";
-import { AddInput, AuthBackAndContinueButton, HeadingHeebo } from "@/components";
-import { cn } from "@/lib";
+import {
+  AddInput,
+  AuthBackAndContinueButton,
+  HeadingHeebo,
+} from "@/components";
+import { cn, TDriverBasicInfoSchema } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { driverBasicInfoSchema } from "@/lib";
-import { z } from "zod";
-
-type DriverBasicInfoSchema = z.infer<typeof driverBasicInfoSchema>;
 
 const Page = () => {
   const {
@@ -23,13 +24,12 @@ const Page = () => {
     formState: { errors, isSubmitting },
     setValue,
     watch,
-  } = useForm<DriverBasicInfoSchema>({
+  } = useForm<TDriverBasicInfoSchema>({
     resolver: zodResolver(driverBasicInfoSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
       dateOfBirth: "",
-      gender: undefined,
       firstEmergencyContact: "",
       secondEmergencyContact: "",
     },
@@ -38,7 +38,7 @@ const Page = () => {
   const router = useRouter();
   const selectedGender = watch("gender");
 
-  const onSubmit = async (data: DriverBasicInfoSchema) => {
+  const onSubmit = async (data: TDriverBasicInfoSchema) => {
     if (!userProfile?.email) {
       toast.error("User email not found. Please log in again.");
       return;
@@ -60,11 +60,12 @@ const Page = () => {
     router.push("/onboarding/offered-services");
   };
 
-  const genderOptions = [
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
-    { value: "other", label: "Other" },
-  ];
+  const genderOptions: { value: "male" | "female" | "other"; label: string }[] =
+    [
+      { value: "male", label: "Male" },
+      { value: "female", label: "Female" },
+      { value: "other", label: "Other" },
+    ];
 
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
@@ -126,12 +127,12 @@ const Page = () => {
               <button
                 key={option.value}
                 type='button'
-                onClick={() => setValue("gender", option.value as any)}
+                onClick={() => setValue("gender", option.value)}
                 className={cn(
                   "flex-1 px-4 py-4 rounded-2xl bg-white border-2 border-transparent transition-all duration-200 text-sm font-medium",
                   selectedGender === option.value
                     ? "border-primary bg-primary/5"
-                    : "hover:border-gray-300"
+                    : "hover:border-gray-300",
                 )}
               >
                 {option.label}
@@ -170,7 +171,7 @@ const Page = () => {
         />
 
         <AuthBackAndContinueButton
-          backActive
+          backActive={!isSubmitting}
           continueActive={!isSubmitting}
           continueFnc={handleSubmit(onSubmit)}
         />

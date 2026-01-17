@@ -31,7 +31,7 @@ export const driverBasicInfoSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  gender: z.enum(["male", "female"], {
+  gender: z.enum(["male", "female", "other"], {
     message: "Please select a valid gender",
   }),
   firstEmergencyContact: z
@@ -128,3 +128,4 @@ export type TVehicleRegistrationSchemaValidator = z.infer<
 export type TUpdateMobileNumberSchemaValidator = z.infer<
   typeof updateMobileNumberSchema
 >;
+export type TDriverBasicInfoSchema = z.infer<typeof driverBasicInfoSchema>;

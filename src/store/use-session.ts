@@ -1,7 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-import type { AdminProfile, DriverProfile, RiderProfile, SelectorFn, UserProfile } from "@/types";
+import type {
+  AdminProfile,
+  DriverProfile,
+  RiderProfile,
+  SelectorFn,
+  UserProfile,
+} from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
 // import { callApi } from "@/lib";
@@ -39,7 +45,7 @@ type Session = {
       firstName: string;
       lastName: string;
       dateOfBirth: string;
-      gender: "male" | "female";
+      gender: "male" | "female" | "other";
       firstEmergencyContact: string;
       secondEmergencyContact: string;
     }) => Promise<boolean>;
@@ -139,7 +145,7 @@ export const useSession = create<Session>()(
 
         const { data, error } = await callApi(
           userApiStr("/user/upload"), // "/api/v1/user/uploads",
-          formData
+          formData,
           // "PATCH"
           // userApiStr("/user/uploads"),
           // {
@@ -167,7 +173,7 @@ export const useSession = create<Session>()(
         const path = userApiStr("/user/login");
         const { data, error } = await callApi<{ userRole: string }>(
           path,
-          loginData
+          loginData,
         );
 
         if (error) {
@@ -182,7 +188,7 @@ export const useSession = create<Session>()(
         }
         return data?.data.userRole as string;
       },
-      logOut: async () => { },
+      logOut: async () => {},
       registerUser: async (registerUserData) => {
         // console.log("this ran reisteruser");
         set({ isLoading: true });
@@ -258,12 +264,12 @@ export const useSession = create<Session>()(
         }
         if (data) {
           console.log(data, path);
-          return true
+          return true;
         }
         return false;
       }, //POST
       addVerificationDocumentsAndServices: async (
-        addVerificationDocumentsAndServicesData
+        addVerificationDocumentsAndServicesData,
       ) => {
         const path = userApiStr("/user/documents-services");
         const { data, error } = await callApi(
@@ -272,7 +278,7 @@ export const useSession = create<Session>()(
             ...addVerificationDocumentsAndServicesData,
             services: get().services,
           },
-          "PATCH"
+          "PATCH",
         );
 
         if (error) {
@@ -292,7 +298,7 @@ export const useSession = create<Session>()(
         const { data, error } = await callApi(
           path,
           registerVehicleData,
-          "PATCH"
+          "PATCH",
         );
 
         if (error) {
@@ -341,7 +347,7 @@ export const useSession = create<Session>()(
         const { data, error } = await callApi(
           path,
           updateDriverDetailsData,
-          "PATCH"
+          "PATCH",
         );
 
         if (error) {
@@ -358,7 +364,7 @@ export const useSession = create<Session>()(
         const { data, error } = await callApi(
           path,
           updateRiderDetailsData,
-          "PATCH"
+          "PATCH",
         );
 
         if (error) {
@@ -375,7 +381,7 @@ export const useSession = create<Session>()(
         const { data, error } = await callApi(
           path,
           createRideProfileData,
-          "PATCH"
+          "PATCH",
         );
 
         if (error) {
@@ -390,9 +396,9 @@ export const useSession = create<Session>()(
         set({ isFetchingUserSessionLoading: true });
         const path = userApiStr("/user/profile");
 
-        const { data, error } = await callApi<RiderProfile | DriverProfile>(
-          path
-        );
+        const { data, error } = await callApi<
+          RiderProfile | DriverProfile | AdminProfile | UserProfile
+        >(path);
 
         if (error) {
           set({ userRole: "", isFetchingUserSessionLoading: false });
@@ -403,20 +409,21 @@ export const useSession = create<Session>()(
         if (data) {
           if (shouldToast) toast.success(data.message);
           switch (data.data.role) {
-            case "admin": {
-              set({
-                adminProfile: data.data as AdminProfile,
-                userRole: "admin",
-                isFetchingUserSessionLoading: false,
-              })
-            }
+            case "admin":
+              {
+                set({
+                  adminProfile: data.data as AdminProfile,
+                  userRole: "admin",
+                  isFetchingUserSessionLoading: false,
+                });
+              }
               break;
             case "rider":
               set({
-              riderProfile: data.data as RiderProfile,
-              userRole: "rider",
-              isFetchingUserSessionLoading: false,
-            });
+                riderProfile: data.data as RiderProfile,
+                userRole: "rider",
+                isFetchingUserSessionLoading: false,
+              });
               break;
             case "driver":
               set({
@@ -439,7 +446,7 @@ export const useSession = create<Session>()(
                 adminProfile: undefined,
                 riderProfile: undefined,
                 isFetchingUserSessionLoading: false,
-              })
+              });
           }
         }
       },
@@ -483,11 +490,11 @@ export const useSession = create<Session>()(
         }
       },
     },
-  }))
+  })),
 );
 
 export const useSessions = <TResult>(
-  selector: SelectorFn<Session, TResult>
+  selector: SelectorFn<Session, TResult>,
 ) => {
   const state = useSession(selector);
 

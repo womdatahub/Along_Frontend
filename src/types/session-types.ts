@@ -1,15 +1,16 @@
 export type AdminProfile = {
   _id: string;
-  userId: string;
+  adminId: string;
   firstName: string;
   lastName: string;
   email: string;
+  mobileNumber: string;
   role: "admin" | string;
   profilePictureUri: string | null;
   createdAt: string;
   updatedAt: string;
   __v: number;
-}
+};
 export type DriverProfile = {
   _id: string;
   userId: string;
@@ -66,7 +67,7 @@ export interface RiderProfile {
 }
 
 export interface UserProfile {
-  _id: string,
+  _id: string;
   email: string;
   role: string;
   createdAt: string;

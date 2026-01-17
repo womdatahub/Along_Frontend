@@ -14,7 +14,7 @@ import {
   UploadImageIcon,
 } from "@public/svgs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -47,12 +47,14 @@ const Page = () => {
     error: null,
   });
 
-  const [advancedVerification, setAdvancedVerification] = useState<UploadState>({
-    preview: null,
-    uploadedUrl: null,
-    isUploading: false,
-    error: null,
-  });
+  const [advancedVerification, setAdvancedVerification] = useState<UploadState>(
+    {
+      preview: null,
+      uploadedUrl: null,
+      isUploading: false,
+      error: null,
+    },
+  );
 
   const {
     actions: { addVerificationDocumentsAndServices },
@@ -73,7 +75,7 @@ const Page = () => {
 
   const handleFileSelect = (
     file: ImageType,
-    setter: React.Dispatch<React.SetStateAction<UploadState>>
+    setter: React.Dispatch<React.SetStateAction<UploadState>>,
   ) => {
     console.log("file selected:", file);
     console.log("file.imageFile:", file.imageFile);
@@ -97,7 +99,7 @@ const Page = () => {
     uploadType: "profile" | "verification_document",
     state: UploadState,
     setter: React.Dispatch<React.SetStateAction<UploadState>>,
-    label: string
+    label: string,
   ) => {
     if (!state.preview) return;
 
@@ -111,7 +113,8 @@ const Page = () => {
 
       // Make the upload request
       const platform = process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "";
-      const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000";
+      const baseUrl =
+        process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000";
       // Make the upload request
       const response = await fetch(`${baseUrl}/user/api/v1/user/upload`, {
         method: "POST",
@@ -154,9 +157,12 @@ const Page = () => {
     const validationErrors: string[] = [];
 
     if (!profilePhoto.uploadedUrl) validationErrors.push("Profile photo");
-    if (!licenseFront.uploadedUrl) validationErrors.push("Driver's license front");
-    if (!licenseBack.uploadedUrl) validationErrors.push("Driver's license back");
-    if (!advancedVerification.uploadedUrl) validationErrors.push("Advanced verification photo");
+    if (!licenseFront.uploadedUrl)
+      validationErrors.push("Driver's license front");
+    if (!licenseBack.uploadedUrl)
+      validationErrors.push("Driver's license back");
+    if (!advancedVerification.uploadedUrl)
+      validationErrors.push("Advanced verification photo");
 
     if (validationErrors.length > 0) {
       validationErrors.forEach((error) => {
@@ -191,12 +197,19 @@ const Page = () => {
     router.push("/onboarding/vehicle-info");
   };
 
-  const allFilesUploaded =
-    profilePhoto.uploadedUrl &&
-    licenseFront.uploadedUrl &&
-    licenseBack.uploadedUrl &&
-    advancedVerification.uploadedUrl;
-
+  const allFilesUploaded = useMemo(
+    () =>
+      profilePhoto.uploadedUrl &&
+      licenseFront.uploadedUrl &&
+      licenseBack.uploadedUrl &&
+      advancedVerification.uploadedUrl,
+    [
+      profilePhoto.uploadedUrl,
+      licenseFront.uploadedUrl,
+      licenseBack.uploadedUrl,
+      advancedVerification.uploadedUrl,
+    ],
+  );
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-5'>
@@ -212,7 +225,10 @@ const Page = () => {
               index={0}
               previews={[profilePhoto.preview]}
               setPreviews={(newValue) => {
-                const value = typeof newValue === 'function' ? newValue([profilePhoto.preview]) : newValue;
+                const value =
+                  typeof newValue === "function"
+                    ? newValue([profilePhoto.preview])
+                    : newValue;
                 if (value[0]) handleFileSelect(value[0].image, setProfilePhoto);
               }}
               className='justify-center items-center rounded-[10px] bg-[#FAFAFA] text-placeholder self-end w-[157px] h-[98px]'
@@ -226,7 +242,14 @@ const Page = () => {
 
             {profilePhoto.preview && !profilePhoto.uploadedUrl && (
               <button
-                onClick={() => handleConfirmUpload("profile", profilePhoto, setProfilePhoto, "Profile photo")}
+                onClick={() =>
+                  handleConfirmUpload(
+                    "profile",
+                    profilePhoto,
+                    setProfilePhoto,
+                    "Profile photo",
+                  )
+                }
                 disabled={profilePhoto.isUploading}
                 className='self-end px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary disabled:bg-gray-400 disabled:cursor-not-allowed'
               >
@@ -235,11 +258,15 @@ const Page = () => {
             )}
 
             {profilePhoto.uploadedUrl && (
-              <p className='self-end text-sm text-green-600 font-medium'>✓ Uploaded</p>
+              <p className='self-end text-sm text-green-600 font-medium'>
+                ✓ Uploaded
+              </p>
             )}
 
             {profilePhoto.error && (
-              <p className='self-end text-sm text-red-600 font-medium'>{profilePhoto.error}</p>
+              <p className='self-end text-sm text-red-600 font-medium'>
+                {profilePhoto.error}
+              </p>
             )}
           </div>
         </div>
@@ -258,7 +285,7 @@ const Page = () => {
         />
 
         <div className='flex flex-col gap-1'>
-          <label className='font-semibold text-sm ml-5'>Driver's License</label>
+          <label className='font-semibold text-sm ml-5'>Drivers License</label>
           <div className='flex gap-5'>
             <div className='flex flex-col gap-2 flex-1'>
               <UploadingImagesReusableComponent
@@ -266,8 +293,12 @@ const Page = () => {
                 index={0}
                 previews={[licenseFront.preview]}
                 setPreviews={(setter) => {
-                  const newValue = typeof setter === 'function' ? setter([licenseFront.preview]) : setter;
-                  if (newValue[0]) handleFileSelect(newValue[0].image, setLicenseFront);
+                  const newValue =
+                    typeof setter === "function"
+                      ? setter([licenseFront.preview])
+                      : setter;
+                  if (newValue[0])
+                    handleFileSelect(newValue[0].image, setLicenseFront);
                 }}
                 className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-[80px]'
                 imageToastDescription='Front of the driver license'
@@ -280,7 +311,14 @@ const Page = () => {
 
               {licenseFront.preview && !licenseFront.uploadedUrl && (
                 <button
-                  onClick={() => handleConfirmUpload("verification_document", licenseFront, setLicenseFront, "License front")}
+                  onClick={() =>
+                    handleConfirmUpload(
+                      "verification_document",
+                      licenseFront,
+                      setLicenseFront,
+                      "License front",
+                    )
+                  }
                   disabled={licenseFront.isUploading}
                   className='px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-primary disabled:bg-gray-400'
                 >
@@ -289,11 +327,15 @@ const Page = () => {
               )}
 
               {licenseFront.uploadedUrl && (
-                <p className='text-xs text-green-600 font-medium text-center'>✓ Uploaded</p>
+                <p className='text-xs text-green-600 font-medium text-center'>
+                  ✓ Uploaded
+                </p>
               )}
 
               {licenseFront.error && (
-                <p className='text-xs text-red-600 font-medium text-center'>{licenseFront.error}</p>
+                <p className='text-xs text-red-600 font-medium text-center'>
+                  {licenseFront.error}
+                </p>
               )}
             </div>
 
@@ -303,8 +345,12 @@ const Page = () => {
                 index={0}
                 previews={[licenseBack.preview]}
                 setPreviews={(setter) => {
-                  const newValue = typeof setter === 'function' ? setter([licenseBack.preview]) : setter;
-                  if (newValue[0]) handleFileSelect(newValue[0].image, setLicenseBack);
+                  const newValue =
+                    typeof setter === "function"
+                      ? setter([licenseBack.preview])
+                      : setter;
+                  if (newValue[0])
+                    handleFileSelect(newValue[0].image, setLicenseBack);
                 }}
                 className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-[80px]'
                 imageToastDescription='Back of the driver license'
@@ -317,7 +363,14 @@ const Page = () => {
 
               {licenseBack.preview && !licenseBack.uploadedUrl && (
                 <button
-                  onClick={() => handleConfirmUpload("verification_document", licenseBack, setLicenseBack, "License back")}
+                  onClick={() =>
+                    handleConfirmUpload(
+                      "verification_document",
+                      licenseBack,
+                      setLicenseBack,
+                      "License back",
+                    )
+                  }
                   disabled={licenseBack.isUploading}
                   className='px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-primary disabled:bg-gray-400'
                 >
@@ -326,11 +379,15 @@ const Page = () => {
               )}
 
               {licenseBack.uploadedUrl && (
-                <p className='text-xs text-green-600 font-medium text-center'>✓ Uploaded</p>
+                <p className='text-xs text-green-600 font-medium text-center'>
+                  ✓ Uploaded
+                </p>
               )}
 
               {licenseBack.error && (
-                <p className='text-xs text-red-600 font-medium text-center'>{licenseBack.error}</p>
+                <p className='text-xs text-red-600 font-medium text-center'>
+                  {licenseBack.error}
+                </p>
               )}
             </div>
           </div>
@@ -343,7 +400,7 @@ const Page = () => {
             </label>
             <p className='font-medium text-sm ml-5 text-[#858585]'>
               Please upload a picture of you holding <br />
-              your driver's license
+              your drivers license
             </p>
           </div>
 
@@ -352,8 +409,12 @@ const Page = () => {
             index={0}
             previews={[advancedVerification.preview]}
             setPreviews={(setter) => {
-              const newValue = typeof setter === 'function' ? setter([advancedVerification.preview]) : setter;
-              if (newValue[0]) handleFileSelect(newValue[0].image, setAdvancedVerification);
+              const newValue =
+                typeof setter === "function"
+                  ? setter([advancedVerification.preview])
+                  : setter;
+              if (newValue[0])
+                handleFileSelect(newValue[0].image, setAdvancedVerification);
             }}
             className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-[80px]'
             imageToastDescription='Advanced verification photo'
@@ -364,22 +425,34 @@ const Page = () => {
             </div>
           </UploadingImagesReusableComponent>
 
-          {advancedVerification.preview && !advancedVerification.uploadedUrl && (
-            <button
-              onClick={() => handleConfirmUpload("verification_document", advancedVerification, setAdvancedVerification, "Advanced verification")}
-              disabled={advancedVerification.isUploading}
-              className='px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary disabled:bg-gray-400'
-            >
-              {advancedVerification.isUploading ? "Uploading..." : "Confirm Upload"}
-            </button>
-          )}
+          {advancedVerification.preview &&
+            !advancedVerification.uploadedUrl && (
+              <button
+                onClick={() =>
+                  handleConfirmUpload(
+                    "verification_document",
+                    advancedVerification,
+                    setAdvancedVerification,
+                    "Advanced verification",
+                  )
+                }
+                disabled={advancedVerification.isUploading}
+                className='px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary disabled:bg-gray-400'
+              >
+                {advancedVerification.isUploading
+                  ? "Uploading..."
+                  : "Confirm Upload"}
+              </button>
+            )}
 
           {advancedVerification.uploadedUrl && (
             <p className='text-sm text-green-600 font-medium'>✓ Uploaded</p>
           )}
 
           {advancedVerification.error && (
-            <p className='text-sm text-red-600 font-medium'>{advancedVerification.error}</p>
+            <p className='text-sm text-red-600 font-medium'>
+              {advancedVerification.error}
+            </p>
           )}
         </div>
       </div>

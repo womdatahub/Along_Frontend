@@ -22,6 +22,7 @@ const authOnlyRoutes = [
   "/onboarding/services",
   "/onboarding/driver-info",
   "/onboarding/vehicle-info",
+  "/onboarding/documents",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -43,9 +44,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isAuthOnly = useMemo(
     () =>
       authOnlyRoutes.some(
-        (route) => pathname === route || pathname.startsWith(`${route}/`)
+        (route) => pathname === route || pathname.startsWith(`${route}/`),
       ),
-    [pathname]
+    [pathname],
   );
 
   const isProtected = !isPublic && !isAuthOnly;
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (userRole === "user" && isProtected) {
       console.log("onboarding process incomplete");
       toast.error(
-        "Onboarding process incomplete. Please complete your onboarding process to continue!!"
+        "Onboarding process incomplete. Please complete your onboarding process to continue!!",
       );
       setIsFetchingUserSessionLoading(false);
       router.replace("/onboarding/user-type");
