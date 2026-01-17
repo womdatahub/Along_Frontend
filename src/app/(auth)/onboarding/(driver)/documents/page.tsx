@@ -4,6 +4,7 @@ import { UploadingImagesReusableComponent } from "@/components";
 import {
   socialSecurityNumberSchema,
   TSocialSecurityNumberSchemaValidator,
+  userApiStr,
 } from "@/lib";
 import { useSession } from "@/store";
 import { ImageType } from "@/types";
@@ -113,10 +114,10 @@ const Page = () => {
 
       // Make the upload request
       const platform = process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "";
-      const baseUrl =
-        process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000";
+      // const baseUrl =
+      //   process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000";
       // Make the upload request
-      const response = await fetch(`${baseUrl}/user/api/v1/user/upload`, {
+      const response = await fetch(userApiStr("/user/upload"), {
         method: "POST",
         body: formData,
         headers: {
