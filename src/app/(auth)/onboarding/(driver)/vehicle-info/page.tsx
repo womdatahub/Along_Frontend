@@ -52,14 +52,14 @@ const Page = () => {
       return;
     }
 
-    for (let i = 0; i < previews.length; i++) {
-      const uri = await uploadImages({
-        uploadType: "vehicle",
-        imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
-      });
-      if (!uri) return;
-      setImagesUri((prev) => [...prev, uri]);
-    }
+    // for (let i = 0; i < previews.length; i++) {
+    //   const uri = await uploadImages({
+    //     uploadType: "vehicle",
+    //     imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
+    //   });
+    //   if (!uri) return;
+    //   setImagesUri((prev) => [...prev, uri]);
+    // }
 
     const isSuccess = await registerVehicle({
       ...v,
