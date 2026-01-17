@@ -114,10 +114,10 @@ const Page = () => {
 
       // Make the upload request
       const platform = process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "";
-      // const baseUrl =
-      //   process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000";
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3000";
       // Make the upload request
-      const response = await fetch(userApiStr("/user/upload"), {
+      const response = await fetch(`${baseUrl}/${userApiStr("/user/upload")}`, {
         method: "POST",
         body: formData,
         headers: {
