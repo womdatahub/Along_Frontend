@@ -236,6 +236,7 @@ export const useSession = create<Session>()(
           return;
         }
         if (data) {
+          await get().actions.fetchUserDetails();
           console.log(data, path);
         }
       },
