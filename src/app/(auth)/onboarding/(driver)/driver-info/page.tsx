@@ -76,7 +76,10 @@ const Page = () => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+      <form
+        // onSubmit={handleSubmit(onSubmit)}
+        className='flex flex-col gap-5'
+      >
         <div className='flex gap-4'>
           <AddInput
             label='First Name'

@@ -12,3 +12,4 @@ export * from "./btn-loader";
 export * from "./button-with-loader";
 export * from "./loading-component";
 export * from "./service-dialog";
+export * from "./terms-modal";

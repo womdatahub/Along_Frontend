@@ -4,6 +4,7 @@ import { devtools } from "zustand/middleware";
 import type {
   AdminProfile,
   DriverProfile,
+  ImageType,
   RiderProfile,
   SelectorFn,
   UserProfile,
@@ -27,7 +28,7 @@ type Session = {
     setRouteBeforeRedirect: (route: string) => void;
     uploadImages: (data: {
       uploadType: "profile" | "vehicle" | "verification_document";
-      imageFile: string | ArrayBuffer | File | null;
+      imageFile: ImageType["imageFile"];
     }) => Promise<string>;
     setServices: (services: string[]) => void;
     registerUser: (data: {
@@ -137,22 +138,11 @@ export const useSession = create<Session>()(
         }
         const formData = new FormData();
         formData.append("uploadType", d.uploadType);
-        if (d.imageFile instanceof ArrayBuffer) {
-          formData.append("image", new Blob([d.imageFile]));
-        } else {
-          formData.append("image", d.imageFile);
-        }
+        formData.append("image", d.imageFile as Blob);
 
-        const { data, error } = await callApi(
-          userApiStr("/user/upload"), // "/api/v1/user/uploads",
+        const { data, error } = await callApi<{ url: string }>(
+          userApiStr("/user/upload"),
           formData,
-          // "PATCH"
-          // userApiStr("/user/uploads"),
-          // {
-          //   image: d.imageFile,
-          //   uploadType: d.uploadType,
-          // },
-          // "PATCH"
         );
 
         if (error) {
@@ -161,6 +151,7 @@ export const useSession = create<Session>()(
         }
         if (data) {
           console.log(data, "userApiStr('/user/upload')");
+          return data.data.url;
         }
         return "";
       },

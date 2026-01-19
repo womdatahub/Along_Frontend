@@ -4,12 +4,13 @@ import {
   ButtonWithLoader,
   HeadingHeebo,
   AddInput,
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  Button,
-  DialogFooter,
+  // Dialog,
+  // DialogTrigger,
+  // DialogContent,
+  // DialogTitle,
+  // Button,
+  // DialogFooter,
+  TermsModal,
 } from "@/components";
 import { cn, onboardingSchema, TOnboardingValidator } from "@/lib";
 import { useSession } from "@/store";
@@ -19,7 +20,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+// import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { toast } from "sonner";
 
 const Page = () => {
   const router = useRouter();
@@ -44,6 +46,7 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TOnboardingValidator) => {
+    if (!isTermsAccepted) toast.error("Please accept terms and conditions.");
     // console.log(values, errors);
     const isSuccess = await registerUser({ ...values, type: "email" });
     if (isSuccess === false) return;
@@ -173,12 +176,12 @@ const Page = () => {
             <div
               className={cn(
                 "size-3 bg-white rounded-[2px] cursor-pointer",
-                isTermsAccepted && "bg-primary"
+                isTermsAccepted && "bg-primary",
               )}
               onClick={() => setIsTermsAccepted((prev) => !prev)}
             />
 
-            <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
+            {/* <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
               <DialogTrigger asChild>
                 <p className='font-fustat text-xs text-center text-primary'>
                   Terms and Conditions apply
@@ -200,7 +203,8 @@ const Page = () => {
                     “us,” or “our”). These Rider Terms and Conditions (“Terms”)
                     govern your use of our platform and services as a rider
                     (“Rider,” “you,” or “your”). By registering and booking
-                    rides through Along, you agree to comply with these Terms.{" "}
+                    rides through Along, you agree to comply with these
+                    Terms.{" "}
                   </p>
                   <div className='flex flex-col gap-1'>
                     {terms.map((term, id) => {
@@ -230,7 +234,20 @@ const Page = () => {
                   </DialogFooter>
                 </div>
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
+            <TermsModal
+              acceptFunction={() => {
+                setIsTermsAccepted(true);
+                setIsTermsModalOpen(false);
+              }}
+              isTermsModalOpen={isTermsModalOpen}
+              setIsTermsModalOpen={setIsTermsAccepted}
+              trigger={
+                <p className='font-fustat text-xs text-center text-primary'>
+                  Terms and Conditions apply
+                </p>
+              }
+            />
           </div>
 
           <p className='text-gray text-xs font-light text-center'>
@@ -271,10 +288,10 @@ const icons = [
   },
 ];
 
-const terms = [
-  "Rider Eligibility and Registration You must be at least 18 years old to use our services. You agree to provide accurate, complete, and up-to-date information during registration and booking. You are responsible for maintaining the confidentiality of your account credentials.",
-  "Booking and Use of Services You may use the Along platform to request rides from registered drivers. Ride availability depends on driver presence and route compatibility. You agree to provide accurate pickup and drop-off locations. You must be ready at the agreed pickup time and location. Along reserves the right to cancel or modify bookings as necessary.",
-  "Rider Conduct You agree to treat drivers and other riders with respect and courtesy. Discrimination, harassment, or abusive behavior is strictly prohibited. Smoking, alcohol, or drug use during rides is not allowed. You are responsible for your personal belongings during rides. Along is not liable for lost or damaged items",
-  "Payments and Fees Ride fares will be displayed at booking and are subject to change based on distance, time, and demand. Payment must be made through the Along platform using accepted payment methods. Tips are optional and go 100% to the driver. You agree to pay all applicable fees and taxes. Refunds or disputes will be handled according to Along’s policies",
-  "Safety and Liability Along conducts background checks and vehicle inspections for drivers but does not guarantee safety. You must follow driver instructions and safety guidelines during rides. Along is not liable for any injuries, damages, or losses incurred during rides. In case of emergencies or safety concerns, contact Along support immediately. ",
-];
+// const terms = [
+//   "Rider Eligibility and Registration You must be at least 18 years old to use our services. You agree to provide accurate, complete, and up-to-date information during registration and booking. You are responsible for maintaining the confidentiality of your account credentials.",
+//   "Booking and Use of Services You may use the Along platform to request rides from registered drivers. Ride availability depends on driver presence and route compatibility. You agree to provide accurate pickup and drop-off locations. You must be ready at the agreed pickup time and location. Along reserves the right to cancel or modify bookings as necessary.",
+//   "Rider Conduct You agree to treat drivers and other riders with respect and courtesy. Discrimination, harassment, or abusive behavior is strictly prohibited. Smoking, alcohol, or drug use during rides is not allowed. You are responsible for your personal belongings during rides. Along is not liable for lost or damaged items",
+//   "Payments and Fees Ride fares will be displayed at booking and are subject to change based on distance, time, and demand. Payment must be made through the Along platform using accepted payment methods. Tips are optional and go 100% to the driver. You agree to pay all applicable fees and taxes. Refunds or disputes will be handled according to Along’s policies",
+//   "Safety and Liability Along conducts background checks and vehicle inspections for drivers but does not guarantee safety. You must follow driver instructions and safety guidelines during rides. Along is not liable for any injuries, damages, or losses incurred during rides. In case of emergencies or safety concerns, contact Along support immediately. ",
+// ];
