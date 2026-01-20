@@ -11,7 +11,6 @@ import type {
 } from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
-// import { callApi } from "@/lib";
 
 type Session = {
   userRole: string;
@@ -318,10 +317,9 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
-          console.log(data, path);
           toast.success(data.message);
         }
-        set({ isLoading: false });
+        set({ isLoading: false, userRole: "rider" });
         return true;
       },
       registerBankAccount: async (registerBankAccountData) => {

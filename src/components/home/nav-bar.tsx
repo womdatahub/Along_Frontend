@@ -13,7 +13,7 @@ export const Navbar = () => {
   const { userRole } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
-    }))
+    })),
   );
 
   useEffect(() => {
@@ -48,17 +48,19 @@ export const Navbar = () => {
           <Link href='/onboarding'>Drive</Link>
           <Link href='#'>Help</Link>
           <Link
-            href={
-              userRole ? `/${userRole.toLowerCase()}-db/account` : "/sign-in"
-            }
+            href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
             className='font-semibold flex items-center gap-2.5'
           >
-            <Image
-              alt='profile img'
-              src='/images/account.png'
-              width={30}
-              height={30}
-            />
+            {userRole ? (
+              <div className='rounded-full size-8 bg-green-200' />
+            ) : (
+              <Image
+                alt='profile img'
+                src='/images/account.png'
+                width={30}
+                height={30}
+              />
+            )}
             {!userRole && <p>Sign in</p>}
           </Link>
         </div>

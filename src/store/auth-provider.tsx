@@ -29,6 +29,7 @@ const authOnlyRoutes = [
   "/onboarding/driver-info",
   "/onboarding/vehicle-info",
   // "/onboarding/documents",
+  "/rider-db",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -106,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // 🚫 Incomplete onboarding
     if (userRole === "user" && isProtected) {
-      console.log("onboarding process incomplete");
+      // console.log("onboarding process incomplete");
       toast.error(
         "Onboarding process incomplete. Please complete your onboarding process to continue!!",
       );
@@ -118,17 +119,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetchingUserSessionLoading, userRole, pathname]);
 
-  if (isFetchingUserSessionLoading && !isPublic) {
-    return <LoadingComponent />;
-  }
+  // if (isFetchingUserSessionLoading && !isPublic) {
+  //   return <LoadingComponent />;
+  // }
 
-  if (!userRole && isProtected) {
-    return <LoadingComponent />;
-  }
+  // if (!userRole && isProtected) {
+  //   return <LoadingComponent />;
+  // }
 
-  if (userRole && isAuthOnly && userRole !== "user") {
-    return <LoadingComponent />;
-  }
+  // if (userRole && isAuthOnly && userRole !== "user") {
+  //   return <LoadingComponent />;
+  // }
 
   return <Provider value={{}}>{children}</Provider>;
 };

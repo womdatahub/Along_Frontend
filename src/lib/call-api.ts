@@ -29,7 +29,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASEURL,
   withCredentials: true,
-  timeout: 10000,
+  // timeout: 10000,
 });
 
 export const callApi = async <T>(

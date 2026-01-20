@@ -65,7 +65,7 @@ const RentRide = () => {
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
     router.push(
-      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver.vehicleId}&isLater=${isLater}`
+      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver.vehicleId}&isLater=${isLater}`,
     );
   };
 
@@ -79,13 +79,13 @@ const RentRide = () => {
     useShallow((state) => ({
       actions: state.actions,
       availableVehicles: state.availableVehicles,
-    }))
+    })),
   );
 
   useEffect(() => {
-    if (!autoCompleteAddress) return;
+    if (!autoCompleteAddress || !vehicleType) return;
     retrieveAvailableVehicles({
-      vehicleClass: vehicleType ? (vehicleType as string) : "economy",
+      vehicleClass: vehicleType as string,
       longitude: `${autoCompleteAddress.longitude}`,
       latitude: `${autoCompleteAddress.latitude}`,
     });
@@ -117,13 +117,13 @@ const RentRide = () => {
             <div
               className={cn(
                 "flex items-center gap-8 rounded-2xl px-2",
-                vehicleType && "bg-primaryLight"
+                vehicleType && "bg-primaryLight",
               )}
             >
               <div
                 className={cn(
                   "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl w-full",
-                  vehicleType && "bg-transparent"
+                  vehicleType && "bg-transparent",
                 )}
               >
                 <AccuracyIcon />
@@ -196,7 +196,7 @@ const RentRide = () => {
                             key={car.name}
                             className={cn(
                               "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                              vehicleType === title && "bg-primary text-white"
+                              vehicleType === title && "bg-primary text-white",
                             )}
                           >
                             <Image
@@ -311,7 +311,7 @@ const RentRide = () => {
                                 <p
                                   className={cn(
                                     "text-icons font-medium text-xs",
-                                    selectedHoursLength && "text-black"
+                                    selectedHoursLength && "text-black",
                                   )}
                                 >
                                   {selectedHoursLength
@@ -338,7 +338,7 @@ const RentRide = () => {
                                       className={cn(
                                         "text-primary-deep text-sm font-bold bg-transparent hover:bg-transparent w-fit h-fit p-0 underline",
                                         selectedTab !== "hours" &&
-                                          "text-placeholder no-underline"
+                                          "text-placeholder no-underline",
                                       )}
                                       onClick={() => {
                                         setSelectedTab("hours");
@@ -350,7 +350,7 @@ const RentRide = () => {
                                       className={cn(
                                         "text-primary-deep text-sm font-bold bg-transparent hover:bg-transparent w-fit h-fit p-0 underline",
                                         selectedTab !== "days" &&
-                                          "text-placeholder no-underline"
+                                          "text-placeholder no-underline",
                                       )}
                                       onClick={() => {
                                         setSelectedTab("days");
@@ -397,7 +397,7 @@ const RentRide = () => {
                                     selectedHours &&
                                       selectedMins &&
                                       selectAmOrPm &&
-                                      "text-black"
+                                      "text-black",
                                   )}
                                 >
                                   {selectedHours && selectedMins && selectAmOrPm
@@ -442,7 +442,7 @@ const RentRide = () => {
                                             .fill(0)
                                             .map(
                                               (_, i) =>
-                                                `${i <= 10 ? "0" : ""}${i + 1}`
+                                                `${i <= 10 ? "0" : ""}${i + 1}`,
                                             )}
                                           triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                           triggerLabel='1'
@@ -487,7 +487,7 @@ const RentRide = () => {
                                 <p
                                   className={cn(
                                     "font-medium text-xs",
-                                    date ? "text-black" : "text-placeholder"
+                                    date ? "text-black" : "text-placeholder",
                                   )}
                                 >
                                   {date
@@ -750,7 +750,7 @@ export const RentRideDialogComponent = ({
         <HeadingHeebo
           className={cn(
             "text-left font-semibold text-xl text-primary-deep",
-            isTitleCentered && "text-center"
+            isTitleCentered && "text-center",
           )}
         >
           {title}

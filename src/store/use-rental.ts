@@ -9,6 +9,7 @@ import { callApi, rentalApiStr } from "@/lib";
 import { toast } from "sonner";
 
 type RentalStoreType = {
+  isLoading: boolean;
   availableVehicles: VehicleLocation[];
   intent: RentAndCreateIntentResponseType | undefined;
   actions: {
@@ -22,26 +23,30 @@ type RentalStoreType = {
 const initialState = {
   availableVehicles: [],
   intent: undefined,
+  isLoading: false,
 };
 
 export const useRental = create<RentalStoreType>()((set) => ({
   ...initialState,
   actions: {
     retrieveAvailableVehicles: async (queries) => {
+      set({ isLoading: true });
       const params = new URLSearchParams(queries);
       const queryString = params.toString();
       const path = rentalApiStr(
-        `/vehicles${queryString ? `?${queryString}` : ""}`
+        `/vehicles${queryString ? `?${queryString}` : ""}`,
       );
       const { data, error } = await callApi<{ vehicles: VehicleLocation[] }>(
-        path
+        path,
       );
       if (error) {
         toast.error(error.message);
+        set({ isLoading: false });
         return;
       }
       if (data) {
         console.log(data, path);
+        set({ isLoading: false, availableVehicles: data.data.vehicles });
       }
     },
     rentAndCreateIntent: async (data) => {
@@ -62,7 +67,7 @@ export const useRental = create<RentalStoreType>()((set) => ({
 }));
 
 export const useRentals = <TResult>(
-  selector: SelectorFn<RentalStoreType, TResult>
+  selector: SelectorFn<RentalStoreType, TResult>,
 ) => {
   const state = useRental(selector);
 
