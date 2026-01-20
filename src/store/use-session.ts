@@ -247,12 +247,14 @@ export const useSession = create<Session>()(
         }
       },
       registerDriver: async (registerDriverData) => {
+        // console.log(registerDriverData, "registerDriverData");
         const path = userApiStr("/user/driver");
 
         const { data, error } = await callApi(path, registerDriverData);
 
         if (error) {
           toast.error(error.message);
+          // console.log(error);
           return false;
         }
         if (data) {

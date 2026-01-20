@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import React, { createContext, useEffect, useMemo } from "react";
+import React, { createContext, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { useSession } from "./use-session";
 import { LoadingComponent } from "@/components";
@@ -10,7 +10,13 @@ const Context = createContext({});
 const { Provider } = Context;
 
 // Public = accessible to everyone (even when logged in)
-const publicRoutes = ["/", "/about", "/onboarding"];
+const publicRoutes = [
+  "/",
+  "/about",
+  "/onboarding",
+  "/onboarding/services",
+  "/onboarding/documents",
+];
 
 // Auth-only = should NOT be accessible once logged in
 const authOnlyRoutes = [
@@ -19,19 +25,21 @@ const authOnlyRoutes = [
   "/onboarding/rider",
   "/onboarding/user-type",
   "/onboarding/terms",
-  "/onboarding/services",
+  // "/onboarding/services",
   "/onboarding/driver-info",
   "/onboarding/vehicle-info",
-  "/onboarding/documents",
+  // "/onboarding/documents",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const hasFetchedRef = useRef(false);
 
   const {
     userRole,
     isFetchingUserSessionLoading,
+    driverProfile,
     actions: {
       fetchUserDetails,
       setRouteBeforeRedirect,
@@ -52,14 +60,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isProtected = !isPublic && !isAuthOnly;
 
   useEffect(() => {
-    if (isPublic) return;
-    if (userRole) return;
+    // if (isPublic) return;
+    // if (userRole) return;
     // if (isAuthOnly) return;
 
-    fetchUserDetails(true);
+    if (hasFetchedRef.current) return;
+
+    hasFetchedRef.current = true;
+    fetchUserDetails(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPublic, userRole]);
+  }, []);
 
   useEffect(() => {
     if (isFetchingUserSessionLoading) return;
@@ -80,6 +91,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
       if (userRole === "driver") {
+        if (!driverProfile?.driverProfilePictureUri) {
+          router.replace("/onboarding/services");
+          return;
+        }
         router.replace("/driver-db");
         return;
       }
@@ -104,17 +119,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isFetchingUserSessionLoading, userRole, pathname]);
 
   if (isFetchingUserSessionLoading && !isPublic) {
-    console.log("First IF Block");
     return <LoadingComponent />;
   }
 
   if (!userRole && isProtected) {
-    console.log("Second IF Block");
     return <LoadingComponent />;
   }
 
   if (userRole && isAuthOnly && userRole !== "user") {
-    console.log("Third IF Block");
     return <LoadingComponent />;
   }
 

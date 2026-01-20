@@ -72,4 +72,7 @@ export interface UserProfile {
   role: string;
   createdAt: string;
   updatedAt: string;
+  isEmailVerified: true;
+  isMobileNumberVerified: boolean;
+  mobileNumber: string;
 }

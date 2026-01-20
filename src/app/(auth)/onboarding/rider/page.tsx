@@ -23,6 +23,7 @@ const Page = () => {
   const router = useRouter();
 
   const {
+    userProfile,
     actions: { registerRider },
   } = useSession((state) => state);
   const {
@@ -33,7 +34,7 @@ const Page = () => {
     defaultValues: {
       firstName: "",
       lastName: "",
-      mobileNumber: "",
+      mobileNumber: userProfile?.mobileNumber ?? "",
     },
     resolver: zodResolver(registerRiderSchema),
   });

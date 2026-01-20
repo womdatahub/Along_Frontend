@@ -62,16 +62,16 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
           <span>{label}</span>
         </label>
       )}
-      <div className="flex flex-col gap-1">
+      <div className='flex flex-col gap-1'>
         <div
           className={cn(
             "flex gap-2 items-center px-6",
             iconAndInputWrapperClassName,
             errors[id] && "border border-red-400",
-            isReverse && "flex-row-reverse"
+            isReverse && "flex-row-reverse",
           )}
         >
-          {icon && <div className="flex items-center">{icon}</div>}
+          {icon && <div className='flex items-center'>{icon}</div>}
           <Input
             id={id}
             type={realType}
@@ -83,11 +83,11 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
           />
           {type === "password" && (
             <button
-              type="button"
+              type='button'
               onClick={() =>
                 setRealType(realType === "password" ? "text" : "password")
               }
-              className="text-sm text-primary font-medium cursor-pointer"
+              className='text-sm text-primary font-medium cursor-pointer'
             >
               {realType === "password" ? "Show" : "Hide"}
             </button>
@@ -95,7 +95,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
         </div>
 
         {errors[id]?.message && (
-          <p className="text-xs text-red-400 ml-4">{`${errors[id].message}`}</p>
+          <p className='text-xs text-red-400 ml-4'>{`${errors[id].message}`}</p>
         )}
       </div>
     </div>
@@ -118,7 +118,7 @@ const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
   } = props;
   return (
     <div className={cn("w-full flex flex-col gap-3 bg-white", className)}>
-      <label htmlFor={id} className="text-base">
+      <label htmlFor={id} className='text-base'>
         {label}
       </label>
       <Textarea
@@ -130,11 +130,11 @@ const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
           "pl-5 rounded-lg",
           inputClassName,
           errors[id] && "border border-red-400",
-          "focus:outline-none focus:ring-0 border-0  shadow-none"
+          "focus:outline-none focus:ring-0 border-0  shadow-none",
         )}
       />
       {errors[id]?.message && (
-        <p className="text-xs text-red-400 ml-4">{`${errors[id].message}`}</p>
+        <p className='text-xs text-red-400 ml-4'>{`${errors[id].message}`}</p>
       )}
     </div>
   );

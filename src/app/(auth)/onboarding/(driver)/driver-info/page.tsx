@@ -15,6 +15,7 @@ import { driverBasicInfoSchema } from "@/lib";
 const Page = () => {
   const {
     userProfile,
+    driverProfile,
     actions: { registerDriver },
   } = useSession((state) => state);
 
@@ -27,11 +28,11 @@ const Page = () => {
   } = useForm<TDriverBasicInfoSchema>({
     resolver: zodResolver(driverBasicInfoSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstName: "test",
+      lastName: "tester",
       dateOfBirth: "",
-      firstEmergencyContact: "",
-      secondEmergencyContact: "",
+      firstEmergencyContact: "09090909090",
+      secondEmergencyContact: "09090909090",
     },
   });
 
@@ -39,14 +40,14 @@ const Page = () => {
   const selectedGender = watch("gender");
 
   const onSubmit = async (data: TDriverBasicInfoSchema) => {
-    if (!userProfile?.email) {
+    if (!driverProfile?.email && !userProfile?.email) {
       toast.error("User email not found. Please log in again.");
       return;
     }
 
     const driverData = {
       ...data,
-      email: userProfile.email,
+      email: driverProfile?.email || userProfile?.email,
     };
 
     const isSuccess = await registerDriver(driverData);

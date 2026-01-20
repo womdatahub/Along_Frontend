@@ -58,7 +58,7 @@ const Page = () => {
   );
 
   const {
-    actions: { addVerificationDocumentsAndServices },
+    actions: { addVerificationDocumentsAndServices, uploadImages },
   } = useSession((state) => state);
 
   const {
@@ -117,7 +117,15 @@ const Page = () => {
       const baseUrl =
         process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3000";
       // Make the upload request
-      const response = await fetch(`${baseUrl}/${userApiStr("/user/upload")}`, {
+      console.log(`${baseUrl}/${userApiStr("/user/upload")}`);
+      const test = await uploadImages({
+        imageFile: state.preview.image.imageFile as ImageType["imageFile"],
+        uploadType: "profile",
+      });
+
+      console.log("test", test);
+
+      const response = await fetch(`${baseUrl}${userApiStr("/user/upload")}`, {
         method: "POST",
         body: formData,
         headers: {

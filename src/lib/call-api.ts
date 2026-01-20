@@ -29,13 +29,13 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASEURL,
   withCredentials: true,
-  // timeout: 10000,
+  timeout: 10000,
 });
 
 export const callApi = async <T>(
   endpoint: string,
   data?: Record<string, unknown> | FormData,
-  extraMethods?: "PUT" | "DELETE" | "PATCH"
+  extraMethods?: "PUT" | "DELETE" | "PATCH",
 ): Promise<{ data?: ApiResponse<T>; error?: ApiError }> => {
   const cancelTokenSource = axios.CancelToken.source();
 
@@ -47,8 +47,8 @@ export const callApi = async <T>(
         extraMethods && data
           ? extraMethods
           : data && !extraMethods
-          ? "POST"
-          : "GET",
+            ? "POST"
+            : "GET",
       url: endpoint,
       ...(data && { data }),
       headers: {
