@@ -1,13 +1,68 @@
 "use client";
-import { Button, Card, CardContent, HeadingHeebo, Switch } from "@/components";
+import {
+  Button,
+  Card,
+  CardContent,
+  HeadingHeebo,
+  NameAvatar,
+  Switch,
+  UploadingImagesReusableComponent,
+} from "@/components";
 import { cn } from "@/lib";
-import { AshForwardIcon } from "@public/svgs";
+import { useSession } from "@/store";
+import { ImageType } from "@/types";
+import { AddPhotoIcon, AshForwardIcon } from "@public/svgs";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useShallow } from "zustand/shallow";
 
+type UploadState = {
+  preview: { image: ImageType; uri: string } | null;
+  uploadedUrl: string | null;
+  isUploading: boolean;
+  error: string | null;
+};
 const Page = () => {
   const [active, setActive] = useState<"personal-info" | "security">(
-    "personal-info"
+    "personal-info",
   );
+
+  const { riderProfile } = useSession(
+    useShallow((state) => ({
+      riderProfile: state.riderProfile,
+      actions: state.actions,
+    })),
+  );
+
+  const [profilePhoto, setProfilePhoto] = useState<UploadState>({
+    preview: null,
+    uploadedUrl: null,
+    isUploading: false,
+    error: null,
+  });
+
+  const handleFileSelect = (
+    file: ImageType,
+    setter: React.Dispatch<React.SetStateAction<UploadState>>,
+  ) => {
+    console.log("file selected:", file);
+    console.log("file.imageFile:", file.imageFile);
+
+    try {
+      // Create object URL from the file
+      const objectUrl = URL.createObjectURL(file.imageFile as Blob);
+
+      setter((prev) => ({
+        ...prev,
+        preview: { image: file, uri: objectUrl },
+        error: null,
+      }));
+    } catch (error) {
+      console.error("Error creating object URL:", error);
+      toast.error("Invalid file selected");
+    }
+  };
+
   return (
     <div className='flex flex-col gap-5'>
       <HeadingHeebo className='text-start pl-4'>Manage Account</HeadingHeebo>
@@ -17,7 +72,7 @@ const Page = () => {
             onClick={() => setActive("personal-info")}
             className={cn(
               "text-sm text-gray-5 hover:text-primary bg-transparent hover:bg-transparent border-0 shadow-none cursor-pointer p-0 h-fit",
-              active === "personal-info" && "text-primary font-bold underline"
+              active === "personal-info" && "text-primary font-bold underline",
             )}
           >
             Personal info
@@ -26,7 +81,7 @@ const Page = () => {
             onClick={() => setActive("security")}
             className={cn(
               "text-sm text-gray-5 hover:text-primary bg-transparent hover:bg-transparent border-0 shadow-none cursor-pointer p-0 h-fit",
-              active === "security" && "text-primary font-bold underline"
+              active === "security" && "text-primary font-bold underline",
             )}
           >
             Security
@@ -36,20 +91,45 @@ const Page = () => {
           {active === "personal-info" ? (
             <CardContent className='flex flex-col gap-8'>
               <div className='flex gap-6 items-center'>
-                <div className='size-24 rounded-full bg-primary flex items-center justify-center' />
-                <p className='text-lg font-heebo'>Michael Cynthia </p>
+                {/* <UploadingImagesReusableComponent
+                  key={0}
+                  index={0}
+                  previews={[profilePhoto.preview]}
+                  setPreviews={(newValue) => {
+                    const value =
+                      typeof newValue === "function"
+                        ? newValue([profilePhoto.preview])
+                        : newValue;
+                    if (value[0])
+                      handleFileSelect(value[0].image, setProfilePhoto);
+                  }}
+                  className='justify-center items-center rounded-full bg-[#FAFAFA] text-placeholder self-end size-24'
+                  imageToastDescription='Profile image'
+                >
+                  <div className='flex flex-col gap-2 justify-center items-center'>
+                    <p className='text-sm font-medium'>Profile photo</p>
+                  </div>
+                </UploadingImagesReusableComponent> */}
+                <NameAvatar
+                  value={`${riderProfile?.firstName[0] ?? ""} ${riderProfile?.lastName[0] ?? ""}`}
+                />
+                <p className='text-lg font-heebo'>
+                  {riderProfile?.firstName} {riderProfile?.lastName}
+                </p>
               </div>
               <div className='flex gap-4 flex-col'>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
                     <p className=' font-light text-gray-5'>Phone number</p>
-                    <p className='font-semibold'>+1 67 988 90098</p>
+                    <p className='font-semibold'>
+                      {riderProfile?.mobileNumber}
+                    </p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
                     <p className=' font-light text-gray-5'>Email address</p>
-                    <p className='font-semibold'>michael.cynthia@gmail.com</p>
+                    <p className='font-semibold'>{riderProfile?.email}</p>
                   </div>
                 </ContainerWithArrow>
 
@@ -88,7 +168,7 @@ const Page = () => {
                 </ContainerWithArrow>
                 <div className='flex gap-1 justify-between font-heebo text-black text-sm pb-4'>
                   <p className='font-semibold'>Notification</p>
-                  <Switch color='primary' />
+                  <Switch color='primary' checked />
                 </div>
               </div>
             </CardContent>
@@ -111,7 +191,7 @@ const ContainerWithArrow = ({
     <div
       className={cn(
         "flex items-center justify-between gap-4 border-b",
-        withoutBottomBorder && "border-b-0"
+        withoutBottomBorder && "border-b-0",
       )}
     >
       {children}

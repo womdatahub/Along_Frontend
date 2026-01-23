@@ -7,6 +7,7 @@ import {
   CardFooter,
   CompleteHeroServiceDialog,
   HeadingHeebo,
+  NameAvatar,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -23,13 +24,20 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useShallow } from "zustand/shallow";
 // import { useEffect } from "react";
 
 const Page = () => {
   const router = useRouter();
   const {
+    riderProfile,
     // actions: { fetchUserDetails },
-  } = useSession((state) => state);
+  } = useSession(
+    useShallow((state) => ({
+      riderProfile: state.riderProfile,
+      actions: state.actions,
+    })),
+  );
 
   const {
     autoCompleteAddress,
@@ -75,10 +83,14 @@ const Page = () => {
           </div>
 
           <div className='flex gap-4 items-center'>
-            <div className='rounded-full size-[96px] bg-red-200' />
+            <NameAvatar
+              value={`${riderProfile?.firstName[0] ?? ""}${riderProfile?.lastName[0] ?? ""}`}
+            />
             <Popover>
               <PopoverTrigger asChild>
-                <p className='text-lg  cursor-pointer'>Michael</p>
+                <p className='text-lg  cursor-pointer'>
+                  {riderProfile?.firstName}
+                </p>
               </PopoverTrigger>
               <PopoverContent className='w-[270px] p-0'>
                 <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-[270px] pt-4'>

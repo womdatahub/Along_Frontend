@@ -29,7 +29,7 @@ const authOnlyRoutes = [
   "/onboarding/driver-info",
   "/onboarding/vehicle-info",
   // "/onboarding/documents",
-  "/rider-db",
+  // "/rider-db",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -119,17 +119,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetchingUserSessionLoading, userRole, pathname]);
 
-  // if (isFetchingUserSessionLoading && !isPublic) {
-  //   return <LoadingComponent />;
-  // }
+  if (isFetchingUserSessionLoading && !isPublic) {
+    return <LoadingComponent />;
+  }
 
-  // if (!userRole && isProtected) {
-  //   return <LoadingComponent />;
-  // }
+  if (!userRole && isProtected) {
+    return <LoadingComponent />;
+  }
 
-  // if (userRole && isAuthOnly && userRole !== "user") {
-  //   return <LoadingComponent />;
-  // }
+  if (userRole && isAuthOnly && userRole !== "user") {
+    return <LoadingComponent />;
+  }
 
   return <Provider value={{}}>{children}</Provider>;
 };

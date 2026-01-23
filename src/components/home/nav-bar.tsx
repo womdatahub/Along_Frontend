@@ -1,19 +1,35 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { LogoIcon } from "@public/svgs";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "@/store";
 import { useShallow } from "zustand/shallow";
+import { NameAvatar } from "../shared";
 
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { userRole } = useSession(
+  const { userRole, riderProfile, adminProfile, driverProfile } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
+      riderProfile: state.riderProfile,
+      driverProfile: state.driverProfile,
+      adminProfile: state.adminProfile,
     })),
+  );
+
+  const avatarName = useMemo(
+    () =>
+      riderProfile
+        ? `${riderProfile.firstName[0]}${riderProfile.lastName[0]}`
+        : driverProfile
+          ? `${driverProfile.firstName[0]}${driverProfile.lastName[0]}`
+          : adminProfile
+            ? `${adminProfile.firstName[0]}${adminProfile.lastName[0]}`
+            : "AL",
+    [riderProfile, driverProfile, adminProfile],
   );
 
   useEffect(() => {
@@ -52,7 +68,12 @@ export const Navbar = () => {
             className='font-semibold flex items-center gap-2.5'
           >
             {userRole ? (
-              <div className='rounded-full size-8 bg-green-200' />
+              // <div className='rounded-full size-8 bg-green-200' />
+              <NameAvatar
+                // value={`${riderProfile?.firstName[0] ?? ""}${riderProfile?.lastName[0] ?? ""}`}
+                value={avatarName}
+                className='size-8 text-sm'
+              />
             ) : (
               <Image
                 alt='profile img'
