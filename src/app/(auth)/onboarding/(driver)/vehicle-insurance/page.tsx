@@ -67,148 +67,6 @@ const Page = () => {
         />
 
         <div className='flex gap-4'>
-          {/* <div className="flex flex-col gap-1 flex-1">
-            <label className="font-semibold text-sm ml-5">
-              Issued date
-            </label>
-            <Dialog open={issDateDialogOpen} onOpenChange={setIsDateDialogOpen}>
-              <DialogTrigger asChild>
-                <div className="rounded-2xl max-w-[378px] bg-white items-center justify-between px-7 py-3 w-full flex gap-4 hover:cursor-pointer">
-                  <p
-                    className={cn(
-                      "font-medium text-xs",
-                      date ? "text-black" : "text-placeholder"
-                    )}
-                  >
-                    {date
-                      ? formatDateToDDMMYYYY(date as Date)
-                      : "Choose a date"}
-                  </p>
-                  <CalenderIcon />
-                </div>
-              </DialogTrigger>
-
-              <DialogContent
-                className="w-fit p-0  rounded-[20px] overflow-hidden bg-background-1"
-                showCloseButton={false}
-              >
-                <VisuallyHidden>
-                  <DialogTitle>
-                    Select a vehicle type: Economy, Comfort, Comfort XL, Luxury
-                    or Luxury XL
-                  </DialogTitle>
-                </VisuallyHidden>
-                <div className="flex flex-col bg-white">
-                  <RentRideDialogComponent
-                    title={formatDateToDDMMYYYY(
-                      date ? (date as Date) : new Date()
-                    )}
-                    subTitle=""
-                    isTitleCentered
-                  >
-                    <div className="flex flex-col gap-5 justify-center items-center bg-white w-fit pb-6 px-4">
-                      <Calendar
-                        mode="single"
-                        defaultMonth={date}
-                        selected={date}
-                        onSelect={setDate}
-                        disabled={{
-                          before: new Date(),
-                        }}
-                        className="bg-transparent"
-                      />
-
-                      <div className="flex gap-10 items-center font-bold">
-                        <Button
-                          onClick={() => setDate(new Date())}
-                          className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-black"
-                        >
-                          CANCEL
-                        </Button>
-                        <Button
-                          onClick={() => setIsDateDialogOpen(false)}
-                          className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-primary"
-                        >
-                          SELECT
-                        </Button>
-                      </div>
-                    </div>
-                  </RentRideDialogComponent>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div className="flex flex-col gap-1 flex-1">
-            <label className="font-semibold text-sm ml-5">
-              Insurance document
-            </label>
-            <Dialog open={issDateDialogOpen} onOpenChange={setIsDateDialogOpen}>
-              <DialogTrigger asChild>
-                <div className="rounded-2xl max-w-[378px] bg-white items-center justify-between px-7 py-3 w-full flex gap-4 hover:cursor-pointer">
-                  <p
-                    className={cn(
-                      "font-medium text-xs",
-                      date ? "text-black" : "text-placeholder"
-                    )}
-                  >
-                    {date
-                      ? formatDateToDDMMYYYY(date as Date)
-                      : "Choose a date"}
-                  </p>
-                  <CalenderIcon />
-                </div>
-              </DialogTrigger>
-
-              <DialogContent
-                className="w-fit p-0  rounded-[20px] overflow-hidden bg-background-1"
-                showCloseButton={false}
-              >
-                <VisuallyHidden>
-                  <DialogTitle>
-                    Select a vehicle type: Economy, Comfort, Comfort XL, Luxury
-                    or Luxury XL
-                  </DialogTitle>
-                </VisuallyHidden>
-                <div className="flex flex-col bg-white">
-                  <RentRideDialogComponent
-                    title={formatDateToDDMMYYYY(
-                      date ? (date as Date) : new Date()
-                    )}
-                    subTitle=""
-                    isTitleCentered
-                  >
-                    <div className="flex flex-col gap-5 justify-center items-center bg-white w-fit pb-6 px-4">
-                      <Calendar
-                        mode="single"
-                        defaultMonth={date}
-                        selected={date}
-                        onSelect={setDate}
-                        disabled={{
-                          before: new Date(),
-                        }}
-                        className="bg-transparent"
-                      />
-
-                      <div className="flex gap-10 items-center font-bold">
-                        <Button
-                          onClick={() => setDate(new Date())}
-                          className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-black"
-                        >
-                          CANCEL
-                        </Button>
-                        <Button
-                          onClick={() => setIsDateDialogOpen(false)}
-                          className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-primary"
-                        >
-                          SELECT
-                        </Button>
-                      </div>
-                    </div>
-                  </RentRideDialogComponent>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div> */}
           <AddInput
             id='email'
             label='Issued date'
@@ -266,6 +124,8 @@ const Page = () => {
         continueFnc={() => {
           router.push("/driver-db");
         }}
+        continueIsLoading
+
         // continuePath='/onboarding/driver-info'
       />
     </div>
