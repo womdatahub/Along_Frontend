@@ -76,6 +76,7 @@ const OTPVerification = () => {
                 onClick={() => {
                   if (!email) return;
                   resendVerificationOTP({ email: email });
+                  setValue("");
                 }}
               >
                 Resend
