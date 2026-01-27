@@ -50,30 +50,39 @@ const Page = () => {
   });
 
   const onSubmit = async (v: TVehicleRegistrationSchemaValidator) => {
-    if (previews.includes(null)) {
+    if (previews.some((p) => p == null)) {
       toast.error("All images are required");
       return;
     }
 
-    const uris = [];
-    for (let i = 0; i < previews.length; i++) {
-      const uri = await uploadImages({
-        uploadType: "vehicle",
-        imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
+    try {
+      const uris: string[] = await Promise.all(
+        previews.map((p) =>
+          uploadImages({
+            uploadType: "vehicle",
+            imageFile: p!.image.imageFile,
+          }),
+        ),
+      ).then((results) => {
+        if (results.some((r) => !r)) {
+          throw new Error("Upload failed");
+        }
+        return results as string[];
       });
-      if (!uri) return;
-      uris.push(uri);
-    }
 
-    const isSuccess = await registerVehicle({
-      ...v,
-      vehicleFrontViewImageUri: uris[0],
-      vehicleBackViewImageUri: uris[1],
-      vehicleSideViewImageUri: uris[2],
-      insuranceDocumentUri: uris[3],
-    });
-    if (!isSuccess) return;
-    router.push("/onboarding/vehicle-insurance");
+      const isSuccess = await registerVehicle({
+        ...v,
+        vehicleFrontViewImageUri: uris[0],
+        vehicleBackViewImageUri: uris[1],
+        vehicleSideViewImageUri: uris[2],
+        insuranceDocumentUri: uris[3],
+      });
+
+      if (!isSuccess) return;
+      router.push("/onboarding/vehicle-insurance");
+    } catch {
+      toast.error("Image uploads failed!");
+    }
   };
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
