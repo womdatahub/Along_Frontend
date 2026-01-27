@@ -31,11 +31,7 @@ export const useRental = create<RentalStoreType>()((set) => ({
   actions: {
     retrieveAvailableVehicles: async (queries) => {
       set({ isLoading: true });
-      const params = new URLSearchParams(queries);
-      const queryString = params.toString();
-      const path = rentalApiStr(
-        `/vehicles${queryString ? `?${queryString}` : ""}`,
-      );
+      const path = rentalApiStr(`/vehicles`, queries);
       const { data, error } = await callApi<{ vehicles: VehicleLocation[] }>(
         path,
       );

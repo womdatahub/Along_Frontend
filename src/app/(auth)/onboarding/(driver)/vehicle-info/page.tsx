@@ -40,11 +40,11 @@ const Page = () => {
     formState: { errors },
   } = useForm<TVehicleRegistrationSchemaValidator>({
     defaultValues: {
-      vehicleMake: "Tesla",
-      vehicleModel: "Model 9",
-      vehicleColor: "White",
-      vehicleIdentificationNumber: "0909dfds",
-      vehicleYear: "2021",
+      vehicleMake: "",
+      vehicleModel: "",
+      vehicleColor: "",
+      vehicleIdentificationNumber: "",
+      vehicleYear: "",
     },
     resolver: zodResolver(vehicleRegistrationSchema),
   });

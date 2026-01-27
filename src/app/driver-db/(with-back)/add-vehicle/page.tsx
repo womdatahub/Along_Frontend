@@ -1,6 +1,7 @@
 "use client";
 import { Button, Card, CardContent, HeadingHeebo } from "@/components";
 import Image from "next/image";
+import Link from "next/link";
 
 const Page = () => {
   return (
@@ -29,8 +30,8 @@ const Page = () => {
         </CardContent>
       </Card>
       <div className='flex justify-between items-center w-full md:w-[446px]'>
-        <Button className='cursor-pointer text-sm rounded-full'>
-          Add vehicle
+        <Button className='cursor-pointer text-sm rounded-full' asChild>
+          <Link href='/driver-db/vehicle-reg'>Add vehicle</Link>
         </Button>
       </div>
     </div>
