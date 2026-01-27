@@ -3,7 +3,6 @@
 import {
   AddInput,
   AuthBackAndContinueButton,
-  CustomAuthInput,
   HeadingHeebo,
 } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components/shared/uploading-images-reusable-component";
@@ -18,7 +17,7 @@ import { useForm } from "react-hook-form";
 const Page = () => {
   const [previews, setPreviews] = useState<
     ({ image: ImageType; uri: string } | null)[]
-  >([null]);
+  >(Array(1).fill(null));
 
   const {
     register,
@@ -32,6 +31,42 @@ const Page = () => {
     resolver: zodResolver(onboardingSchema),
   });
   const router = useRouter();
+
+  //   const onSubmit = async (v: TVehicleRegistrationSchemaValidator) => {
+  //   if (previews.some((p) => p == null)) {
+  //     toast.error("All images are required");
+  //     return;
+  //   }
+
+  //   try {
+  //     const uris: string[] = await Promise.all(
+  //       previews.map((p) =>
+  //         uploadImages({
+  //           uploadType: "vehicle",
+  //           imageFile: p!.image.imageFile,
+  //         }),
+  //       ),
+  //     ).then((results) => {
+  //       if (results.some((r) => !r)) {
+  //         throw new Error("Upload failed");
+  //       }
+  //       return results as string[];
+  //     });
+
+  //     const isSuccess = await registerVehicle({
+  //       ...v,
+  //       vehicleFrontViewImageUri: uris[0],
+  //       vehicleBackViewImageUri: uris[1],
+  //       vehicleSideViewImageUri: uris[2],
+  //       insuranceDocumentUri: uris[3],
+  //     });
+
+  //     if (!isSuccess) return;
+  //     router.push("/onboarding/vehicle-insurance");
+  //   } catch {
+  //     toast.error("Image uploads failed!");
+  //   }
+  // };
   return (
     <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-2'>
