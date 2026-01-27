@@ -1,6 +1,14 @@
 "use client";
-import { Button, HeadingHeebo } from "@/components";
-import { cn } from "@/lib";
+import {
+  Button,
+  CompleteHeroServiceDialog,
+  HeadingHeebo,
+  NameAvatar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  RadarAutocomplete,
+} from "@/components";
 import {
   AccuracyIcon,
   LocationPointerSvg,
@@ -9,16 +17,37 @@ import {
 } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useRadarMap, useSession } from "@/store";
+import { useShallow } from "zustand/shallow";
 
 const DynamicDriversChart = dynamic(
   () => import("../../components/shared/drivers-chart"),
-  { ssr: false }
+  { ssr: false },
 );
 const Page = () => {
+  const router = useRouter();
+
+  const { driverProfile } = useSession(
+    useShallow((state) => ({
+      driverProfile: state.driverProfile,
+      actions: state.actions,
+    })),
+  );
+
+  const {
+    autoCompleteAddress,
+    actions: { setAutoCompleteAddress },
+  } = useRadarMap(
+    useShallow((state) => ({
+      autoCompleteAddress: state.autoCompleteAddress,
+      actions: state.actions,
+    })),
+  );
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>
-        <div className='flex flex-col gap-2 w-fit'>
+        {/* <div className='flex flex-col gap-2 w-fit'>
           <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
           <div className='flex items-center gap-8'>
             <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl'>
@@ -38,6 +67,71 @@ const Page = () => {
                 <WhiteForwardIcon />
               </div>
             </Button>
+          </div>
+        </div> */}
+        <div className='flex justify-between gap-5'>
+          <div className='flex flex-col gap-2 w-fit'>
+            <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
+            <div className='flex items-center gap-8'>
+              <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl md:w-[375px]'>
+                <AccuracyIcon />
+                <RadarAutocomplete
+                  setAutoCompleteAddress={setAutoCompleteAddress}
+                  placeholder='Enter your location'
+                  defaultValue={
+                    autoCompleteAddress &&
+                    `${autoCompleteAddress?.formattedAddress}`
+                  }
+                />
+              </div>
+
+              <CompleteHeroServiceDialog
+                trigger={
+                  <Button
+                    variant={"default"}
+                    className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
+                  >
+                    <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
+                      <WhiteForwardIcon />
+                    </div>
+                  </Button>
+                }
+              />
+            </div>
+          </div>
+
+          <div className='flex gap-4 items-center'>
+            <NameAvatar
+              value={`${driverProfile?.firstName[0] ?? ""}${driverProfile?.lastName[0] ?? ""}`}
+            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <p className='text-lg  cursor-pointer'>
+                  {driverProfile?.firstName}
+                </p>
+              </PopoverTrigger>
+              <PopoverContent className='w-[270px] p-0'>
+                <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-[270px] pt-4'>
+                  <div className='flex flex-col gap-4 px-4 pb-4'>
+                    <div className='flex gap-3 items-center'>
+                      <div className='rounded-full size-8 bg-green-200' />
+                      <p className='font-semibold text-base'>
+                        {driverProfile?.firstName} {driverProfile?.lastName}
+                      </p>
+                    </div>
+                    <p
+                      className='pl-11 cursor-pointer text-sm'
+                      onClick={() => router.push("/driver-db/account")}
+                    >
+                      Manage Account
+                    </p>
+                  </div>
+                  <div className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'>
+                    Sign out
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
         <HeadingHeebo className='text-left mt-5'>Menu</HeadingHeebo>
