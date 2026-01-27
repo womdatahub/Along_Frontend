@@ -37,15 +37,15 @@ export const UploadingImagesReusableComponent = ({
       prev.map((item, id) =>
         id === index
           ? {
-            image: {
-              imageFile: file, // Store the actual File object
-              imageName: file.name,
-              imageSize: file.size,
-            },
-            uri: objectUrl, // Store the object URL for preview
-          }
-          : item
-      )
+              image: {
+                imageFile: file, // Store the actual File object
+                imageName: file.name,
+                imageSize: file.size,
+              },
+              uri: objectUrl, // Store the object URL for preview
+            }
+          : item,
+      ),
     );
 
     toast.success("Success", {
@@ -70,7 +70,7 @@ export const UploadingImagesReusableComponent = ({
     <div
       className={cn(
         "size-full overflow-hidden relative h-full w-fit",
-        className
+        className,
       )}
     >
       {previews[index]?.uri ? (
@@ -79,7 +79,7 @@ export const UploadingImagesReusableComponent = ({
           alt='image'
           width={100}
           height={100}
-          className='size-full hover:cursor-pointer object-cover'
+          className='size-full hover:cursor-pointer object-contain'
         />
       ) : (
         <div className='size-full flex flex-col gap-1 justify-center items-center text-center'>
@@ -91,7 +91,7 @@ export const UploadingImagesReusableComponent = ({
           <div
             className={cn(
               "flex-1 cursor-pointer bg-transparent rounded-lg p-4",
-              isDragActive && "opacity-60"
+              isDragActive && "opacity-60",
             )}
           >
             <div
