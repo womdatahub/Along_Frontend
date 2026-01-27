@@ -246,18 +246,18 @@ export const useSession = create<Session>()(
         }
       },
       registerDriver: async (registerDriverData) => {
-        // console.log(registerDriverData, "registerDriverData");
+        set({ isLoading: true });
         const path = userApiStr("/user/driver");
 
         const { data, error } = await callApi(path, registerDriverData);
 
         if (error) {
           toast.error(error.message);
-          // console.log(error);
+          set({ isLoading: false });
           return false;
         }
         if (data) {
-          console.log(data, path);
+          set({ isLoading: false });
           return true;
         }
         return false;
@@ -265,6 +265,7 @@ export const useSession = create<Session>()(
       addVerificationDocumentsAndServices: async (
         addVerificationDocumentsAndServicesData,
       ) => {
+        set({ isLoading: true });
         const path = userApiStr("/user/documents-services");
         const { data, error } = await callApi(
           path,
@@ -277,17 +278,20 @@ export const useSession = create<Session>()(
 
         if (error) {
           toast.error(error.message);
+          set({ isLoading: false });
           return false;
         }
         if (data) {
           await get().actions.fetchUserDetails(false);
           toast.success("Documents and services added successfully");
+          set({ isLoading: false });
           console.log(data, path);
         }
 
         return true;
       }, // PATCH
       registerVehicle: async (registerVehicleData) => {
+        set({ isLoading: true });
         const path = userApiStr("/user/vehicle");
 
         const { data, error } = await callApi(
@@ -298,12 +302,13 @@ export const useSession = create<Session>()(
 
         if (error) {
           toast.error(error.message);
+          set({ isLoading: false });
           return false;
         }
         if (data) {
           await get().actions.fetchUserDetails(false);
           toast.success("Vehicle information added successfully");
-          console.log(data, path);
+          set({ isLoading: false });
         }
         return true;
       },

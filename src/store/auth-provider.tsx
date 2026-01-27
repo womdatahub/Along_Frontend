@@ -5,6 +5,7 @@ import React, { createContext, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { useSession } from "./use-session";
 import { LoadingComponent } from "@/components";
+import { useShallow } from "zustand/shallow";
 
 const Context = createContext({});
 const { Provider } = Context;
@@ -16,6 +17,7 @@ const publicRoutes = [
   "/onboarding",
   "/onboarding/services",
   "/onboarding/documents",
+  "/onboarding/vehicle-info",
 ];
 
 // Auth-only = should NOT be accessible once logged in
@@ -27,9 +29,9 @@ const authOnlyRoutes = [
   "/onboarding/terms",
   // "/onboarding/services",
   "/onboarding/driver-info",
-  "/onboarding/vehicle-info",
+  // "/onboarding/vehicle-info",
   // "/onboarding/documents",
-  // "/rider-db",
+  "/rider-db",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -41,12 +43,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     userRole,
     isFetchingUserSessionLoading,
     driverProfile,
+    riderProfile,
     actions: {
       fetchUserDetails,
       setRouteBeforeRedirect,
       setIsFetchingUserSessionLoading,
     },
-  } = useSession((state) => state);
+  } = useSession(
+    useShallow((state) => ({
+      userRole: state.userRole,
+      isFetchingUserSessionLoading: state.isFetchingUserSessionLoading,
+      driverProfile: state.driverProfile,
+      riderProfile: state.riderProfile,
+      actions: state.actions,
+    })),
+  );
 
   const isPublic = useMemo(() => publicRoutes.includes(pathname), [pathname]);
 
@@ -86,22 +97,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // 🚫 Logged in → auth-only routes
-    if (userRole && isAuthOnly) {
-      if (userRole === "rider") {
-        router.replace("/rider-db");
-        return;
+    if (userRole) {
+      if (!riderProfile?.firstName) {
       }
       if (userRole === "driver") {
         if (!driverProfile?.driverProfilePictureUri) {
+          toast.error("Your profile is incomplete!");
           router.replace("/onboarding/services");
+          return;
+        }
+        if (!driverProfile?.vehicleFrontViewImageUri) {
+          console.log("driverProfile?.vehicleFrontViewImageUri");
+          router.replace("/onboarding/vehicle-info");
+          return;
+        }
+        if (!driverProfile?.insuranceDocumentUri) {
+          console.log("driverProfile?.insuranceDocumentUri");
+          router.replace("/onboarding/vehicle-insurance");
           return;
         }
         router.replace("/driver-db");
         return;
       }
-      if (userRole === "admin") {
-        router.replace("/admin");
-        return;
+      if (isAuthOnly) {
+        if (userRole === "rider") {
+          router.replace("/rider-db");
+          return;
+        }
+        if (userRole === "admin") {
+          router.replace("/admin");
+          return;
+        }
       }
     }
 
@@ -117,7 +143,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetchingUserSessionLoading, userRole, pathname]);
+  }, [
+    isFetchingUserSessionLoading,
+    userRole,
+    pathname,
+    riderProfile,
+    driverProfile,
+  ]);
 
   if (isFetchingUserSessionLoading && !isPublic) {
     return <LoadingComponent />;
