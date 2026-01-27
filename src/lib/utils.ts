@@ -24,7 +24,20 @@ export enum ApiBase {
   MATCH = "match",
 }
 
-export const userApiStr = (value: string) => apiStr(ApiBase.USER, value);
-export const instantApiStr = (value: string) => apiStr(ApiBase.INSTANT, value);
-export const rentalApiStr = (value: string) => apiStr(ApiBase.RENTAL, value);
-export const matchingApiStr = (value: string) => apiStr(ApiBase.MATCH, value);
+type Queries = {
+  [key: string]: string;
+};
+
+const generateQueries = (queries?: Queries) => {
+  const params = new URLSearchParams(queries);
+  const queryString = params.toString();
+  return queryString ? `?${queryString}` : "";
+};
+export const userApiStr = (value: string, queries?: Queries) =>
+  apiStr(ApiBase.USER, value + generateQueries(queries));
+export const instantApiStr = (value: string, queries?: Queries) =>
+  apiStr(ApiBase.INSTANT, value + generateQueries(queries));
+export const rentalApiStr = (value: string, queries?: Queries) =>
+  apiStr(ApiBase.RENTAL, value + generateQueries(queries));
+export const matchingApiStr = (value: string, queries?: Queries) =>
+  apiStr(ApiBase.MATCH, value + generateQueries(queries));
