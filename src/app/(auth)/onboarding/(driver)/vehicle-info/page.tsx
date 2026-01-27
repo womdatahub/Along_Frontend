@@ -4,9 +4,7 @@ import { AddInput, AuthBackAndContinueButton } from "@/components";
 import { HeadingHeebo } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components/shared/uploading-images-reusable-component";
 import {
-  TSocialSecurityNumberSchemaValidator,
   TVehicleRegistrationSchemaValidator,
-  socialSecurityNumberSchema,
   vehicleRegistrationSchema,
 } from "@/lib";
 import { useSession } from "@/store";
@@ -17,16 +15,24 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
   const [previews, setPreviews] = useState<
     ({ image: ImageType; uri: string } | null)[]
-  >([null, null, null, null, null]);
+  >([null, null, null, null]);
 
-  const [imagesUri, setImagesUri] = useState<string[]>([]);
   const {
+    isLoading,
     actions: { uploadImages, registerVehicle },
-  } = useSession((state) => state);
+  } = useSession(
+    useShallow((state) => ({
+      actions: state.actions,
+      isLoading: state.isLoading,
+    })),
+  );
+
+  const router = useRouter();
 
   const {
     register,
@@ -34,39 +40,37 @@ const Page = () => {
     formState: { errors },
   } = useForm<TVehicleRegistrationSchemaValidator>({
     defaultValues: {
-      vehicleMake: "",
-      vehicleModel: "",
-      vehicleColor: "",
-      vehicleIdentificationNumber: "",
-      vehicleYear: "",
+      vehicleMake: "Tesla",
+      vehicleModel: "Model 9",
+      vehicleColor: "White",
+      vehicleIdentificationNumber: "0909dfds",
+      vehicleYear: "2021",
     },
     resolver: zodResolver(vehicleRegistrationSchema),
   });
 
-  const router = useRouter();
-
   const onSubmit = async (v: TVehicleRegistrationSchemaValidator) => {
-    console.log(v, errors);
     if (previews.includes(null)) {
       toast.error("All images are required");
       return;
     }
 
-    // for (let i = 0; i < previews.length; i++) {
-    //   const uri = await uploadImages({
-    //     uploadType: "vehicle",
-    //     imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
-    //   });
-    //   if (!uri) return;
-    //   setImagesUri((prev) => [...prev, uri]);
-    // }
+    const uris = [];
+    for (let i = 0; i < previews.length; i++) {
+      const uri = await uploadImages({
+        uploadType: "vehicle",
+        imageFile: previews[i]?.image.imageFile as ImageType["imageFile"],
+      });
+      if (!uri) return;
+      uris.push(uri);
+    }
 
     const isSuccess = await registerVehicle({
       ...v,
-      vehicleFrontViewImageUri: imagesUri[0],
-      vehicleBackViewImageUri: imagesUri[1],
-      vehicleSideViewImageUri: imagesUri[2],
-      insuranceDocumentUri: imagesUri[3],
+      vehicleFrontViewImageUri: uris[0],
+      vehicleBackViewImageUri: uris[1],
+      vehicleSideViewImageUri: uris[2],
+      insuranceDocumentUri: uris[3],
     });
     if (!isSuccess) return;
     router.push("/onboarding/vehicle-insurance");
@@ -211,12 +215,10 @@ const Page = () => {
         </div>
       </div>
       <AuthBackAndContinueButton
-        backActive
-        continueActive={true}
+        backActive={!isLoading}
+        continueActive={!isLoading}
         continueFnc={handleSubmit(onSubmit)}
-        // router.push("/onboarding/vehicle-insurance");
-
-        // continuePath='/onboarding/driver-info'
+        continueIsLoading={isLoading}
       />
     </div>
   );
