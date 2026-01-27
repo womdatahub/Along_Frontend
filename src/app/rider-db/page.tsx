@@ -97,7 +97,9 @@ const Page = () => {
                   <div className='flex flex-col gap-4 px-4 pb-4'>
                     <div className='flex gap-3 items-center'>
                       <div className='rounded-full size-8 bg-green-200' />
-                      <p className='font-semibold text-base'>Micheal Cynthia</p>
+                      <p className='font-semibold text-base'>
+                        {riderProfile?.firstName} {riderProfile?.lastName}
+                      </p>
                     </div>
                     <p
                       className='pl-11 cursor-pointer text-sm'
