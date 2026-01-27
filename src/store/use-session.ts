@@ -280,6 +280,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
+          await get().actions.fetchUserDetails(false);
           toast.success("Documents and services added successfully");
           console.log(data, path);
         }
@@ -287,7 +288,7 @@ export const useSession = create<Session>()(
         return true;
       }, // PATCH
       registerVehicle: async (registerVehicleData) => {
-        const path = userApiStr("/user/documents-services");
+        const path = userApiStr("/user/vehicle");
 
         const { data, error } = await callApi(
           path,
@@ -300,6 +301,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
+          await get().actions.fetchUserDetails(false);
           toast.success("Vehicle information added successfully");
           console.log(data, path);
         }
@@ -318,6 +320,7 @@ export const useSession = create<Session>()(
         }
         if (data) {
           toast.success(data.message);
+          await get().actions.fetchUserDetails(false);
         }
         set({ isLoading: false, userRole: "rider" });
         return true;
