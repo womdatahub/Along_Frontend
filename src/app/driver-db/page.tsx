@@ -1,24 +1,17 @@
 "use client";
 import {
   Button,
-  CompleteHeroServiceDialog,
   HeadingHeebo,
   NameAvatar,
   Popover,
   PopoverContent,
   PopoverTrigger,
-  RadarAutocomplete,
 } from "@/components";
-import {
-  AccuracyIcon,
-  LocationPointerSvg,
-  // RemoveCardIcon,
-  WhiteForwardIcon,
-} from "@public/svgs";
+import { LocationPointerSvg } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useRadarMap, useSession } from "@/store";
+import { useSession } from "@/store";
 import { useShallow } from "zustand/shallow";
 
 const DynamicDriversChart = dynamic(
@@ -35,15 +28,6 @@ const Page = () => {
     })),
   );
 
-  const {
-    autoCompleteAddress,
-    actions: { setAutoCompleteAddress },
-  } = useRadarMap(
-    useShallow((state) => ({
-      autoCompleteAddress: state.autoCompleteAddress,
-      actions: state.actions,
-    })),
-  );
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>
@@ -70,35 +54,7 @@ const Page = () => {
           </div>
         </div> */}
         <div className='flex justify-between gap-5'>
-          <div className='flex flex-col gap-2 w-fit'>
-            <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
-            <div className='flex items-center gap-8'>
-              <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl md:w-[375px]'>
-                <AccuracyIcon />
-                <RadarAutocomplete
-                  setAutoCompleteAddress={setAutoCompleteAddress}
-                  placeholder='Enter your location'
-                  defaultValue={
-                    autoCompleteAddress &&
-                    `${autoCompleteAddress?.formattedAddress}`
-                  }
-                />
-              </div>
-
-              <CompleteHeroServiceDialog
-                trigger={
-                  <Button
-                    variant={"default"}
-                    className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
-                  >
-                    <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
-                      <WhiteForwardIcon />
-                    </div>
-                  </Button>
-                }
-              />
-            </div>
-          </div>
+          <div />
 
           <div className='flex gap-4 items-center'>
             <NameAvatar
@@ -139,8 +95,8 @@ const Page = () => {
           <div className='flex flex-col gap-10 border-r border-r-gray-5 pr-10 mb-32 w-fit whitespace-nowrap'>
             <div className='flex gap-2 justify-between flex-col'>
               <div className='flex flex-col gap-10'>
-                <Link href={"/rider-db/ride-details"}>Vehicle</Link>
-                <Link href={"/rider-db/ride-details"}>TBC</Link>
+                <Link href={"/driver-db/add-vehicle"}>Vehicle</Link>
+                <Link href={"/driver-db/ride-details"}>TBC</Link>
                 <Link href={"/onboarding"}>Ride</Link>
               </div>
               <div className='flex items-center gap-3'>
