@@ -72,10 +72,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isProtected = !isPublic && !isAuthOnly;
 
   useEffect(() => {
-    // if (isPublic) return;
-    // if (userRole) return;
-    // if (isAuthOnly) return;
-
     if (hasFetchedRef.current) return;
 
     hasFetchedRef.current = true;
@@ -96,10 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    // 🚫 Logged in → auth-only routes
     if (userRole) {
-      if (!riderProfile?.firstName) {
-      }
       if (userRole === "driver") {
         if (!driverProfile?.driverProfilePictureUri) {
           toast.error("Your profile is incomplete!");
@@ -111,15 +104,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           router.replace("/onboarding/vehicle-info");
           return;
         }
-        if (!driverProfile?.insuranceDocumentUri) {
-          console.log("driverProfile?.insuranceDocumentUri");
-          router.replace("/onboarding/vehicle-insurance");
-          return;
-        }
-        router.replace("/driver-db");
-        return;
+        // if (!driverProfile?.insuranceDocumentUri) {
+        //   console.log("driverProfile?.insuranceDocumentUri");
+        //   router.replace("/onboarding/vehicle-insurance");
+        //   return;
+        // }
       }
       if (isAuthOnly) {
+        if (userRole === "driver") {
+          router.replace("/driver-db");
+          return;
+        }
         if (userRole === "rider") {
           router.replace("/rider-db");
           return;
