@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
   const [previews, setPreviews] = useState<
@@ -24,8 +25,14 @@ const Page = () => {
   >(Array(4).fill(null));
 
   const {
+    isLoading,
     actions: { addVerificationDocumentsAndServices, uploadImages },
-  } = useSession((state) => state);
+  } = useSession(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      actions: state.actions,
+    })),
+  );
 
   const {
     register,
@@ -181,9 +188,10 @@ const Page = () => {
       </div>
 
       <AuthBackAndContinueButton
-        backActive
-        continueActive={true}
+        backActive={!isLoading}
+        continueActive={!isLoading}
         continueFnc={handleSubmit(onSubmit)}
+        continueIsLoading={isLoading}
       />
     </div>
   );
