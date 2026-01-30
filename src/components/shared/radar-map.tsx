@@ -50,7 +50,7 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
                 headers: {
                   Authorization: publishableKey,
                 },
-              }
+              },
             );
 
             // resp.data should have a routes array
@@ -98,7 +98,7 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
                     "line-color": "#007AFF",
                     "line-width": 4,
                   },
-                }
+                },
               );
             } else {
               console.error("Route geometry format not supported");
@@ -110,7 +110,7 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickup, drop]);
+  }, [pickup?.[0], pickup?.[1], drop?.[0], drop?.[1]]);
   // [pickup?.[0], pickup?.[1], drop?.[0], drop?.[1]] correct one that prevents rerender
 
   return (
@@ -155,7 +155,7 @@ const RadarAutocomplete = ({
     });
 
     const input = containerRef.current.querySelector(
-      ".radar-autocomplete-input"
+      ".radar-autocomplete-input",
     ) as HTMLInputElement | null;
 
     if (input) {
@@ -184,19 +184,19 @@ type RadarAutocompleteResult = {
   geometry: { coordinates: [number, number] };
 };
 const radarAutocompleteManual = async (
-  query: string
+  query: string,
 ): Promise<RadarAutocompleteResult[]> => {
   if (!query || query.length < 3) return [];
 
   const { data, status } = await axios(
     `${AUTOCOMPLETE_URL}?query=${encodeURIComponent(
-      query
+      query,
     )}&layers=address,place`,
     {
       headers: {
         Authorization: publishableKey,
       },
-    }
+    },
   );
 
   if (status !== 200) {

@@ -230,11 +230,7 @@ const RentRide = () => {
           {vehicleType && !selectedDriver && (
             <div className='flex flex-col gap-8'>
               <DriverInfoAccordion
-                vehicles={
-                  availableVehicles.length > 0
-                    ? availableVehicles
-                    : dummyVehicleLocation
-                }
+                vehicles={availableVehicles.length > 0 ? availableVehicles : []}
                 func={func}
               />
             </div>
@@ -694,21 +690,6 @@ export const RentRideDialogComponent = ({
     </div>
   );
 };
-
-const reviewDetails = [
-  {
-    title: "Rent Duration",
-    value: "6 hours",
-  },
-  {
-    title: "Pick up time",
-    value: "18:35PM",
-  },
-  {
-    title: "Time Flexibility",
-    value: "Yes",
-  },
-];
 
 const dummyVehicleLocation: VehicleLocation[] = [
   {

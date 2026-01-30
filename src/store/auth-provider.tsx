@@ -15,6 +15,7 @@ const publicRoutes = [
   "/",
   "/about",
   "/onboarding",
+  "/onboarding/driver-info",
   "/onboarding/services",
   "/onboarding/documents",
   "/onboarding/vehicle-info",
@@ -28,7 +29,7 @@ const authOnlyRoutes = [
   "/onboarding/user-type",
   "/onboarding/terms",
   // "/onboarding/services",
-  "/onboarding/driver-info",
+  // "/onboarding/driver-info",
   // "/onboarding/vehicle-info",
   // "/onboarding/documents",
   "/rider-db",
@@ -94,6 +95,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (userRole) {
       if (userRole === "driver") {
+        if (!driverProfile?.firstName) {
+          toast.error("Your profile is incomplete!");
+          router.replace("/onboarding/driver-info");
+          return;
+        }
         if (!driverProfile?.driverProfilePictureUri) {
           toast.error("Your profile is incomplete!");
           router.replace("/onboarding/services");
