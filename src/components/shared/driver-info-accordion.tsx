@@ -17,21 +17,6 @@ import {
 import Image from "next/image";
 
 type Props = {
-  driverInfo: {
-    name: string;
-    carName: string;
-    price: number;
-    image: string;
-    rating: number;
-    completedRides: number;
-    distanceTraveled: number;
-    passengerCapacity: number;
-    petsAllowed: boolean;
-    carConditions: {
-      title: string;
-      content: string;
-    }[];
-  }[];
   vehicles: VehicleLocation[];
   func: (selectedDriver: VehicleLocation) => void;
 };

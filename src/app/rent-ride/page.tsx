@@ -53,6 +53,7 @@ const RentRide = () => {
   const [pickupModalOpen, setPickupModalOpen] = useState(false);
   const [selectedDriverDetails, setSelectedDriverDetails] =
     useState<VehicleLocation | null>(null);
+  const [flexibility, setFlexibility] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -72,7 +73,12 @@ const RentRide = () => {
   const {
     autoCompleteAddress,
     actions: { setAutoCompleteAddress },
-  } = useRadarMap((state) => state);
+  } = useRadarMap(
+    useShallow((state) => ({
+      actions: state.actions,
+      autoCompleteAddress: state.autoCompleteAddress,
+    })),
+  );
   const {
     availableVehicles,
     actions: { retrieveAvailableVehicles, rentAndCreateIntent },
@@ -224,7 +230,6 @@ const RentRide = () => {
           {vehicleType && !selectedDriver && (
             <div className='flex flex-col gap-8'>
               <DriverInfoAccordion
-                driverInfo={driverInfo}
                 vehicles={
                   availableVehicles.length > 0
                     ? availableVehicles
@@ -241,6 +246,7 @@ const RentRide = () => {
                   <div className='flex gap-7 items-center'>
                     <Image
                       src={"/images/small-car.png"}
+                      // src={selectedDriverDetails?.vehicleInfo.vehicleSideViewImageUri ?? ""}
                       alt={"car"}
                       width={40}
                       height={40}
@@ -369,20 +375,11 @@ const RentRide = () => {
                                     </Button>
                                   </div>
                                   <SelectDropdown
-                                    options={[
-                                      "1 Hours",
-                                      "2 Hours",
-                                      "3 Hours",
-                                      "4 Hours",
-                                      "5 Hours",
-                                      "6 Hours",
-                                      "7 Hours",
-                                      "8 Hours",
-                                      "9 Hours",
-                                      "10 Hours",
-                                      "11 Hours",
-                                      "12 Hours",
-                                    ]}
+                                    options={Array(12)
+                                      .fill(0)
+                                      .map((_, index) => {
+                                        return `${index + 1} Hour${index + 1 === 1 ? "" : "s"}`;
+                                      })}
                                     triggerLabel='Select hours'
                                     selected={selectedHoursLength}
                                     setSelected={setSelectedHoursLength}
@@ -558,13 +555,30 @@ const RentRide = () => {
                           </p>
                           <MoreInfoIcon />
                         </div>
-                        <Switch color='primary' />
+                        <Switch
+                          color='primary'
+                          checked={flexibility}
+                          onChange={() => setFlexibility((prev) => !prev)}
+                        />
                       </div>
                     </div>
                   )}
                   {isReview && (
                     <div className='flex flex-col gap-5 border-t border-primaryLight2 pt-8'>
-                      {reviewDetails.map((review) => {
+                      {[
+                        {
+                          title: "Rent Duration",
+                          value: selectedHoursLength,
+                        },
+                        {
+                          title: "Pick up time",
+                          value: `${selectedHours} : ${selectedMins} ${selectAmOrPm}`,
+                        },
+                        {
+                          title: "Time Flexibility",
+                          value: flexibility ? "Yes" : "No",
+                        },
+                      ].map((review) => {
                         return (
                           <div
                             key={review.title}
@@ -594,9 +608,9 @@ const RentRide = () => {
                     )
                       return;
                     rentAndCreateIntent({
+                      flexibility,
                       days: [],
                       duration: 1,
-                      flexibility: false,
                       vehicleId: selectedDriverDetails.vehicleId,
                       pickUpLat: autoCompleteAddress.latitude,
                       pickUpLong: autoCompleteAddress.longitude,
@@ -650,96 +664,6 @@ const RentRide = () => {
   );
 };
 export default Page;
-
-const driverInfo = [
-  {
-    name: "Mark Spencer",
-    carName: "Tesla Model 3 - 2023",
-    price: 2,
-    image: "",
-    rating: 4.8,
-    completedRides: 453,
-    distanceTraveled: 234,
-    passengerCapacity: 3,
-    petsAllowed: false,
-    carConditions: [
-      {
-        title: "Type",
-        content: "Sedan EV",
-      },
-      {
-        title: "Comfort",
-        content: "Fully Air-conditioned",
-      },
-      {
-        title: "Safety",
-        content: "Passenger/Rear Airbag",
-      },
-      {
-        title: "License",
-        content: "LA23 76 NYC",
-      },
-    ],
-  },
-  {
-    name: "Stephen Malcolm",
-    image: "",
-    rating: 4.6,
-    carName: "Toyota Camry - 2024",
-    price: 4,
-    completedRides: 231,
-    distanceTraveled: 234,
-    passengerCapacity: 3,
-    petsAllowed: false,
-    carConditions: [
-      {
-        title: "Type",
-        content: "Sedan EV",
-      },
-      {
-        title: "Comfort",
-        content: "Fully Air-conditioned",
-      },
-      {
-        title: "Safety",
-        content: "Passenger/Rear Airbag",
-      },
-      {
-        title: "License",
-        content: "LA23 76 NYC",
-      },
-    ],
-  },
-  {
-    name: "Mary Bucher",
-    image: "",
-    carName: "Audi A8 - 2025",
-    price: 6,
-    rating: 4.8,
-    completedRides: 453,
-    distanceTraveled: 234,
-    passengerCapacity: 4,
-    petsAllowed: false,
-    carConditions: [
-      {
-        title: "Type",
-        content: "Sedan EV",
-      },
-      {
-        title: "Comfort",
-        content: "Fully Air-conditioned",
-      },
-      {
-        title: "Safety",
-        content: "Passenger/Rear Airbag",
-      },
-      {
-        title: "License",
-        content: "LA23 76 NYC",
-      },
-    ],
-  },
-];
 
 type RentRideDialogComponentProps = {
   title: string;
