@@ -13,7 +13,6 @@ import {
   PopoverTrigger,
   RadarAutocomplete,
 } from "@/components";
-// import { cn } from "@/lib";
 import { useRadarMap, useSession } from "@/store";
 import {
   AccuracyIcon,
@@ -25,13 +24,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/shallow";
-// import { useEffect } from "react";
 
 const Page = () => {
   const router = useRouter();
   const {
     riderProfile,
-    // actions: { fetchUserDetails },
+    actions: { logOut },
   } = useSession(
     useShallow((state) => ({
       riderProfile: state.riderProfile,
@@ -44,10 +42,6 @@ const Page = () => {
     actions: { setAutoCompleteAddress },
   } = useRadarMap((state) => state);
 
-  // useEffect(() => {
-  // fetchUserDetails();
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>
@@ -108,7 +102,10 @@ const Page = () => {
                       Manage Account
                     </p>
                   </div>
-                  <div className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'>
+                  <div
+                    onClick={logOut}
+                    className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'
+                  >
                     Sign out
                   </div>
                 </div>

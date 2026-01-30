@@ -21,7 +21,10 @@ const DynamicDriversChart = dynamic(
 const Page = () => {
   const router = useRouter();
 
-  const { driverProfile } = useSession(
+  const {
+    driverProfile,
+    actions: { logOut },
+  } = useSession(
     useShallow((state) => ({
       driverProfile: state.driverProfile,
       actions: state.actions,
@@ -82,7 +85,10 @@ const Page = () => {
                       Manage Account
                     </p>
                   </div>
-                  <div className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'>
+                  <div
+                    onClick={logOut}
+                    className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'
+                  >
                     Sign out
                   </div>
                 </div>
