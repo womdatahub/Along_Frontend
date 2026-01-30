@@ -101,7 +101,10 @@ type Session = {
       passangerCapacity: number;
       allowPets: boolean;
     }) => Promise<void>;
-    fetchUserDetails: (shouldToast?: boolean) => Promise<void>;
+    fetchUserDetails: (
+      shouldToast?: boolean,
+      shouldReload?: boolean,
+    ) => Promise<void>;
     fetchVehicleViaClass: (vehicleClass: string) => Promise<void>;
     fetchVehicleViaDriverID: (driverID: string) => Promise<void>;
     fetchVehicleID: (vehicleID: string) => Promise<void>;
@@ -178,7 +181,21 @@ export const useSession = create<Session>()(
         }
         return data?.data.userRole as string;
       },
-      logOut: async () => {},
+      logOut: async () => {
+        set({ isLoading: true });
+        const path = userApiStr("/user/logout");
+
+        const { data, error } = await callApi(path, {});
+
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+        }
+        if (data) {
+          toast.success(data.message);
+          set({ isLoading: false });
+        }
+      },
       registerUser: async (registerUserData) => {
         // console.log("this ran reisteruser");
         set({ isLoading: true });
@@ -258,9 +275,11 @@ export const useSession = create<Session>()(
         }
         if (data) {
           set({ isLoading: false });
+          await get().actions.fetchUserDetails(false, false);
+
           return true;
         }
-        return false;
+        return true;
       }, //POST
       addVerificationDocumentsAndServices: async (
         addVerificationDocumentsAndServicesData,
@@ -282,7 +301,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
-          await get().actions.fetchUserDetails(false);
+          await get().actions.fetchUserDetails(false, false);
           toast.success("Documents and services added successfully");
           set({ isLoading: false });
           console.log(data, path);
@@ -306,7 +325,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
-          await get().actions.fetchUserDetails(false);
+          await get().actions.fetchUserDetails(false, false);
           toast.success("Vehicle information added successfully");
           set({ isLoading: false });
         }
@@ -325,7 +344,7 @@ export const useSession = create<Session>()(
         }
         if (data) {
           toast.success(data.message);
-          await get().actions.fetchUserDetails(false);
+          await get().actions.fetchUserDetails(false, false);
         }
         set({ isLoading: false, userRole: "rider" });
         return true;
@@ -393,8 +412,8 @@ export const useSession = create<Session>()(
           console.log(data, path);
         }
       },
-      fetchUserDetails: async (shouldToast) => {
-        set({ isFetchingUserSessionLoading: true });
+      fetchUserDetails: async (shouldToast, shouldReload = true) => {
+        set({ ...(shouldReload && { isFetchingUserSessionLoading: true }) });
         const path = userApiStr("/user/profile");
 
         const { data, error } = await callApi<
