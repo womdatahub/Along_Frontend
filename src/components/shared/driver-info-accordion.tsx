@@ -15,12 +15,35 @@ import {
   RideRentCarIcon,
 } from "@public/svgs";
 import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
+import { useRental } from "@/store/use-rental";
+import { useShallow } from "zustand/shallow";
+import Link from "next/link";
 
 type Props = {
-  vehicles: VehicleLocation[];
   func: (selectedDriver: VehicleLocation) => void;
+  vehicleType: string;
+  isLater: boolean;
 };
-export const DriverInfoAccordion = ({ vehicles, func }: Props) => {
+export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
+  const { isLoadingRental, availableVehicles } = useRental(
+    useShallow((state) => ({
+      actions: state.actions,
+      availableVehicles: state.availableVehicles,
+      isLoadingRental: state.isLoading,
+    })),
+  );
+
+  if (isLoadingRental) {
+    return (
+      <div className='flex flex-col gap-4'>
+        <Skeleton className=' h-16 rounded-lg' />
+        <Skeleton className=' h-16 rounded-lg' />
+        <Skeleton className=' h-16 rounded-lg' />
+      </div>
+    );
+  }
+
   return (
     <Accordion
       type='single'
@@ -28,7 +51,7 @@ export const DriverInfoAccordion = ({ vehicles, func }: Props) => {
       className='w-full flex flex-col gap-4'
       defaultValue='item-1'
     >
-      {vehicles.map((vehicle, i) => {
+      {dummyVehicleLocation.map((vehicle, i) => {
         const carConditions = [
           {
             title: "Type",
@@ -53,7 +76,7 @@ export const DriverInfoAccordion = ({ vehicles, func }: Props) => {
             key={i}
             value={` 
             ${vehicle.driverInfo?.firstName} ${vehicle.driverInfo?.lastName}-
-            ${vehicle.vehicleInfo?.vehicleModel}`}
+            ${vehicle.vehicleInfo?.vehicleModel}-${vehicle.vehicleId}`}
             className='border-b-0 bg-white rounded-2xl '
           >
             <AccordionTrigger className='hover:no-underline cursor-pointer pr-4 py-2 items-center'>
@@ -175,22 +198,28 @@ export const DriverInfoAccordion = ({ vehicles, func }: Props) => {
                     {vehicle.driverInfo.rideProfile.allowPets
                       ? "Allowed"
                       : "Not allowed"}
-                    {/* {info.petsAllowed ? "Allowed" : "Not allowed"} */}
                   </p>
                 </div>
               </div>
               <Button
-                onClick={() =>
-                  func(
-                    vehicle,
-                    // info.carConditions[info.carConditions.length - 1].content
-                    //   .toLowerCase()
-                    //   .replace(/\s+/g, "-")
-                  )
-                }
+                onClick={() => {
+                  console.log("Button was pressed too!");
+                  func(vehicle);
+                }}
                 className='w-fit rounded-2xl hover:cursor-pointer'
+                asChild
               >
-                Book
+                <Link
+                  href={{
+                    query: {
+                      selectedDriver: vehicle.vehicleId,
+                      vehicleType,
+                      isLater,
+                    },
+                  }}
+                >
+                  Book
+                </Link>
               </Button>
             </AccordionContent>
           </AccordionItem>
@@ -199,3 +228,112 @@ export const DriverInfoAccordion = ({ vehicles, func }: Props) => {
     </Accordion>
   );
 };
+
+const dummyVehicleLocation: VehicleLocation[] = [
+  {
+    _id: "loc_001",
+    vehicleId: "veh_001",
+    driverId: "drv_001",
+    latitude: 6.5244,
+    longitude: 3.3792,
+    address: "Victoria Island, Lagos, Nigeria",
+    capacity: 4,
+    status: "available",
+    createdAt: "2025-01-05T10:12:30.000Z",
+    updatedAt: "2025-01-05T10:12:30.000Z",
+    __v: 0,
+    vehicleInfo: {
+      vehicleMake: "Toyota",
+      vehicleModel: "Camry XE",
+      vehicleClass: "economy",
+      vehicleYear: "2024",
+      vehicleColor: "White",
+      vehicleFrontViewImageUri: "/images/small-car.png",
+      vehicleBackViewImageUri: "/images/small-car.png",
+      vehicleSideViewImageUri: "/images/small-car.png",
+      vehicleIdentificationNumber: "894WRJKJ480943NRD",
+    },
+    driverInfo: {
+      _id: "drv_001",
+      email: "jeff@example.com",
+      role: "driver",
+      userId: "usr_001",
+      firstName: "Jeff",
+      lastName: "Azaman",
+      acceptanceRate: 0.85,
+      rating: {
+        totalRating: 123,
+        numberOfRatings: 4.7,
+      },
+      gender: "male",
+      services: ["scheduled_ride"],
+      rideProfile: {
+        currentLocation: {
+          location: "Victoria Island, Lagos, Nigeria",
+          latitude: 6.5244,
+          longitude: 3.3792,
+        },
+        ratePerHour: "1500",
+        allowPets: false,
+        luggageCapacity: 3,
+      },
+      createdAt: "2025-01-01T09:00:00.000Z",
+      updatedAt: "2025-01-05T10:00:00.000Z",
+      __v: 0,
+      age: 26,
+    },
+  },
+  {
+    _id: "loc_001",
+    vehicleId: "veh_002",
+    driverId: "drv_001",
+    latitude: 6.5244,
+    longitude: 3.3792,
+    address: "Victoria Island, Lagos, Nigeria",
+    capacity: 4,
+    status: "available",
+    createdAt: "2025-01-05T10:12:30.000Z",
+    updatedAt: "2025-01-05T10:12:30.000Z",
+    __v: 0,
+    vehicleInfo: {
+      vehicleMake: "Toyota",
+      vehicleModel: "Camry XE",
+      vehicleClass: "economy",
+      vehicleYear: "2024",
+      vehicleColor: "White",
+      vehicleFrontViewImageUri: "/images/small-car.png",
+      vehicleBackViewImageUri: "/images/small-car.png",
+      vehicleSideViewImageUri: "/images/small-car.png",
+      vehicleIdentificationNumber: "894WRJKJ480943NRD",
+    },
+    driverInfo: {
+      _id: "drv_001",
+      email: "jeff@example.com",
+      role: "driver",
+      userId: "usr_001",
+      firstName: "Jeff",
+      lastName: "Azaman",
+      acceptanceRate: 0.85,
+      rating: {
+        totalRating: 123,
+        numberOfRatings: 4.7,
+      },
+      gender: "male",
+      services: ["scheduled_ride"],
+      rideProfile: {
+        currentLocation: {
+          location: "Victoria Island, Lagos, Nigeria",
+          latitude: 6.5244,
+          longitude: 3.3792,
+        },
+        ratePerHour: "1500",
+        allowPets: false,
+        luggageCapacity: 3,
+      },
+      createdAt: "2025-01-01T09:00:00.000Z",
+      updatedAt: "2025-01-05T10:00:00.000Z",
+      __v: 0,
+      age: 26,
+    },
+  },
+];

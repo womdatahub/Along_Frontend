@@ -44,7 +44,7 @@ const Page = () => {
 const RentRide = () => {
   const [open, setOpen] = useState(false);
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("hours");
+  const [selectedTab, setSelectedTab] = useState<"hours" | "days">("hours");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedHours, setSelectedHours] = useState<string>("");
   const [selectedHoursLength, setSelectedHoursLength] = useState<string>("");
@@ -65,9 +65,9 @@ const RentRide = () => {
 
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
-    router.push(
-      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver.vehicleId}&isLater=${isLater}`,
-    );
+    // router.push(
+    //   `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver.vehicleId}&isLater=${isLater}`,
+    // ); using link in the component now
   };
 
   const {
@@ -80,12 +80,10 @@ const RentRide = () => {
     })),
   );
   const {
-    availableVehicles,
     actions: { retrieveAvailableVehicles, rentAndCreateIntent },
   } = useRental(
     useShallow((state) => ({
       actions: state.actions,
-      availableVehicles: state.availableVehicles,
     })),
   );
 
@@ -105,7 +103,6 @@ const RentRide = () => {
   ]);
 
   return (
-    // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
       <div className='flex gap-4 h-full'>
         <div className='flex flex-col gap-10 min-w-[40%] h-full'>
@@ -230,8 +227,10 @@ const RentRide = () => {
           {vehicleType && !selectedDriver && (
             <div className='flex flex-col gap-8'>
               <DriverInfoAccordion
-                vehicles={availableVehicles.length > 0 ? availableVehicles : []}
+                // vehicles={availableVehicles.length > 0 ? availableVehicles : []}
                 func={func}
+                vehicleType={vehicleType ?? ""}
+                isLater={isLater}
               />
             </div>
           )}
@@ -371,10 +370,12 @@ const RentRide = () => {
                                     </Button>
                                   </div>
                                   <SelectDropdown
-                                    options={Array(12)
+                                    options={Array(
+                                      selectedTab === "hours" ? 12 : 6,
+                                    )
                                       .fill(0)
                                       .map((_, index) => {
-                                        return `${index + 1} Hour${index + 1 === 1 ? "" : "s"}`;
+                                        return `${index + 1} ${selectedTab === "hours" ? "Hour" : "Day"}${index + 1 === 1 ? "" : "s"}`;
                                       })}
                                     triggerLabel='Select hours'
                                     selected={selectedHoursLength}
@@ -595,14 +596,15 @@ const RentRide = () => {
               <div className='flex gap-6 items-center'>
                 <Button
                   className='items-end'
-                  asChild={!isReview}
+                  disabled={
+                    !autoCompleteAddress ||
+                    !selectedHours ||
+                    !selectedMins ||
+                    !selectAmOrPm ||
+                    !selectedHoursLength
+                  }
                   onClick={() => {
-                    if (
-                      // !isReview ||
-                      !autoCompleteAddress ||
-                      !selectedDriverDetails
-                    )
-                      return;
+                    if (!autoCompleteAddress || !selectedDriverDetails) return;
                     rentAndCreateIntent({
                       flexibility,
                       days: [],
@@ -619,7 +621,7 @@ const RentRide = () => {
                   ) : (
                     <Link
                       href={{
-                        pathname: "/rent-ride",
+                        // pathname: "/rent-ride",
                         query: {
                           vehicleType,
                           selectedDriver,
@@ -690,59 +692,3 @@ export const RentRideDialogComponent = ({
     </div>
   );
 };
-
-const dummyVehicleLocation: VehicleLocation[] = [
-  {
-    _id: "loc_001",
-    vehicleId: "veh_001",
-    driverId: "drv_001",
-    latitude: 6.5244,
-    longitude: 3.3792,
-    address: "Victoria Island, Lagos, Nigeria",
-    capacity: 4,
-    status: "available",
-    createdAt: "2025-01-05T10:12:30.000Z",
-    updatedAt: "2025-01-05T10:12:30.000Z",
-    __v: 0,
-    vehicleInfo: {
-      vehicleMake: "Toyota",
-      vehicleModel: "Camry XE",
-      vehicleClass: "economy",
-      vehicleYear: "2024",
-      vehicleColor: "White",
-      vehicleFrontViewImageUri: "https://example.com/vehicle/front.jpg",
-      vehicleBackViewImageUri: "https://example.com/vehicle/back.jpg",
-      vehicleSideViewImageUri: "https://example.com/vehicle/side.jpg",
-      vehicleIdentificationNumber: "894WRJKJ480943NRD",
-    },
-    driverInfo: {
-      _id: "drv_001",
-      email: "jeff@example.com",
-      role: "driver",
-      userId: "usr_001",
-      firstName: "Jeff",
-      lastName: "Azaman",
-      acceptanceRate: 0.85,
-      rating: {
-        totalRating: 123,
-        numberOfRatings: 4.7,
-      },
-      gender: "male",
-      services: ["scheduled_ride"],
-      rideProfile: {
-        currentLocation: {
-          location: "Victoria Island, Lagos, Nigeria",
-          latitude: 6.5244,
-          longitude: 3.3792,
-        },
-        ratePerHour: "1500",
-        allowPets: false,
-        luggageCapacity: 3,
-      },
-      createdAt: "2025-01-01T09:00:00.000Z",
-      updatedAt: "2025-01-05T10:00:00.000Z",
-      __v: 0,
-      age: 26,
-    },
-  },
-];
