@@ -23,6 +23,7 @@ const Page = () => {
   const router = useRouter();
 
   const {
+    isLoading,
     userProfile,
     actions: { registerRider },
   } = useSession((state) => state);
@@ -132,11 +133,10 @@ const Page = () => {
       </div>
 
       <AuthBackAndContinueButton
-        backActive
-        continueActive
-        continueFnc={() => {
-          handleSubmit(onSubmit)();
-        }}
+        backActive={!isLoading}
+        continueActive={!isLoading}
+        continueFnc={handleSubmit(onSubmit)}
+        continueIsLoading={isLoading}
       />
     </div>
   );
