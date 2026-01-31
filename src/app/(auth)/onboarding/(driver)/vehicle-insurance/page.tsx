@@ -159,7 +159,7 @@ const Page = () => {
         continueFnc={() => {
           router.push("/driver-db");
         }}
-        continueIsLoading
+        // continueIsLoading
 
         // continuePath='/onboarding/driver-info'
       />

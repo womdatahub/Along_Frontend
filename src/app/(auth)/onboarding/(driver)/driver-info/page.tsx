@@ -11,13 +11,20 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { driverBasicInfoSchema } from "@/lib";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
   const {
     userProfile,
     driverProfile,
     actions: { registerDriver },
-  } = useSession((state) => state);
+  } = useSession(
+    useShallow((state) => ({
+      userProfile: state.userProfile,
+      driverProfile: state.driverProfile,
+      actions: state.actions,
+    })),
+  );
 
   const {
     register,
@@ -28,8 +35,8 @@ const Page = () => {
   } = useForm<TDriverBasicInfoSchema>({
     resolver: zodResolver(driverBasicInfoSchema),
     defaultValues: {
-      firstName: "test",
-      lastName: "tester",
+      firstName: "",
+      lastName: "",
       dateOfBirth: "",
       firstEmergencyContact: "09090909090",
       secondEmergencyContact: "09090909090",
@@ -53,9 +60,12 @@ const Page = () => {
     const isSuccess = await registerDriver(driverData);
 
     if (!isSuccess) {
+      console.log("In the failed block");
       toast.error("Failed to register driver. Please try again.");
       return;
     }
+
+    console.log("Reached this point");
 
     toast.success("Driver information saved successfully!");
     router.push("/onboarding/services");
@@ -77,10 +87,7 @@ const Page = () => {
         </p>
       </div>
 
-      <form
-        // onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col gap-5'
-      >
+      <div className='flex flex-col gap-5'>
         <div className='flex gap-4'>
           <AddInput
             label='First Name'
@@ -178,8 +185,9 @@ const Page = () => {
           backActive={!isSubmitting}
           continueActive={!isSubmitting}
           continueFnc={handleSubmit(onSubmit)}
+          continueIsLoading={isSubmitting}
         />
-      </form>
+      </div>
     </div>
   );
 };

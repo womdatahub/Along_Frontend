@@ -1,6 +1,7 @@
 "use client";
 import {
   Button,
+  ButtonWithLoader,
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
@@ -26,7 +27,7 @@ const OTPVerification = () => {
   const email: string | null = searchParams.get("email");
 
   const {
-    // isLoading,
+    isLoading,
     actions: { resendVerificationOTP, verifyEmail },
   } = useSession((state) => state);
 
@@ -82,6 +83,14 @@ const OTPVerification = () => {
                 Resend
               </Button>
             </div>
+            {isLoading && (
+              <div className='flex w-full justify-center items-center'>
+                <ButtonWithLoader
+                  isLoading={isLoading}
+                  text='Verifying OTP...'
+                />
+              </div>
+            )}
           </div>
         </div>
         {/* <AuthBackAndContinueButton

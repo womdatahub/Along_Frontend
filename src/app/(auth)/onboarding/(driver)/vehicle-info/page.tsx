@@ -79,7 +79,8 @@ const Page = () => {
       });
 
       if (!isSuccess) return;
-      router.push("/onboarding/vehicle-insurance");
+      // router.push("/onboarding/vehicle-insurance"); // this has not been implemented by backend so go to dashboard
+      router.push("/driver-db");
     } catch {
       toast.error("Image uploads failed!");
     }
