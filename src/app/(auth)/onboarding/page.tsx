@@ -181,70 +181,16 @@ const Page = () => {
               onClick={() => setIsTermsAccepted((prev) => !prev)}
             />
 
-            {/* <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
-              <DialogTrigger asChild>
-                <p className='font-fustat text-xs text-center text-primary'>
-                  Terms and Conditions apply
-                </p>
-              </DialogTrigger>
-              <DialogContent
-                className='sm:max-w-[700px] max-h-[75%] overflow-y-scroll px-10 py-8 rounded-[20px] bg-background-1'
-                showCloseButton={false}
-              >
-                <VisuallyHidden>
-                  <DialogTitle>Terms and conditions</DialogTitle>
-                </VisuallyHidden>
-                <DialogTitle className='font-semibold text-2xl'>
-                  Terms and Conditions
-                </DialogTitle>
-                <div className='flex flex-col gap-5 text-semibold text-sm'>
-                  <p>
-                    Welcome to Along Ride Sharing Services LLC (“Along,” “we,”
-                    “us,” or “our”). These Rider Terms and Conditions (“Terms”)
-                    govern your use of our platform and services as a rider
-                    (“Rider,” “you,” or “your”). By registering and booking
-                    rides through Along, you agree to comply with these
-                    Terms.{" "}
-                  </p>
-                  <div className='flex flex-col gap-1'>
-                    {terms.map((term, id) => {
-                      return (
-                        <div key={id} className='flex gap-2'>
-                          <p>{id + 1}.</p>
-                          <p>{term}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      onClick={() => {
-                        setIsTermsAccepted(true);
-                        setIsTermsModalOpen(false);
-                      }}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      variant='destructive'
-                      onClick={() => setIsTermsModalOpen(false)}
-                    >
-                      Decline
-                    </Button>
-                  </DialogFooter>
-                </div>
-              </DialogContent>
-            </Dialog> */}
             <TermsModal
               acceptFunction={() => {
                 setIsTermsAccepted(true);
                 setIsTermsModalOpen(false);
               }}
               isTermsModalOpen={isTermsModalOpen}
-              setIsTermsModalOpen={setIsTermsAccepted}
+              setIsTermsModalOpen={setIsTermsModalOpen}
               trigger={
                 <p className='font-fustat text-xs text-center text-primary'>
-                  Terms and Conditions apply
+                  Terms and Conditions apply modal
                 </p>
               }
             />
