@@ -11,7 +11,7 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { userRole, riderProfile, adminProfile, driverProfile } = useSession(
+  const { userRole, riderProfile, driverProfile, adminProfile } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
       riderProfile: state.riderProfile,
@@ -20,17 +20,21 @@ export const Navbar = () => {
     })),
   );
 
-  const avatarName = useMemo(
+  const riderInitials = useMemo(
     () =>
-      riderProfile
-        ? `${riderProfile.firstName[0]}${riderProfile.lastName[0]}`
-        : driverProfile
-          ? `${driverProfile.firstName[0]}${driverProfile.lastName[0]}`
-          : adminProfile
-            ? `${adminProfile.firstName[0]}${adminProfile.lastName[0]}`
-            : "AL",
-    [riderProfile, driverProfile, adminProfile],
+      riderProfile?.firstName
+        ? `${riderProfile?.firstName[0]}${riderProfile?.lastName[0]}`
+        : "",
+    [riderProfile],
   );
+  const driverInitials = useMemo(
+    () =>
+      driverProfile?.firstName
+        ? `${driverProfile?.firstName[0]}${driverProfile?.lastName[0]}`
+        : "",
+    [driverProfile],
+  );
+  const userInitials = "AL";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,14 +68,16 @@ export const Navbar = () => {
           <Link href='/onboarding'>Drive</Link>
           <Link href='#'>Help</Link>
           <Link
-            href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
+            href={
+              userRole && userRole !== "user"
+                ? `/${userRole.toLowerCase()}-db`
+                : "/sign-in"
+            }
             className='font-semibold flex items-center gap-2.5'
           >
-            {userRole ? (
-              // <div className='rounded-full size-8 bg-green-200' />
+            {userRole && userRole !== "user" ? (
               <NameAvatar
-                // value={`${riderProfile?.firstName[0] ?? ""}${riderProfile?.lastName[0] ?? ""}`}
-                value={avatarName}
+                value={riderInitials || driverInitials || userInitials}
                 className='size-8 text-sm'
               />
             ) : (
