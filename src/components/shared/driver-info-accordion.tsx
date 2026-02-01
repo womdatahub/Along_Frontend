@@ -51,7 +51,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
       className='w-full flex flex-col gap-4'
       defaultValue='item-1'
     >
-      {dummyVehicleLocation.map((vehicle, i) => {
+      {availableVehicles.map((vehicle, i) => {
         const carConditions = [
           {
             title: "Type",
@@ -203,7 +203,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
               </div>
               <Button
                 onClick={() => {
-                  console.log("Button was pressed too!");
+                  // console.log("Button was pressed too!");
                   func(vehicle);
                 }}
                 className='w-fit rounded-2xl hover:cursor-pointer'
@@ -229,111 +229,111 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
   );
 };
 
-const dummyVehicleLocation: VehicleLocation[] = [
-  {
-    _id: "loc_001",
-    vehicleId: "veh_001",
-    driverId: "drv_001",
-    latitude: 6.5244,
-    longitude: 3.3792,
-    address: "Victoria Island, Lagos, Nigeria",
-    capacity: 4,
-    status: "available",
-    createdAt: "2025-01-05T10:12:30.000Z",
-    updatedAt: "2025-01-05T10:12:30.000Z",
-    __v: 0,
-    vehicleInfo: {
-      vehicleMake: "Toyota",
-      vehicleModel: "Camry XE",
-      vehicleClass: "economy",
-      vehicleYear: "2024",
-      vehicleColor: "White",
-      vehicleFrontViewImageUri: "/images/small-car.png",
-      vehicleBackViewImageUri: "/images/small-car.png",
-      vehicleSideViewImageUri: "/images/small-car.png",
-      vehicleIdentificationNumber: "894WRJKJ480943NRD",
-    },
-    driverInfo: {
-      _id: "drv_001",
-      email: "jeff@example.com",
-      role: "driver",
-      userId: "usr_001",
-      firstName: "Jeff",
-      lastName: "Azaman",
-      acceptanceRate: 0.85,
-      rating: {
-        totalRating: 123,
-        numberOfRatings: 4.7,
-      },
-      gender: "male",
-      services: ["scheduled_ride"],
-      rideProfile: {
-        currentLocation: {
-          location: "Victoria Island, Lagos, Nigeria",
-          latitude: 6.5244,
-          longitude: 3.3792,
-        },
-        ratePerHour: "1500",
-        allowPets: false,
-        luggageCapacity: 3,
-      },
-      createdAt: "2025-01-01T09:00:00.000Z",
-      updatedAt: "2025-01-05T10:00:00.000Z",
-      __v: 0,
-      age: 26,
-    },
-  },
-  {
-    _id: "loc_001",
-    vehicleId: "veh_002",
-    driverId: "drv_001",
-    latitude: 6.5244,
-    longitude: 3.3792,
-    address: "Victoria Island, Lagos, Nigeria",
-    capacity: 4,
-    status: "available",
-    createdAt: "2025-01-05T10:12:30.000Z",
-    updatedAt: "2025-01-05T10:12:30.000Z",
-    __v: 0,
-    vehicleInfo: {
-      vehicleMake: "Toyota",
-      vehicleModel: "Camry XE",
-      vehicleClass: "economy",
-      vehicleYear: "2024",
-      vehicleColor: "White",
-      vehicleFrontViewImageUri: "/images/small-car.png",
-      vehicleBackViewImageUri: "/images/small-car.png",
-      vehicleSideViewImageUri: "/images/small-car.png",
-      vehicleIdentificationNumber: "894WRJKJ480943NRD",
-    },
-    driverInfo: {
-      _id: "drv_001",
-      email: "jeff@example.com",
-      role: "driver",
-      userId: "usr_001",
-      firstName: "Jeff",
-      lastName: "Azaman",
-      acceptanceRate: 0.85,
-      rating: {
-        totalRating: 123,
-        numberOfRatings: 4.7,
-      },
-      gender: "male",
-      services: ["scheduled_ride"],
-      rideProfile: {
-        currentLocation: {
-          location: "Victoria Island, Lagos, Nigeria",
-          latitude: 6.5244,
-          longitude: 3.3792,
-        },
-        ratePerHour: "1500",
-        allowPets: false,
-        luggageCapacity: 3,
-      },
-      createdAt: "2025-01-01T09:00:00.000Z",
-      updatedAt: "2025-01-05T10:00:00.000Z",
-      __v: 0,
-      age: 26,
-    },
-  },
-];
+// const dummyVehicleLocation: VehicleLocation[] = [
+//   {
+//     _id: "loc_001",
+//     vehicleId: "veh_001",
+//     driverId: "drv_001",
+//     latitude: 6.5244,
+//     longitude: 3.3792,
+//     address: "Victoria Island, Lagos, Nigeria",
+//     capacity: 4,
+//     status: "available",
+//     createdAt: "2025-01-05T10:12:30.000Z",
+//     updatedAt: "2025-01-05T10:12:30.000Z",
+//     __v: 0,
+//     vehicleInfo: {
+//       vehicleMake: "Toyota",
+//       vehicleModel: "Camry XE",
+//       vehicleClass: "economy",
+//       vehicleYear: "2024",
+//       vehicleColor: "White",
+//       vehicleFrontViewImageUri: "/images/small-car.png",
+//       vehicleBackViewImageUri: "/images/small-car.png",
+//       vehicleSideViewImageUri: "/images/small-car.png",
+//       vehicleIdentificationNumber: "894WRJKJ480943NRD",
+//     },
+//     driverInfo: {
+//       _id: "drv_001",
+//       email: "jeff@example.com",
+//       role: "driver",
+//       userId: "usr_001",
+//       firstName: "Jeff",
+//       lastName: "Azaman",
+//       acceptanceRate: 0.85,
+//       rating: {
+//         totalRating: 123,
+//         numberOfRatings: 4.7,
+//       },
+//       gender: "male",
+//       services: ["scheduled_ride"],
+//       rideProfile: {
+//         currentLocation: {
+//           location: "Victoria Island, Lagos, Nigeria",
+//           latitude: 6.5244,
+//           longitude: 3.3792,
+//         },
+//         ratePerHour: "1500",
+//         allowPets: false,
+//         luggageCapacity: 3,
+//       },
+//       createdAt: "2025-01-01T09:00:00.000Z",
+//       updatedAt: "2025-01-05T10:00:00.000Z",
+//       __v: 0,
+//       age: 26,
+//     },
+//   },
+//   {
+//     _id: "loc_001",
+//     vehicleId: "veh_002",
+//     driverId: "drv_001",
+//     latitude: 6.5244,
+//     longitude: 3.3792,
+//     address: "Victoria Island, Lagos, Nigeria",
+//     capacity: 4,
+//     status: "available",
+//     createdAt: "2025-01-05T10:12:30.000Z",
+//     updatedAt: "2025-01-05T10:12:30.000Z",
+//     __v: 0,
+//     vehicleInfo: {
+//       vehicleMake: "Toyota",
+//       vehicleModel: "Camry XE",
+//       vehicleClass: "economy",
+//       vehicleYear: "2024",
+//       vehicleColor: "White",
+//       vehicleFrontViewImageUri: "/images/small-car.png",
+//       vehicleBackViewImageUri: "/images/small-car.png",
+//       vehicleSideViewImageUri: "/images/small-car.png",
+//       vehicleIdentificationNumber: "894WRJKJ480943NRD",
+//     },
+//     driverInfo: {
+//       _id: "drv_001",
+//       email: "jeff@example.com",
+//       role: "driver",
+//       userId: "usr_001",
+//       firstName: "Jeff",
+//       lastName: "Azaman",
+//       acceptanceRate: 0.85,
+//       rating: {
+//         totalRating: 123,
+//         numberOfRatings: 4.7,
+//       },
+//       gender: "male",
+//       services: ["scheduled_ride"],
+//       rideProfile: {
+//         currentLocation: {
+//           location: "Victoria Island, Lagos, Nigeria",
+//           latitude: 6.5244,
+//           longitude: 3.3792,
+//         },
+//         ratePerHour: "1500",
+//         allowPets: false,
+//         luggageCapacity: 3,
+//       },
+//       createdAt: "2025-01-01T09:00:00.000Z",
+//       updatedAt: "2025-01-05T10:00:00.000Z",
+//       __v: 0,
+//       age: 26,
+//     },
+//   },
+// ];
