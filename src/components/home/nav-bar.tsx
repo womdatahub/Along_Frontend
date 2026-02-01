@@ -11,7 +11,7 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { userRole, riderProfile, driverProfile, adminProfile } = useSession(
+  const { userRole, riderProfile, driverProfile } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
       riderProfile: state.riderProfile,
