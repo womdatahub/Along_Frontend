@@ -32,7 +32,7 @@ const authOnlyRoutes = [
   // "/onboarding/driver-info",
   // "/onboarding/vehicle-info",
   // "/onboarding/documents",
-  "/rider-db",
+  // "/rider-db",
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -45,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isFetchingUserSessionLoading,
     driverProfile,
     riderProfile,
+    services,
     actions: {
       fetchUserDetails,
       setRouteBeforeRedirect,
@@ -56,6 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isFetchingUserSessionLoading: state.isFetchingUserSessionLoading,
       driverProfile: state.driverProfile,
       riderProfile: state.riderProfile,
+      services: state.services,
       actions: state.actions,
     })),
   );
@@ -101,8 +103,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
         if (!driverProfile?.driverProfilePictureUri) {
-          toast.error("Your profile is incomplete!");
-          router.replace("/onboarding/services");
+          toast.error("Your driver profile is incomplete!");
+          if (services.length === 0) router.replace("/onboarding/services");
+          router.replace("/onboarding/documents");
           return;
         }
         if (!driverProfile?.vehicleFrontViewImageUri) {
@@ -115,6 +118,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         //   router.replace("/onboarding/vehicle-insurance");
         //   return;
         // }
+      }
+      if (userRole === "rider" && !isPublic) {
+        if (!riderProfile?.firstName) {
+          toast.error("Your profile is incomplete!");
+          router.replace("/onboarding/driver-info");
+          return; // just testing this out for now
+        }
       }
       if (isAuthOnly) {
         if (userRole === "driver") {
@@ -134,7 +144,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // 🚫 Incomplete onboarding
     if (userRole === "user" && isProtected) {
-      // console.log("onboarding process incomplete");
       toast.error(
         "Onboarding process incomplete. Please complete your onboarding process to continue!!",
       );
