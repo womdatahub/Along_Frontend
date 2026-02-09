@@ -22,6 +22,7 @@ type Session = {
   userProfile: UserProfile | undefined;
   isFetchingUserSessionLoading: boolean;
   isLoading: boolean;
+  isResendingVerificationOTP: boolean;
   services: string[];
   routeBeforeRedirect: string;
   actions: {
@@ -117,6 +118,7 @@ const initialState = {
   userRole: "",
   isFetchingUserSessionLoading: true,
   isLoading: false,
+  isResendingVerificationOTP: false,
   services: [],
   routeBeforeRedirect: "",
   riderProfile: undefined,
@@ -137,6 +139,7 @@ export const useSession = create<Session>()(
         set({ routeBeforeRedirect: route });
       },
       uploadImages: async (d) => {
+        set({ isLoading: true });
         if (!d.imageFile) {
           throw new Error("Image file is required");
         }
@@ -194,8 +197,10 @@ export const useSession = create<Session>()(
           set({ isLoading: false });
         }
         if (data) {
-          toast.success(data.message);
-          set({ isLoading: false });
+          set({
+            ...initialState,
+            isFetchingUserSessionLoading: false,
+          });
         }
       },
       registerUser: async (registerUserData) => {
@@ -251,17 +256,19 @@ export const useSession = create<Session>()(
         }
       },
       resendVerificationOTP: async (resendVerificationOTPData) => {
+        set({ isResendingVerificationOTP: true });
         const path = userApiStr("/user/resend-verification-otp");
 
         const { data, error } = await callApi(path, resendVerificationOTPData);
 
         if (error) {
           toast.error(error.message);
+          set({ isResendingVerificationOTP: false });
           return;
         }
         if (data) {
           toast.success(data.message);
-          console.log(data, path);
+          set({ isResendingVerificationOTP: false });
         }
       },
       registerDriver: async (registerDriverData) => {
@@ -334,7 +341,7 @@ export const useSession = create<Session>()(
             address: autoCompleteAddress?.formattedAddress ?? "",
             latitude: autoCompleteAddress?.latitude ?? 0,
             longitude: autoCompleteAddress?.longitude ?? 0,
-            vehicleId: "",
+            vehicleId: get().driverProfile?._id ?? "",
           });
           toast.success("Vehicle information added successfully");
           set({ isLoading: false });

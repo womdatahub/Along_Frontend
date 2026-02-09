@@ -12,6 +12,7 @@ import { useSession } from "@/store";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
   return (
@@ -28,8 +29,15 @@ const OTPVerification = () => {
 
   const {
     isLoading,
+    isResendingVerificationOTP,
     actions: { resendVerificationOTP, verifyEmail },
-  } = useSession((state) => state);
+  } = useSession(
+    useShallow((state) => ({
+      actions: state.actions,
+      isLoading: state.isLoading,
+      isResendingVerificationOTP: state.isResendingVerificationOTP,
+    })),
+  );
 
   const continueFnc = async () => {
     if (!email || otpValue.length <= 3) return;
@@ -73,14 +81,15 @@ const OTPVerification = () => {
               <p className='text-sm'>Didn’t get the code?</p>
               <Button
                 variant={"link"}
-                className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline'
+                disabled={isResendingVerificationOTP}
+                className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline disabled:cursor-progress disabled:text-gray'
                 onClick={() => {
                   if (!email) return;
                   resendVerificationOTP({ email: email });
                   setValue("");
                 }}
               >
-                Resend
+                {isResendingVerificationOTP ? "Resending..." : "Resend"}
               </Button>
             </div>
             {isLoading && (
@@ -93,11 +102,6 @@ const OTPVerification = () => {
             )}
           </div>
         </div>
-        {/* <AuthBackAndContinueButton
-          backActive={true}
-          continueActive={otpValue.length === 4 && !isLoading}
-          continueFnc={continueFnc}
-        /> */}
       </div>
       <p className='text-base text-gray'>
         If you don’t see the code, check your spam folder too.

@@ -56,6 +56,9 @@ export const useRental = create<RentalStoreType>()((set) => ({
       }
       if (data) {
         console.log(data, path);
+        toast.success(
+          data.message ?? "Vehicle listed for rentals successfully!",
+        );
         set({ isLoading: false });
       }
     },

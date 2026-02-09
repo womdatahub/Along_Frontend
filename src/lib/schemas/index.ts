@@ -47,7 +47,8 @@ export const driverBasicInfoSchema = z.object({
 export const socialSecurityNumberSchema = z.object({
   socialSecurityNumber: z
     .string()
-    .min(10, "Social security number has a minimum of 10 characters!"),
+    .min(8, "Social security number has a minimum of 8 characters!")
+    .max(10, "Social security number has a maximum of 10 characters!"),
 });
 export const vehicleRegistrationSchema = z.object({
   vehicleMake: z.string().min(1, "Car make is required!"),

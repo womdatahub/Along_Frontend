@@ -11,6 +11,28 @@ const Page = () => {
       driverProfile: state.driverProfile,
     })),
   );
+  const carInfo = [
+    {
+      title: "Car make",
+      value: driverProfile?.vehicleMake ?? "",
+    },
+    {
+      title: "Model",
+      value: driverProfile?.vehicleModel ?? "",
+    },
+    {
+      title: "Year",
+      value: driverProfile?.vehicleYear ?? "",
+    },
+    {
+      title: "Color",
+      value: driverProfile?.vehicleColor ?? "",
+    },
+    {
+      title: "License number",
+      value: driverProfile?.vehicleIdentificationNumber ?? "",
+    },
+  ];
   return (
     <div className='flex flex-col gap-5'>
       <HeadingHeebo className='text-start pl-4 mb-11'>Vehicle</HeadingHeebo>
@@ -23,28 +45,7 @@ const Page = () => {
             height={446}
             className='-mt-20 max-w-[302px] rounded-lg'
           />
-          {[
-            {
-              title: "Car make",
-              value: driverProfile?.vehicleMake ?? "",
-            },
-            {
-              title: "Model",
-              value: driverProfile?.vehicleModel ?? "",
-            },
-            {
-              title: "Year",
-              value: driverProfile?.vehicleYear ?? "",
-            },
-            {
-              title: "Color",
-              value: driverProfile?.vehicleColor,
-            },
-            {
-              title: "License number",
-              value: driverProfile?.vehicleIdentificationNumber ?? "",
-            },
-          ].map((i) => {
+          {carInfo.map((i) => {
             return (
               <div
                 key={i.title}
@@ -66,26 +67,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-const items = [
-  {
-    title: "Car make",
-    value: "Toyota",
-  },
-  {
-    title: "Model",
-    value: "Camry",
-  },
-  {
-    title: "Year",
-    value: "2023",
-  },
-  {
-    title: "Color",
-    value: "Blue",
-  },
-  {
-    title: "License number",
-    value: "LK 238 90",
-  },
-];

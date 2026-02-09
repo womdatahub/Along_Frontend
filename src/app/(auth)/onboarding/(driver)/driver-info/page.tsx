@@ -17,12 +17,14 @@ const Page = () => {
   const {
     userProfile,
     driverProfile,
+    isLoading,
     actions: { registerDriver },
   } = useSession(
     useShallow((state) => ({
+      actions: state.actions,
       userProfile: state.userProfile,
       driverProfile: state.driverProfile,
-      actions: state.actions,
+      isLoading: state.isLoading,
     })),
   );
 
@@ -38,8 +40,8 @@ const Page = () => {
       firstName: "",
       lastName: "",
       dateOfBirth: "",
-      firstEmergencyContact: "09090909090",
-      secondEmergencyContact: "09090909090",
+      firstEmergencyContact: "",
+      secondEmergencyContact: "",
     },
   });
 
@@ -60,14 +62,10 @@ const Page = () => {
     const isSuccess = await registerDriver(driverData);
 
     if (!isSuccess) {
-      console.log("In the failed block");
       toast.error("Failed to register driver. Please try again.");
       return;
     }
-
-    console.log("Reached this point");
-
-    toast.success("Driver information saved successfully!");
+    // toast.success("Driver information saved successfully!");
     router.push("/onboarding/services");
   };
 
@@ -95,7 +93,7 @@ const Page = () => {
             errors={errors}
             placeholder='Enter first name'
             register={register}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
             required
             type='text'
             iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
@@ -108,7 +106,7 @@ const Page = () => {
             errors={errors}
             placeholder='Enter last name'
             register={register}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
             required
             type='text'
             iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
@@ -122,7 +120,7 @@ const Page = () => {
           errors={errors}
           placeholder='Select date'
           register={register}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isLoading}
           required
           type='date'
           iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
@@ -161,7 +159,7 @@ const Page = () => {
           errors={errors}
           placeholder='+234 000 000 0000'
           register={register}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isLoading}
           required
           type='tel'
           iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
@@ -174,7 +172,7 @@ const Page = () => {
           errors={errors}
           placeholder='+234 000 000 0000'
           register={register}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isLoading}
           required
           type='tel'
           iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
@@ -182,10 +180,10 @@ const Page = () => {
         />
 
         <AuthBackAndContinueButton
-          backActive={!isSubmitting}
-          continueActive={!isSubmitting}
+          backActive={!isSubmitting && !isLoading}
+          continueActive={!isSubmitting && !isLoading}
           continueFnc={handleSubmit(onSubmit)}
-          continueIsLoading={isSubmitting}
+          continueIsLoading={isSubmitting || isLoading}
         />
       </div>
     </div>
