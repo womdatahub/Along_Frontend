@@ -11,6 +11,8 @@ import type {
 } from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
+import { useRental } from "./use-rental";
+import { useRadarMap } from "./use-radar-map";
 
 type Session = {
   userRole: string;
@@ -326,6 +328,14 @@ export const useSession = create<Session>()(
         }
         if (data) {
           await get().actions.fetchUserDetails(false, false);
+          const autoCompleteAddress =
+            useRadarMap.getState().toAutoCompleteAddress;
+          await useRental.getState().actions.listVehicleForRental({
+            address: autoCompleteAddress?.formattedAddress ?? "",
+            latitude: autoCompleteAddress?.latitude ?? 0,
+            longitude: autoCompleteAddress?.longitude ?? 0,
+            vehicleId: "",
+          });
           toast.success("Vehicle information added successfully");
           set({ isLoading: false });
         }
