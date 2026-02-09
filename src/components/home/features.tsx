@@ -102,7 +102,7 @@ export const Features = () => {
             !animating &&
               (direction === "right"
                 ? "animate-slide-in-from-right"
-                : "animate-slide-in-from-left")
+                : "animate-slide-in-from-left"),
           )}
         >
           <div className='flex flex-col gap-4 text-left w-full md:w-1/2'>
@@ -118,6 +118,7 @@ export const Features = () => {
             alt={currentSlide.description}
             width={237}
             height={337}
+            className='w-auto'
           />
         </div>
       </div>

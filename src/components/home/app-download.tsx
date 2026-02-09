@@ -32,6 +32,7 @@ export const AppDownload = () => {
                   alt='app-download'
                   width={isMobile ? 20 : 38}
                   height={isMobile ? 20 : 38}
+                  className='w-auto'
                 />
                 Android
               </div>
@@ -44,6 +45,7 @@ export const AppDownload = () => {
                   alt='app-download'
                   width={isMobile ? 20 : 38}
                   height={isMobile ? 20 : 38}
+                  className='w-auto'
                 />
                 Apple
               </div>

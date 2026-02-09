@@ -24,6 +24,7 @@ export const Footer = () => {
                     alt='app-download'
                     width={28}
                     height={32}
+                    className='w-auto'
                   />
                   Android
                 </div>
@@ -36,6 +37,7 @@ export const Footer = () => {
                     alt='app-download'
                     width={28}
                     height={32}
+                    className='w-auto'
                   />
                   Apple
                 </div>

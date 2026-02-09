@@ -58,7 +58,7 @@ export const HowItWorks = () => {
                 alt={activeStep.title}
                 width={400}
                 height={576}
-                className='object-cover rounded-[20px] md:rounded-[39px] w-full h-full'
+                className='object-cover rounded-[20px] md:rounded-[39px] w-auto h-full'
               />
             </motion.div>
           </AnimatePresence>
