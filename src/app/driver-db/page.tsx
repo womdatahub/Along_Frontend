@@ -2,7 +2,6 @@
 import {
   Button,
   HeadingHeebo,
-  NameAvatar,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -13,6 +12,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/store";
 import { useShallow } from "zustand/shallow";
+import Image from "next/image";
 
 const DynamicDriversChart = dynamic(
   () => import("../../components/shared/drivers-chart"),
@@ -34,34 +34,18 @@ const Page = () => {
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
       <div className='flex flex-col gap-4'>
-        {/* <div className='flex flex-col gap-2 w-fit'>
-          <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
-          <div className='flex items-center gap-8'>
-            <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl'>
-              <AccuracyIcon />
-              <input
-                className={cn(
-                  "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full md:w-[375px]"
-                )}
-                placeholder='Pick up location'
-              />
-            </div>
-            <Button
-              variant={"default"}
-              className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
-            >
-              <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
-                <WhiteForwardIcon />
-              </div>
-            </Button>
-          </div>
-        </div> */}
         <div className='flex justify-between gap-5'>
           <div />
 
           <div className='flex gap-4 items-center'>
-            <NameAvatar
-              value={`${driverProfile?.firstName[0] ?? ""}${driverProfile?.lastName[0] ?? ""}`}
+            <Image
+              alt={`${driverProfile?.firstName}-${driverProfile?.lastName}`}
+              src={
+                driverProfile?.driverProfilePictureUri ?? "/images/camry.png"
+              }
+              width={96}
+              height={96}
+              className='size-24 rounded-full object-cover bg-gray-200'
             />
             <Popover>
               <PopoverTrigger asChild>
@@ -73,7 +57,16 @@ const Page = () => {
                 <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-[270px] pt-4'>
                   <div className='flex flex-col gap-4 px-4 pb-4'>
                     <div className='flex gap-3 items-center'>
-                      <div className='rounded-full size-8 bg-green-200' />
+                      <Image
+                        alt={`${driverProfile?.firstName}-${driverProfile?.lastName}`}
+                        src={
+                          driverProfile?.driverProfilePictureUri ??
+                          "/images/camry.png"
+                        }
+                        width={32}
+                        height={32}
+                        className='size-8 rounded-full object-cover bg-gray-200'
+                      />
                       <p className='font-semibold text-base'>
                         {driverProfile?.firstName} {driverProfile?.lastName}
                       </p>
