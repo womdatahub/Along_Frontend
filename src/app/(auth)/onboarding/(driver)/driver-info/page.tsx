@@ -48,7 +48,7 @@ const Page = () => {
 
   const onSubmit = async (data: TDriverBasicInfoSchema) => {
     if (!driverProfile?.email && !userProfile?.email) {
-      toast.error("User email not found. Please log in again.");
+      toast.error("User email not found. Please sign up again.");
       return;
     }
 
