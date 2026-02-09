@@ -1,22 +1,50 @@
 "use client";
 import { Button, Card, CardContent, HeadingHeebo } from "@/components";
+import { useSession } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
+  const { driverProfile } = useSession(
+    useShallow((state) => ({
+      driverProfile: state.driverProfile,
+    })),
+  );
   return (
     <div className='flex flex-col gap-5'>
       <HeadingHeebo className='text-start pl-4 mb-11'>Vehicle</HeadingHeebo>
       <Card className='w-full md:w-[446px] rounded-2xl shadow-none'>
         <CardContent className='flex flex-col gap-4'>
           <Image
-            alt='camry'
-            src='/images/camry.png'
+            alt={`${driverProfile?.vehicleMake}-${driverProfile?.vehicleModel}`}
+            src={driverProfile?.vehicleFrontViewImageUri ?? "/images/camry.png"}
             width={446}
             height={446}
-            className='-mt-20 max-w-[302px]'
+            className='-mt-20 max-w-[302px] rounded-lg'
           />
-          {items.map((i) => {
+          {[
+            {
+              title: "Car make",
+              value: driverProfile?.vehicleMake ?? "",
+            },
+            {
+              title: "Model",
+              value: driverProfile?.vehicleModel ?? "",
+            },
+            {
+              title: "Year",
+              value: driverProfile?.vehicleYear ?? "",
+            },
+            {
+              title: "Color",
+              value: driverProfile?.vehicleColor,
+            },
+            {
+              title: "License number",
+              value: driverProfile?.vehicleIdentificationNumber ?? "",
+            },
+          ].map((i) => {
             return (
               <div
                 key={i.title}
