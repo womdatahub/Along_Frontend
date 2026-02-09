@@ -17,6 +17,12 @@ type RentalStoreType = {
       [key: string]: string;
     }) => Promise<void>;
     rentAndCreateIntent: (data: RentAndCreateIntentType) => Promise<void>;
+    listVehicleForRental: (data: {
+      vehicleId: string;
+      latitude: number;
+      longitude: number;
+      address: string;
+    }) => Promise<void>;
   };
 };
 
@@ -29,6 +35,30 @@ const initialState = {
 export const useRental = create<RentalStoreType>()((set) => ({
   ...initialState,
   actions: {
+    listVehicleForRental: async (vehicleInfo) => {
+      set({ isLoading: true });
+      const d = {
+        accuracy: 20,
+        capacity: 3,
+        deviceId: "EAB",
+        deviceType: "Android",
+        deviceOS: "android",
+        deviceMake: "Xiaomi",
+        deviceModel: "Note 13 Pro",
+        ...vehicleInfo,
+      };
+      const path = rentalApiStr(`/driver/rent`);
+      const { data, error } = await callApi(path, d);
+      if (error) {
+        toast.error(error.message);
+        set({ isLoading: false });
+        return;
+      }
+      if (data) {
+        console.log(data, path);
+        set({ isLoading: false });
+      }
+    },
     retrieveAvailableVehicles: async (queries) => {
       set({ isLoading: true });
       const path = rentalApiStr(`/vehicles`, queries);
