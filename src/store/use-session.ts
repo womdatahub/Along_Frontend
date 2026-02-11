@@ -335,14 +335,14 @@ export const useSession = create<Session>()(
         }
         if (data) {
           await get().actions.fetchUserDetails(false, false);
-          const autoCompleteAddress =
-            useRadarMap.getState().toAutoCompleteAddress;
-          await useRental.getState().actions.listVehicleForRental({
-            address: autoCompleteAddress?.formattedAddress ?? "",
-            latitude: autoCompleteAddress?.latitude ?? 0,
-            longitude: autoCompleteAddress?.longitude ?? 0,
-            vehicleId: get().driverProfile?._id ?? "",
-          });
+          // const autoCompleteAddress =
+          //   useRadarMap.getState().toAutoCompleteAddress;
+          // await useRental.getState().actions.listVehicleForRental({
+          //   address: autoCompleteAddress?.formattedAddress ?? "",
+          //   latitude: autoCompleteAddress?.latitude ?? 0,
+          //   longitude: autoCompleteAddress?.longitude ?? 0,
+          //   vehicleId: get().driverProfile?._id ?? "",
+          // });
           toast.success("Vehicle information added successfully");
           set({ isLoading: false });
         }
@@ -427,6 +427,7 @@ export const useSession = create<Session>()(
         }
         if (data) {
           console.log(data, path);
+          toast.success(data.message)
         }
       },
       fetchUserDetails: async (shouldToast, shouldReload = true) => {

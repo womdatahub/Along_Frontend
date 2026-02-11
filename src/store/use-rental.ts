@@ -7,6 +7,7 @@ import type {
 } from "@/types";
 import { callApi, rentalApiStr } from "@/lib";
 import { toast } from "sonner";
+import { useSession } from "./use-session";
 
 type RentalStoreType = {
   isLoading: boolean;
@@ -37,6 +38,15 @@ export const useRental = create<RentalStoreType>()((set) => ({
   actions: {
     listVehicleForRental: async (vehicleInfo) => {
       set({ isLoading: true });
+      await useSession.getState().actions.createRideProfile({
+        allowPets: true,
+        luggageCapacity: 20,
+        passangerCapacity: 4,
+        ratePerHour: 30,
+        currentLocation: vehicleInfo.address,
+        latitude: vehicleInfo.latitude,
+        longitude: vehicleInfo.longitude,
+      });
       const d = {
         accuracy: 20,
         capacity: 3,

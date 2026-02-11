@@ -10,8 +10,8 @@ import { LocationPointerSvg } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/store";
-import { useShallow } from "zustand/shallow";
+import { useSession, useRental, useRadarMap } from "@/store";
+import { useShallow,  } from "zustand/shallow";
 import Image from "next/image";
 
 const DynamicDriversChart = dynamic(
@@ -29,6 +29,18 @@ const Page = () => {
       driverProfile: state.driverProfile,
       actions: state.actions,
     })),
+  );
+
+  const {
+    actions: { listVehicleForRental },
+  } = useRental(
+    useShallow((state) => ({
+      actions: state.actions,
+    })),
+  );
+
+  const { autoCompleteAddress } = useRadarMap(
+    useShallow((state) => ({ autoCompleteAddress: state.autoCompleteAddress })),
   );
 
   return (
@@ -77,6 +89,19 @@ const Page = () => {
                     >
                       Manage Account
                     </p>
+                  </div>
+                  <div
+                    onClick={() =>
+                      listVehicleForRental({
+                        address: autoCompleteAddress?.formattedAddress ?? "",
+                        latitude: autoCompleteAddress?.latitude ?? 0,
+                        longitude: autoCompleteAddress?.longitude ?? 0,
+                        vehicleId: driverProfile?._id ?? "",
+                      })
+                    }
+                    className='text-center cursor-pointer font-bold'
+                  >
+                    List vehicle for Rent
                   </div>
                   <div
                     onClick={logOut}
