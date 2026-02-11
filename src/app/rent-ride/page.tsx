@@ -15,8 +15,7 @@ import {
   LoadingComponent,
 } from "@/components";
 import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
-import { useRadarMap } from "@/store";
-import { useRental } from "@/store/use-rental";
+import { useRadarMap, useRental } from "@/store";
 import { VehicleLocation } from "@/types";
 import {
   AccuracyIcon,

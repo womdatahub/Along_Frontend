@@ -16,7 +16,7 @@ import {
 } from "@public/svgs";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
-import { useRental } from "@/store/use-rental";
+import { useRental } from "@/store";
 import { useShallow } from "zustand/shallow";
 import Link from "next/link";
 
