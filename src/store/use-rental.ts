@@ -23,7 +23,7 @@ type RentalStoreType = {
       latitude: number;
       longitude: number;
       address: string;
-    }) => Promise<void>;
+    }) => Promise<string>;
   };
 };
 
@@ -38,15 +38,15 @@ export const useRental = create<RentalStoreType>()((set) => ({
   actions: {
     listVehicleForRental: async (vehicleInfo) => {
       set({ isLoading: true });
-      await useSession.getState().actions.createRideProfile({
-        allowPets: true,
-        luggageCapacity: 20,
-        passangerCapacity: 4,
-        ratePerHour: 30,
-        currentLocation: vehicleInfo.address,
-        latitude: vehicleInfo.latitude,
-        longitude: vehicleInfo.longitude,
-      });
+      // await useSession.getState().actions.createRideProfile({
+      //   allowPets: true,
+      //   luggageCapacity: 20,
+      //   passangerCapacity: 4,
+      //   ratePerHour: 30,
+      //   currentLocation: vehicleInfo.address,
+      //   latitude: vehicleInfo.latitude,
+      //   longitude: vehicleInfo.longitude,
+      // });
       const d = {
         accuracy: 20,
         capacity: 3,
@@ -59,10 +59,12 @@ export const useRental = create<RentalStoreType>()((set) => ({
       };
       const path = rentalApiStr(`/driver/rent`);
       const { data, error } = await callApi(path, d);
+      console.log(error, "error");
       if (error) {
         toast.error(error.message);
         set({ isLoading: false });
-        return;
+
+        return error.accountLink ?? "";
       }
       if (data) {
         console.log(data, path);
@@ -71,6 +73,7 @@ export const useRental = create<RentalStoreType>()((set) => ({
         );
         set({ isLoading: false });
       }
+      return "";
     },
     retrieveAvailableVehicles: async (queries) => {
       set({ isLoading: true });

@@ -16,6 +16,7 @@ interface ApiError {
   status: string | number;
   error?: unknown;
   headers?: Record<string, unknown>;
+  accountLink?: string;
 }
 
 export const isObject = (value: unknown): value is Record<string, unknown> => {

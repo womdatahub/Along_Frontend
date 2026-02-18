@@ -11,7 +11,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useSession, useRental, useRadarMap } from "@/store";
-import { useShallow,  } from "zustand/shallow";
+import { useShallow } from "zustand/shallow";
 import Image from "next/image";
 
 const DynamicDriversChart = dynamic(
@@ -91,14 +91,16 @@ const Page = () => {
                     </p>
                   </div>
                   <div
-                    onClick={() =>
-                      listVehicleForRental({
+                    onClick={async () => {
+                      const link = await listVehicleForRental({
                         address: autoCompleteAddress?.formattedAddress ?? "",
                         latitude: autoCompleteAddress?.latitude ?? 0,
                         longitude: autoCompleteAddress?.longitude ?? 0,
                         vehicleId: driverProfile?._id ?? "",
-                      })
-                    }
+                      });
+                      console.log(`link gotten from api call is this: ${link}`);
+                      router.push(link);
+                    }}
                     className='text-center cursor-pointer font-bold'
                   >
                     List vehicle for Rent
