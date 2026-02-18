@@ -46,7 +46,9 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TOnboardingValidator) => {
-    if (!isTermsAccepted) toast.error("Please accept terms and conditions.");
+    if (!isTermsAccepted)
+      return toast.error("Please accept terms and conditions.");
+
     // console.log(values, errors);
     const isSuccess = await registerUser({ ...values, type: "email" });
     if (isSuccess === false) return;

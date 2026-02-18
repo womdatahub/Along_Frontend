@@ -98,18 +98,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (userRole) {
       if (userRole === "driver") {
         if (!driverProfile?.firstName) {
-          toast.error("Your profile is incomplete!");
+          // toast.error("Your profile is incomplete!");
           router.replace("/onboarding/driver-info");
           return;
         }
         if (!driverProfile?.driverProfilePictureUri) {
-          toast.error("Your driver profile is incomplete!");
+          // toast.error("Your driver profile is incomplete!");
           if (services.length === 0) router.replace("/onboarding/services");
           router.replace("/onboarding/documents");
           return;
         }
         if (!driverProfile?.vehicleFrontViewImageUri) {
-          console.log("driverProfile?.vehicleFrontViewImageUri");
+          // console.log("driverProfile?.vehicleFrontViewImageUri");
           router.replace("/onboarding/vehicle-info");
           return;
         }
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       if (userRole === "rider" && !isPublic) {
         if (!riderProfile?.firstName) {
-          toast.error("Your profile is incomplete!");
+          // toast.error("Your profile is incomplete!");
           router.replace("/onboarding/driver-info");
           return; // just testing this out for now
         }

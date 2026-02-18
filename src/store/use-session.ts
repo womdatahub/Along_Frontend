@@ -235,8 +235,8 @@ export const useSession = create<Session>()(
         }
         if (data) {
           await get().actions.fetchUserDetails();
-          toast.success(data.message);
-          console.log(data, path);
+          toast.success(data.message ?? "OTP verified successfully");
+          // console.log(data, path);
         }
         set({ isLoading: false });
         return true;
@@ -252,7 +252,7 @@ export const useSession = create<Session>()(
         }
         if (data) {
           await get().actions.fetchUserDetails();
-          console.log(data, path);
+          // console.log(data, path);
         }
       },
       resendVerificationOTP: async (resendVerificationOTPData) => {
@@ -427,7 +427,7 @@ export const useSession = create<Session>()(
         }
         if (data) {
           console.log(data, path);
-          toast.success(data.message)
+          toast.success(data.message);
         }
       },
       fetchUserDetails: async (shouldToast, shouldReload = true) => {
