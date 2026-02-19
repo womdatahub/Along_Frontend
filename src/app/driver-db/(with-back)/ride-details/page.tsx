@@ -31,7 +31,7 @@ const Page = () => {
           </div>
           <p className='font-bold text-lg mt-2'>$45.99</p>
         </CardContent>
-        <CardFooter className='flex items-center justify-between'>
+        {/* <CardFooter className='flex items-center justify-between'>
           <div className='flex justify-between items-center gap-8'>
             <Button className='cursor-pointer text-sm rounded-full h-11 px-8'>
               Book again
@@ -44,7 +44,7 @@ const Page = () => {
             </Button>
           </div>
           <p className='text-green-600 text-xs'>Completed</p>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </div>
   );

@@ -96,7 +96,7 @@ const Page = () => {
                         address: autoCompleteAddress?.formattedAddress ?? "",
                         latitude: autoCompleteAddress?.latitude ?? 0,
                         longitude: autoCompleteAddress?.longitude ?? 0,
-                        vehicleId: driverProfile?._id ?? "",
+                        vehicleId: driverProfile?.vehicleId ?? "",
                       });
                       console.log(`link gotten from api call is this: ${link}`);
                       router.push(link);

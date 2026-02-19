@@ -44,6 +44,8 @@ export type DriverProfile = {
   vehicleFrontViewImageUri: string;
   vehicleBackViewImageUri: string;
   vehicleSideViewImageUri: string;
+  vehicleId: string;
+  mobileNumber: string;
   insuranceDocumentUri: string;
   isActive: boolean;
   __v: number;

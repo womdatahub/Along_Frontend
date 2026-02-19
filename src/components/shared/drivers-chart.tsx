@@ -98,44 +98,52 @@ const data = [
     uv: 0,
   },
   {
-    name: "Page A",
-    uv: 4000,
+    name: "Jan",
+    uv: 0,
   },
   {
-    name: "Page B",
-    uv: 3000,
+    name: "Feb",
+    uv: 0,
   },
   {
-    name: "Page C",
-    uv: 2000,
+    name: "Mar",
+    uv: 0,
   },
   {
-    name: "Page D",
-    uv: 2780,
+    name: "Apr",
+    uv: 0,
   },
   {
-    name: "Page E",
-    uv: 1890,
+    name: "May",
+    uv: 0,
   },
   {
-    name: "Page F",
-    uv: 2390,
+    name: "Jun",
+    uv: 0,
   },
   {
-    name: "Page G",
-    uv: 3490,
+    name: "Jul",
+    uv: 0,
   },
   {
-    name: "Page h",
-    uv: 30,
+    name: "Aug",
+    uv: 0,
   },
   {
-    name: "Page i",
-    uv: 3090,
+    name: "Sep",
+    uv: 0,
   },
   {
-    name: "Page j",
-    uv: 340,
+    name: "Oct",
+    uv: 0,
+  },
+  {
+    name: "Nov",
+    uv: 0,
+  },
+  {
+    name: "Dec",
+    uv: 0,
   },
 ];
 
