@@ -38,7 +38,7 @@ export const nonModalItems = [
     state: "scheduled",
     title: "Scheduled Ride",
     img: "/images/scheduled.png",
-    disabled: false,
+    disabled: true,
   },
   {
     state: "logistics",

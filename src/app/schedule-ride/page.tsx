@@ -416,7 +416,7 @@ const ScheduleRidePage = () => {
               <SelectDropdown
                 options={Array(10)
                   .fill(0)
-                  .map((v) => `${v} passenger${v === "1" ? "" : "s"}`)}
+                  .map((_, i) => `${i + 1} passenger${i + 1 === 1 ? "" : "s"}`)}
                 triggerLabel='Number of passengers'
                 selected={selected}
                 setSelected={setSelected}

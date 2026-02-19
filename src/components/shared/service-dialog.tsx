@@ -62,7 +62,7 @@ export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
                         }}
                         className={cn(
                           "flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
-                          service === item.state && "bg-primary/70 text-white"
+                          service === item.state && "bg-primary/70 text-white",
                         )}
                       >
                         <div className='flex gap-4 items-center'>
@@ -92,17 +92,22 @@ export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
                     }}
                     className={cn(
                       "disabled:cursor-not-allowed flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
-                      service === item.state && "bg-primary/70 text-white"
+                      service === item.state && "bg-primary/70 text-white",
                     )}
                   >
-                    <div className='flex gap-4 items-center'>
-                      <Image
-                        src={item.img}
-                        alt={item.state}
-                        width={40}
-                        height={40}
-                      />
-                      <p className='font-medium text-xs'>{item.title}</p>
+                    <div className='flex justify-between items-center gap-5 w-full'>
+                      <div className='flex gap-4 items-center'>
+                        <Image
+                          src={item.img}
+                          alt={item.state}
+                          width={40}
+                          height={40}
+                        />
+                        <p className='font-medium text-xs'>{item.title}</p>
+                      </div>
+                      <p className='font-bold text-xs text-red-600 animate-pulse'>
+                        Coming Soon
+                      </p>
                     </div>
                   </button>
                 );
@@ -157,7 +162,7 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
                       key={r.title}
                       className={cn(
                         "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                        rentalType === title && "bg-primary text-white"
+                        rentalType === title && "bg-primary text-white",
                       )}
                     >
                       <Image
@@ -210,7 +215,8 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
                               key={car.name}
                               className={cn(
                                 "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                                vehicleType === title && "bg-primary text-white"
+                                vehicleType === title &&
+                                  "bg-primary text-white",
                               )}
                             >
                               <Image

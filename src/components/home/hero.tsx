@@ -44,7 +44,7 @@ const Page = () => {
     useShallow((state) => ({
       autoCompleteAddress: state.autoCompleteAddress,
       actions: state.actions,
-    }))
+    })),
   );
 
   const {
@@ -52,7 +52,7 @@ const Page = () => {
   } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
-    }))
+    })),
   );
 
   return (
