@@ -99,7 +99,7 @@ const Page = () => {
                       className='pl-11 cursor-pointer text-sm'
                       onClick={() => router.push("/rider-db/account")}
                     >
-                      Manage Account
+                      Profile
                     </p>
                   </div>
                   <div

@@ -15,7 +15,10 @@ type Props = {
   triggerClassName?: string;
   groupClassName?: string;
   selected: string;
-  setSelected: React.Dispatch<React.SetStateAction<string>>;
+  setSelected: (value: string) => void;
+  disabled?: boolean;
+  label?: string;
+  errorMessage?: string;
 };
 export const SelectDropdown = ({
   triggerLabel,
@@ -25,32 +28,49 @@ export const SelectDropdown = ({
   groupClassName,
   selected,
   setSelected,
+  disabled,
+  label,
+  errorMessage,
 }: Props) => {
   return (
-    <Select onValueChange={setSelected} defaultValue={selected}>
-      <SelectTrigger
-        withoutIcon={withoutIcon}
-        className={cn(
-          "w-full bg-white min-h-16 rounded-2xl px-4 text-sm focus:outline-none focus:ring-0",
-          triggerClassName
-        )}
-      >
-        <SelectValue
-          placeholder={triggerLabel}
-          className='placeholder:text-placeholder'
-        />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup className={cn("max-h-40", groupClassName)}>
-          {options.map((option) => {
-            return (
-              <SelectItem key={option} value={option.toLowerCase()}>
-                {option}
-              </SelectItem>
-            );
-          })}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className='flex flex-col gap-1'>
+      <label className={cn("text-sm font-semibold ml-5")}>
+        <span>{label}</span>
+      </label>
+      <Select onValueChange={setSelected} defaultValue={selected}>
+        <SelectTrigger
+          withoutIcon={withoutIcon}
+          disabled={disabled}
+          className={cn(
+            "w-full bg-white min-h-16 rounded-2xl px-4 text-sm focus:outline-none focus:ring-0 capitalize",
+            triggerClassName,
+            errorMessage && "border border-red-400",
+          )}
+        >
+          <SelectValue
+            placeholder={triggerLabel}
+            className='placeholder:text-placeholder capitalize'
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup className={cn("max-h-40", groupClassName)}>
+            {options.map((option) => {
+              return (
+                <SelectItem
+                  key={option}
+                  value={option.toLowerCase()}
+                  className='capitalize'
+                >
+                  {option}
+                </SelectItem>
+              );
+            })}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      {errorMessage && (
+        <p className='text-xs text-red-400 ml-4'>{`${errorMessage}`}</p>
+      )}
+    </div>
   );
 };

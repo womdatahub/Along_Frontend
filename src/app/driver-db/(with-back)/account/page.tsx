@@ -16,7 +16,7 @@ const Page = () => {
   );
   return (
     <div className='flex flex-col gap-5'>
-      <HeadingHeebo className='text-start pl-4'>Manage Account</HeadingHeebo>
+      <HeadingHeebo className='text-start pl-4'>Profile</HeadingHeebo>
       <div className='flex flex-col gap-2'>
         <div className='flex gap-4'>
           <Button
@@ -60,7 +60,9 @@ const Page = () => {
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
                     <p className=' font-light text-gray-5'>Phone number</p>
-                    <p className='font-semibold'>{/* {driverProfile?.} */}</p>
+                    <p className='font-semibold'>
+                      {driverProfile?.mobileNumber}
+                    </p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>

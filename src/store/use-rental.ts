@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+
 import type {
   RentAndCreateIntentResponseType,
   RentAndCreateIntentType,
@@ -33,80 +35,82 @@ const initialState = {
   isLoading: false,
 };
 
-export const useRental = create<RentalStoreType>()((set) => ({
-  ...initialState,
-  actions: {
-    listVehicleForRental: async (vehicleInfo) => {
-      set({ isLoading: true });
-      // await useSession.getState().actions.createRideProfile({
-      //   allowPets: true,
-      //   luggageCapacity: 20,
-      //   passangerCapacity: 4,
-      //   ratePerHour: 30,
-      //   currentLocation: vehicleInfo.address,
-      //   latitude: vehicleInfo.latitude,
-      //   longitude: vehicleInfo.longitude,
-      // });
-      const d = {
-        accuracy: 20,
-        capacity: 3,
-        deviceId: "EAB",
-        deviceType: "Android",
-        deviceOS: "android",
-        deviceMake: "Xiaomi",
-        deviceModel: "Note 13 Pro",
-        ...vehicleInfo,
-      };
-      const path = rentalApiStr(`/driver/rent`);
-      const { data, error } = await callApi(path, d);
-      console.log(error, "error");
-      if (error) {
-        toast.error(error.message);
-        set({ isLoading: false });
+export const useRental = create<RentalStoreType>()(
+  devtools((set) => ({
+    ...initialState,
+    actions: {
+      listVehicleForRental: async (vehicleInfo) => {
+        set({ isLoading: true });
+        await useSession.getState().actions.createRideProfile({
+          allowPets: true,
+          luggageCapacity: 20,
+          passangerCapacity: 4,
+          ratePerHour: 30,
+          currentLocation: vehicleInfo.address,
+          latitude: vehicleInfo.latitude,
+          longitude: vehicleInfo.longitude,
+        });
+        const d = {
+          accuracy: 20,
+          capacity: 3,
+          deviceId: "EAB",
+          deviceType: "Android",
+          deviceOS: "android",
+          deviceMake: "Xiaomi",
+          deviceModel: "Note 13 Pro",
+          ...vehicleInfo,
+        };
+        const path = rentalApiStr(`/driver/rent`);
+        const { data, error } = await callApi(path, d);
+        console.log(error, "error");
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
 
-        return error.accountLink ?? "";
-      }
-      if (data) {
-        console.log(data, path);
-        toast.success(
-          data.message ?? "Vehicle listed for rentals successfully!",
+          return error.accountLink ?? "";
+        }
+        if (data) {
+          console.log(data, path);
+          toast.success(
+            data.message ?? "Vehicle listed for rentals successfully!",
+          );
+          set({ isLoading: false });
+        }
+        return "";
+      },
+      retrieveAvailableVehicles: async (queries) => {
+        set({ isLoading: true });
+        const path = rentalApiStr(`/vehicles`, queries);
+        const { data, error } = await callApi<{ vehicles: VehicleLocation[] }>(
+          path,
         );
-        set({ isLoading: false });
-      }
-      return "";
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+          return;
+        }
+        if (data) {
+          console.log(data, path);
+          set({ isLoading: false, availableVehicles: data.data.vehicles });
+        }
+      },
+      rentAndCreateIntent: async (data) => {
+        const path = rentalApiStr("/rider/rent");
+        const { data: response, error } =
+          await callApi<RentAndCreateIntentResponseType>(path, data);
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        if (response) {
+          toast.success(response.message);
+          set({ intent: response.data });
+          console.log(response, path);
+        }
+      },
     },
-    retrieveAvailableVehicles: async (queries) => {
-      set({ isLoading: true });
-      const path = rentalApiStr(`/vehicles`, queries);
-      const { data, error } = await callApi<{ vehicles: VehicleLocation[] }>(
-        path,
-      );
-      if (error) {
-        toast.error(error.message);
-        set({ isLoading: false });
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-        set({ isLoading: false, availableVehicles: data.data.vehicles });
-      }
-    },
-    rentAndCreateIntent: async (data) => {
-      const path = rentalApiStr("/rider/rent");
-      const { data: response, error } =
-        await callApi<RentAndCreateIntentResponseType>(path, data);
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (response) {
-        toast.success(response.message);
-        set({ intent: response.data });
-        console.log(response, path);
-      }
-    },
-  },
-}));
+  })),
+);
 
 export const useRentals = <TResult>(
   selector: SelectorFn<RentalStoreType, TResult>,

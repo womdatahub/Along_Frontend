@@ -104,7 +104,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         if (!driverProfile?.driverProfilePictureUri) {
           // toast.error("Your driver profile is incomplete!");
-          if (services.length === 0) router.replace("/onboarding/services");
+          if (services.length === 0)
+            return router.replace("/onboarding/services");
           router.replace("/onboarding/documents");
           return;
         }

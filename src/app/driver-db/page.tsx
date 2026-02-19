@@ -87,7 +87,7 @@ const Page = () => {
                       className='pl-11 cursor-pointer text-sm'
                       onClick={() => router.push("/driver-db/account")}
                     >
-                      Manage Account
+                      Profile
                     </p>
                   </div>
                   <div
@@ -121,7 +121,7 @@ const Page = () => {
           <div className='flex flex-col gap-10 border-r border-r-gray-5 pr-10 mb-32 w-fit whitespace-nowrap'>
             <div className='flex gap-2 justify-between flex-col'>
               <div className='flex flex-col gap-10'>
-                <Link href={"/driver-db/add-vehicle"}>Vehicle</Link>
+                <Link href={"/driver-db/vehicle"}>Vehicle</Link>
                 <Link href={"/driver-db/ride-details"}>TBC</Link>
                 <Link href={"/onboarding"}>Ride</Link>
               </div>
@@ -155,29 +155,31 @@ const Page = () => {
             <HeadingHeebo className='text-left sticky top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-              <div
-                key={item}
-                className='flex gap-3 pb-5 border-b border-b-[#D3D3D3]'
-              >
-                <div className='mt-5'>
-                  <LocationPointerSvg />
+            {Array(10)
+              .fill(0)
+              .map((item) => (
+                <div
+                  key={item}
+                  className='flex gap-3 pb-5 border-b border-b-[#D3D3D3]'
+                >
+                  <div className='mt-5'>
+                    <LocationPointerSvg />
+                  </div>
+                  <div className='flex flex-col font-heebo'>
+                    <p className='text-[8px] font-medium'>Ride rental</p>
+                    <HeadingHeebo className='text-left text-sm'>
+                      Monte Calo Crescent, New Jersey
+                    </HeadingHeebo>
+                    <p className='text-[9px] text-icons flex gap-3'>
+                      Mon 23, August 2025 <span>12 : 35</span>
+                    </p>
+                    <p className='text-green-600 text-[9px]'>Completed</p>
+                    <HeadingHeebo className='text-left text-sm'>
+                      $45.99
+                    </HeadingHeebo>
+                  </div>
                 </div>
-                <div className='flex flex-col font-heebo'>
-                  <p className='text-[8px] font-medium'>Ride rental</p>
-                  <HeadingHeebo className='text-left text-sm'>
-                    Monte Calo Crescent, New Jersey
-                  </HeadingHeebo>
-                  <p className='text-[9px] text-icons flex gap-3'>
-                    Mon 23, August 2025 <span>12 : 35</span>
-                  </p>
-                  <p className='text-green-600 text-[9px]'>Completed</p>
-                  <HeadingHeebo className='text-left text-sm'>
-                    $45.99
-                  </HeadingHeebo>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>

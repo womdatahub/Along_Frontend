@@ -52,17 +52,17 @@ const Page = () => {
                 className='flex gap-4 justify-between items-center border-b last:mb-10 pb-4 border-b-[#D0DCDD] text-sm'
               >
                 <p className='font-medium text-placeholder'>{i.title}</p>
-                <p className='font-bold'>{i.value}</p>
+                <p className='font-bold capitalize'>{i.value}</p>
               </div>
             );
           })}
         </CardContent>
       </Card>
-      <div className='flex justify-between items-center w-full md:w-[446px]'>
+      {/* <div className='flex justify-between items-center w-full md:w-[446px]'>
         <Button className='cursor-pointer text-sm rounded-full' asChild>
           <Link href='/driver-db/vehicle-reg'>Add vehicle</Link>
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

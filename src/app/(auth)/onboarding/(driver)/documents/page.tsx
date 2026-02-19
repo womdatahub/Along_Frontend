@@ -114,7 +114,7 @@ const Page = () => {
           label='Social Security Number'
           id='socialSecurityNumber'
           errors={errors}
-          placeholder='000 000 00000'
+          placeholder='AAA-GG-SSSS'
           register={register}
           disabled={false}
           required

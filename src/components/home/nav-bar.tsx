@@ -1,17 +1,20 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { LogoIcon } from "@public/svgs";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "@/store";
 import { useShallow } from "zustand/shallow";
-import { NameAvatar } from "../shared";
+// import { NameAvatar } from "../shared";
 
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { userRole, riderProfile, driverProfile } = useSession(
+  const {
+    userRole,
+    //  riderProfile, driverProfile
+  } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
       riderProfile: state.riderProfile,
@@ -20,21 +23,21 @@ export const Navbar = () => {
     })),
   );
 
-  const riderInitials = useMemo(
-    () =>
-      riderProfile?.firstName
-        ? `${riderProfile?.firstName[0]}${riderProfile?.lastName[0]}`
-        : "",
-    [riderProfile],
-  );
-  const driverInitials = useMemo(
-    () =>
-      driverProfile?.firstName
-        ? `${driverProfile?.firstName[0]}${driverProfile?.lastName[0]}`
-        : "",
-    [driverProfile],
-  );
-  const userInitials = "AL";
+  // const riderInitials = useMemo(
+  //   () =>
+  //     riderProfile?.firstName
+  //       ? `${riderProfile?.firstName[0]}${riderProfile?.lastName[0]}`
+  //       : "",
+  //   [riderProfile],
+  // );
+  // const driverInitials = useMemo(
+  //   () =>
+  //     driverProfile?.firstName
+  //       ? `${driverProfile?.firstName[0]}${driverProfile?.lastName[0]}`
+  //       : "",
+  //   [driverProfile],
+  // );
+  // const userInitials = "AL";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,14 +76,15 @@ export const Navbar = () => {
                 ? `/${userRole.toLowerCase()}-db`
                 : "/sign-in"
             }
-            className='font-semibold flex items-center gap-2.5'
+            className='font-medium flex items-center gap-2.5'
           >
             {userRole && userRole !== "user" ? (
-              <NameAvatar
-                value={riderInitials || driverInitials || userInitials}
-                className='size-8 text-sm'
-              />
+              <p>Dashboard</p>
             ) : (
+              // <NameAvatar
+              //   value={riderInitials || driverInitials || userInitials}
+              //   className='size-8 text-sm'
+              // />
               <Image
                 alt='profile img'
                 src='/images/account.png'
@@ -122,12 +126,16 @@ export const Navbar = () => {
                 href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
                 className='font-semibold flex items-center gap-2.5'
               >
-                <Image
-                  alt='profile img'
-                  src='/images/account.png'
-                  width={30}
-                  height={30}
-                />
+                {userRole && userRole !== "user" ? (
+                  <p className='text-lg'>Dashboard</p>
+                ) : (
+                  <Image
+                    alt='profile img'
+                    src='/images/account.png'
+                    width={30}
+                    height={30}
+                  />
+                )}
                 {!userRole && <p>Sign in</p>}
               </Link>
             </li>

@@ -62,7 +62,7 @@ const ScheduleRidePage = () => {
       autoCompleteAddress: state.autoCompleteAddress,
       toAutoCompleteAddress: state.toAutoCompleteAddress,
       actions: state.actions,
-    }))
+    })),
   );
   return (
     // IF YOU WANT THE PAGE TO BE SCROLLABLE WITHOUT THE NAVBAR BECOMING TRANSPARENT, YOU SHOULD LEAVE THE h and the overflow. OTHERWISE REMOVE IT
@@ -88,16 +88,16 @@ const ScheduleRidePage = () => {
                       "font-medium text-xs",
                       date || (dateRange?.from && dateRange?.to)
                         ? "text-black"
-                        : "text-placeholder"
+                        : "text-placeholder",
                     )}
                   >
                     {isOneWay && date
                       ? formatDateToDDMMYYYY(date as Date)
                       : !isOneWay && dateRange?.from && dateRange?.to
-                      ? `${formatDateToDDMMYYYY(
-                          dateRange.from as Date
-                        )} - ${formatDateToDDMMYYYY(dateRange.to as Date)}`
-                      : "Choose a date"}
+                        ? `${formatDateToDDMMYYYY(
+                            dateRange.from as Date,
+                          )} - ${formatDateToDDMMYYYY(dateRange.to as Date)}`
+                        : "Choose a date"}
                   </p>
                   <CalenderIcon />
                 </div>
@@ -122,7 +122,7 @@ const ScheduleRidePage = () => {
                       <HeadingHeebo
                         className={cn(
                           "text-left font-semibold text-sm text-primary-deep",
-                          !isOneWay && "opacity-35"
+                          !isOneWay && "opacity-35",
                         )}
                       >
                         One way
@@ -135,7 +135,7 @@ const ScheduleRidePage = () => {
                       <HeadingHeebo
                         className={cn(
                           "text-left font-semibold text-sm text-primary-deep",
-                          isOneWay && "opacity-35"
+                          isOneWay && "opacity-35",
                         )}
                       >
                         Round trip
@@ -195,7 +195,7 @@ const ScheduleRidePage = () => {
                     formatDateToDDMMYYYY(date ? (date as Date) : new Date())}
                   {!isOneWay &&
                     formatDateToDDMMYYYY(
-                      dateRange?.from ? (dateRange.from as Date) : new Date()
+                      dateRange?.from ? (dateRange.from as Date) : new Date(),
                     )}
                 </p>
               </div>
@@ -206,7 +206,7 @@ const ScheduleRidePage = () => {
                     formatDateToDDMMYYYY(date ? (date as Date) : new Date())}
                   {!isOneWay &&
                     formatDateToDDMMYYYY(
-                      dateRange?.to ? (dateRange.to as Date) : new Date()
+                      dateRange?.to ? (dateRange.to as Date) : new Date(),
                     )}
                 </p>
               </div>
@@ -286,7 +286,8 @@ const ScheduleRidePage = () => {
                               key={car.name}
                               className={cn(
                                 "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                                vehicleType === title && "bg-primary text-white"
+                                vehicleType === title &&
+                                  "bg-primary text-white",
                               )}
                             >
                               <Link
@@ -353,20 +354,9 @@ const ScheduleRidePage = () => {
                               <div className='flex p-4 gap-2 items-center'>
                                 <p className='text-sm'>Hour</p>
                                 <SelectDropdown
-                                  options={[
-                                    "1",
-                                    "2",
-                                    "3",
-                                    "4",
-                                    "5",
-                                    "6",
-                                    "7",
-                                    "8",
-                                    "9",
-                                    "10",
-                                    "11",
-                                    "12",
-                                  ]}
+                                  options={Array(12)
+                                    .fill(0)
+                                    .map((_, i) => `${i + 1}`)}
                                   triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                   triggerLabel='1'
                                   withoutIcon
@@ -381,7 +371,7 @@ const ScheduleRidePage = () => {
                                   options={Array(60)
                                     .fill(0)
                                     .map(
-                                      (_, i) => `${i <= 10 ? "0" : ""}${i + 1}`
+                                      (_, i) => `${i <= 10 ? "0" : ""}${i + 1}`,
                                     )}
                                   triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
                                   triggerLabel='1'
@@ -424,18 +414,9 @@ const ScheduleRidePage = () => {
                 Passenger Details
               </HeadingHeebo>
               <SelectDropdown
-                options={[
-                  "1",
-                  "2",
-                  "3",
-                  "4",
-                  "5",
-                  "6",
-                  "7",
-                  "8",
-                  "9",
-                  "10",
-                ].map((v) => `${v} passenger${v === "1" ? "" : "s"}`)}
+                options={Array(10)
+                  .fill(0)
+                  .map((v) => `${v} passenger${v === "1" ? "" : "s"}`)}
                 triggerLabel='Number of passengers'
                 selected={selected}
                 setSelected={setSelected}

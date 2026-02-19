@@ -65,7 +65,7 @@ const Page = () => {
 
   return (
     <div className='flex flex-col gap-5'>
-      <HeadingHeebo className='text-start pl-4'>Manage Account</HeadingHeebo>
+      <HeadingHeebo className='text-start pl-4'>Profile</HeadingHeebo>
       <div className='flex flex-col gap-2'>
         <div className='flex gap-4'>
           <Button
