@@ -29,11 +29,14 @@ const Page = () => {
 
   const {
     isLoading,
+    registeredDriverResponseWithStripeDetails,
     actions: { uploadImages, registerVehicle },
   } = useSession(
     useShallow((state) => ({
       actions: state.actions,
       isLoading: state.isLoading,
+      registeredDriverResponseWithStripeDetails:
+        state.registeredDriverResponseWithStripeDetails,
     })),
   );
 
@@ -86,8 +89,19 @@ const Page = () => {
       });
 
       if (!isSuccess) return;
+      toast.success(
+        "Vehicle information saved successfully! \n Redirecting you to set up your account details on Stripe. Cheers!",
+        { duration: 4000, position: "top-center" },
+      );
+      setTimeout(() => {
+        router.push(
+          registeredDriverResponseWithStripeDetails?.stripeAccount
+            .accountLink ??
+            "https://connect.stripe.com/setup/e/acct_1T2pIx3kAZuormA4/BPUUzqETvXgb",
+        );
+      }, 3000); // this will redirect them to set up their account on stripe.
       // router.push("/onboarding/vehicle-insurance"); // this has not been implemented by backend so go to dashboard
-      router.push("/driver-db");
+      // router.push("/driver-db");
     } catch {
       toast.error("Image uploads failed!");
     }

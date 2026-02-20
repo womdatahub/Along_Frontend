@@ -14,7 +14,23 @@ import { toast } from "sonner";
 import { useRental } from "./use-rental";
 import { useRadarMap } from "./use-radar-map";
 
+type RegisterDriverResponse = {
+  userRole: string;
+  stripeAccount: {
+    driverId: string;
+    accountId: string;
+    chargesEnabled: boolean;
+    payoutsEnabled: boolean;
+    detailsSubmitted: boolean;
+    accountLink: string;
+    linkExpiresAt: string;
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+  };
+};
 type Session = {
+  registeredDriverResponseWithStripeDetails: RegisterDriverResponse | null;
   userRole: string;
   riderProfile: RiderProfile | undefined;
   driverProfile: DriverProfile | undefined;
@@ -125,6 +141,7 @@ const initialState = {
   driverProfile: undefined,
   adminProfile: undefined,
   userProfile: undefined,
+  registeredDriverResponseWithStripeDetails: null,
 };
 
 export const useSession = create<Session>()(
@@ -275,7 +292,10 @@ export const useSession = create<Session>()(
         set({ isLoading: true });
         const path = userApiStr("/user/driver");
 
-        const { data, error } = await callApi(path, registerDriverData);
+        const { data, error } = await callApi<RegisterDriverResponse>(
+          path,
+          registerDriverData,
+        );
 
         if (error) {
           toast.error(error.message);
@@ -283,7 +303,10 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
-          set({ isLoading: false });
+          set({
+            isLoading: false,
+            registeredDriverResponseWithStripeDetails: data.data,
+          });
           await get().actions.fetchUserDetails(false, false);
 
           return true;
