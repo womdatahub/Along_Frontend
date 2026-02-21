@@ -4,6 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
   Button,
+  Empty,
+  EmptyContent,
+  EmptyHeader,
+  EmptyTitle,
   HeadingHeebo,
 } from "@/components";
 import { VehicleLocation } from "@/types";
@@ -41,6 +45,19 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
         <Skeleton className=' h-16 rounded-lg' />
         <Skeleton className=' h-16 rounded-lg' />
       </div>
+    );
+  }
+
+  if (availableVehicles.length === 0) {
+    return (
+      <Empty>
+        <EmptyContent>
+          <EmptyTitle className='text-sm'>
+            There are no available vehicles with vehicle type: {vehicleType}{" "}
+            around your location
+          </EmptyTitle>
+        </EmptyContent>
+      </Empty>
     );
   }
 

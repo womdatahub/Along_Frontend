@@ -101,9 +101,11 @@ const RentRide = () => {
     autoCompleteAddress?.latitude,
   ]);
 
+  useEffect(() => {}, [selectedDriver]);
+
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
-      <div className='flex gap-4 h-full'>
+      <div className='flex flex-col md:flex-row gap-8 md:gap-4 h-full'>
         <div className='flex flex-col gap-10 min-w-[40%] h-full'>
           <div className='flex flex-col'>
             <HeadingHeebo className='text-left font-extrabold text-4xl'>

@@ -157,9 +157,9 @@ const Page = () => {
             </HeadingHeebo>
             {Array(10)
               .fill(0)
-              .map((item) => (
+              .map((_, i) => (
                 <div
-                  key={item}
+                  key={i}
                   className='flex gap-3 pb-5 border-b border-b-[#D3D3D3]'
                 >
                   <div className='mt-5'>
