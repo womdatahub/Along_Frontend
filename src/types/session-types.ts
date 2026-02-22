@@ -5,11 +5,25 @@ export type AdminProfile = {
   lastName: string;
   email: string;
   mobileNumber: string;
-  role: "admin" | string;
+  role: "admin";
   profilePictureUri: string | null;
   createdAt: string;
   updatedAt: string;
   __v: number;
+  isEmailVerified: boolean;
+  isMobileNumberVerified: boolean;
+  passwordResetToken: string;
+  passwordResetOtp: string;
+  isGoogleUser: false;
+  isAppleUser: false;
+  isFacebookUser: false;
+  password: string;
+  isSuspended: false;
+  suspensionReason: string;
+  suspensionNotes: string;
+  suspensionType: string;
+  suspensionEndDate: string;
+  refreshToken: string;
 };
 export type DriverProfile = {
   _id: string;

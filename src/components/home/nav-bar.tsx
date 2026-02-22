@@ -71,11 +71,12 @@ export const Navbar = () => {
           <Link href='/onboarding'>Drive</Link>
           <Link href='#'>Help</Link>
           <Link
-            href={
-              userRole && userRole !== "user"
-                ? `/${userRole.toLowerCase()}-db`
-                : "/sign-in"
-            }
+            href={{
+              pathname:
+                userRole && userRole !== "user"
+                  ? `/${userRole.toLowerCase()}${userRole !== "admin" ? "-db" : ""}`
+                  : "/sign-in",
+            }}
             className='font-medium flex items-center gap-2.5'
           >
             {userRole && userRole !== "user" ? (

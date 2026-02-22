@@ -14,7 +14,7 @@ import { JSX, SVGProps, useState } from "react";
 
 export const NavMain = () => {
   return (
-    <SidebarMenu className="mt-6 px-4">
+    <SidebarMenu className='mt-6 px-4'>
       {menuItems.map(({ icon: Icon, path, text }, index) => {
         return <SMenuButton key={index} Icon={Icon} path={path} text={text} />;
       })}
@@ -43,7 +43,7 @@ const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
       // key={path}
       className={cn(
         "group hover:bg-white text-white hover:text-primary h-12 rounded-full px-8",
-        isActive && "bg-white text-primary"
+        isActive && "bg-white text-primary",
       )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -52,9 +52,9 @@ const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
       <Link href={path}>
         <Icon
           fill={isActive ? "#0E696A" : "white"}
-          className="group-hover:fill-[#0E696A]"
+          className='group-hover:fill-[#0E696A]'
         />
-        <span className="text-[15px]">{text}</span>
+        <span className='text-[15px]'>{text}</span>
       </Link>
     </SidebarMenuButton>
   );
@@ -80,5 +80,20 @@ const menuItems = [
     icon: AdminRulesAndPermissionsIcon,
     text: "Roles and permission",
     path: "/admin/roles-and-permission",
+  },
+  {
+    icon: AdminRulesAndPermissionsIcon,
+    text: "SOS",
+    path: "/admin/sos",
+  },
+  {
+    icon: AdminRulesAndPermissionsIcon,
+    text: "Active trip",
+    path: "/admin/active-trip",
+  },
+  {
+    icon: AdminRulesAndPermissionsIcon,
+    text: "Market Place",
+    path: "/admin/market-place",
   },
 ];

@@ -23,54 +23,54 @@ import { AdminRefreshIcon, AdminSearchIcon } from "@public/svgs";
 const isEmpty = false;
 const Page = () => {
   return (
-    <section className="flex flex-col gap-8">
-      <p className="text-4xl font-heebo">SOS Console</p>
-      <Card className="pb-10">
+    <section className='flex flex-col gap-8'>
+      <p className='text-4xl font-heebo'>SOS Console</p>
+      <Card className='pb-10'>
         <CardHeader>
-          <div className="flex justify-between border-b pb-6">
-            <p className="font-medium text-2xl">Open Alerts (3)</p>
-            <Button className="bg-[#E0E6E6] hover:bg-[#E0E6E6]/90 rounded-full text-black">
+          <div className='flex justify-between border-b pb-6'>
+            <p className='font-medium text-2xl'>Open Alerts (3)</p>
+            <Button className='bg-[#E0E6E6] hover:bg-[#E0E6E6]/90 rounded-full text-black'>
               <AdminRefreshIcon />
               Refresh
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="grid gap-5 grid-cols-2">
+        <CardContent className='grid gap-5 grid-cols-2'>
           {trips.map((trip) => {
             return (
               <div
                 key={trip.tripID}
-                className="flex bg-[#F4F4F4] justify-between items-center gap-5 rounded-2xl p-6"
+                className='flex bg-[#F4F4F4] justify-between items-center gap-5 rounded-2xl p-6'
               >
-                <div className="flex flex-col gap-1">
-                  <p className="text-xl font-bold">Trip ID: {trip.tripID}</p>
-                  <p className="text-sm">Driver: {trip.driver}</p>
-                  <p className="bg-[#FD6E58] px-1">Rider: {trip.rider}</p>
+                <div className='flex flex-col gap-1'>
+                  <p className='text-xl font-bold'>Trip ID: {trip.tripID}</p>
+                  <p className='text-sm'>Driver: {trip.driver}</p>
+                  <p className='bg-[#FD6E58] px-1'>Rider: {trip.rider}</p>
                 </div>
-                <div className="flex gap-4">
+                <div className='flex gap-4'>
                   <Button
-                    variant="outline"
-                    className="border-[#B3BFBF] rounded-full"
+                    variant='outline'
+                    className='border-[#B3BFBF] rounded-full'
                   >
                     Call driver
                   </Button>
                   <Button
-                    variant="outline"
-                    className="border-[#B3BFBF] rounded-full"
+                    variant='outline'
+                    className='border-[#B3BFBF] rounded-full'
                   >
                     Call ridPer
                   </Button>
 
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button className="rounded-full">More</Button>
+                      <Button className='rounded-full'>More</Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-fit">
-                      <div className="flex flex-col gap-3">
-                        <p className="text-xs font-medium cursor-pointer">
+                    <PopoverContent className='w-fit'>
+                      <div className='flex flex-col gap-3'>
+                        <p className='text-xs font-medium cursor-pointer'>
                           Open trip
                         </p>
-                        <p className="text-xs font-medium cursor-pointer">
+                        <p className='text-xs font-medium cursor-pointer'>
                           Call 911
                         </p>
                       </div>
@@ -82,69 +82,70 @@ const Page = () => {
           })}
         </CardContent>
       </Card>
-
-      <div className="rounded-3xl border border-gray-300 flex flex-col gap-4 py-4">
-        <div className="flex justify-between gap-5 items-center px-6">
-          <p className="text-xl font-medium">Alert logs</p>
-          <div className="flex items-center gap-5">
-            <div className="flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] min-w-[325px]">
-              <AdminSearchIcon />
-              <input
-                type="text"
-                name="search"
-                id="search"
-                className="bg-transparent focus:outline-none"
-                placeholder="Search"
-              />
+      <Card className='rounded-3xl border border-gray-300 flex flex-col gap-4 py-4'>
+        <CardContent className='p-0 gap-4 flex flex-col'>
+          <div className='flex justify-between gap-5 items-center px-6'>
+            <p className='text-xl font-medium'>Alert logs</p>
+            <div className='flex items-center gap-5'>
+              <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] min-w-[325px]'>
+                <AdminSearchIcon />
+                <input
+                  type='text'
+                  name='search'
+                  id='search'
+                  className='bg-transparent focus:outline-none'
+                  placeholder='Search'
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]">
-              <TableHead className="text-[#768B8F] pl-6">Type</TableHead>
-              <TableHead className="text-[#768B8F]">Timestamp</TableHead>
-              <TableHead className="text-[#768B8F]">Trip ID</TableHead>
-              <TableHead className="text-[#768B8F]">Initiator</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          {isEmpty ? (
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={4} className="p-10">
-                  <Empty>
-                    <EmptyHeader>
-                      <EmptyTitle>No information found</EmptyTitle>
-                    </EmptyHeader>
-                  </Empty>
-                </TableCell>
+          <Table>
+            <TableHeader>
+              <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
+                <TableHead className='text-[#768B8F] pl-6'>Type</TableHead>
+                <TableHead className='text-[#768B8F]'>Timestamp</TableHead>
+                <TableHead className='text-[#768B8F]'>Trip ID</TableHead>
+                <TableHead className='text-[#768B8F]'>Initiator</TableHead>
               </TableRow>
-            </TableBody>
-          ) : (
-            <TableBody>
-              {alertTables.map((alert, i) => {
-                return (
-                  <TableRow key={i} className="last:border-b-0">
-                    <TableCell className=" text-sm font-medium pl-6">
-                      {alert.type}
-                    </TableCell>
-                    <TableCell className=" text-sm font-medium">
-                      {alert.timeStamp}
-                    </TableCell>
-                    <TableCell className=" text-sm font-medium">
-                      {alert.tripID}
-                    </TableCell>
-                    <TableCell className=" text-sm font-medium">
-                      {alert.initiator}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          )}
-        </Table>
-      </div>
+            </TableHeader>
+
+            {isEmpty ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={4} className='p-10'>
+                    <Empty>
+                      <EmptyHeader>
+                        <EmptyTitle>No information found</EmptyTitle>
+                      </EmptyHeader>
+                    </Empty>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {alertTables.map((alert, i) => {
+                  return (
+                    <TableRow key={i} className='last:border-b-0'>
+                      <TableCell className=' text-sm font-medium pl-6'>
+                        {alert.type}
+                      </TableCell>
+                      <TableCell className=' text-sm font-medium'>
+                        {alert.timeStamp}
+                      </TableCell>
+                      <TableCell className=' text-sm font-medium'>
+                        {alert.tripID}
+                      </TableCell>
+                      <TableCell className=' text-sm font-medium'>
+                        {alert.initiator}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            )}
+          </Table>
+        </CardContent>
+      </Card>
     </section>
   );
 };
