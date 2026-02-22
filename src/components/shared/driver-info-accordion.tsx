@@ -100,7 +100,6 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
               <div className='flex gap-8 justify-between w-full items-center'>
                 <div className='flex gap-8 items-center'>
                   <Image
-                    // src={"/images/small-car.png"}
                     src={vehicle.vehicleInfo.vehicleSideViewImageUri}
                     alt={"car"}
                     width={40}
@@ -108,20 +107,17 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
                     className='w-[100px]'
                   />
                   <div className='flex flex-col'>
-                    <p className='font-semibold text-base'>
-                      {vehicle.vehicleInfo?.vehicleModel} -{" "}
-                      {vehicle.vehicleInfo?.vehicleMake}
-                      {/* {info.carName} */}
+                    <p className='font-semibold text-base capitalize'>
+                      {vehicle.vehicleInfo?.vehicleMake} -{" "}
+                      {vehicle.vehicleInfo?.vehicleModel}
                     </p>
-                    <p className='text-sm text-[#858585]'>
+                    <p className='text-sm text-[#858585] capitalize'>
                       {`${vehicle.driverInfo?.firstName} ${vehicle.driverInfo?.lastName}  `}{" "}
-                      {/* {info.name} */}
                     </p>
                   </div>
                 </div>
                 <p className='font-extrabold text-lg'>
                   ${vehicle.driverInfo.rideProfile?.ratePerHour}
-                  {/* {info.price} */}
                   .00/hr
                 </p>
               </div>
@@ -152,8 +148,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
                   <div className='flex gap-4 items-center'>
                     <div className='p-[2px] rounded-full bg-white'>
                       <Image
-                        src={"/images/profile.jpg"}
-                        // src={vehicle.driverInfo?.profileImageUri}
+                        src={vehicle.driverInfo?.driverProfilePictureUri ?? ""}
                         alt='profile-image'
                         className='rounded-full w-[66px] object-cover aspect-square'
                         width={40}
@@ -161,17 +156,12 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
                       />
                     </div>
                     <HeadingHeebo className='font-fustat text-xl font-semibold text-left'>
-                      {`${vehicle.driverInfo?.firstName} ${vehicle.driverInfo?.lastName}  `}{" "}
-                      {/* {info.name} */}
+                      {`${vehicle.driverInfo?.firstName} ${vehicle.driverInfo?.lastName}`}
                     </HeadingHeebo>
                   </div>
                   <div className='flex items-center gap-2 text-lg'>
                     <FilledGreenStarIcon />
-                    <p>
-                      {vehicle.driverInfo?.rating?.numberOfRatings}
-                      {/* {info.rating}{" "} */}
-                      Rating
-                    </p>
+                    <p>{vehicle.driverInfo?.rating?.numberOfRatings} Rating</p>
                   </div>
                 </div>
               </div>
@@ -200,11 +190,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
                     <PassengerCapacityIcon />
                     <p className='font-semibold text-sm'>Passenger Capacity</p>
                   </div>
-                  <p className='text-base'>
-                    {vehicle.capacity}
-                    {/* {info.passengerCapacity}  */}
-                    Persons
-                  </p>
+                  <p className='text-base'>{vehicle.capacity} Persons</p>
                 </div>
                 <div className='flex justify-between gap-6 items-center border-b border-b-[#EDEDED] pb-3'>
                   <div className='flex gap-6 items-center'>
@@ -220,7 +206,6 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
               </div>
               <Button
                 onClick={() => {
-                  // console.log("Button was pressed too!");
                   func(vehicle);
                 }}
                 className='w-fit rounded-2xl hover:cursor-pointer'

@@ -105,6 +105,12 @@ export type DriverInfo = {
   updatedAt: string; // ISO date
   __v: number;
   age: number;
+  driverLincenseBackViewUri: string;
+  driverLincenseFrontViewUri: string;
+  driverProfilePictureUri: string;
+  driverSocialSecurityNumber: string;
+  referralCode: string;
+  kycStatus: string;
 };
 
 export type DriverRating = {

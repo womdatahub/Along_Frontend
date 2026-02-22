@@ -14,6 +14,7 @@ import {
   Switch,
   LoadingComponent,
 } from "@/components";
+import { Skeleton } from "@/components/ui/skeleton";
 import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap, useRental } from "@/store";
 import { VehicleLocation } from "@/types";
@@ -50,13 +51,11 @@ const RentRide = () => {
   const [selectedMins, setSelectedMins] = useState<string>("");
   const [selectAmOrPm, setSelectAmOrPm] = useState<string>("am");
   const [pickupModalOpen, setPickupModalOpen] = useState(false);
-  const [selectedDriverDetails, setSelectedDriverDetails] =
-    useState<VehicleLocation | null>(null);
   const [flexibility, setFlexibility] = useState<boolean>(false);
 
-  const searchParams = useSearchParams();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
   const vehicleType = searchParams.get("vehicleType");
   const selectedDriver = searchParams.get("selectedDriver");
   const isReview = !!searchParams.get("isReview");
@@ -64,9 +63,6 @@ const RentRide = () => {
 
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
-    // router.push(
-    //   `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver.vehicleId}&isLater=${isLater}`,
-    // ); using link in the component now
   };
 
   const {
@@ -79,10 +75,18 @@ const RentRide = () => {
     })),
   );
   const {
-    actions: { retrieveAvailableVehicles, rentAndCreateIntent },
+    selectedDriverDetails,
+    isLoading,
+    actions: {
+      retrieveAvailableVehicles,
+      rentAndCreateIntent,
+      setSelectedDriverDetails,
+    },
   } = useRental(
     useShallow((state) => ({
       actions: state.actions,
+      selectedDriverDetails: state.selectedDriverDetails,
+      isLoading: state.isLoading,
     })),
   );
 
@@ -101,7 +105,20 @@ const RentRide = () => {
     autoCompleteAddress?.latitude,
   ]);
 
-  useEffect(() => {}, [selectedDriver]);
+  useEffect(() => {
+    if (
+      !selectedHours ||
+      !selectedHoursLength ||
+      !selectedMins ||
+      !selectAmOrPm
+    ) {
+    }
+    router.push(
+      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver}&isLater=${isLater}`,
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
 
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
@@ -190,13 +207,10 @@ const RentRide = () => {
                           .replace(/\s+/g, "-");
                         return (
                           <Button
-                            // disabled
                             onClick={() => {
                               router.push(`/rent-ride?vehicleType=${title}`);
 
-                              // setTimeout(() => {
                               setOpen(false);
-                              // }, 2000);
                             }}
                             key={car.name}
                             className={cn(
@@ -228,7 +242,6 @@ const RentRide = () => {
           {vehicleType && !selectedDriver && (
             <div className='flex flex-col gap-8'>
               <DriverInfoAccordion
-                // vehicles={availableVehicles.length > 0 ? availableVehicles : []}
                 func={func}
                 vehicleType={vehicleType ?? ""}
                 isLater={isLater}
@@ -241,37 +254,37 @@ const RentRide = () => {
                 <div className='flex rounded-2xl p-3 gap-4 items-center justify-between bg-primaryLight2 w-full'>
                   <div className='flex gap-7 items-center'>
                     <Image
-                      src={"/images/small-car.png"}
-                      // src={selectedDriverDetails?.vehicleInfo.vehicleSideViewImageUri ?? ""}
+                      src={
+                        selectedDriverDetails?.vehicleInfo
+                          .vehicleSideViewImageUri ?? ""
+                      }
                       alt={"car"}
                       width={40}
                       height={40}
                       className='w-[100px]'
                     />
                     <div className='flex flex-col'>
-                      <p className=' text-xs font-semibold'>
-                        {/* Tesla Model 3 - 2023 */}
-                        {selectedDriverDetails?.vehicleInfo?.vehicleModel}{" "}
-                        {selectedDriverDetails?.vehicleInfo?.vehicleMake} -{" "}
+                      <p className=' text-xs font-semibold capitalize'>
+                        {selectedDriverDetails?.vehicleInfo?.vehicleMake}{" "}
+                        {selectedDriverDetails?.vehicleInfo?.vehicleModel} -{" "}
                         {selectedDriverDetails?.vehicleInfo?.vehicleYear}
                       </p>
-                      {/* <p className=' text-sm font-extrabold'>
-                        Tesla Model 3 - 2023
-                      </p> */}
                     </div>
                   </div>
                   <div className='flex flex-col items-center'>
                     <div className='p-[2px] rounded-full bg-white'>
                       <Image
-                        src='/images/profile.jpg'
-                        // src={vehicle.driverInfo?.profileImageUri}
+                        src={
+                          selectedDriverDetails?.driverInfo
+                            .driverProfilePictureUri ?? ""
+                        }
                         alt='profile-image'
                         className='rounded-full w-[66px] object-cover aspect-square'
                         width={40}
                         height={40}
                       />
                     </div>
-                    <p className=' text-xs font-semibold'>
+                    <p className=' text-xs font-semibold capitalize'>
                       {selectedDriverDetails?.driverInfo.firstName}{" "}
                       {selectedDriverDetails?.driverInfo.lastName}
                     </p>
@@ -378,7 +391,7 @@ const RentRide = () => {
                                       .map((_, index) => {
                                         return `${index + 1} ${selectedTab === "hours" ? "Hour" : "Day"}${index + 1 === 1 ? "" : "s"}`;
                                       })}
-                                    triggerLabel='Select hours'
+                                    triggerLabel={`Select ${selectedTab === "hours" ? "hours" : "days"}`}
                                     selected={selectedHoursLength}
                                     setSelected={setSelectedHoursLength}
                                   />
@@ -556,7 +569,10 @@ const RentRide = () => {
                         <Switch
                           color='primary'
                           checked={flexibility}
-                          onChange={() => setFlexibility((prev) => !prev)}
+                          onCheckedChange={() =>
+                            setFlexibility((prev) => !prev)
+                          }
+                          className='my-5 cursor-pointer'
                         />
                       </div>
                     </div>
@@ -604,12 +620,14 @@ const RentRide = () => {
                     !selectAmOrPm ||
                     !selectedHoursLength
                   }
-                  onClick={() => {
+                  onClick={async () => {
+                    const duration = Number(selectedHoursLength.split(" ")[0]);
                     if (!autoCompleteAddress || !selectedDriverDetails) return;
-                    rentAndCreateIntent({
+                    await rentAndCreateIntent({
                       flexibility,
                       days: [],
-                      duration: 1,
+                      duration:
+                        selectedTab === "hours" ? duration : duration * 24,
                       vehicleId: selectedDriverDetails.vehicleId,
                       pickUpLat: autoCompleteAddress.latitude,
                       pickUpLong: autoCompleteAddress.longitude,
@@ -622,7 +640,6 @@ const RentRide = () => {
                   ) : (
                     <Link
                       href={{
-                        // pathname: "/rent-ride",
                         query: {
                           vehicleType,
                           selectedDriver,
@@ -639,11 +656,19 @@ const RentRide = () => {
                   <div className='flex flex-col w-1/3'>
                     <div className='flex justify-between gap-4 font-bold text-base'>
                       <p>Total</p>
-                      <p>$55.92</p>
+                      {isLoading ? (
+                        <Skeleton className=' w-fit h-2' />
+                      ) : (
+                        <p>$55.92</p>
+                      )}
                     </div>
                     <div className='flex justify-between gap-4 font-semibold text-sm text-icons'>
                       <p>Tax</p>
-                      <p>$2.92</p>
+                      {isLoading ? (
+                        <Skeleton className=' w-fit h-2' />
+                      ) : (
+                        <p>$2.92</p>
+                      )}
                     </div>
                   </div>
                 )}
