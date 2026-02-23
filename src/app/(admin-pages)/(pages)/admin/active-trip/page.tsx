@@ -36,7 +36,7 @@ const Page = () => {
               key={id}
               className={cn(
                 "w-full md:w-[350px] rounded-2xl shadow-none border",
-                selectedTripIndex === id && "bg-[#EFF1F1]"
+                selectedTripIndex === id && "bg-background-1",
               )}
               onClick={() => setSelectedTripIndex(id)}
             >

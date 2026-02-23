@@ -5,10 +5,17 @@ import {
   AdminNotificationIcon,
   //  AdminSearchIcon
 } from "@public/svgs";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/store";
+import { useShallow } from "zustand/shallow";
+import {
+  NameAvatar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components";
 
 export default function AdminDashboardLayout({
   children,
@@ -16,17 +23,24 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const { actions: { logOut } } = useSession((state) => state);
+  const {
+    adminProfile,
+    actions: { logOut },
+  } = useSession(
+    useShallow((state) => ({
+      actions: state.actions,
+      adminProfile: state.adminProfile,
+    })),
+  );
 
-  function showMenu() {
-    const menu = document.getElementById("admin-profile-menu");
-    menu?.classList.toggle("hidden");
-  }
+  // function showMenu() {
+  //   const menu = document.getElementById("admin-profile-menu");
+  //   menu?.classList.toggle("hidden");
+  // }
 
   async function logoutUser() {
     await logOut();
-    console.log("User logged out");
-    window.location.href = "/sign-in";
+    // window.location.href = "/sign-in";
   }
   return (
     <SidebarProvider>
@@ -34,7 +48,7 @@ export default function AdminDashboardLayout({
       <SidebarInset className='bg-[#e1e3e3] flex flex-col gap-10 p-16'>
         <div className='flex justify-between items-center gap-5'>
           <p className='text-xl font-medium text-primary'>
-            {pathname === "/admin" && "Hello, David"}
+            {pathname === "/admin" && `Hello, ${adminProfile?.firstName}`}
           </p>
           <div className='flex items-center gap-5'>
             {/* {pathname === "/admin" && (
@@ -50,30 +64,37 @@ export default function AdminDashboardLayout({
               </div>
             )} */}
             <AdminNotificationIcon />
-            <div className='flex items-center gap-2'>
-              <Image
-                src='/images/about-vision.png'
-                alt='Profile image'
-                className='rounded-full size-8 object-cover'
-                width={32}
-                height={32}
-                onClick={() => showMenu()}
-              />
-              <p className='text-base font-medium'>David Junior</p>
-            </div>
-            <div id='admin-profile-menu' className='hidden absolute top-16 right-16 bg-white shadow-md rounded-md'>
-              <div className='flex flex-col p-4 gap-3'>
-                <p className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer'>
-                  <Link href="/admin/profile">Profile</Link>
-                </p>
-                <p className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer'>
-                  <Link href="/admin/settings">Settings</Link>
-                </p>
-                <p className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer' onClick={() => logoutUser()}>
-                  Logout
-                </p>
-              </div>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className='flex items-center gap-2 cursor-pointer'>
+                  <NameAvatar
+                    value={`${adminProfile?.firstName[0] ?? ""}${adminProfile?.lastName[0] ?? ""}`}
+                    className='size-8 text-sm'
+                  />
+                  <p className='text-base font-medium'>
+                    {adminProfile?.firstName} {adminProfile?.lastName}
+                  </p>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className='w-[200px] p-0'>
+                <div className='shadow-md rounded-md'>
+                  <div className='flex flex-col p-4 gap-3'>
+                    <p className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer'>
+                      <Link href='/admin/profile'>Profile</Link>
+                    </p>
+                    <p className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer'>
+                      <Link href='/admin/settings'>Settings</Link>
+                    </p>
+                    <p
+                      className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer'
+                      onClick={() => logoutUser()}
+                    >
+                      Logout
+                    </p>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
         {children}

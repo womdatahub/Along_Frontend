@@ -151,9 +151,20 @@
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
-  box-shadow: 0 0 0px 1000px #fff inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px inherit inset !important;
+  box-shadow: 0 0 0px 1000px inherit inset !important;
   -webkit-text-fill-color: #000 !important;
+
+   /* -webkit-text-fill-color: inherit !important; 
+  caret-color: inherit !important;
+  transition: background-color 9999s ease-out 0s;  */
+
+}
+
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* border: 1px solid #ccc; */
