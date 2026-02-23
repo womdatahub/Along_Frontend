@@ -1,12 +1,18 @@
 "use client";
 
 import {
+  AddInput,
   Button,
   Card,
   CardContent,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
   Empty,
   EmptyHeader,
   EmptyTitle,
+  SelectDropdown,
   Table,
   TableBody,
   TableCell,
@@ -14,9 +20,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components";
+import { useState } from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { TOnboardingValidator, onboardingSchema } from "@/lib";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 const isEmpty = true;
 const Page = () => {
+  const [open, setOpen] = useState(false);
+
+  const {
+    register,
+    setValue,
+    watch,
+    // handleSubmit,
+    formState: { errors },
+  } = useForm<TOnboardingValidator>({
+    defaultValues: {
+      mobileNumber: "",
+      email: "0",
+      password: "",
+      referralCode: "",
+    },
+    resolver: zodResolver(onboardingSchema),
+  });
+
+  const email = watch("email");
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-4xl font-heebo'>Market Place</p>
@@ -26,7 +56,164 @@ const Page = () => {
           <div className='flex justify-between gap-5 items-center px-6'>
             <p className='text-xl font-medium'>Fare Engine Profile</p>
             <div className='flex items-center gap-5'>
-              <Button className='rounded-full'>Add New</Button>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button className='rounded-full'>Add New</Button>
+                </DialogTrigger>
+                <DialogContent
+                  className='sm:max-w-[425px] md:max-w-[520px] px-4 py-8 rounded-[20px]'
+                  showCloseButton={false}
+                >
+                  <VisuallyHidden>
+                    <DialogTitle>Add new Fare Engine Profile</DialogTitle>
+                  </VisuallyHidden>
+                  <div className='flex flex-col gap-6'>
+                    <p className='-5 font-bold text-2xl'>New Profile</p>
+                    <AddInput
+                      label='First Name'
+                      id='email'
+                      errors={errors}
+                      placeholder='Rush Hour 22'
+                      register={register}
+                      required
+                      type='text'
+                      labelClassName='text-sm font-semibold ml-2'
+                      iconAndInputWrapperClassName='bg-background-1 rounded-2xl p-0'
+                      inputClassName='h-14 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                    />
+                    <SelectDropdown
+                      options={["Test", "Test 2"]}
+                      selected={email}
+                      setSelected={(value: string) => {
+                        setValue("email", value);
+                      }}
+                      triggerLabel='USD'
+                      triggerClassName='bg-background-1 min-h-14 h-12'
+                      labelClassName='ml-2'
+                      label='Currency'
+                      groupClassName='shadow-lg'
+                      errorMessage={errors.email?.message ?? ""}
+                    />
+                    <div className='flex gap-4'>
+                      <AddInput
+                        label='Base Fare'
+                        id='password'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-2'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                      <AddInput
+                        label='Driver to rider fee'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-2'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                      <AddInput
+                        label='Wait charge/min'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-0'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                      <AddInput
+                        label='Tax %'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-0'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                    </div>
+                    <div className='flex gap-4'>
+                      <AddInput
+                        label='Base Haggle %'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-0'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                      <AddInput
+                        label='Max Haggle %'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-0'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                      <AddInput
+                        label='Platform fee'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-0'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                      <AddInput
+                        label='Surge multiplier'
+                        id='email'
+                        errors={errors}
+                        placeholder='0'
+                        register={register}
+                        required
+                        type='text'
+                        inputMode='numeric'
+                        pattern='[0-9]*'
+                        labelClassName='text-xs font-medium ml-0'
+                        iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+                        inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+                      />
+                    </div>
+                    <Button className='px-14'>Save</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
               <Button variant={"ghost"} className='rounded-full'>
                 Batch Delete
               </Button>

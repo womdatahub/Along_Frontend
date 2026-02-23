@@ -19,6 +19,7 @@ type Props = {
   disabled?: boolean;
   label?: string;
   errorMessage?: string;
+  labelClassName?: string;
 };
 export const SelectDropdown = ({
   triggerLabel,
@@ -31,10 +32,11 @@ export const SelectDropdown = ({
   disabled,
   label,
   errorMessage,
+  labelClassName,
 }: Props) => {
   return (
     <div className='flex flex-col gap-1'>
-      <label className={cn("text-sm font-semibold ml-5")}>
+      <label className={cn("text-sm font-semibold ml-5", labelClassName)}>
         <span>{label}</span>
       </label>
       <Select onValueChange={setSelected} defaultValue={selected}>
@@ -52,14 +54,14 @@ export const SelectDropdown = ({
             className='placeholder:text-placeholder capitalize'
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className='p-0'>
           <SelectGroup className={cn("max-h-40", groupClassName)}>
             {options.map((option) => {
               return (
                 <SelectItem
                   key={option}
                   value={option.toLowerCase()}
-                  className='capitalize'
+                  className={cn("capitalize")}
                 >
                   {option}
                 </SelectItem>

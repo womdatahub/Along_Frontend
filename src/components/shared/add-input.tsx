@@ -9,9 +9,11 @@ import {
 import { Input, Textarea } from "@/components";
 
 import { cn } from "@/lib";
-import { useState } from "react";
+import { HTMLAttributes, useState } from "react";
 export interface AddInputProps<T extends FieldValues> {
   id: Path<T>;
+  inputMode?: HTMLAttributes<T>["inputMode"];
+  pattern?: string;
   type?: string;
   width?: string;
   label?: string;
@@ -34,6 +36,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
   const {
     id,
     type = "text",
+    inputMode,
     label,
     width,
     errors,
@@ -48,6 +51,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
     icon,
     iconAndInputWrapperClassName,
     isReverse,
+    pattern,
   } = props;
 
   const [realType, setRealType] = useState(type);
@@ -76,6 +80,8 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
             id={id}
             type={realType}
             disabled={disabled}
+            inputMode={inputMode}
+            pattern={pattern}
             {...register(id, { required })}
             onBlur={onblur}
             placeholder={placeholder}
