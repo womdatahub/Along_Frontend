@@ -22,7 +22,7 @@ import {
 } from "@/components";
 import { useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { TOnboardingValidator, onboardingSchema } from "@/lib";
+import { TMarketPlaceSchema, marketPlaceSchema } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -36,17 +36,23 @@ const Page = () => {
     watch,
     // handleSubmit,
     formState: { errors },
-  } = useForm<TOnboardingValidator>({
+  } = useForm<TMarketPlaceSchema>({
     defaultValues: {
-      mobileNumber: "",
-      email: "0",
-      password: "",
-      referralCode: "",
+      platformFee: "",
+      currency: "",
+      baseFare: "",
+      driverToRiderFee: "",
+      waitChargePerMin: "",
+      tax: "",
+      baseHaggle: "",
+      maxHaggle: "",
+      surgeMultiplier: "",
+      profileName: "",
     },
-    resolver: zodResolver(onboardingSchema),
+    resolver: zodResolver(marketPlaceSchema),
   });
 
-  const email = watch("email");
+  const email = watch("currency");
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-4xl font-heebo'>Market Place</p>
@@ -70,8 +76,8 @@ const Page = () => {
                   <div className='flex flex-col gap-6'>
                     <p className='-5 font-bold text-2xl'>New Profile</p>
                     <AddInput
-                      label='First Name'
-                      id='email'
+                      label='Profile name'
+                      id='profileName'
                       errors={errors}
                       placeholder='Rush Hour 22'
                       register={register}
@@ -82,22 +88,22 @@ const Page = () => {
                       inputClassName='h-14 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
                     />
                     <SelectDropdown
-                      options={["Test", "Test 2"]}
+                      options={["USD", "NGN"]}
                       selected={email}
                       setSelected={(value: string) => {
-                        setValue("email", value);
+                        setValue("currency", value);
                       }}
                       triggerLabel='USD'
                       triggerClassName='bg-background-1 min-h-14 h-12'
                       labelClassName='ml-2'
                       label='Currency'
                       groupClassName='shadow-lg'
-                      errorMessage={errors.email?.message ?? ""}
+                      errorMessage={errors.currency?.message ?? ""}
                     />
                     <div className='flex gap-4'>
                       <AddInput
                         label='Base Fare'
-                        id='password'
+                        id='baseFare'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -111,7 +117,7 @@ const Page = () => {
                       />
                       <AddInput
                         label='Driver to rider fee'
-                        id='email'
+                        id='driverToRiderFee'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -125,7 +131,7 @@ const Page = () => {
                       />
                       <AddInput
                         label='Wait charge/min'
-                        id='email'
+                        id='waitChargePerMin'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -139,7 +145,7 @@ const Page = () => {
                       />
                       <AddInput
                         label='Tax %'
-                        id='email'
+                        id='tax'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -155,7 +161,7 @@ const Page = () => {
                     <div className='flex gap-4'>
                       <AddInput
                         label='Base Haggle %'
-                        id='email'
+                        id='baseHaggle'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -169,7 +175,7 @@ const Page = () => {
                       />
                       <AddInput
                         label='Max Haggle %'
-                        id='email'
+                        id='maxHaggle'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -183,7 +189,7 @@ const Page = () => {
                       />
                       <AddInput
                         label='Platform fee'
-                        id='email'
+                        id='platformFee'
                         errors={errors}
                         placeholder='0'
                         register={register}
@@ -197,7 +203,7 @@ const Page = () => {
                       />
                       <AddInput
                         label='Surge multiplier'
-                        id='email'
+                        id='surgeMultiplier'
                         errors={errors}
                         placeholder='0'
                         register={register}
