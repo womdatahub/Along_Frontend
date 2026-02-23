@@ -16,21 +16,21 @@ import Image from "next/image";
 const isEmpty = false;
 const Page = () => {
   return (
-    <section className="flex flex-col gap-8">
-      <p className="text-4xl font-heebo">Riders</p>
+    <section className='flex flex-col gap-8'>
+      <p className='text-4xl font-heebo'>Riders</p>
 
-      <div className="rounded-3xl border border-gray-300 flex flex-col gap-4 py-4">
-        <div className="flex justify-between gap-5 items-center px-6">
-          <p className="text-xl font-medium">Riders information</p>
-          <div className="flex items-center gap-5">
-            <div className="flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] min-w-[325px]">
+      <div className='rounded-3xl border border-gray-300 flex flex-col gap-4 py-4 bg-white'>
+        <div className='flex justify-between gap-5 items-center px-6'>
+          <p className='text-xl font-medium'>Riders information</p>
+          <div className='flex items-center gap-5'>
+            <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] min-w-[325px]'>
               <AdminSearchIcon />
               <input
-                type="text"
-                name="search"
-                id="search"
-                className="bg-transparent focus:outline-none"
-                placeholder="Search"
+                type='text'
+                name='search'
+                id='search'
+                className='bg-transparent focus:outline-none'
+                placeholder='Search'
               />
             </div>
             <AdminFilterIcon />
@@ -38,25 +38,25 @@ const Page = () => {
         </div>
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]">
-              <TableHead className="text-[#768B8F]">Driver Name</TableHead>
-              <TableHead className="text-[#768B8F]">
+            <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
+              <TableHead className='text-[#768B8F]'>Driver Name</TableHead>
+              <TableHead className='text-[#768B8F]'>
                 Vehicle Reg Number
               </TableHead>
-              <TableHead className="text-[#768B8F]">Drivers ID</TableHead>
-              <TableHead className="text-[#768B8F]">Phone Number</TableHead>
-              <TableHead className="text-[#768B8F]">Address</TableHead>
-              <TableHead className="text-[#768B8F]">
+              <TableHead className='text-[#768B8F]'>Drivers ID</TableHead>
+              <TableHead className='text-[#768B8F]'>Phone Number</TableHead>
+              <TableHead className='text-[#768B8F]'>Address</TableHead>
+              <TableHead className='text-[#768B8F]'>
                 Social Security No
               </TableHead>
-              <TableHead className="text-[#768B8F]">Action</TableHead>
+              <TableHead className='text-[#768B8F]'>Action</TableHead>
             </TableRow>
           </TableHeader>
 
           {isEmpty ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={7} className="p-10">
+                <TableCell colSpan={7} className='p-10'>
                   <Empty>
                     <EmptyHeader>
                       <EmptyTitle>No information found</EmptyTitle>
@@ -69,40 +69,40 @@ const Page = () => {
             <TableBody>
               {[...drivers, ...drivers].map((driver, i) => {
                 return (
-                  <TableRow key={i} className="last:border-b-0">
-                    <TableCell className="text-sm font-medium py-5">
-                      <div className="flex items-center gap-2">
+                  <TableRow key={i} className='last:border-b-0'>
+                    <TableCell className='text-sm font-medium py-5'>
+                      <div className='flex items-center gap-2'>
                         <Image
-                          src="/images/about-vision.png"
-                          alt="Profile image"
-                          className="rounded-full size-8 object-cover"
+                          src='/images/about-vision.png'
+                          alt='Profile image'
+                          className='rounded-full size-8 object-cover'
                           width={32}
                           height={32}
                         />
                         <p>{driver.name}</p>
                       </div>
                     </TableCell>
-                    <TableCell className=" text-sm font-medium">
+                    <TableCell className=' text-sm font-medium'>
                       {driver.vehicleRegNumber}
                     </TableCell>
-                    <TableCell className=" text-sm font-medium">
+                    <TableCell className=' text-sm font-medium'>
                       {driver.driverID}
                     </TableCell>
-                    <TableCell className=" text-sm font-medium">
+                    <TableCell className=' text-sm font-medium'>
                       {driver.phoneNumber}
                     </TableCell>
-                    <TableCell className=" text-sm font-medium">
+                    <TableCell className=' text-sm font-medium'>
                       {driver.address}
                     </TableCell>
-                    <TableCell className=" text-sm font-medium">
+                    <TableCell className=' text-sm font-medium'>
                       {driver.socialSecurityNo}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Button className="rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]">
+                      <div className='flex items-center gap-3'>
+                        <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
                           Suspend
                         </Button>
-                        <Button className="rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]">
+                        <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
                           View profile
                         </Button>
                       </div>
