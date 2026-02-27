@@ -14,7 +14,7 @@ import { toast } from "sonner";
 const Page = () => {
   const router = useRouter();
   const {
-    userRole,
+    // userRole,
     isLoading,
     routeBeforeRedirect,
     actions: { login, setRouteBeforeRedirect },
@@ -35,16 +35,16 @@ const Page = () => {
   const onSubmit = async (values: TSignInValidator) => {
     const val = await login(values);
     if (!val) return;
-    console.log(
-      val,
-      userRole,
-      routeBeforeRedirect,
-      "val and userRole and routeBeforeRedirect"
-    );
+    // console.log(
+    //   val,
+    //   userRole,
+    //   routeBeforeRedirect,
+    //   "val and userRole and routeBeforeRedirect"
+    // );
     if (val === "user") {
       router.replace("/onboarding/user-type");
       toast.error(
-        "Onboarding process incomplete. Please complete your onboarding process to continue!!"
+        "Onboarding process incomplete. Please complete your onboarding process to continue!!",
       );
       return;
     } else if (routeBeforeRedirect) {

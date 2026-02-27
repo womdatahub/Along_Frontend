@@ -6,22 +6,13 @@ import {
   HeadingHeebo,
   NameAvatar,
   Switch,
-  UploadingImagesReusableComponent,
 } from "@/components";
 import { cn } from "@/lib";
 import { useSession } from "@/store";
-import { ImageType } from "@/types";
-import { AddPhotoIcon, AshForwardIcon } from "@public/svgs";
+import {  AshForwardIcon } from "@public/svgs";
 import { useState } from "react";
-import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
-type UploadState = {
-  preview: { image: ImageType; uri: string } | null;
-  uploadedUrl: string | null;
-  isUploading: boolean;
-  error: string | null;
-};
 const Page = () => {
   const [active, setActive] = useState<"personal-info" | "security">(
     "personal-info",
@@ -34,34 +25,6 @@ const Page = () => {
     })),
   );
 
-  const [profilePhoto, setProfilePhoto] = useState<UploadState>({
-    preview: null,
-    uploadedUrl: null,
-    isUploading: false,
-    error: null,
-  });
-
-  const handleFileSelect = (
-    file: ImageType,
-    setter: React.Dispatch<React.SetStateAction<UploadState>>,
-  ) => {
-    console.log("file selected:", file);
-    console.log("file.imageFile:", file.imageFile);
-
-    try {
-      // Create object URL from the file
-      const objectUrl = URL.createObjectURL(file.imageFile as Blob);
-
-      setter((prev) => ({
-        ...prev,
-        preview: { image: file, uri: objectUrl },
-        error: null,
-      }));
-    } catch (error) {
-      console.error("Error creating object URL:", error);
-      toast.error("Invalid file selected");
-    }
-  };
 
   return (
     <div className='flex flex-col gap-5'>

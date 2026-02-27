@@ -42,11 +42,11 @@ const Page = () => {
 
   const onSubmit = async (values: TRegisterRiderValidator) => {
     if (!date || !selected) return;
-    console.log({
-      ...values,
-      dateOfBirth: date.toISOString(),
-      gender: selected,
-    });
+    // console.log({
+    //   ...values,
+    //   dateOfBirth: date.toISOString(),
+    //   gender: selected,
+    // });
     const isSuccess = await registerRider({
       ...values,
       dateOfBirth: date.toISOString(),

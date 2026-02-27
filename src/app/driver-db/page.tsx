@@ -98,7 +98,7 @@ const Page = () => {
                         longitude: autoCompleteAddress?.longitude ?? 0,
                         vehicleId: driverProfile?.vehicleId ?? "",
                       });
-                      console.log(`link gotten from api call is this: ${link}`);
+                      // console.log(`link gotten from api call is this: ${link}`);
                       router.push(link);
                     }}
                     className='text-center cursor-pointer font-bold'

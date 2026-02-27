@@ -26,10 +26,10 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TSignInValidator) => {
-    console.log(values, errors);
+    // console.log(values, errors);
     await login(values).then((val) => {
       if (!val) return;
-      console.log("val from login", val);
+      // console.log("val from login", val);
       router.push("/admin");
     });
   };

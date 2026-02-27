@@ -336,7 +336,7 @@ export const useSession = create<Session>()(
           await get().actions.fetchUserDetails(false, false);
           toast.success("Documents and services added successfully");
           set({ isLoading: false });
-          console.log(data, path);
+          // console.log(data, path);
         }
 
         return true;
