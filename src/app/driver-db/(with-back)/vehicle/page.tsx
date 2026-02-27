@@ -1,8 +1,8 @@
 "use client";
-import { Button, Card, CardContent, HeadingHeebo } from "@/components";
+import { Card, CardContent, HeadingHeebo } from "@/components";
 import { useSession } from "@/store";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 import { useShallow } from "zustand/shallow";
 
 const Page = () => {

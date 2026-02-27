@@ -11,8 +11,8 @@ import type {
 } from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
-import { useRental } from "./use-rental";
-import { useRadarMap } from "./use-radar-map";
+// import { useRental } from "./use-rental";
+// import { useRadarMap } from "./use-radar-map";
 
 type RegisterDriverResponse = {
   userRole: string;

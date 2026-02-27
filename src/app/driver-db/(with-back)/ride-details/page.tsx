@@ -1,11 +1,5 @@
 "use client";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  HeadingHeebo,
-} from "@/components";
+import { Card, CardContent, HeadingHeebo } from "@/components";
 
 const Page = () => {
   return (
