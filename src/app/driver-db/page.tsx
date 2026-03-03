@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components";
-import { LocationPointerSvg } from "@public/svgs";
+import { FilledGreenStarIcon, LocationPointerSvg } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -123,12 +123,12 @@ const Page = () => {
               <div className='flex flex-col gap-10'>
                 <Link href={"/driver-db/vehicle"}>Vehicle</Link>
                 <Link href={"/driver-db/ride-details"}>TBC</Link>
-                <Link href={"/onboarding"}>Ride</Link>
+                <Link href={"#"}>Ride</Link>
               </div>
               <div className='flex items-center gap-3'>
                 <p>Driver rating</p>
-                <p>Star</p>
-                <p>4.8%</p>
+                <FilledGreenStarIcon />
+                <p>{driverProfile?.rating.numberOfRatings ?? 0}%</p>
               </div>
             </div>
           </div>

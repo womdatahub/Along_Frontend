@@ -55,9 +55,11 @@ const Page = () => {
                     />
                     <p className='font-medium text-xs'>{service.title}</p>
                   </div>
-                  <p className='font-bold text-xs text-red-600 animate-pulse'>
-                    Coming Soon
-                  </p>
+                  {service.isComingSoon && (
+                    <p className='font-bold text-xs text-red-600 animate-pulse'>
+                      Coming Soon
+                    </p>
+                  )}
                 </div>
 
                 <div

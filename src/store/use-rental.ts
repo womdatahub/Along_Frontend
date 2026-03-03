@@ -95,7 +95,11 @@ export const useRental = create<RentalStoreType>()(
               vehicles: VehicleLocation[];
             }>(path);
             if (error) {
-              toast.error(error.message);
+              toast.error(
+                error.message ??
+                  (error.error as string) ??
+                  "There was an error retrieving available vehicles",
+              );
               set({ isLoading: false });
               return;
             }
