@@ -59,16 +59,18 @@ export const Navbar = () => {
       }`}
     >
       <div className='flex justify-between items-center h-20 px-4 md:px-0 max-w-6xl mx-auto '>
-        {/* Logo */}
         <Link href='/'>
           <LogoIcon />
         </Link>
 
-        {/* Desktop Menu */}
         <div className='hidden md:flex gap-14 text-black text-xl'>
           <Link href='/about'>About</Link>
-          <Link href='/rent-ride'>Ride</Link>
-          <Link href='/onboarding'>Drive</Link>
+          {userRole && userRole !== "driver" && (
+            <Link href='/rent-ride'>Ride</Link>
+          )}
+          {userRole && userRole !== "driver" && (
+            <Link href='/onboarding'>Drive</Link>
+          )}
           <Link href='#'>Help</Link>
           <Link
             href={{
@@ -97,7 +99,6 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile Toggle */}
         <button
           className='md:hidden text-gray-800 text-2xl'
           onClick={() => setMenuOpen(!menuOpen)}
@@ -106,19 +107,22 @@ export const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className='md:hidden bg-white border-t border-gray-200'>
           <ul className='flex flex-col items-center gap-4 py-4 text-gray-700'>
             <li onClick={() => setMenuOpen(false)}>
               <Link href='/about'>About</Link>
             </li>
-            <li onClick={() => setMenuOpen(false)}>
-              <Link href='/rent-ride'>Ride</Link>
-            </li>
-            <li onClick={() => setMenuOpen(false)}>
-              <Link href='/onboarding'>Drive</Link>
-            </li>
+            {userRole && userRole !== "driver" && (
+              <li onClick={() => setMenuOpen(false)}>
+                <Link href='/rent-ride'>Ride</Link>
+              </li>
+            )}
+            {userRole && userRole !== "driver" && (
+              <li onClick={() => setMenuOpen(false)}>
+                <Link href='/onboarding'>Drive</Link>
+              </li>
+            )}
             <li onClick={() => setMenuOpen(false)}>
               <Link href='#'>Help</Link>
             </li>

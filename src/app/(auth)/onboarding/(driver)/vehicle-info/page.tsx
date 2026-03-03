@@ -15,14 +15,12 @@ import { useSession } from "@/store";
 import { ImageType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadImageIcon } from "@public/svgs";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
 const Page = () => {
-  const router = useRouter();
   const [previews, setPreviews] = useState<
     ({ image: ImageType; uri: string } | null)[]
   >([null, null, null, null]);
@@ -94,11 +92,17 @@ const Page = () => {
         { duration: 4000, position: "top-center" },
       );
       setTimeout(() => {
-        router.push(
+        const url =
           registeredDriverResponseWithStripeDetails?.stripeAccount
-            .accountLink ??
-            "https://connect.stripe.com/setup/e/acct_1T2pIx3kAZuormA4/BPUUzqETvXgb",
-        );
+            .accountLink ?? "";
+        if (typeof window !== "undefined" && url) {
+          window.location.assign(url);
+        }
+        // router.push(
+        //   registeredDriverResponseWithStripeDetails?.stripeAccount
+        //     .accountLink ??
+        //     "https://connect.stripe.com/setup/e/acct_1T2pIx3kAZuormA4/BPUUzqETvXgb",
+        // );
       }, 3000); // this will redirect them to set up their account on stripe.
       // router.push("/onboarding/vehicle-insurance"); // this has not been implemented by backend so go to dashboard
       // router.push("/driver-db");
