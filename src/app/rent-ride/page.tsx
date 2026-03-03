@@ -111,20 +111,22 @@ const RentRide = () => {
 
   useEffect(() => {
     if (
-      !selectedHours ||
-      !selectedHoursLength ||
-      !selectedMins ||
-      !selectAmOrPm
+      (!selectedHours ||
+        !selectedHoursLength ||
+        !selectedMins ||
+        !selectAmOrPm) &&
+      vehicleType
     ) {
+      console.log(selectedDriver, "selectedDriver");
       router.push(
-        `?vehicleType=${vehicleType}&selectedDriver=${selectedDriver}&isLater=${isLater}`,
+        `?vehicleType=${vehicleType}&isLater=${isLater}${selectedDriver ? `&selectedDriver=${selectedDriver}` : ""}`,
       );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
 
-  console.log("isLater from rent ride component: ", isLater);
+  // console.log("isLater from rent ride component: ", isLater);
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
       <div className='flex flex-col md:flex-row gap-8 md:gap-4 h-full'>
