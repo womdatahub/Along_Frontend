@@ -32,6 +32,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
 const Page = () => {
@@ -59,7 +60,10 @@ const RentRide = () => {
   const vehicleType = searchParams.get("vehicleType");
   const selectedDriver = searchParams.get("selectedDriver");
   const isReview = !!searchParams.get("isReview");
-  const isLater = !!!searchParams.get("isLater");
+  // const isLater = !!searchParams.get("isLater");
+
+  const rawIsLater = searchParams.get("isLater");
+  const isLater = rawIsLater === "true";
 
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
@@ -105,15 +109,22 @@ const RentRide = () => {
     autoCompleteAddress?.latitude,
   ]);
 
-  // useEffect(() => {
-  //   if (!selectedDriver) return;
-  //   router.push(
-  //     `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver}&isLater=${isLater}`,
-  //   );
+  useEffect(() => {
+    if (
+      !selectedHours ||
+      !selectedHoursLength ||
+      !selectedMins ||
+      !selectAmOrPm
+    ) {
+      router.push(
+        `?vehicleType=${vehicleType}&selectedDriver=${selectedDriver}&isLater=${isLater}`,
+      );
+    }
 
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
 
+  console.log("isLater from rent ride component: ", isLater);
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
       <div className='flex flex-col md:flex-row gap-8 md:gap-4 h-full'>
@@ -255,7 +266,7 @@ const RentRide = () => {
                       alt={"car"}
                       width={40}
                       height={40}
-                      className='w-[100px]'
+                      className='w-[100px] aspect-square object-cover rounded-2xl'
                     />
                     <div className='flex flex-col'>
                       <p className=' text-xs font-semibold capitalize'>
@@ -586,6 +597,14 @@ const RentRide = () => {
                           title: "Time Flexibility",
                           value: flexibility ? "Yes" : "No",
                         },
+                        {
+                          ...(date && {
+                            title: "Rent Date",
+                            value: date
+                              ? formatDateToDDMMYYYY(date as Date)
+                              : "",
+                          }),
+                        },
                       ].map((review) => {
                         return (
                           <div
@@ -615,6 +634,10 @@ const RentRide = () => {
                     !selectedHoursLength
                   }
                   onClick={async () => {
+                    if (isLater && !date) {
+                      toast.error("Please select a date");
+                      return;
+                    }
                     const duration = Number(selectedHoursLength.split(" ")[0]);
                     if (!autoCompleteAddress || !selectedDriverDetails) return;
                     await rentAndCreateIntent({

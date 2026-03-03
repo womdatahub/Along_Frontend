@@ -30,6 +30,8 @@ type Props = {
   isLater: boolean;
 };
 export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
+  console.log("isLater gotten in the driver info accordion: ", isLater);
+
   const { isLoadingRental, availableVehicles } = useRental(
     useShallow((state) => ({
       actions: state.actions,

@@ -31,30 +31,39 @@ const Page = () => {
       </div>
       <div className='flex flex-col gap-4'>
         <div className='flex flex-col gap-1'>
-          {items.map((item) => {
+          {servicesItems.map((service) => {
             return (
               <button
-                key={item.state}
+                disabled={service.isComingSoon}
+                key={service.state}
                 onClick={() => {
-                  toggleOption(item.state);
+                  if (service.isComingSoon) return;
+                  toggleOption(service.state);
                 }}
                 className={cn(
-                  "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl"
+                  "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl",
+                  service.isComingSoon && "cursor-not-allowed",
                 )}
               >
-                <div className='flex gap-4 items-center'>
-                  <Image
-                    src={item.img}
-                    alt={item.state}
-                    width={40}
-                    height={40}
-                  />
-                  <p className='font-medium text-xs'>{item.title}</p>
+                <div className='flex flex-1 items-center justify-between gap-5'>
+                  <div className='flex gap-4 items-center'>
+                    <Image
+                      src={service.img}
+                      alt={service.state}
+                      width={40}
+                      height={40}
+                    />
+                    <p className='font-medium text-xs'>{service.title}</p>
+                  </div>
+                  <p className='font-bold text-xs text-red-600 animate-pulse'>
+                    Coming Soon
+                  </p>
                 </div>
+
                 <div
                   className={cn(
                     "size-4 bg-primaryLight",
-                    services.includes(item.state) && "bg-primary"
+                    services.includes(service.state) && "bg-primary",
                   )}
                 />
               </button>
@@ -63,10 +72,16 @@ const Page = () => {
           <div className='flex justify-between items-center gap-3 px-4 mt-3'>
             <p>Select all</p>
             <div
-              onClick={() => setServices(items.map((i) => i.state))}
+              onClick={() =>
+                setServices(
+                  servicesItems
+                    .filter((service) => service.isComingSoon)
+                    .map((service) => service.state),
+                )
+              }
               className={cn(
                 "size-4 bg-primaryLight cursor-pointer",
-                services.length === 3 && "bg-primary"
+                services.length === 3 && "bg-primary",
               )}
             />
           </div>
@@ -84,20 +99,23 @@ const Page = () => {
 };
 export default Page;
 
-const items = [
+const servicesItems = [
   {
     state: "rental",
     title: "Ride Rental",
     img: "/images/rental.png",
+    isComingSoon: false,
   },
   {
     state: "scheduled",
     title: "Scheduled Ride",
     img: "/images/scheduled.png",
+    isComingSoon: true,
   },
   {
     state: "logistics",
     title: "Logistics",
     img: "/images/logistics.png",
+    isComingSoon: true,
   },
 ];
