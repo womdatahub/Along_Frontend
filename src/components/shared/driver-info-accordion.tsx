@@ -104,7 +104,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
                     alt={"car"}
                     width={40}
                     height={40}
-                    className='w-[100px]'
+                    className='w-[100px] aspect-square object-cover rounded-2xl'
                   />
                   <div className='flex flex-col'>
                     <p className='font-semibold text-base capitalize'>

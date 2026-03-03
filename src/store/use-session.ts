@@ -11,6 +11,8 @@ import type {
 } from "@/types";
 import { callApi, userApiStr } from "@/lib";
 import { toast } from "sonner";
+import { useRadarMap } from "./use-radar-map";
+import { useRental } from "./use-rental";
 // import { useRental } from "./use-rental";
 // import { useRadarMap } from "./use-radar-map";
 
@@ -214,6 +216,8 @@ export const useSession = create<Session>()(
           set({ isLoading: false });
         }
         if (data) {
+          await useRadarMap.persist.clearStorage();
+          await useRental.persist.clearStorage();
           set({
             ...initialState,
             isFetchingUserSessionLoading: false,

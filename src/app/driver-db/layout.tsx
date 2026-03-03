@@ -1,5 +1,8 @@
 "use client";
 import { Navbar } from "@/components";
+import { useSession } from "@/store";
+import { useRouter } from "next/navigation";
+import { useShallow } from "zustand/shallow";
 // import { AuthProvider } from "@/store";
 
 const Layout = ({
@@ -7,6 +10,25 @@ const Layout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const { userRole } = useSession(
+    useShallow((state) => ({
+      userRole: state.userRole,
+    })),
+  );
+  const router = useRouter();
+
+  if (!userRole) {
+    router.push("/");
+    return;
+  }
+  if (userRole === "rider") {
+    router.push("/rider-db");
+    return;
+  }
+  if (userRole === "admin") {
+    router.push("/admin");
+    return;
+  }
   return (
     // <AuthProvider>
     <section className='w-screen min-h-screen flex flex-col bg-background-1'>

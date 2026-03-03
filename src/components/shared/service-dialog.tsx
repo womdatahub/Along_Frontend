@@ -54,10 +54,10 @@ export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
                       <button
                         key={item.state}
                         onClick={() => {
-                          if (item.state === "scheduled") {
-                            router.push("/schedule-ride");
-                            return;
-                          }
+                          // if (item.state === "scheduled") {
+                          //   router.push("/schedule-ride");
+                          //   return;
+                          // }
                           router.push(`?service=${item.state.toLowerCase()}`);
                         }}
                         className={cn(
@@ -151,13 +151,19 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
           </div>
           <div className='flex flex-col gap-1'>
             {rideRental.map((r) => {
-              const title = r.title.toLowerCase().replace(/\s+/g, "-");
+              const title =
+                r.title.toLowerCase().replace(/\s+/g, "-") ??
+                "rent-instant-ride";
               return (
                 <Dialog key={r.title}>
                   <DialogTrigger asChild>
                     <Button
                       onClick={() => {
-                        router.push(`?service=${service}&rentalType=${title}`);
+                        router.push(
+                          `?service=${service}&rentalType=${
+                            title ?? "rent-instant-ride"
+                          }`,
+                        );
                       }}
                       key={r.title}
                       className={cn(

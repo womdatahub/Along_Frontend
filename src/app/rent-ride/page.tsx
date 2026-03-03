@@ -105,20 +105,14 @@ const RentRide = () => {
     autoCompleteAddress?.latitude,
   ]);
 
-  useEffect(() => {
-    if (
-      !selectedHours ||
-      !selectedHoursLength ||
-      !selectedMins ||
-      !selectAmOrPm
-    ) {
-    }
-    router.push(
-      `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver}&isLater=${isLater}`,
-    );
+  // useEffect(() => {
+  //   if (!selectedDriver) return;
+  //   router.push(
+  //     `/rent-ride?vehicleType=${vehicleType}&selectedDriver=${selectedDriver}&isLater=${isLater}`,
+  //   );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
 
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
