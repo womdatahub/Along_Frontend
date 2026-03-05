@@ -1,0 +1,563 @@
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+
+import type {
+  AdminProfile,
+  DriverProfile,
+  ImageType,
+  RiderProfile,
+  UserProfile,
+} from "@/types";
+import { callApi, userApiStr } from "@/lib";
+import { toast } from "sonner";
+import { useRadarMap } from "./use-radar-map";
+import { useRental } from "./use-rental";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type RegisterDriverResponse = {
+  userRole: string;
+  stripeAccount: {
+    driverId: string;
+    accountId: string;
+    chargesEnabled: boolean;
+    payoutsEnabled: boolean;
+    detailsSubmitted: boolean;
+    accountLink: string;
+    linkExpiresAt: string;
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+  };
+};
+
+type SessionActions = {
+  setIsFetchingUserSessionLoading: (val: boolean) => void;
+  setRouteBeforeRedirect: (route: string) => void;
+  uploadImages: (data: {
+    uploadType: "profile" | "vehicle" | "verification_document";
+    imageFile: ImageType["imageFile"];
+  }) => Promise<string>;
+  setServices: (services: string[]) => void;
+  registerUser: (data: {
+    email: string;
+    password: string;
+    mobileNumber: string;
+    type: "email" | "phone";
+  }) => Promise<boolean>;
+  verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
+  login: (data: { email: string; password: string }) => Promise<string>;
+  logOut: () => Promise<void>;
+  verifyOtp: () => Promise<void>;
+  resendVerificationOTP: (data: { email: string }) => Promise<void>;
+  registerDriver: (data: {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: "male" | "female" | "other";
+    firstEmergencyContact: string;
+    secondEmergencyContact: string;
+  }) => Promise<boolean>;
+  addVerificationDocumentsAndServices: (data: {
+    driverSocialSecurityNumber: string;
+    driverProfilePictureUri: string;
+    driverLincenseFrontViewUri: string;
+    driverLincenseBackViewUri: string;
+    advancedVerificationUri: string;
+  }) => Promise<boolean>;
+  registerVehicle: (data: {
+    vehicleMake: string;
+    vehicleIdentificationNumber: string;
+    vehicleYear: string;
+    vehicleModel: string;
+    vehicleColor: string;
+    vehicleFrontViewImageUri: string;
+    vehicleBackViewImageUri: string;
+    vehicleSideViewImageUri: string;
+    insuranceDocumentUri: string;
+  }) => Promise<boolean>;
+  registerRider: (data: {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: "male" | "female";
+    mobileNumber: string;
+  }) => Promise<boolean>;
+  registerBankAccount: (data: {
+    bankName: string;
+    routingNumber: string;
+    accountNumber: string;
+  }) => Promise<void>;
+  updateDriverDetails: (data: {
+    firstname: string;
+    lastname: string;
+    mobileNumber: string;
+    gender: "male" | "female";
+  }) => Promise<void>;
+  updateRiderDetails: (data: {
+    firstname: string;
+    lastname: string;
+    dateOfBirth: string;
+    gender: "male" | "female";
+    profilePicture: string;
+  }) => Promise<void>;
+  createRideProfile: (data: {
+    currentLocation: string;
+    longitude: number;
+    latitude: number;
+    ratePerHour: number;
+    luggageCapacity: number;
+    passangerCapacity: number;
+    allowPets: boolean;
+  }) => Promise<void>;
+  fetchUserDetails: (
+    shouldToast?: boolean,
+    shouldReload?: boolean,
+  ) => Promise<void>;
+  fetchVehicleViaClass: (vehicleClass: string) => Promise<void>;
+  fetchVehicleViaDriverID: (driverID: string) => Promise<void>;
+  fetchVehicleID: (vehicleID: string) => Promise<void>;
+};
+
+type Session = {
+  registeredDriverResponseWithStripeDetails: RegisterDriverResponse | null;
+  userRole: string;
+  riderProfile: RiderProfile | undefined;
+  driverProfile: DriverProfile | undefined;
+  adminProfile: AdminProfile | undefined;
+  userProfile: UserProfile | undefined;
+  isFetchingUserSessionLoading: boolean;
+  isLoading: boolean;
+  isResendingVerificationOTP: boolean;
+  services: string[];
+  routeBeforeRedirect: string;
+  actions: SessionActions;
+};
+
+// ─── Initial State ───────────────────────────────────────────────────────────
+
+const initialState = {
+  userRole: "",
+  isFetchingUserSessionLoading: true,
+  isLoading: false,
+  isResendingVerificationOTP: false,
+  services: [] as string[],
+  routeBeforeRedirect: "",
+  riderProfile: undefined,
+  driverProfile: undefined,
+  adminProfile: undefined,
+  userProfile: undefined,
+  registeredDriverResponseWithStripeDetails: null,
+};
+
+// ─── Store ───────────────────────────────────────────────────────────────────
+
+export const useSession = create<Session>()(
+  devtools((set, get) => ({
+    ...initialState,
+
+    actions: {
+      setIsFetchingUserSessionLoading: (val) => {
+        set({ isFetchingUserSessionLoading: val });
+      },
+
+      setRouteBeforeRedirect: (route) => {
+        set({ routeBeforeRedirect: route });
+      },
+
+      setServices: (services) => {
+        set({ services });
+      },
+
+      // ── Image upload ────────────────────────────────────────────────────
+
+      uploadImages: async (d) => {
+        if (!d.imageFile) throw new Error("Image file is required");
+
+        set({ isLoading: true });
+
+        const formData = new FormData();
+        formData.append("uploadType", d.uploadType);
+        formData.append("image", d.imageFile as Blob);
+
+        try {
+          const { data, error } = await callApi<{ url: string }>(
+            userApiStr("/user/upload"),
+            formData,
+          );
+
+          if (error) {
+            toast.error(error.message ?? "Failed to upload image");
+            return "";
+          }
+
+          return data?.data.url ?? "";
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      // ── Auth: login / register / logout ─────────────────────────────────
+
+      login: async (loginData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi<{ userRole: string }>(
+            userApiStr("/user/login"),
+            loginData,
+          );
+
+          if (error) {
+            toast.error(error.message);
+            set({ userRole: "" });
+            return "";
+          }
+
+          if (data) {
+            await get().actions.fetchUserDetails(false);
+            set({ userRole: data.data.userRole });
+          }
+
+          return data?.data.userRole ?? "";
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      logOut: async () => {
+        set({ isLoading: true });
+
+        const { data, error } = await callApi(userApiStr("/user/logout"), {});
+
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+          return;
+        }
+
+        if (data) {
+          // Clear persisted state from related stores
+          await useRadarMap.persist.clearStorage();
+          await useRental.persist.clearStorage();
+
+          set({ ...initialState, isFetchingUserSessionLoading: false });
+        }
+      },
+
+      registerUser: async (registerUserData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi(
+            userApiStr("/user/register"),
+            registerUserData,
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+
+          if (data) toast.success(data.message);
+          return true;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      // ── Email & OTP verification ────────────────────────────────────────
+
+      verifyEmail: async (verifyEmailData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi(
+            userApiStr("/user/verify-email"),
+            verifyEmailData,
+            "PATCH",
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+
+          if (data) {
+            await get().actions.fetchUserDetails();
+            toast.success(data.message ?? "OTP verified successfully");
+          }
+
+          return true;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      verifyOtp: async () => {
+        const { data, error } = await callApi(
+          userApiStr("/user/verify-otp"),
+          {},
+        );
+
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+
+        if (data) await get().actions.fetchUserDetails();
+      },
+
+      resendVerificationOTP: async (resendData) => {
+        set({ isResendingVerificationOTP: true });
+
+        try {
+          const { data, error } = await callApi(
+            userApiStr("/user/resend-verification-otp"),
+            resendData,
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+
+          if (data) toast.success(data.message);
+        } finally {
+          set({ isResendingVerificationOTP: false });
+        }
+      },
+
+      // ── Driver onboarding ───────────────────────────────────────────────
+
+      registerDriver: async (registerDriverData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi<RegisterDriverResponse>(
+            userApiStr("/user/driver"),
+            registerDriverData,
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+
+          if (data) {
+            set({ registeredDriverResponseWithStripeDetails: data.data });
+            await get().actions.fetchUserDetails(false, false);
+          }
+
+          return true;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      addVerificationDocumentsAndServices: async (docData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi(
+            userApiStr("/user/documents-services"),
+            { ...docData, services: get().services },
+            "PATCH",
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+
+          if (data) {
+            await get().actions.fetchUserDetails(false, false);
+            toast.success("Documents and services added successfully");
+          }
+
+          return true;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      registerVehicle: async (vehicleData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi(
+            userApiStr("/user/vehicle"),
+            vehicleData,
+            "PATCH",
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+
+          if (data) {
+            await get().actions.fetchUserDetails(false, false);
+            toast.success("Vehicle information added successfully");
+          }
+
+          return true;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      // ── Rider onboarding ───────────────────────────────────────────────
+
+      registerRider: async (riderData) => {
+        set({ isLoading: true });
+
+        try {
+          const { data, error } = await callApi(
+            userApiStr("/user/rider"),
+            riderData,
+          );
+
+          if (error) {
+            toast.error(error.message);
+            return false;
+          }
+
+          if (data) {
+            toast.success(data.message);
+            await get().actions.fetchUserDetails(false, false);
+          }
+
+          set({ userRole: "rider" });
+          return true;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      // ── Bank account ───────────────────────────────────────────────────
+
+      registerBankAccount: async (bankData) => {
+        const { error } = await callApi(
+          "/user/api/v1/user/bank-details",
+          bankData,
+        );
+
+        if (error) toast.error(error.message);
+      },
+
+      // ── Profile updates ────────────────────────────────────────────────
+
+      updateDriverDetails: async (updateData) => {
+        const { error } = await callApi(
+          userApiStr("/user/driver"),
+          updateData,
+          "PATCH",
+        );
+
+        if (error) toast.error(error.message);
+      },
+
+      updateRiderDetails: async (updateData) => {
+        const { error } = await callApi(
+          userApiStr("/user/rider"),
+          updateData,
+          "PATCH",
+        );
+
+        if (error) toast.error(error.message);
+      },
+
+      // ── Ride profile ───────────────────────────────────────────────────
+
+      createRideProfile: async (profileData) => {
+        const { data, error } = await callApi(
+          userApiStr("/user/driver/profile/create"),
+          profileData,
+          "PATCH",
+        );
+
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+
+        if (data) toast.success(data.message);
+      },
+
+      // ── Session hydration ──────────────────────────────────────────────
+
+      /** Fetches the current user's profile and sets role + profile state */
+      fetchUserDetails: async (shouldToast, shouldReload = true) => {
+        if (shouldReload) set({ isFetchingUserSessionLoading: true });
+
+        const { data, error } = await callApi<
+          RiderProfile | DriverProfile | AdminProfile | UserProfile
+        >(userApiStr("/user/profile"));
+
+        if (error) {
+          set({ userRole: "", isFetchingUserSessionLoading: false });
+          if (shouldToast) toast.error(error.message);
+          return;
+        }
+
+        if (!data) return;
+        if (shouldToast) toast.success(data.message);
+
+        // Map the API role to the correct profile field
+        const role = data.data.role;
+        const baseUpdate = { userRole: role, isFetchingUserSessionLoading: false };
+
+        switch (role) {
+          case "admin":
+            set({ ...baseUpdate, adminProfile: data.data as AdminProfile });
+            break;
+          case "rider":
+            set({ ...baseUpdate, riderProfile: data.data as RiderProfile });
+            break;
+          case "driver":
+            set({ ...baseUpdate, driverProfile: data.data as DriverProfile });
+            break;
+          case "user":
+            set({ ...baseUpdate, userProfile: data.data as UserProfile });
+            break;
+          default:
+            // Unknown role — clear all profiles
+            set({
+              userProfile: undefined,
+              driverProfile: undefined,
+              adminProfile: undefined,
+              riderProfile: undefined,
+              isFetchingUserSessionLoading: false,
+            });
+        }
+      },
+
+      // ── Vehicle lookups ────────────────────────────────────────────────
+
+      fetchVehicleViaClass: async (vehicleClass) => {
+        const { error } = await callApi(
+          userApiStr(`/vehicle/class?vehicleClass=${vehicleClass}`),
+        );
+
+        if (error) toast.error(error.message);
+      },
+
+      fetchVehicleViaDriverID: async (driverID) => {
+        const { error } = await callApi(
+          userApiStr(`/vehicle/driver/${driverID}`),
+        );
+
+        if (error) toast.error(error.message);
+      },
+
+      fetchVehicleID: async (vehicleID) => {
+        const { error } = await callApi(
+          userApiStr(`/vehicle/${vehicleID}`),
+        );
+
+        if (error) toast.error(error.message);
+      },
+    },
+  })),
+);
