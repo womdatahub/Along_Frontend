@@ -307,6 +307,8 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
+          console.log("Data from register driver: ")
+          console.log(data)
           set({
             isLoading: false,
             registeredDriverResponseWithStripeDetails: data.data,
