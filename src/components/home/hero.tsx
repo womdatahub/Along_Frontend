@@ -3,23 +3,13 @@ import { LocationIcon } from "@public/svgs";
 import {
   Button,
   CompleteHeroServiceDialog,
-  // Dialog,
-  // DialogContent,
-  // DialogTitle,
-  // DialogTrigger,
-  // HeadingHeebo,
   RadarAutocomplete,
-  // ServiceDialog,
-  // radarAutocompleteManual,
 } from "@/components";
-import { Suspense } from "react";
-// import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-// import Image from "next/image";
-// import { useRouter, useSearchParams } from "next/navigation";
-// import { cn } from "@/lib";
-import { useRadarMap, useSession } from "@/store";
+import { Suspense, useState, useEffect } from "react";
+import { useRadarMap } from "@/store";
 import { useShallow } from "zustand/shallow";
-// import { modalItems, nonModalItems } from "@/lib";
+
+const HERO_IMAGE = "/images/hero-1.png";
 
 export const Hero = () => {
   return (
@@ -28,14 +18,19 @@ export const Hero = () => {
     </Suspense>
   );
 };
+
 const Page = () => {
-  // const [destination, setDestination] = useState<string>("");
-  // console.log(destination);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  // const searchParams = useSearchParams();
-  // const router = useRouter();
+  // Preload the hero image so the section never disappears while waiting
+  useEffect(() => {
+    const img = new Image();
+    img.src = HERO_IMAGE;
+    img.onload = () => setIsImageLoaded(true);
 
-  // const service = searchParams.get("service");
+    // If image is already cached, onload fires synchronously
+    if (img.complete) setIsImageLoaded(true);
+  }, []);
 
   const {
     autoCompleteAddress,
@@ -47,19 +42,15 @@ const Page = () => {
     })),
   );
 
-  const {
-    // userRole
-  } = useSession(
-    useShallow((state) => ({
-      userRole: state.userRole,
-    })),
-  );
-
   return (
     <div className='pt-16 w-screen'>
       <section
-        className='relative h-[90vh] flex items-end bg-cover bg-center pb-20'
-        style={{ backgroundImage: "url('/images/hero-1.png')" }}
+        className='relative h-[90vh] flex items-end bg-cover bg-center pb-20 transition-opacity duration-700'
+        style={{
+          backgroundColor: "#1a1a2e",
+          backgroundImage: isImageLoaded ? `url('${HERO_IMAGE}')` : "none",
+          opacity: isImageLoaded ? 1 : 0.85,
+        }}
       >
         <div className='absolute inset-0 bg-black/40' />
         <div className='flex flex-col  justify-center gap-6 md:gap-16 px-4 md:px-0 max-w-7xl mx-auto text-center w-full mt-24'>
@@ -88,16 +79,6 @@ const Page = () => {
                       `${autoCompleteAddress?.formattedAddress}`
                     }
                   />
-                  {/* <input
-                    name='destination'
-                    type='text'
-                    placeholder='Enter your destination'
-                    value={destination}
-                    onChange={(e) => {
-                      setDestination(e.target.value);
-                      radarAutocompleteManual(e.target.value);
-                    }}
-                  /> */}
                 </div>
               </div>
 
@@ -108,107 +89,6 @@ const Page = () => {
                   </Button>
                 }
               />
-              {/* <Dialog>
-                <DialogTrigger
-                  asChild
-                  disabled={autoCompleteAddress === undefined}
-                >
-                  <Button className='bg-primary px-6 md:px-6 py-4 md:py-6 w-fit h-full rounded-l-none md:w-40 text-white text-base md:text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
-                    Go
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  className='sm:max-w-[425px] p-0 bg-background-1'
-                  showCloseButton={false}
-                >
-                  <VisuallyHidden>
-                    <DialogTitle>
-                      Please select a service (s) you are interested in
-                    </DialogTitle>
-                  </VisuallyHidden>
-                  <div className='flex flex-col gap-10 rounded-[20px] px-8 py-10 text-black'>
-                    <div className='flex flex-col gap-2'>
-                      <HeadingHeebo>Offered services</HeadingHeebo>
-                      <p className='text-center text-sm'>
-                        Please select a service (s) you are interested in
-                      </p>
-                    </div>
-                    <div className='flex flex-col gap-4'>
-                      <div className='flex flex-col gap-1'>
-                        {modalItems.map((item, i) => {
-                          return (
-                            <ServiceDialog
-                              key={i}
-                              trigger={
-                                <button
-                                  key={item.state}
-                                  onClick={() => {
-                                    if (item.state === "scheduled") {
-                                      router.push("/schedule-ride");
-                                      return;
-                                    }
-                                    router.push(
-                                      `?service=${item.state.toLowerCase()}`
-                                    );
-                                  }}
-                                  className={cn(
-                                    "flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
-                                    service === item.state &&
-                                      "bg-primary/70 text-white"
-                                  )}
-                                >
-                                  <div className='flex gap-4 items-center'>
-                                    <Image
-                                      src={item.img}
-                                      alt={item.state}
-                                      width={40}
-                                      height={40}
-                                    />
-                                    <p className='font-medium text-xs'>
-                                      {item.title}
-                                    </p>
-                                  </div>
-                                </button>
-                              }
-                            />
-                          );
-                        })}
-                        {nonModalItems.map((item) => {
-                          return (
-                            <button
-                              key={item.state}
-                              disabled={item.disabled}
-                              onClick={() => {
-                                if (item.state === "scheduled") {
-                                  router.push("/schedule-ride");
-                                  return;
-                                }
-                              }}
-                              className={cn(
-                                "disabled:cursor-not-allowed flex gap-4 justify-between items-center px-4 py-7 hover:bg-primary/70 hover:text-white bg-white cursor-pointer transition-colors duration-500 rounded-2xl",
-                                service === item.state &&
-                                  "bg-primary/70 text-white"
-                              )}
-                            >
-                              <div className='flex gap-4 items-center'>
-                                <Image
-                                  src={item.img}
-                                  alt={item.state}
-                                  width={40}
-                                  height={40}
-                                />
-                                <p className='font-medium text-xs'>
-                                  {item.title}
-                                </p>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog> */}
             </div>
           </div>
         </div>

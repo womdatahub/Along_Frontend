@@ -108,6 +108,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           router.replace(redirect);
           return;
         }
+
+        // Profile is fully complete — if still on an onboarding page, go to dashboard
+        if (pathname.startsWith("/onboarding")) {
+          router.replace(ROLE_DASHBOARD_MAP.driver);
+          return;
+        }
       }
 
       // Rider onboarding check (only on non-public routes)

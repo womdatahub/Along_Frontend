@@ -77,7 +77,7 @@ const Page = () => {
               onClick={() =>
                 setServices(
                   servicesItems
-                    .filter((service) => service.isComingSoon)
+                    .filter((service) => !service.isComingSoon)
                     .map((service) => service.state),
                 )
               }
