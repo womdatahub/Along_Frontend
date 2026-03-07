@@ -47,3 +47,30 @@ export const nonModalItems = [
     disabled: true,
   },
 ];
+
+// Routes accessible to everyone (logged-in or not)
+export const PUBLIC_ROUTES = [
+  "/",
+  "/about",
+  "/onboarding",
+  "/onboarding/driver-info",
+  "/onboarding/services",
+  "/onboarding/documents",
+  "/onboarding/vehicle-info",
+] as const;
+
+// Routes that authenticated users should be redirected away from
+export const AUTH_ONLY_ROUTES = [
+  "/sign-in",
+  "/onboarding/otp",
+  "/onboarding/rider",
+  "/onboarding/user-type",
+  "/onboarding/terms",
+] as const;
+
+// Dashboard landing pages per role
+export const ROLE_DASHBOARD_MAP: Record<string, string> = {
+  driver: "/driver-db",
+  rider: "/rider-db",
+  admin: "/admin",
+};

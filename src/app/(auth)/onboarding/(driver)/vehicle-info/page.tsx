@@ -8,9 +8,9 @@ import {
 import { HeadingHeebo } from "@/components";
 import { UploadingImagesReusableComponent } from "@/components/shared/uploading-images-reusable-component";
 import {
-  ROLE_DASHBOARD_MAP,
   TVehicleRegistrationSchemaValidator,
   vehicleRegistrationSchema,
+  ROLE_DASHBOARD_MAP,
 } from "@/lib";
 import { useSession } from "@/store";
 import { ImageType } from "@/types";
@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
 const Page = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [previews, setPreviews] = useState<
     ({ image: ImageType; uri: string } | null)[]
   >([null, null, null, null]);
@@ -98,7 +98,7 @@ const Page = () => {
         const url =
           registeredDriverResponseWithStripeDetails?.stripeAccount
             .accountLink ?? "";
-        console.log(url, "stripe url link")
+        console.log(url, "stripe url link");
 
         if (!url) {
           router.replace(ROLE_DASHBOARD_MAP.driver);
@@ -109,7 +109,6 @@ const Page = () => {
           window.location.assign(url);
         }
       }, 3000); // this will redirect them to set up their account on stripe.
-
     } catch {
       toast.error("Image uploads failed!");
     }
