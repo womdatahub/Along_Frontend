@@ -40,7 +40,12 @@ const Page = () => {
   const {
     autoCompleteAddress,
     actions: { setAutoCompleteAddress },
-  } = useRadarMap((state) => state);
+  } = useRadarMap(
+    useShallow((state) => ({
+      autoCompleteAddress: state.autoCompleteAddress,
+      actions: state.actions,
+    })),
+  );
 
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
@@ -90,7 +95,10 @@ const Page = () => {
                 <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-[270px] pt-4'>
                   <div className='flex flex-col gap-4 px-4 pb-4'>
                     <div className='flex gap-3 items-center'>
-                      <div className='rounded-full size-8 bg-green-200' />
+                      <NameAvatar
+                        value={`${riderProfile?.firstName[0] ?? ""}${riderProfile?.lastName[0] ?? ""}`}
+                        className='size-8 text-sm'
+                      />
                       <p className='font-semibold text-base'>
                         {riderProfile?.firstName} {riderProfile?.lastName}
                       </p>
