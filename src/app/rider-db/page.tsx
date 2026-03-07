@@ -125,8 +125,8 @@ const Page = () => {
         <div className='flex gap-10 items-stretch h-[calc(100vh-200px)]'>
           <div className='flex flex-col gap-10 border-r border-r-gray-5 pr-10 mb-32 w-fit whitespace-nowrap'>
             <Link href={"/rent-ride"}>Rent a car</Link>
-            <Link href={"/schedule-ride"}>Schedule a ride</Link>
-            <Link href={"/onboarding"}>Drive</Link>
+            <Link href={"#"}>Schedule a ride</Link>
+            {/* <Link href={"/onboarding"}>Drive</Link> */}
           </div>
           <div className='flex flex-col gap-20 overflow-y-auto mb-32'>
             <div className='flex flex-col gap-4 w-full md:max-w-1/3 '>

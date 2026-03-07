@@ -68,7 +68,7 @@ export const Navbar = () => {
           {userRole && userRole !== "driver" && (
             <Link href='/rent-ride'>Ride</Link>
           )}
-          {userRole && userRole !== "driver" && (
+          {userRole && userRole !== "driver" && userRole !== "rider" && (
             <Link href='/onboarding'>Drive</Link>
           )}
           <Link href='#'>Help</Link>
@@ -118,7 +118,7 @@ export const Navbar = () => {
                 <Link href='/rent-ride'>Ride</Link>
               </li>
             )}
-            {userRole && userRole !== "driver" && (
+            {userRole && userRole !== "driver" && userRole !== "rider" && (
               <li onClick={() => setMenuOpen(false)}>
                 <Link href='/onboarding'>Drive</Link>
               </li>

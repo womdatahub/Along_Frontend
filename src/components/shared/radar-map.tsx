@@ -15,7 +15,7 @@ type RadarMapProps = {
   dropName?: string;
 };
 const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
-  console.log(pickup, "pickup");
+  // console.log(pickup, "pickup");
 
   useEffect(() => {
     Radar.initialize(publishableKey);
@@ -29,12 +29,15 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
 
     if (pickup) {
       Radar.ui
-        .marker({ text: pickupName || "Pickup" })
+        .marker({
+          text: pickupName || "Pickup",
+          color: "red",
+        })
         .setLngLat(pickup)
         .addTo(map);
       if (drop) {
         Radar.ui
-          .marker({ text: dropName || "Drop" })
+          .marker({ text: dropName || "Drop", color: "green" })
           .setLngLat(drop)
           .addTo(map);
         map.on("load", async () => {
