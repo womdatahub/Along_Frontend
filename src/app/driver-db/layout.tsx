@@ -1,5 +1,6 @@
 "use client";
 import { Navbar } from "@/components";
+import { ROLE_DASHBOARD_MAP } from "@/lib";
 import { useSession } from "@/store";
 import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/shallow";
@@ -21,14 +22,11 @@ const Layout = ({
     router.push("/");
     return;
   }
-  if (userRole === "rider") {
-    router.push("/rider-db");
+  if (userRole === "rider" || userRole === "admin") {
+    router.push(ROLE_DASHBOARD_MAP[userRole]);
     return;
   }
-  if (userRole === "admin") {
-    router.push("/admin");
-    return;
-  }
+
   return (
     // <AuthProvider>
     <section className='w-screen min-h-screen flex flex-col bg-background-1'>

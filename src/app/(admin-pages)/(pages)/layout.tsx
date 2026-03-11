@@ -7,7 +7,7 @@ import {
 } from "@public/svgs";
 // import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/store";
 import { useShallow } from "zustand/shallow";
 import {
@@ -16,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components";
+import { ROLE_DASHBOARD_MAP } from "@/lib";
 
 export default function AdminDashboardLayout({
   children,
@@ -33,10 +34,21 @@ export default function AdminDashboardLayout({
     })),
   );
 
-  // function showMenu() {
-  //   const menu = document.getElementById("admin-profile-menu");
-  //   menu?.classList.toggle("hidden");
-  // }
+  const { userRole } = useSession(
+    useShallow((state) => ({
+      userRole: state.userRole,
+    })),
+  );
+  const router = useRouter();
+
+  if (!userRole) {
+    router.push("/");
+    return;
+  }
+  if (userRole === "rider" || userRole === "driver") {
+    router.push(ROLE_DASHBOARD_MAP[userRole]);
+    return;
+  }
 
   async function logoutUser() {
     await logOut();

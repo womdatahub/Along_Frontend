@@ -1,5 +1,6 @@
 "use client";
 import { Navbar } from "@/components";
+import { ROLE_DASHBOARD_MAP } from "@/lib";
 import { useSession } from "@/store";
 import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/shallow";
@@ -21,12 +22,8 @@ const Layout = ({
     router.push("/");
     return;
   }
-  if (userRole === "driver") {
-    router.push("/driver-db");
-    return;
-  }
-  if (userRole === "admin") {
-    router.push("/admin");
+  if (userRole === "driver" || userRole === "admin") {
+    router.push(ROLE_DASHBOARD_MAP[userRole]);
     return;
   }
   return (
