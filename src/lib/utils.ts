@@ -23,6 +23,7 @@ export enum ApiBase {
   RENTAL = "rental",
   MATCH = "match",
   PAYMENT = "payment",
+  ADMIN = "admin",
 }
 
 type Queries = {
@@ -44,3 +45,5 @@ export const matchingApiStr = (value: string, queries?: Queries) =>
   apiStr(ApiBase.MATCH, value + generateQueries(queries));
 export const paymentApiStr = (value: string, queries?: Queries) =>
   apiStr(ApiBase.PAYMENT, value + generateQueries(queries));
+export const adminApiStr = (value: string, queries?: Queries) =>
+  apiStr(ApiBase.ADMIN, value + generateQueries(queries));

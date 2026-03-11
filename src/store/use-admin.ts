@@ -1,17 +1,23 @@
 import { create } from "zustand";
 import type { SelectorFn } from "@/types";
 import { devtools, persist } from "zustand/middleware";
-import { callApi, paymentApiStr, TMarketPlaceSchema } from "@/lib";
+import { adminApiStr, callApi, paymentApiStr, TMarketPlaceSchema } from "@/lib";
 import { toast } from "sonner";
 
 type AdminType = {
+  isCreatingCostSetting: boolean;
   actions: {
-    createRideCostSettings: (costSettings: TMarketPlaceSchema) => Promise<void>;
+    createRideCostSettings: (
+      costSettings: TMarketPlaceSchema,
+    ) => Promise<boolean>;
     getRideCostSettings: () => Promise<void>;
+    updateRideCost: (
+      costSettings: Partial<TMarketPlaceSchema>,
+    ) => Promise<void>;
   };
 };
 
-const initialState = {};
+const initialState = { isCreatingCostSetting: false };
 
 export const useAdmin = create<AdminType>()(
   devtools(
@@ -20,15 +26,58 @@ export const useAdmin = create<AdminType>()(
         ...initialState,
         actions: {
           createRideCostSettings: async (costSettings) => {
+            const {
+              baseFare,
+              baseHagglePercentage,
+              driverToRiderFee,
+              maxHagglePercentage,
+              platformFeePercentage,
+              waitingChargePerMinute,
+              taxPercentage,
+              surgeMultiplier,
+              ...rest
+            } = costSettings;
+            set({ isCreatingCostSetting: true });
             const { data, error } = await callApi(
-              paymentApiStr("/cost/settings"),
-              costSettings,
+              adminApiStr("/cost-settings/ride"),
+              {
+                ...rest,
+                baseFare: Number(baseFare),
+                baseHagglePercentage: Number(baseHagglePercentage),
+                driverToRiderFee: Number(driverToRiderFee),
+                maxHagglePercentage: Number(maxHagglePercentage),
+                platformFeePercentage: Number(platformFeePercentage),
+                waitingChargePerMinute: Number(waitingChargePerMinute),
+                taxPercentage: Number(taxPercentage),
+                surgeMultiplier: Number(surgeMultiplier),
+              },
             );
             if (error) {
-              toast.error(error.message);
+              console.log(error);
+              toast.error(error.message ?? "Something went wrong");
+              set({ isCreatingCostSetting: false });
+              return false;
+            }
+            if (data) {
+              console.log(data);
+              set({ isCreatingCostSetting: false });
+              toast.success(
+                data.message ?? "Cost settings created successfully",
+              );
+            }
+            return true;
+          },
+          updateRideCost: async (costSetting) => {
+            const { data, error } = await callApi(
+              adminApiStr("/cost-settings/ride"),
+              costSetting,
+            );
+            if (error) {
+              toast.error(error.message ?? "Something went wrong");
               return;
             }
             if (data) {
+              console.log(data);
               toast.success(
                 data.message ?? "Cost settings created successfully",
               );
@@ -36,7 +85,7 @@ export const useAdmin = create<AdminType>()(
           },
           getRideCostSettings: async () => {
             const { data, error } = await callApi(
-              paymentApiStr("/cost/settings"),
+              paymentApiStr("/cost-settings/ride"),
             );
             if (error) {
               toast.error(error.message);

@@ -3,6 +3,7 @@
 import {
   AddInput,
   Button,
+  ButtonWithLoader,
   Card,
   CardContent,
   Dialog,
@@ -232,6 +233,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
     setValue,
     watch,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<TMarketPlaceSchema>({
     defaultValues,
@@ -241,11 +243,19 @@ const AddOrEditNewFareEngineProfileComponent = ({
 
   const {
     actions: { createRideCostSettings },
-  } = useAdmin(useShallow((state) => ({ actions: state.actions })));
+    isCreatingCostSetting,
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+      isCreatingCostSetting: state.isCreatingCostSetting,
+    })),
+  );
 
   const onSubmit = async (data: TMarketPlaceSchema) => {
-    console.log(data);
-    await createRideCostSettings(data);
+    const success = await createRideCostSettings(data);
+    if (!success) return;
+    setOpen(false);
+    reset();
   };
 
   return (
@@ -405,7 +415,15 @@ const AddOrEditNewFareEngineProfileComponent = ({
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
             />
           </div>
-          <Button
+          <ButtonWithLoader
+            text={isEdit ? "Edit" : "Save"}
+            isLoading={isCreatingCostSetting}
+            onClick={() => {
+              handleSubmit(onSubmit)();
+            }}
+            className='px-14'
+          />
+          {/* <Button
             onClick={() => {
               console.log("click");
               handleSubmit(createRideCostSettings)();
@@ -413,7 +431,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             className='px-14'
           >
             {isEdit ? "Edit" : "Save"}
-          </Button>
+          </Button> */}
         </div>
       </DialogContent>
     </Dialog>

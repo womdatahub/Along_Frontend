@@ -7,9 +7,13 @@ type Props = {
   className?: string;
 };
 export const BtnLoader = ({ isLoading, children, className }: Props) => {
-  return isLoading ? (
-    <Loader2Icon className={cn("animate-spin", className)} />
-  ) : (
-    children
+  return (
+    <div className='flex gap-4 justify-center items-center'>
+      {children}
+      {isLoading && <Loader2Icon className={cn("animate-spin", className)} />}
+    </div>
   );
+  // ) : (
+  //   children
+  // );
 };
