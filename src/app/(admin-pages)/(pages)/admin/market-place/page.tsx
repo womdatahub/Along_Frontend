@@ -25,6 +25,8 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { TMarketPlaceSchema, marketPlaceSchema } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useAdmin } from "@/store";
+import { useShallow } from "zustand/shallow";
 
 const isEmpty = true;
 const Page = () => {
@@ -229,13 +231,22 @@ const AddOrEditNewFareEngineProfileComponent = ({
     register,
     setValue,
     watch,
-    // handleSubmit,
+    handleSubmit,
     formState: { errors },
   } = useForm<TMarketPlaceSchema>({
     defaultValues,
     resolver: zodResolver(marketPlaceSchema),
   });
-  const currency = watch("currency");
+  const currency = watch("currency") ?? "";
+
+  const {
+    actions: { createRideCostSettings },
+  } = useAdmin(useShallow((state) => ({ actions: state.actions })));
+
+  const onSubmit = async (data: TMarketPlaceSchema) => {
+    console.log(data);
+    await createRideCostSettings(data);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -255,7 +266,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
           </p>
           <AddInput
             label='Profile name'
-            id='profileName'
+            id='title'
             errors={errors}
             placeholder='Rush Hour 22'
             register={register}
@@ -309,7 +320,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             />
             <AddInput
               label='Wait charge/min'
-              id='waitChargePerMin'
+              id='waitingChargePerMinute'
               errors={errors}
               placeholder='0'
               register={register}
@@ -323,7 +334,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             />
             <AddInput
               label='Tax %'
-              id='tax'
+              id='taxPercentage'
               errors={errors}
               placeholder='0'
               register={register}
@@ -339,7 +350,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
           <div className='flex gap-4'>
             <AddInput
               label='Base Haggle %'
-              id='baseHaggle'
+              id='baseHagglePercentage'
               errors={errors}
               placeholder='0'
               register={register}
@@ -353,7 +364,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             />
             <AddInput
               label='Max Haggle %'
-              id='maxHaggle'
+              id='maxHagglePercentage'
               errors={errors}
               placeholder='0'
               register={register}
@@ -367,7 +378,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             />
             <AddInput
               label='Platform fee'
-              id='platformFee'
+              id='platformFeePercentage'
               errors={errors}
               placeholder='0'
               register={register}
@@ -394,7 +405,15 @@ const AddOrEditNewFareEngineProfileComponent = ({
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
             />
           </div>
-          <Button className='px-14'>{isEdit ? "Edit" : "Save"}</Button>
+          <Button
+            onClick={() => {
+              console.log("click");
+              handleSubmit(createRideCostSettings)();
+            }}
+            className='px-14'
+          >
+            {isEdit ? "Edit" : "Save"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

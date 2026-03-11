@@ -1,6 +1,8 @@
 import * as z from "zod";
 
 export const marketPlaceSchema = z.object({
+  title: z.string({ message: "Cost settings title is required." }),
+  isActive: z.boolean().default(false).optional(),
   baseFare: z
     .string()
     .min(1, "Base Fare is required!")
@@ -9,31 +11,30 @@ export const marketPlaceSchema = z.object({
     .string()
     .min(1, "Driver to rider fee is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
-  waitChargePerMin: z
+  waitingChargePerMinute: z
     .string()
     .min(1, "Wait charge per min is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
-  tax: z
+  taxPercentage: z
     .string()
-    .min(1, "Tax is required!")
+    .min(1, "Tax percentage is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
-  baseHaggle: z
+  baseHagglePercentage: z
     .string()
-    .min(1, "Base Haggle is required!")
+    .min(1, "Base Haggle percentage is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
-  maxHaggle: z
+  maxHagglePercentage: z
     .string()
-    .min(1, "Max Haggle is required!")
+    .min(1, "Max Haggle percentage is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
-  platformFee: z
+  platformFeePercentage: z
     .string()
-    .min(1, "Platform fee is required!")
+    .min(1, "Platform fee percentage is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
   surgeMultiplier: z
     .string()
     .min(1, "Surge multiplier is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
-  profileName: z.string().min(1, "Profile name is required!"),
   currency: z.string().min(1, "Currency is required!"),
 });
 
