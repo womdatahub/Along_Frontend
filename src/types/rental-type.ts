@@ -1,51 +1,3 @@
-export type RentAndCreateIntentResponseType = {
-  rental: {
-    riderId: string;
-    driverId: string;
-    vehicleId: string;
-    vehicleClass: string;
-    rentalType: string;
-    pickUpLat: number;
-    pickUpLong: number;
-    pickUpAddress: string;
-    pickUpTime: null;
-    duration: number;
-    recurring: true;
-    flexibility: true;
-    days: string[];
-    luggage: number;
-    pets: string[];
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-    id: string;
-    vehicle: VehicleInfo;
-    driver: DriverInfo;
-    cost: {
-      baseCost: number;
-      tax: number;
-      pickUpCharge: number;
-      total: string;
-      currency: string;
-    };
-    paymentIntent: {
-      baseCost: number;
-      tax: number;
-      pickUpCharge: number;
-      total: string;
-      currency: string;
-      intentId: string;
-      paymentIntent: string;
-      ephemeralKey: string;
-      customer: string;
-      amount: number;
-      paymentMethodTypes: string[];
-      id: string;
-      publishableKey: string;
-    };
-  };
-};
-
 export type RentAndCreateIntentType = {
   vehicleId: string;
   pickUpLat: number;
@@ -127,4 +79,47 @@ export type RideProfile = {
   ratePerHour: string; // ⚠ API returns string
   allowPets: boolean;
   luggageCapacity: number;
+};
+
+export type PaymentIntentResponse = {
+  riderId: string;
+  driverId: string;
+  vehicleId: string;
+  vehicleClass: string;
+  rentalType: string;
+  pickUpLat: number;
+  pickUpLong: number;
+  pickUpAddress: string;
+  pickUpTime: null;
+  duration: number;
+  recurring: boolean;
+  flexibility: boolean;
+  days: [];
+  pets: [];
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
+  vehicle: VehicleLocation;
+  driver: DriverInfo;
+  cost: Cost;
+  paymentIntent: PaymentIntent;
+};
+
+type Cost = {
+  baseCost: number;
+  tax: number;
+  pickUpCharge: number;
+  total: string;
+  currency: string;
+};
+type PaymentIntent = Cost & {
+  intentId: string;
+  paymentIntent: string;
+  ephemeralKey: string;
+  customer: string;
+  amount: number;
+  paymentMethodTypes: "card" | "link" | "cashapp"[];
+  id: string;
+  publishableKey: string;
 };

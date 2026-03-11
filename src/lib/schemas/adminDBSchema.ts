@@ -36,6 +36,9 @@ export const marketPlaceSchema = z.object({
     .min(1, "Surge multiplier is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
   currency: z.string().min(1, "Currency is required!"),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+  id: z.string().optional(),
 });
 
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;

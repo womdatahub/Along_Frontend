@@ -30,8 +30,6 @@ type Props = {
   isLater: boolean;
 };
 export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
-  console.log("isLater gotten in the driver info accordion: ", isLater);
-
   const { isLoadingRental, availableVehicles } = useRental(
     useShallow((state) => ({
       actions: state.actions,
@@ -50,7 +48,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
     );
   }
 
-  if (availableVehicles.length === 0) {
+  if ((availableVehicles ?? []).length === 0) {
     return (
       <Empty>
         <EmptyContent>
@@ -70,7 +68,7 @@ export const DriverInfoAccordion = ({ func, vehicleType, isLater }: Props) => {
       className='w-full flex flex-col gap-4'
       defaultValue='item-1'
     >
-      {availableVehicles.map((vehicle, i) => {
+      {(availableVehicles ?? []).map((vehicle, i) => {
         const carConditions = [
           {
             title: "Type",
