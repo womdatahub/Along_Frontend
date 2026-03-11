@@ -21,16 +21,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { TMarketPlaceSchema, marketPlaceSchema } from "@/lib";
+import {
+  TMarketPlaceSchema,
+  formatDateToDDMMYYYY,
+  marketPlaceSchema,
+  
+} from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAdmin } from "@/store";
 import { useShallow } from "zustand/shallow";
+import { ISOStringFormat } from "date-fns";
 
 const isEmpty = true;
 const Page = () => {
+  const {
+    actions: { getRideCostSettings, activateOrDeactivateCostSetting },
+    rideCostSettings,
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+      rideCostSettings: state.rideCostSettings,
+    })),
+  );
+
+  useEffect(() => {
+    getRideCostSettings();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-4xl font-heebo'>Market Place</p>
@@ -42,6 +63,18 @@ const Page = () => {
             <div className='flex items-center gap-5'>
               <AddOrEditNewFareEngineProfileComponent
                 trigger={<Button>Add New</Button>}
+                defaultValues={{
+                  baseFare: "10",
+                  baseHagglePercentage: "10",
+                  currency: "usd",
+                  driverToRiderFee: "10",
+                  maxHagglePercentage: "10",
+                  platformFeePercentage: "10",
+                  waitingChargePerMinute: "10",
+                  taxPercentage: "10",
+                  surgeMultiplier: "10",
+                  title: "Rush 23",
+                }}
               />
               <Button variant={"ghost"} className='rounded-full'>
                 Batch Delete
@@ -68,7 +101,7 @@ const Page = () => {
               </TableRow>
             </TableHeader>
 
-            {isEmpty ? (
+            {rideCostSettings.length === 0 ? (
               <TableBody>
                 <TableRow>
                   <TableCell colSpan={8} className='p-10'>
@@ -82,20 +115,90 @@ const Page = () => {
               </TableBody>
             ) : (
               <TableBody>
-                {alertTables.map((alert, i) => {
+                {rideCostSettings.map((setting, i) => {
+                  const date = new Date(setting.updatedAt as ISOStringFormat);
+
+                  const {
+                    baseFare,
+                    baseHagglePercentage,
+                    driverToRiderFee,
+                    maxHagglePercentage,
+                    platformFeePercentage,
+                    waitingChargePerMinute,
+                    taxPercentage,
+                    surgeMultiplier,
+                    ...rest
+                  } = setting;
+
                   return (
                     <TableRow key={i} className='last:border-b-0'>
                       <TableCell className=' text-sm font-medium pl-6'>
-                        {alert.type}
+                        {setting.title}
                       </TableCell>
                       <TableCell className=' text-sm font-medium'>
-                        {alert.timeStamp}
+                        {formatDateToDDMMYYYY(date)}
                       </TableCell>
                       <TableCell className=' text-sm font-medium'>
-                        {alert.tripID}
+                        {setting.baseFare}
                       </TableCell>
                       <TableCell className=' text-sm font-medium'>
-                        {alert.initiator}
+                        {setting.surgeMultiplier}
+                      </TableCell>
+                      <TableCell className=' text-sm font-medium'>
+                        {setting.driverToRiderFee}
+                      </TableCell>
+                      <TableCell className=' text-sm font-medium'>
+                        {setting.baseHagglePercentage}
+                      </TableCell>
+                      <TableCell className=' text-sm font-medium'>
+                        {setting.maxHagglePercentage}
+                      </TableCell>
+                      <TableCell className=' flex gap-3 items-center'>
+                        <Button
+                          onClick={() =>
+                            activateOrDeactivateCostSetting({
+                              costId: setting.id ?? "",
+                              isActive: !setting.isActive,
+                            })
+                          }
+                          className='rounded-full px-2 py-1 text-xs'
+                        >
+                          {setting.isActive ? "Deactivate" : "Activate"}
+                        </Button>
+
+                        <AddOrEditNewFareEngineProfileComponent
+                          trigger={
+                            <Button
+                              key={i}
+                              className='rounded-full px-2 py-1 text-xs'
+                            >
+                              Update
+                            </Button>
+                          }
+                          defaultValues={{
+                            ...rest,
+                            baseFare: String(baseFare),
+                            baseHagglePercentage: String(baseHagglePercentage),
+                            driverToRiderFee: String(driverToRiderFee),
+                            maxHagglePercentage: String(maxHagglePercentage),
+                            platformFeePercentage: String(
+                              platformFeePercentage,
+                            ),
+                            waitingChargePerMinute: String(
+                              waitingChargePerMinute,
+                            ),
+                            taxPercentage: String(taxPercentage),
+                            surgeMultiplier: String(surgeMultiplier),
+                          }}
+                          isEdit
+                        />
+
+                        <Button
+                          variant='destructive'
+                          className='rounded-full px-2 py-1 text-xs'
+                        >
+                          Delete
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
@@ -218,7 +321,7 @@ const alertTables: Alert[] = [];
 
 type AddOrEditNewFareEngineProfileComponentType = {
   trigger: ReactNode;
-  defaultValues?: TMarketPlaceSchema;
+  defaultValues?: Partial<TMarketPlaceSchema>;
   isEdit?: boolean;
 };
 const AddOrEditNewFareEngineProfileComponent = ({
@@ -242,7 +345,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
   const currency = watch("currency") ?? "";
 
   const {
-    actions: { createRideCostSettings },
+    actions: { createRideCostSettings, updateRideCost: updateRideCostSetting },
     isCreatingCostSetting,
   } = useAdmin(
     useShallow((state) => ({
@@ -252,7 +355,8 @@ const AddOrEditNewFareEngineProfileComponent = ({
   );
 
   const onSubmit = async (data: TMarketPlaceSchema) => {
-    const success = await createRideCostSettings(data);
+    const funcCaller = isEdit ? updateRideCostSetting : createRideCostSettings;
+    const success = await funcCaller(data);
     if (!success) return;
     setOpen(false);
     reset();

@@ -80,7 +80,9 @@ const RentRide = () => {
   );
   const {
     selectedDriverDetails,
-    isLoading,
+    // isLoading,
+    isCreatingIntent,
+    intent,
     actions: {
       retrieveAvailableVehicles,
       rentAndCreateIntent,
@@ -91,6 +93,8 @@ const RentRide = () => {
       actions: state.actions,
       selectedDriverDetails: state.selectedDriverDetails,
       isLoading: state.isLoading,
+      isCreatingIntent: state.isCreatingIntent,
+      intent: state.intent,
     })),
   );
 
@@ -614,7 +618,6 @@ const RentRide = () => {
                             className='flex justify-between gap-4 font-semibold text-sm'
                           >
                             <div className='flex items-center gap-3'>
-                              <p>I</p>
                               <p>{review.title}</p>
                             </div>
                             <p>{review.value}</p>
@@ -633,7 +636,8 @@ const RentRide = () => {
                     !selectedHours ||
                     !selectedMins ||
                     !selectAmOrPm ||
-                    !selectedHoursLength
+                    !selectedHoursLength ||
+                    isCreatingIntent
                   }
                   onClick={async () => {
                     if (isLater && !date) {
@@ -642,20 +646,28 @@ const RentRide = () => {
                     }
                     const duration = Number(selectedHoursLength.split(" ")[0]);
                     if (!autoCompleteAddress || !selectedDriverDetails) return;
-                    await rentAndCreateIntent({
-                      flexibility,
-                      days: [],
-                      duration:
-                        selectedTab === "hours" ? duration : duration * 24,
-                      vehicleId: selectedDriverDetails.vehicleId,
-                      pickUpLat: autoCompleteAddress.latitude,
-                      pickUpLong: autoCompleteAddress.longitude,
-                      pickUpAddress: autoCompleteAddress.formattedAddress,
-                    });
+                    if (!intent?.cost) {
+                      await rentAndCreateIntent({
+                        flexibility,
+                        days: [],
+                        duration:
+                          selectedTab === "hours" ? duration : duration * 24,
+                        vehicleId: selectedDriverDetails.vehicleId,
+                        pickUpLat: autoCompleteAddress.latitude,
+                        pickUpLong: autoCompleteAddress.longitude,
+                        pickUpAddress: autoCompleteAddress.formattedAddress,
+                      });
+                    }
                   }}
                 >
                   {isReview ? (
-                    "Proceed to payment"
+                    intent ? (
+                      "Proceed to payment"
+                    ) : isCreatingIntent ? (
+                      "Loading"
+                    ) : (
+                      "Retry"
+                    )
                   ) : (
                     <Link
                       href={{
@@ -675,18 +687,36 @@ const RentRide = () => {
                   <div className='flex flex-col w-1/3'>
                     <div className='flex justify-between gap-4 font-bold text-base'>
                       <p>Total</p>
-                      {isLoading ? (
-                        <Skeleton className=' w-fit h-2' />
+                      {isCreatingIntent ? (
+                        <Skeleton className='w-10 h-4 rounded-sm' />
                       ) : (
-                        <p>$55.92</p>
+                        <p
+                          className={cn(
+                            !intent &&
+                              !isCreatingIntent &&
+                              "text-red-500 text-xs animate-pulse",
+                          )}
+                        >
+                          {intent?.cost.total
+                            ? `$${intent.cost.total}`
+                            : "Failed"}
+                        </p>
                       )}
                     </div>
                     <div className='flex justify-between gap-4 font-semibold text-sm text-icons'>
                       <p>Tax</p>
-                      {isLoading ? (
-                        <Skeleton className=' w-fit h-2' />
+                      {isCreatingIntent ? (
+                        <Skeleton className='w-10 h-4 rounded-sm' />
                       ) : (
-                        <p>$2.92</p>
+                        <p
+                          className={cn(
+                            !intent &&
+                              !isCreatingIntent &&
+                              "text-red-500 text-xs animate-pulse",
+                          )}
+                        >
+                          {intent?.cost.tax ? `$${intent.cost.tax}` : "Failed"}
+                        </p>
                       )}
                     </div>
                   </div>

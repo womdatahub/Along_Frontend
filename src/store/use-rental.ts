@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import type {
-  RentAndCreateIntentResponseType,
+  PaymentIntentResponse,
   RentAndCreateIntentType,
   SelectorFn,
   VehicleLocation,
@@ -13,9 +13,10 @@ import { useSession } from "./use-session";
 
 type RentalStoreType = {
   isLoading: boolean;
+  isCreatingIntent: boolean;
   availableVehicles: VehicleLocation[];
-  intent: RentAndCreateIntentResponseType | undefined;
-  selectedDriverDetails: VehicleLocation | null;
+  intent: PaymentIntentResponse | undefined;
+  selectedDriverDetails: VehicleLocation | undefined;
   actions: {
     retrieveAvailableVehicles: (queries: {
       [key: string]: string;
@@ -33,9 +34,11 @@ type RentalStoreType = {
 
 const initialState = {
   availableVehicles: [],
+  isCreatingIntent: false,
   intent: undefined,
   isLoading: false,
-  selectedDriverDetails: null,
+  selectedDriverDetails: undefined,
+  createdIntent: undefined,
 };
 
 export const useRental = create<RentalStoreType>()(
@@ -72,7 +75,6 @@ export const useRental = create<RentalStoreType>()(
             };
             const path = rentalApiStr(`/driver/rent`);
             const { data, error } = await callApi(path, d);
-            console.log(error, "error");
             if (error) {
               toast.error(error.message);
               set({ isLoading: false });
@@ -80,7 +82,6 @@ export const useRental = create<RentalStoreType>()(
               return error.accountLink ?? "";
             }
             if (data) {
-              console.log(data, path);
               toast.success(
                 data.message ?? "Vehicle listed for rentals successfully!",
               );
@@ -109,17 +110,18 @@ export const useRental = create<RentalStoreType>()(
             }
           },
           rentAndCreateIntent: async (data) => {
+            set({ isCreatingIntent: true });
             const path = rentalApiStr("/rider/rent");
             const { data: response, error } =
-              await callApi<RentAndCreateIntentResponseType>(path, data);
+              await callApi<PaymentIntentResponse>(path, data);
             if (error) {
               toast.error(error.message);
+              set({ isCreatingIntent: false });
               return;
             }
             if (response) {
               toast.success(response.message);
-              set({ intent: response.data });
-              console.log(response, path);
+              set({ intent: response.data, isCreatingIntent: false });
             }
           },
         },
