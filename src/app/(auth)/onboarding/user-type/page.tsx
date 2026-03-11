@@ -66,7 +66,7 @@ const Page = () => {
         }}
         isTermsModalOpen={isTermsModalOpen}
         setIsTermsModalOpen={setIsTermsModalOpen}
-        trigger={<></>}
+        trigger={<div key={"1"}></div>}
       />
 
       <AuthBackAndContinueButton
