@@ -24,6 +24,12 @@ type AdminType = {
       costId: string;
       isActive: boolean;
     }) => Promise<void>;
+    getAdminDashboardDetails: () => Promise<void>;
+    getActiveRides: () => Promise<void>;
+    getPendingRequests: () => Promise<void>;
+    getActiveRentals: () => Promise<void>;
+    getDriverAvailability: () => Promise<void>;
+    getRideRoutePlayback: () => Promise<void>;
   };
 };
 
@@ -163,6 +169,90 @@ export const useAdmin = create<AdminType>()(
                 toast.success(
                   data.message ?? "Cost settings fetched successfully",
                 );
+            }
+          },
+          getAdminDashboardDetails: async () => {
+            const path = adminApiStr("/operations/dashboard");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(
+                data.message ?? "Dashboard details fetched successfully",
+              );
+            }
+          },
+          getActiveRides: async () => {
+            const path = adminApiStr("/operations/rides/active");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(
+                data.message ?? "Dashboard details fetched successfully",
+              );
+            }
+          },
+          getPendingRequests: async () => {
+            const path = adminApiStr("/operations/rides/pending");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(
+                data.message ?? "Dashboard details fetched successfully",
+              );
+            }
+          },
+          getActiveRentals: async () => {
+            const path = adminApiStr("/operations/rentals/active");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(
+                data.message ?? "Dashboard details fetched successfully",
+              );
+            }
+          },
+          getDriverAvailability: async () => {
+            const path = adminApiStr("/operations/driver/availability");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(
+                data.message ?? "Dashboard details fetched successfully",
+              );
+            }
+          },
+          getRideRoutePlayback: async () => {
+            const path = adminApiStr("/operations/rides/playback");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(
+                data.message ?? "Dashboard details fetched successfully",
+              );
             }
           },
         },

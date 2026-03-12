@@ -29,6 +29,7 @@ type RentalStoreType = {
       address: string;
     }) => Promise<string>;
     setSelectedDriverDetails: (data: VehicleLocation) => void;
+    cancelRental: (rentalId: string) => Promise<void>;
   };
 };
 
@@ -124,6 +125,20 @@ export const useRental = create<RentalStoreType>()(
               set({ intent: response.data, isCreatingIntent: false });
             }
           },
+          cancelRental: async (rentalId: string) => {
+            set({ isCreatingIntent: true });
+            const path = rentalApiStr(`/rider/rent/cancel/${rentalId}`);
+            const { data: response, error } = await callApi(path, {}, "DELETE");
+            if (error) {
+              toast.error(error.message);
+              set({ isCreatingIntent: false });
+              return;
+            }
+            if (response) {
+              toast.success(response.message);
+              // set({ intent: response.data, isCreatingIntent: false });
+            }
+          },
         },
       }),
       {
@@ -131,6 +146,7 @@ export const useRental = create<RentalStoreType>()(
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
           selectedDriverDetails: state.selectedDriverDetails,
+          intent: state.intent,
         }),
       },
     ),

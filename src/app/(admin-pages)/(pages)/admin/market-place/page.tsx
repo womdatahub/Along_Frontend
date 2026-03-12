@@ -27,7 +27,6 @@ import {
   TMarketPlaceSchema,
   formatDateToDDMMYYYY,
   marketPlaceSchema,
-  
 } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -117,7 +116,6 @@ const Page = () => {
               <TableBody>
                 {rideCostSettings.map((setting, i) => {
                   const date = new Date(setting.updatedAt as ISOStringFormat);
-
                   const {
                     baseFare,
                     baseHagglePercentage,
@@ -526,16 +524,8 @@ const AddOrEditNewFareEngineProfileComponent = ({
               handleSubmit(onSubmit)();
             }}
             className='px-14'
+            shouldChildrenShowWhenSpinning
           />
-          {/* <Button
-            onClick={() => {
-              console.log("click");
-              handleSubmit(createRideCostSettings)();
-            }}
-            className='px-14'
-          >
-            {isEdit ? "Edit" : "Save"}
-          </Button> */}
         </div>
       </DialogContent>
     </Dialog>

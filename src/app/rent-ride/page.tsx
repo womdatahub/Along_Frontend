@@ -14,6 +14,7 @@ import {
   Switch,
   LoadingComponent,
 } from "@/components";
+import { StripeCheckOutComponent } from "@/components/shared/StripeChechoutComponent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap, useRental } from "@/store";
@@ -53,6 +54,7 @@ const RentRide = () => {
   const [selectAmOrPm, setSelectAmOrPm] = useState<string>("am");
   const [pickupModalOpen, setPickupModalOpen] = useState(false);
   const [flexibility, setFlexibility] = useState<boolean>(false);
+  const [proceedToCheckout, setProceedToCheckout] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -646,6 +648,7 @@ const RentRide = () => {
                     }
                     const duration = Number(selectedHoursLength.split(" ")[0]);
                     if (!autoCompleteAddress || !selectedDriverDetails) return;
+                    // await cancelRental(intent?.id ?? "");
                     if (!intent?.cost) {
                       await rentAndCreateIntent({
                         flexibility,
@@ -657,6 +660,9 @@ const RentRide = () => {
                         pickUpLong: autoCompleteAddress.longitude,
                         pickUpAddress: autoCompleteAddress.formattedAddress,
                       });
+                    }
+                    if (intent?.paymentIntent.paymentIntent) {
+                      setProceedToCheckout(true);
                     }
                   }}
                 >
@@ -685,40 +691,40 @@ const RentRide = () => {
                 </Button>
                 {isReview && (
                   <div className='flex flex-col w-1/3'>
-                    <div className='flex justify-between gap-4 font-bold text-base'>
-                      <p>Total</p>
-                      {isCreatingIntent ? (
-                        <Skeleton className='w-10 h-4 rounded-sm' />
-                      ) : (
-                        <p
+                    {[
+                      { title: "Base Cost", value: intent?.cost.baseCost },
+                      {
+                        title: "Pickup Charge",
+                        value: intent?.cost.pickUpCharge,
+                      },
+                      { title: "Tax", value: intent?.cost.tax },
+                      { title: "Total", value: intent?.cost.total },
+                    ].map((item, i) => {
+                      return (
+                        <div
+                          key={i}
                           className={cn(
-                            !intent &&
-                              !isCreatingIntent &&
-                              "text-red-500 text-xs animate-pulse",
+                            "flex justify-between gap-4 font-semibold text-sm text-icons",
+                            item.title === "Total" && "font-bold",
                           )}
                         >
-                          {intent?.cost.total
-                            ? `$${intent.cost.total}`
-                            : "Failed"}
-                        </p>
-                      )}
-                    </div>
-                    <div className='flex justify-between gap-4 font-semibold text-sm text-icons'>
-                      <p>Tax</p>
-                      {isCreatingIntent ? (
-                        <Skeleton className='w-10 h-4 rounded-sm' />
-                      ) : (
-                        <p
-                          className={cn(
-                            !intent &&
-                              !isCreatingIntent &&
-                              "text-red-500 text-xs animate-pulse",
+                          <p>{item.title}</p>
+                          {isCreatingIntent ? (
+                            <Skeleton className='w-10 h-4 rounded-sm' />
+                          ) : (
+                            <p
+                              className={cn(
+                                !intent &&
+                                  !isCreatingIntent &&
+                                  "text-red-500 text-xs animate-pulse",
+                              )}
+                            >
+                              {item.value ? `$${item.value}` : "Failed"}
+                            </p>
                           )}
-                        >
-                          {intent?.cost.tax ? `$${intent.cost.tax}` : "Failed"}
-                        </p>
-                      )}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -731,6 +737,11 @@ const RentRide = () => {
             autoCompleteAddress?.longitude ?? 0,
             autoCompleteAddress?.latitude ?? 0,
           ]}
+        />
+        {/* {proceedToCheckout && <StripeCheckOutComponent />} */}
+        <StripeCheckOutComponent
+          open={proceedToCheckout}
+          onClose={() => setProceedToCheckout(false)}
         />
       </div>
     </div>

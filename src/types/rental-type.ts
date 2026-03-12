@@ -102,18 +102,18 @@ export type PaymentIntentResponse = {
   id: string;
   vehicle: VehicleLocation;
   driver: DriverInfo;
-  cost: Cost;
+  cost: IntentCost;
   paymentIntent: PaymentIntent;
 };
 
-type Cost = {
+export type IntentCost = {
   baseCost: number;
   tax: number;
   pickUpCharge: number;
   total: string;
   currency: string;
 };
-type PaymentIntent = Cost & {
+type PaymentIntent = IntentCost & {
   intentId: string;
   paymentIntent: string;
   ephemeralKey: string;

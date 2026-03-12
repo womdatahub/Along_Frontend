@@ -2,8 +2,36 @@
 
 import { Button, Card, CardContent, CardTitle } from "@/components/";
 import { cn } from "@/lib";
+import { useAdmin } from "@/store";
+import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
+  const {
+    actions: {
+      getActiveRentals,
+      getActiveRides,
+      getPendingRequests,
+      getDriverAvailability,
+      getRideRoutePlayback,
+      getAdminDashboardDetails,
+    },
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+    })),
+  );
+
+  useEffect(() => {
+    getActiveRentals();
+    getActiveRides();
+    getPendingRequests();
+    getDriverAvailability();
+    getRideRoutePlayback();
+    getAdminDashboardDetails();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-4xl font-heebo'>Dashboard</p>
