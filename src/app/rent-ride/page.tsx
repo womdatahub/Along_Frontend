@@ -62,8 +62,6 @@ const RentRide = () => {
   const vehicleType = searchParams.get("vehicleType");
   const selectedDriver = searchParams.get("selectedDriver");
   const isReview = !!searchParams.get("isReview");
-  // const isLater = !!searchParams.get("isLater");
-
   const rawIsLater = searchParams.get("isLater");
   const isLater = rawIsLater === "true";
 
@@ -123,7 +121,6 @@ const RentRide = () => {
         !selectAmOrPm) &&
       vehicleType
     ) {
-      console.log(selectedDriver, "selectedDriver");
       router.push(
         `?vehicleType=${vehicleType}&isLater=${isLater}${selectedDriver ? `&selectedDriver=${selectedDriver}` : ""}`,
       );
@@ -690,7 +687,7 @@ const RentRide = () => {
                   )}
                 </Button>
                 {isReview && (
-                  <div className='flex flex-col w-1/3'>
+                  <div className='flex flex-col w-1/2'>
                     {[
                       { title: "Base Cost", value: intent?.cost.baseCost },
                       {
@@ -705,7 +702,8 @@ const RentRide = () => {
                           key={i}
                           className={cn(
                             "flex justify-between gap-4 font-semibold text-sm text-icons",
-                            item.title === "Total" && "font-bold",
+                            item.title === "Total" &&
+                              "font-bold text-base text-black",
                           )}
                         >
                           <p>{item.title}</p>
@@ -741,7 +739,11 @@ const RentRide = () => {
         {/* {proceedToCheckout && <StripeCheckOutComponent />} */}
         <StripeCheckOutComponent
           open={proceedToCheckout}
-          onClose={() => setProceedToCheckout(false)}
+          onClose={() => {
+            useRental.persist.clearStorage();
+            setProceedToCheckout(false);
+            console.log("cleared and closed successfully!!!");
+          }}
         />
       </div>
     </div>

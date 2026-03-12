@@ -72,7 +72,7 @@ const CheckoutForm = ({
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `http://localhost:3001/rider-db?success=true`,
+        return_url: `http://localhost:3001/rider-db`,
       },
     });
 
