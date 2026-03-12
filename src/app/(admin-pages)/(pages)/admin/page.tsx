@@ -15,6 +15,7 @@ const Page = () => {
       getDriverAvailability,
       getRideRoutePlayback,
       getAdminDashboardDetails,
+      getSOSAlerts,
     },
   } = useAdmin(
     useShallow((state) => ({
@@ -29,6 +30,7 @@ const Page = () => {
     getDriverAvailability();
     getRideRoutePlayback();
     getAdminDashboardDetails();
+    getSOSAlerts();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,7 +96,7 @@ const Page = () => {
                 Active trips
               </CardTitle>
               <CardContent className='px-0'>
-                <p className='font-bold text-4xl'>3,550</p>
+                <p className='font-bold text-4xl'>0</p>
               </CardContent>
             </Card>
             <Card className='px-4 py-7 gap-1'>
@@ -102,7 +104,7 @@ const Page = () => {
                 Scheduled Trips
               </CardTitle>
               <CardContent className='px-0'>
-                <p className='font-bold text-4xl'>320</p>
+                <p className='font-bold text-4xl'>0</p>
               </CardContent>
             </Card>
             <Card className='px-4 py-7 gap-1'>
@@ -110,7 +112,7 @@ const Page = () => {
                 Rush SLA Met
               </CardTitle>
               <CardContent className='px-0'>
-                <p className='font-bold text-4xl'>78%</p>
+                <p className='font-bold text-4xl'>0%</p>
               </CardContent>
             </Card>
             <Card className='px-4 py-7 gap-1 '>
@@ -118,7 +120,7 @@ const Page = () => {
                 Open SOS
               </CardTitle>
               <CardContent className='px-0'>
-                <p className='font-bold text-4xl'>14</p>
+                <p className='font-bold text-4xl'>0</p>
               </CardContent>
             </Card>
           </div>
@@ -152,18 +154,18 @@ const queues = [
     title: "Rush",
     textColor: "text-[#A90404]",
     badgeColor: "bg-[#FFD3CD]",
-    text: "5 requests approaching SLA",
+    text: "0 requests approaching SLA",
   },
   {
     textColor: "text-[#6A8200]",
     badgeColor: "bg-[#EDFF9D]",
-    text: "18 need assignment in 48h",
+    text: "0 need assignment in 48h",
     title: "Scheduled",
   },
   {
     textColor: "text-[#000000]",
     badgeColor: "bg-[#FD6E58]",
-    text: "7 awaiting approval",
+    text: "0 awaiting approval",
     title: "Refunds",
   },
 ];

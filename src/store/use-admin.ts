@@ -30,6 +30,11 @@ type AdminType = {
     getActiveRentals: () => Promise<void>;
     getDriverAvailability: () => Promise<void>;
     getRideRoutePlayback: () => Promise<void>;
+    getSOSAlerts: () => Promise<void>;
+    resolveSOSAlert: (alert: {
+      alertId: string;
+      resolution: string;
+    }) => Promise<void>;
   };
 };
 
@@ -253,6 +258,30 @@ export const useAdmin = create<AdminType>()(
               toast.success(
                 data.message ?? "Dashboard details fetched successfully",
               );
+            }
+          },
+          getSOSAlerts: async () => {
+            const path = adminApiStr("/sos/alerts");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(data.message ?? "SOS alerts fetched successfully");
+            }
+          },
+          resolveSOSAlert: async (alert) => {
+            const path = adminApiStr("/sos/alerts/resolve");
+            const { data, error } = await callApi(path, alert);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(data.message ?? "SOS resolved successfully");
             }
           },
         },
