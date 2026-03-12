@@ -10,6 +10,7 @@ import {
   HeadingHeebo,
   LoadingComponent,
   RadarAutocomplete,
+  RadarMap,
   SelectDropdown,
 } from "@/components";
 import { cn, formatDateToDDMMYYYY, carTypes } from "@/lib";
@@ -459,6 +460,16 @@ const ScheduleRidePage = () => {
         </div>
 
         <div className='flex w-full h-full min-h-40 sticky top-0'>
+          {/* <RadarMap
+            pickup={[
+              autoCompleteAddress?.longitude ?? 0,
+              autoCompleteAddress?.latitude ?? 0,
+            ]}
+            drop={[
+              toAutoCompleteAddress?.longitude ?? 0,
+              toAutoCompleteAddress?.latitude ?? 0,
+            ]}
+          /> */}
           <Image
             src='/images/scheduled-ride-img.png'
             alt='scheduled-ride-img'
