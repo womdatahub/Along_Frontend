@@ -20,7 +20,7 @@ const Layout = ({
 
   if (userRole === "driver" || userRole === "admin") {
     toast.error(
-      "You are not authorized to access this page. Please log in as a rider.",
+      "You are not authorized to access this page. Redirecting to your dashboard",
     );
     router.push(ROLE_DASHBOARD_MAP[userRole]);
     return;
