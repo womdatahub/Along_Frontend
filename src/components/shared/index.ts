@@ -14,3 +14,4 @@ export * from "./loading-component";
 export * from "./service-dialog";
 export * from "./terms-modal";
 export * from "./name-avatar";
+export * from "./payment-success-page";
