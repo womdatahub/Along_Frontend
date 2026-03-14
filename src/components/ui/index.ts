@@ -13,3 +13,5 @@ export * from "./textarea";
 export * from "./input";
 export * from "./empty";
 export * from "./table";
+export * from "./separator";
+export * from "./badge";
