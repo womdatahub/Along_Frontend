@@ -12,6 +12,8 @@ import { Button, Dialog, DialogContent, DialogTitle } from "@/components";
 import { IntentCost } from "@/types";
 import { toast } from "sonner";
 
+const frontendBaseUrl =
+  process.env.NEXT_PUBLIC_BASE_FRONTEND_URL || "http://localhost:3001";
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PK_KEY || "";
 const stripePromise = loadStripe(publishableKey);
 
@@ -72,7 +74,7 @@ const CheckoutForm = ({
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `http://localhost:3001/rider-db`,
+        return_url: `${frontendBaseUrl}/rider-db/success`,
       },
     });
 
