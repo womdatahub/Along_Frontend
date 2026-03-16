@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, useState } from "react";
 import { Badge, Button, Card, CardContent, Separator } from "@/components";
 import { CheckCircle2, Copy, Check } from "lucide-react";
