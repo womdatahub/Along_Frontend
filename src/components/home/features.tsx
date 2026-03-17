@@ -54,7 +54,7 @@ export const Features = () => {
   const currentSlide = slides[currentIndex];
 
   return (
-    <section className='pt-36 pb-16 px-6 bg-white relative overflow-hidden'>
+    <section className='pt-14 md:pt-36 pb-16 px-6 bg-white relative overflow-hidden'>
       <div className='relative h-[400px] max-w-6xl mx-auto flex items-center justify-center'>
         <button
           onClick={handlePrev}
