@@ -26,7 +26,7 @@ const TermsModal = ({
     <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
-        className='sm:max-w-[700px] max-h-[75%] overflow-y-scroll px-10 py-8 rounded-[20px] bg-background-1'
+        className='sm:max-w-[700px] max-h-[75%] overflow-y-scroll px-5 md:px-10 py-8 rounded-[20px] bg-background-1'
         showCloseButton={false}
       >
         <VisuallyHidden>
@@ -53,7 +53,7 @@ const TermsModal = ({
               );
             })}
           </div>
-          <DialogFooter>
+          <DialogFooter className='flex flex-row gap-4 flex-wrap'>
             <Button onClick={acceptFunction}>Accept</Button>
             <Button
               variant='destructive'

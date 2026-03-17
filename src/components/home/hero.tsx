@@ -84,7 +84,7 @@ const Page = () => {
 
               <CompleteHeroServiceDialog
                 trigger={
-                  <Button className='bg-primary px-6 md:px-6 py-4 md:py-6 w-fit h-full rounded-l-none md:w-40 text-white text-base md:text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
+                  <Button className='bg-primary px-6 md:px-6 py-5 md:py-6 w-fit h-full rounded-l-none md:w-40 text-white text-base md:text-2xl hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500'>
                     Go
                   </Button>
                 }

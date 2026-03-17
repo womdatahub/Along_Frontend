@@ -36,13 +36,13 @@ const Page = () => {
 
   return (
     <div className='font-fustat'>
-      <section className='pt-14 px-4 md:px-6 text-center bg-background-1 h-fit md:h-[844px'>
-        <div className='flex  gap-20 max-w-6xl mx-auto items-center justify-between'>
-          <div className='flex flex-col gap-10 w-1/2'>
-            <HeadingHeebo className='font-extrabold text-[67px] text-left'>
+      <section className='md:pt-14 px-4 md:px-6 text-center bg-background-1 h-fit'>
+        <div className='flex flex-col md:flex-row gap-6 md:gap-20 max-w-6xl md:mx-auto md:items-center justify-between'>
+          <div className='flex flex-col gap-10 md:w-1/2'>
+            <HeadingHeebo className='font-extrabold text-5xl md:text-[67px] text-center md:text-left'>
               About Us
             </HeadingHeebo>
-            <p className='font-heebo font-light text-lg text-left'>
+            <p className='font-heebo font-light text-base md:text-lg text-left'>
               At Along, we care about bridging the gap between smaller towns,
               suburbs, and major cities by connecting local residents with
               drivers already traveling those routes. For communities without
@@ -60,19 +60,19 @@ const Page = () => {
               alt='woman-bg'
               width={710}
               height={863}
-              className='z-10 object-contain w-full h-[863px]'
+              className='z-10 object-contain w-full md:h-[863px]'
             />
           </div>
         </div>
       </section>
-      <section className='py-14 md:py-36 md:px-6 text-center bg-gradient-to-b from-[#8DC13D] via-[#026270] to-[#0E4A7A]'>
+      <section className='py-14 px-4 md:py-36 md:px-6 text-center bg-gradient-to-b from-[#8DC13D] via-[#026270] to-[#0E4A7A]'>
         <div className='flex flex-col gap-16 max-w-6xl mx-auto items-center justify-between'>
-          <div className='flex gap-20 items-center text-white justify-between'>
-            <div className='flex flex-col gap-1 w-1/2'>
-              <HeadingHeebo className='text-left text-[40px]'>
+          <div className='flex flex-col md:flex-row gap-8 md:gap-20 md:items-center text-white justify-between'>
+            <div className='flex flex-col gap-1 md:w-1/2'>
+              <HeadingHeebo className='text-center md:text-left text-3xl md:text-[40px]'>
                 Our Mission
               </HeadingHeebo>
-              <p className='text-left font-light text-lg'>
+              <p className='text-left font-light text-base md:text-lg'>
                 Our mission is to provide safe, customizable, and cost-effective
                 intercity travel solutions across the United States and
                 worldwide. Whether you’re planning ahead or need a last-minute
@@ -85,19 +85,19 @@ const Page = () => {
               alt='mission'
               width={606}
               height={732}
-              className='object-contain w-[50%] h-[732px]'
+              className='object-contain md:w-[50%] h-fit md:h-[732px]'
             />
           </div>
-          <div className='flex gap-20 items-center text-white justify-between'>
+          <div className='flex flex-col-reverse md:flex-row gap-8 md:gap-20 md:items-center text-white justify-between'>
             <Image
               src='/images/about-vision.png'
               alt='mission'
               width={606}
               height={732}
-              className='object-contain w-[50%] h-[732px]'
+              className='object-contain md:w-[50%] h-fit md:h-[732px]'
             />
-            <div className='flex flex-col gap-1 w-1/2'>
-              <HeadingHeebo className='text-left text-[40px]'>
+            <div className='flex flex-col gap-1 md:w-1/2'>
+              <HeadingHeebo className='text-center md:text-left text-3xl md:text-[40px]'>
                 Our Vision
               </HeadingHeebo>
               <p className='text-left  font-light text-lg'>
@@ -122,7 +122,7 @@ const Page = () => {
         <div className='absolute inset-0 bg-black/40' />
 
         <div className='flex flex-col gap-8 max-w-6xl items-center justify-center'>
-          <HeadingHeebo className='text-[40px] font-extrabold z-10'>
+          <HeadingHeebo className='text-3xl md:text-[40px] font-extrabold z-10'>
             What makes us different
           </HeadingHeebo>
           <div className='flex flex-col gap-1 max-w-[400px] z-10'>
@@ -137,9 +137,9 @@ const Page = () => {
         </div>
       </section>
 
-      <section className='py-14 md:py-36 md:px-6 bg-background-1 flex items-center justify-center'>
+      <section className='py-14 px-4 md:py-36 md:px-6 bg-background-1 flex items-center justify-center'>
         <div className='flex flex-col gap-6 max-w-6xl items-center justify-center'>
-          <HeadingHeebo className='text-[40px] font-extrabold z-10'>
+          <HeadingHeebo className='text-3xl md:text-[40px] font-extrabold z-10'>
             Have a question?
           </HeadingHeebo>
           <form
