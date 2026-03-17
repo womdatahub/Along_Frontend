@@ -10,7 +10,10 @@ import { FilledGreenStarIcon, LocationPointerSvg } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useSession, useRental, useRadarMap } from "@/store";
+import {
+  useSession,
+  // useRental, useRadarMap
+} from "@/store";
 import { useShallow } from "zustand/shallow";
 import Image from "next/image";
 
@@ -31,20 +34,20 @@ const Page = () => {
     })),
   );
 
-  const {
-    actions: { listVehicleForRental },
-  } = useRental(
-    useShallow((state) => ({
-      actions: state.actions,
-    })),
-  );
+  // const {
+  //   actions: { listVehicleForRental },
+  // } = useRental(
+  //   useShallow((state) => ({
+  //     actions: state.actions,
+  //   })),
+  // );
 
-  const { autoCompleteAddress } = useRadarMap(
-    useShallow((state) => ({ autoCompleteAddress: state.autoCompleteAddress })),
-  );
+  // const { autoCompleteAddress } = useRadarMap(
+  //   useShallow((state) => ({ autoCompleteAddress: state.autoCompleteAddress })),
+  // );
 
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
+    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 md:h-[calc(100vh-80px)] md:overflow-hidden'>
       <div className='flex flex-col gap-4'>
         <div className='flex justify-between gap-5'>
           <div />
@@ -57,7 +60,7 @@ const Page = () => {
               }
               width={96}
               height={96}
-              className='size-24 rounded-full object-cover bg-gray-200'
+              className='size-14 md:size-24 rounded-full object-cover bg-gray-200'
             />
             <Popover>
               <PopoverTrigger asChild>
@@ -90,7 +93,12 @@ const Page = () => {
                       Profile
                     </p>
                   </div>
-                  <div
+                  <div className='items-center gap-3 flex md:hidden justify-center pb-3'>
+                    <p>Driver rating</p>
+                    <FilledGreenStarIcon />
+                    <p>{driverProfile?.rating.numberOfRatings ?? 0}%</p>
+                  </div>
+                  {/* <div
                     onClick={async () => {
                       const link = await listVehicleForRental({
                         address: autoCompleteAddress?.formattedAddress ?? "",
@@ -104,7 +112,7 @@ const Page = () => {
                     className='text-center cursor-pointer font-bold'
                   >
                     List vehicle for Rent
-                  </div>
+                  </div> */}
                   <div
                     onClick={logOut}
                     className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'
@@ -117,22 +125,22 @@ const Page = () => {
           </div>
         </div>
         <HeadingHeebo className='text-left mt-5'>Menu</HeadingHeebo>
-        <div className='flex gap-10 items-stretch h-[calc(100vh-200px)]'>
-          <div className='flex flex-col gap-10 border-r border-r-gray-5 pr-10 mb-32 w-fit whitespace-nowrap'>
-            <div className='flex gap-2 justify-between flex-col'>
-              <div className='flex flex-col gap-10'>
+        <div className='flex flex-col md:flex-row gap-10 md:items-stretch md:h-[calc(100vh-200px)]'>
+          <div className='flex flex-row md:flex-col gap-3 md:gap-10 md:border-r md:border-r-gray-5 pr-10 md:mb-32 w-fit whitespace-nowrap'>
+            <div className='flex gap-3 md:gap-2 justify-between flex-row md:flex-col'>
+              <div className='flex md:flex-col flex-row gap-5 md:gap-10'>
                 <Link href={"/driver-db/vehicle"}>Vehicle</Link>
                 <Link href={"/driver-db/ride-details"}>TBC</Link>
                 <Link href={"#"}>Ride</Link>
               </div>
-              <div className='flex items-center gap-3'>
+              <div className='items-center gap-3 hidden md:flex'>
                 <p>Driver rating</p>
                 <FilledGreenStarIcon />
                 <p>{driverProfile?.rating.numberOfRatings ?? 0}%</p>
               </div>
             </div>
           </div>
-          <div className='flex flex-col gap-20 overflow-y-auto mb-32'>
+          <div className='flex flex-col gap-20 overflow-y-auto md:mb-32'>
             <div className='flex flex-col gap-4 w-full md:max-w-1/3 '>
               <HeadingHeebo className='text-3xl text-left'>
                 Start your day the right way
@@ -151,8 +159,8 @@ const Page = () => {
               <DynamicDriversChart />
             </div>
           </div>
-          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto relative pb-32'>
-            <HeadingHeebo className='text-left sticky top-0 bg-background-1 pb-2'>
+          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto md:relative md:pb-32'>
+            <HeadingHeebo className='text-left md:sticky md:top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
             {Array(10)

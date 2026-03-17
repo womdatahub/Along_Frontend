@@ -28,14 +28,12 @@ const Layout = ({
   }
 
   return (
-    // <AuthProvider>
     <section className='w-screen min-h-screen flex flex-col bg-background-1'>
       <Navbar />
-      <div className='flex-1 h-full flex flex-col gap-2 pt-44 lg:pt-20'>
+      <div className='flex-1 h-full flex flex-col gap-2 py-28 lg:pt-20'>
         {children}
       </div>
     </section>
-    // </AuthProvider>
   );
 };
 export default Layout;
