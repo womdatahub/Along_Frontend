@@ -48,13 +48,13 @@ const Page = () => {
   );
 
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px)] overflow-hidden'>
+    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full md:py-14 md:h-[calc(100vh-80px)] md:overflow-hidden'>
       <div className='flex flex-col gap-4'>
-        <div className='flex justify-between gap-5'>
-          <div className='flex flex-col gap-2 w-fit'>
+        <div className='flex flex-col-reverse md:flex-row justify-between gap-5'>
+          <div className='flex flex-col gap-2 w-full md:w-fit'>
             <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
-            <div className='flex items-center gap-8'>
-              <div className='flex gap-4 items-center px-4 py-3 bg-white rounded-2xl md:w-[375px]'>
+            <div className='flex items-center gap-4 md:gap-8'>
+              <div className='flex gap-2 md:gap-4 items-center px-2 md:px-4 py-3 bg-white rounded-2xl w-full md:w-[375px]'>
                 <AccuracyIcon />
                 <RadarAutocomplete
                   setAutoCompleteAddress={setAutoCompleteAddress}
@@ -81,7 +81,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className='flex gap-4 items-center'>
+          <div className='flex gap-4 items-center self-end'>
             <NameAvatar
               value={`${riderProfile?.firstName[0] ?? ""}${riderProfile?.lastName[0] ?? ""}`}
             />
@@ -122,13 +122,13 @@ const Page = () => {
           </div>
         </div>
         <HeadingHeebo className='text-left mt-5'>Menu</HeadingHeebo>
-        <div className='flex gap-10 items-stretch h-[calc(100vh-200px)]'>
-          <div className='flex flex-col gap-10 border-r border-r-gray-5 pr-10 mb-32 w-fit whitespace-nowrap'>
+        <div className='flex flex-col md:flex-row gap-10 md:items-stretch md:h-[calc(100vh-200px)]'>
+          <div className='flex flex-row md:flex-col gap-3 md:gap-10 md:border-r md:border-r-gray-5 pr-10 md:mb-32 w-fit whitespace-nowrap'>
             <Link href={"/rent-ride"}>Rent a car</Link>
             <Link href={"#"}>Schedule a ride</Link>
             {/* <Link href={"/onboarding"}>Drive</Link> */}
           </div>
-          <div className='flex flex-col gap-20 overflow-y-auto mb-32'>
+          <div className='flex flex-col gap-10 md:gap-20 overflow-y-auto md:mb-32'>
             <div className='flex flex-col gap-4 w-full md:max-w-1/3 '>
               <HeadingHeebo className='text-3xl text-left'>
                 Start your day the right way
@@ -143,7 +143,7 @@ const Page = () => {
             </div>
             <div className='flex gap-3 flex-col'>
               <HeadingHeebo className='w-fit text-left'>Payment</HeadingHeebo>
-              <div className='flex gap-4'>
+              <div className='flex flex-col md:flex-row gap-4'>
                 <Card className='flex flex-col gap-14 bg-[#1F364B] rounded-2xl justify-between w-full md:w-fit border-0 shadow-none'>
                   <CardContent className='flex gap-5'>
                     <div className='flex flex-col justify-between w-[384px] gap-14'>
@@ -214,8 +214,8 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto relative pb-32'>
-            <HeadingHeebo className='text-left sticky top-0 bg-background-1 pb-2'>
+          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto md:relative pb-16 md:pb-32'>
+            <HeadingHeebo className='text-left md:sticky md:top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (

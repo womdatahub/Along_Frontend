@@ -37,7 +37,7 @@ export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
             Please select a service (s) you are interested in
           </DialogTitle>
         </VisuallyHidden>
-        <div className='flex flex-col gap-10 rounded-[20px] px-8 py-10 text-black'>
+        <div className='flex flex-col gap-10 rounded-[20px] px-4 md:px-8 py-10 text-black'>
           <div className='flex flex-col gap-2'>
             <HeadingHeebo>Offered services</HeadingHeebo>
             <p className='text-center text-sm'>
