@@ -24,7 +24,7 @@ const isEmpty = false;
 const Page = () => {
   return (
     <section className='flex flex-col gap-8'>
-      <p className='text-4xl font-heebo'>SOS Console</p>
+      <p className='text-2xl md:text-4xl font-heebo'>SOS Console</p>
       <Card className='pb-10'>
         <CardHeader>
           <div className='flex justify-between border-b pb-6'>

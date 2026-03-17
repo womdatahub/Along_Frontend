@@ -53,7 +53,7 @@ const Page = () => {
   }, []);
   return (
     <section className='flex flex-col gap-8'>
-      <p className='text-4xl font-heebo'>Market Place</p>
+      <p className='text-2xl md:text-4xl font-heebo'>Market Place</p>
 
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>

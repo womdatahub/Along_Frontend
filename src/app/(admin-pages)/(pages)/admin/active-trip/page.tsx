@@ -16,7 +16,7 @@ const Page = () => {
   const [selectedTripIndex, setSelectedTripIndex] = useState(0);
   return (
     <section className='flex flex-col gap-8'>
-      <p className='text-4xl font-heebo'>Active Trip</p>
+        <p className='text-2xl md:text-4xl font-heebo'>Active Trip</p>
       <div className='flex gap-7'>
         <div className='flex flex-col gap-4'>
           <div className='flex gap-4 items-center'>
