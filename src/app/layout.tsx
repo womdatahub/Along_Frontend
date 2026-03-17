@@ -82,10 +82,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/80 selection:text-primary-foreground`}
       >
         <AuthProvider>{children}</AuthProvider>
-        {/* <CheckWindowSize> */}
-        {/* {children} */}
-        {/* </CheckWindowSize> */}
-        <Toaster position='bottom-right' richColors />
+        <Toaster position='top-center' richColors />
       </body>
     </html>
   );
