@@ -1,6 +1,10 @@
 "use client";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import {
   AdminNotificationIcon,
   //  AdminSearchIcon
@@ -52,29 +56,19 @@ export default function AdminDashboardLayout({
 
   async function logoutUser() {
     await logOut();
-    // window.location.href = "/sign-in";
   }
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className='bg-[#e1e3e3] flex flex-col gap-10 p-16'>
+      <SidebarInset className='bg-[#e1e3e3] flex flex-col gap-10 p-4 py-8 md:p-16'>
         <div className='flex justify-between items-center gap-5'>
-          <p className='text-xl font-medium text-primary'>
-            {pathname === "/admin" && `Hello, ${adminProfile?.firstName}`}
-          </p>
+          <div className='flex gap-2 items-center'>
+            <SidebarTrigger />
+            <p className='text-base md:text-xl font-medium text-primary'>
+              {pathname === "/admin" && `Hello, ${adminProfile?.firstName}`}
+            </p>
+          </div>
           <div className='flex items-center gap-5'>
-            {/* {pathname === "/admin" && (
-              <div className="shadow-md flex bg-white gap-3 items-center px-3 py-2 rounded-full min-w-[325px]">
-                <AdminSearchIcon />
-                <input
-                  type="text"
-                  name="search"
-                  id="search"
-                  className="bg-transparent focus:outline-none flex-1"
-                  placeholder="Search"
-                />
-              </div>
-            )} */}
             <AdminNotificationIcon />
             <Popover>
               <PopoverTrigger asChild>

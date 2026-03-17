@@ -1,23 +1,37 @@
 "use client";
 
 import * as React from "react";
-import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-} from "@/components/ui/sidebar";
+  useSidebar,
+  NavMain,
+} from "@/components";
 import { AdminLogoIcon } from "@public/svgs";
 import Link from "next/link";
+import { cn } from "@/lib";
 
 export const AppSidebar = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   return (
     <Sidebar collapsible='icon' {...props}>
-      <SidebarHeader className='bg-[#768B8F] pt-9 px-12'>
+      <SidebarHeader
+        className={cn(
+          "bg-[#768B8F] pt-9 px-12",
+          isCollapsed && "w-full flex justify-center items-center px-0",
+        )}
+      >
         <Link href='/'>
-          <AdminLogoIcon />
+          {isCollapsed ? (
+            <p className='text-lg text-white font-bold'>AL</p>
+          ) : (
+            <AdminLogoIcon />
+          )}
         </Link>
       </SidebarHeader>
       <SidebarContent className='bg-[#768B8F]'>

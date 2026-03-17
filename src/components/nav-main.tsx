@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarMenu, SidebarMenuButton } from "@/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuButton, useSidebar } from "@/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib";
@@ -13,8 +13,10 @@ import {
 import { JSX, SVGProps, useState } from "react";
 
 export const NavMain = () => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
   return (
-    <SidebarMenu className='mt-6 px-4'>
+    <SidebarMenu className={cn("mt-6 px-4", isCollapsed && "px-2")}>
       {menuItems.map(({ icon: Icon, path, text }, index) => {
         return <SMenuButton key={index} Icon={Icon} path={path} text={text} />;
       })}
@@ -40,9 +42,8 @@ const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
 
   return (
     <SidebarMenuButton
-      // key={path}
       className={cn(
-        "group hover:bg-white text-white hover:text-primary h-12 rounded-full px-8",
+        "group hover:bg-white text-white hover:text-primary h-12 rounded-full px-4",
         isActive && "bg-white text-primary",
       )}
       onMouseEnter={() => setHover(true)}

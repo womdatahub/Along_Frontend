@@ -36,18 +36,18 @@ const Page = () => {
   }, []);
   return (
     <section className='flex flex-col gap-8'>
-      <p className='text-4xl font-heebo'>Dashboard</p>
-      <div className='flex gap-8'>
-        <div className='flex gap-8 flex-col w-[33vw]'>
+      <p className='text-2xl md:text-4xl font-heebo'>Dashboard</p>
+      <div className='flex flex-col md:flex-row gap-4 md:gap-8'>
+        <div className='flex gap-4 md:gap-8 flex-col md:w-[33vw]'>
           <Card className='px-4 py-7'>
-            <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]'>
+            <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-[#768B8F]'>
               Queues
             </CardTitle>
             <CardContent className='flex flex-col gap-6 px-0'>
               {queues.map((q) => (
                 <div key={q.text} className='flex gap-4 items-center'>
                   <div
-                    className={cn("w-[5.5vw] font-medium", `${q.textColor}`)}
+                    className={cn("md:w-[5.5vw] font-medium", `${q.textColor}`)}
                   >
                     {q.title}
                   </div>
@@ -83,16 +83,16 @@ const Page = () => {
             </CardContent>
           </Card>
         </div>
-        <div className='flex gap-8 flex-col flex-1'>
+        <div className='flex gap-4 md:gap-8 flex-col flex-1'>
           <Card className='px-4 py-7 gap-1 '>
-            <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]'>
+            <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-[#768B8F]'>
               Live heatmap
             </CardTitle>
             <CardContent className='px-0 h-[250px]'></CardContent>
           </Card>
-          <div className='grid grid-cols-2 gap-6 flex-wrap'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 flex-wrap'>
             <Card className='px-4 py-7 gap-1'>
-              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]'>
+              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-[#768B8F]'>
                 Active trips
               </CardTitle>
               <CardContent className='px-0'>
@@ -100,7 +100,7 @@ const Page = () => {
               </CardContent>
             </Card>
             <Card className='px-4 py-7 gap-1'>
-              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]'>
+              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-[#768B8F]'>
                 Scheduled Trips
               </CardTitle>
               <CardContent className='px-0'>
@@ -108,7 +108,7 @@ const Page = () => {
               </CardContent>
             </Card>
             <Card className='px-4 py-7 gap-1'>
-              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]'>
+              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-[#768B8F]'>
                 Rush SLA Met
               </CardTitle>
               <CardContent className='px-0'>
@@ -116,7 +116,7 @@ const Page = () => {
               </CardContent>
             </Card>
             <Card className='px-4 py-7 gap-1 '>
-              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-[#768B8F]'>
+              <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-[#768B8F]'>
                 Open SOS
               </CardTitle>
               <CardContent className='px-0'>
@@ -125,7 +125,7 @@ const Page = () => {
             </Card>
           </div>
           <Card className='px-4 py-7 bg-[#768B8F] text-white'>
-            <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-xl text-white'>
+            <CardTitle className='p-0 m-0 text-left font-heebo font-medium text-lg md:text-xl text-white'>
               Ad Notification
             </CardTitle>
             <CardContent className='px-0 flex flex-col gap-2'>

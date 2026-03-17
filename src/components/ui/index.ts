@@ -15,3 +15,4 @@ export * from "./empty";
 export * from "./table";
 export * from "./separator";
 export * from "./badge";
+export * from "./sidebar";
