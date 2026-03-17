@@ -25,16 +25,16 @@ const Page = () => {
   const [userORRoles, setUserOrRoles] = useState<"user" | "roles">("user");
   return (
     <section className='flex flex-col gap-8'>
-      <p className='text-4xl font-heebo'>Roles and Permission</p>
+      <p className='text-2xl md:text-4xl font-heebo'>Roles and Permission</p>
 
-      <div className='flex self-end gap-7 items-center'>
-        <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-white shadow-md min-w-[250px]'>
+      <div className='flex flex-col md:flex-row md:self-end gap-4 md:gap-7 md:items-center'>
+        <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-white shadow-md md:min-w-[250px]'>
           <AdminSearchIcon />
           <input
             type='text'
             name='search'
             id='search'
-            className='bg-transparent focus:outline-none'
+            className='bg-transparent focus:outline-none flex-1'
             placeholder='Search'
           />
         </div>
@@ -42,9 +42,9 @@ const Page = () => {
           <Button
             onClick={() => setUserOrRoles("user")}
             className={cn(
-              "rounded-full transition-colors duration-300 shadow-none",
+              "rounded-full transition-colors duration-300 shadow-none flex-1",
               userORRoles !== "user" &&
-                "bg-transparent text-black hover:text-white"
+                "bg-transparent text-black hover:text-white",
             )}
           >
             Users
@@ -52,9 +52,9 @@ const Page = () => {
           <Button
             onClick={() => setUserOrRoles("roles")}
             className={cn(
-              "rounded-full transition-colors duration-300 shadow-none",
+              "rounded-full transition-colors duration-300 shadow-none flex-1",
               userORRoles !== "roles" &&
-                "bg-transparent text-black hover:text-white"
+                "bg-transparent text-black hover:text-white",
             )}
           >
             Roles
@@ -133,12 +133,12 @@ const Page = () => {
               <p>Roles</p>
             </div>
           </CardHeader>
-          <CardContent className='grid grid-cols-2 gap-6 pb-6'>
+          <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6 pb-6'>
             {roles.map((r) => {
               return (
                 <div
                   key={r.role}
-                  className='flex bg-[#F4F4F4] justify-between items-center gap-5 rounded-2xl p-6'
+                  className='flex flex-col md:flex-row bg-[#F4F4F4] justify-between md:items-center gap-5 rounded-2xl p-6'
                 >
                   <div className='flex flex-col gap-1'>
                     <p className='text-xl font-bold'>{r.role}</p>
