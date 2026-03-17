@@ -57,7 +57,7 @@ const Page = () => {
 
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
-          <div className='flex justify-between gap-5 items-center px-6'>
+          <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-6'>
             <p className='text-xl font-medium'>Fare Engine Profile</p>
             <div className='flex items-center gap-5'>
               <AddOrEditNewFareEngineProfileComponent

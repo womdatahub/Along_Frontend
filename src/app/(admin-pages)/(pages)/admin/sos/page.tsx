@@ -35,19 +35,19 @@ const Page = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className='grid gap-5 grid-cols-2'>
+        <CardContent className='grid gap-5 grid-cols-1 md:grid-cols-2'>
           {trips.map((trip) => {
             return (
               <div
                 key={trip.tripID}
-                className='flex bg-[#F4F4F4] justify-between items-center gap-5 rounded-2xl p-6'
+                className='flex flex-col md:flex-row bg-[#F4F4F4] justify-between md:items-center gap-5 rounded-2xl p-6'
               >
                 <div className='flex flex-col gap-1'>
                   <p className='text-xl font-bold'>Trip ID: {trip.tripID}</p>
                   <p className='text-sm'>Driver: {trip.driver}</p>
                   <p className='bg-[#FD6E58] px-1'>Rider: {trip.rider}</p>
                 </div>
-                <div className='flex gap-4'>
+                <div className='flex flex-wrap gap-4'>
                   <Button
                     variant='outline'
                     className='border-[#B3BFBF] rounded-full'
@@ -84,10 +84,10 @@ const Page = () => {
       </Card>
       <Card className='rounded-3xl border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
-          <div className='flex justify-between gap-5 items-center px-6'>
-            <p className='text-xl font-medium'>Alert logs</p>
+          <div className='flex justify-between gap-5 items-center px-3 md:px-6'>
+            <p className='text-xl font-medium text-nowrap'>Alert logs</p>
             <div className='flex items-center gap-5'>
-              <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] min-w-[325px]'>
+              <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] md:min-w-[325px]'>
                 <AdminSearchIcon />
                 <input
                   type='text'

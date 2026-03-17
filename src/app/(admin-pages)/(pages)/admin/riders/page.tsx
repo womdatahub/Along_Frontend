@@ -19,7 +19,7 @@ const Page = () => {
     <section className='flex flex-col gap-8'>
       <p className='text-2xl md:text-4xl font-heebo'>Riders</p>
 
-      <div className='rounded-3xl border border-gray-300 flex flex-col gap-4 py-4 bg-white'>
+      <div className='rounded-xl md:rounded-3xl border border-gray-300 flex flex-col gap-4 py-4 bg-white'>
         <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-2 md:px-6'>
           <p className='text-xl text-left font-medium'>Riders information</p>
           <div className='flex items-center gap-5'>
