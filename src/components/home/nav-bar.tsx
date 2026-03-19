@@ -109,7 +109,7 @@ export const Navbar = () => {
 
       {menuOpen && (
         <div className='md:hidden bg-white border-t border-gray-200'>
-          <ul className='flex flex-col items-center gap-4 py-4 text-gray-700'>
+          <ul className='flex flex-col gap-4 p-4 text-gray-700'>
             <li onClick={() => setMenuOpen(false)}>
               <Link href='/about'>About</Link>
             </li>
@@ -139,6 +139,7 @@ export const Navbar = () => {
                     src='/images/account.png'
                     width={30}
                     height={30}
+                    className='hidden md:flex'
                   />
                 )}
                 {!userRole && <p>Sign in</p>}
