@@ -58,7 +58,7 @@ const Page = () => {
                     variant='outline'
                     className='border-[#B3BFBF] rounded-full'
                   >
-                    Call ridPer
+                    Call rider
                   </Button>
 
                   <Popover>
