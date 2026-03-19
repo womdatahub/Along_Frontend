@@ -22,7 +22,7 @@ const Page = () => {
     }
   };
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] px-8 py-10 bg-background-1 text-black'>
+    <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-2'>
         <HeadingHeebo>Offered services</HeadingHeebo>
         <p className='text-center text-sm'>
