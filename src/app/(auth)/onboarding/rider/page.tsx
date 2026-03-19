@@ -5,8 +5,8 @@ import {
   AuthBackAndContinueButton,
   DatePicker,
   SelectDropdown,
+  HeadingHeebo,
 } from "@/components";
-import { HeadingHeebo } from "@/components";
 import { TRegisterRiderValidator, registerRiderSchema } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,7 +57,7 @@ const Page = () => {
   };
 
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] w-[500px] -mt-10 px-8 py-10 bg-background-1 text-black'>
+    <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] -mt-10 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-1'>
         <HeadingHeebo>Lets get you started</HeadingHeebo>
         <p className='text-sm text-center'>
