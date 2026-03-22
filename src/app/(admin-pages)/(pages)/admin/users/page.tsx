@@ -14,6 +14,7 @@ import {
   AddNewUserModal,
   EditRolesPermissionModal,
   ConfirmActionModal,
+  ResetPasswordModal,
 } from "@/components/";
 import { AdminSearchIcon } from "@public/svgs";
 import {
@@ -96,18 +97,23 @@ const Page = () => {
               }
             />
 
-            <button
-              disabled={!hasSelection}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors",
-                hasSelection
-                  ? "text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  : "text-gray-300 cursor-not-allowed",
-              )}
-            >
-              <KeyRound size={14} />
-              Reset Password
-            </button>
+            <ResetPasswordModal
+              trigger={
+                <button
+                  disabled={!hasSelection}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors",
+                    hasSelection
+                      ? "text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      : "text-gray-300 cursor-not-allowed",
+                  )}
+                >
+                  <KeyRound size={14} />
+                  Reset Password
+                </button>
+              }
+            />
+
             <ConfirmActionModal
               trigger={
                 <button
