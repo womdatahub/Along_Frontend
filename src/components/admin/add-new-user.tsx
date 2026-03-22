@@ -19,18 +19,18 @@ type Step = 1 | 2 | 3;
 function StepCircle({ n, current }: { n: number; current: Step }) {
   if (n < current) {
     return (
-      <div className='w-[18px] h-[18px] rounded-full flex-shrink-0 flex items-center justify-center bg-[#0f766e]'>
+      <div className='size-3 md:size-4 rounded-full flex-shrink-0 flex items-center justify-center bg-[#0f766e]'>
         <Check size={10} strokeWidth={3} className='text-white' />
       </div>
     );
   }
   if (n === current) {
     return (
-      <div className='w-[18px] h-[18px] rounded-full flex-shrink-0 bg-gray-800' />
+      <div className='size-3 md:size-4 rounded-full flex-shrink-0 bg-primary' />
     );
   }
   return (
-    <div className='w-[18px] h-[18px] rounded-full flex-shrink-0 bg-gray-300' />
+    <div className='size-3 md:size-4 rounded-full flex-shrink-0 bg-gray-300' />
   );
 }
 
@@ -43,13 +43,16 @@ function Sidebar({ current }: { current: Step }) {
   ];
 
   return (
-    <div className='w-[210px] flex-shrink-0 px-6 pt-8 pb-6'>
+    <div className='flex flex-row md:flex-col px-2 md:px-6 pt-8 md:pb-6 w-full'>
       {steps.map((s, i) => (
-        <div key={s.n}>
-          <div className='flex items-center gap-3'>
+        <div
+          key={s.n}
+          className='flex items-center md:flex-col gap-2 mb-6 md:last:mb-0'
+        >
+          <div className='flex items-center gap-1 md:gap-3'>
             <StepCircle n={s.n} current={current} />
             <span
-              className={`text-[13px] leading-none ${
+              className={`text-xs md:text-sm leading-none ${
                 s.n <= current
                   ? "text-gray-800 font-medium"
                   : "text-gray-400 font-normal"
@@ -59,7 +62,7 @@ function Sidebar({ current }: { current: Step }) {
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div className='w-px h-7 bg-gray-200 ml-[8.5px] my-1' />
+            <div className='w-4 h-px md:w-px md:h-7  bg-gray-200 ml-[8.5px] my-1' />
           )}
         </div>
       ))}
@@ -81,7 +84,7 @@ function StepBasic({
 }) {
   return (
     <>
-      <div className='flex-1 px-8 pt-8 pb-6'>
+      <div className='flex-1 px-4 md:px-8 pt-8 pb-6'>
         <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
           Add a new user
         </h2>
@@ -90,7 +93,7 @@ function StepBasic({
           adding as a user.
         </p>
 
-        <div className='flex gap-4 mb-5'>
+        <div className='flex flex-col md:flex-row gap-4 mb-5'>
           <div className='flex-1'>
             <label className='block text-[13px] text-gray-500 mb-1.5'>
               First name
@@ -145,19 +148,10 @@ function StepBasic({
 
       <Separator />
       <div className='flex items-center justify-between px-8 py-4'>
-        <Button
-          variant='outline'
-          onClick={onCancel}
-          className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
-        >
+        <Button variant='outline' onClick={onCancel}>
           Cancel
         </Button>
-        <Button
-          onClick={onNext}
-          className='h-10 px-7 rounded-xl text-[13px] font-medium bg-[#b8cece] text-[#3a6868] border-0 hover:bg-[#a8c0c0] shadow-none'
-        >
-          Next
-        </Button>
+        <Button onClick={onNext}>Next</Button>
       </div>
     </>
   );
@@ -250,16 +244,11 @@ function StepRoles({
         <Button
           variant='outline'
           onClick={onBack}
-          className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
+          // className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
         >
           Back
         </Button>
-        <Button
-          onClick={onNext}
-          className='h-10 px-7 rounded-xl text-[13px] font-medium bg-[#b8cece] text-[#3a6868] border-0 hover:bg-[#a8c0c0] shadow-none'
-        >
-          Next
-        </Button>
+        <Button onClick={onNext}>Next</Button>
       </div>
     </>
   );
@@ -357,11 +346,11 @@ const AddNewUserModal = ({ trigger }: { trigger: React.ReactNode }) => {
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-[840px] p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'>
-        <div className='flex min-h-[480px]'>
+      <DialogContent className='max-w-sm md:max-w-[840px] p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'>
+        <div className='flex flex-col md:flex-row min-h-[480px]'>
           <Sidebar current={step} />
 
-          <div className='w-px bg-gray-200 flex-shrink-0' />
+          <div className='w-px bg-gray-200 flex-shrink-0 hidden md:block' />
 
           <div className='flex-1 flex flex-col'>
             {step === 1 && (

@@ -20,7 +20,7 @@ const EditRolesPermissionModal = ({
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-[560px] rounded-2xl p-8 gap-0 [&>button]:hidden'>
+      <DialogContent className='max-w-sm md:max-w-[560px] p-8 gap-0 [&>button]:hidden'>
         {/* Header */}
         <h2 className='text-[20px] font-bold text-gray-900 leading-tight mb-1'>
           Edit roles and permission
@@ -104,9 +104,7 @@ const EditRolesPermissionModal = ({
 
         {/* Save */}
         <div className='mt-6'>
-          <Button className='h-10 px-8 rounded-full text-[13px] font-medium bg-[#6BBEBE] text-white hover:bg-[#5AADAD] shadow-none border-0'>
-            Save
-          </Button>
+          <Button className='rounded-full'>Save</Button>
         </div>
       </DialogContent>
     </Dialog>
