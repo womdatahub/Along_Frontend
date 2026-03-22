@@ -12,7 +12,7 @@ type ResetState = "input" | "confirmation";
 const tealCheckbox =
   "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
 
-export function ResetPasswordModal() {
+const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [state, setState] = useState<ResetState>("input");
   const [open, setOpen] = useState(false);
 
@@ -29,9 +29,7 @@ export function ResetPasswordModal() {
         else setOpen(true);
       }}
     >
-      <DialogTrigger asChild>
-        <Button variant='outline'>Reset Password</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent className='max-w-[460px] rounded-2xl p-8 gap-0 [&>button]:hidden'>
         {state === "input" ? (
@@ -106,4 +104,5 @@ export function ResetPasswordModal() {
       </DialogContent>
     </Dialog>
   );
-}
+};
+export { ResetPasswordModal };

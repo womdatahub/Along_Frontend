@@ -9,14 +9,16 @@ import { ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 const tealCheckbox =
   "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
 
-export function EditRolesPermissionModal() {
+const EditRolesPermissionModal = ({
+  trigger,
+}: {
+  trigger: React.ReactNode;
+}) => {
   const [opsOpen, setOpsOpen] = useState(true);
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='outline'>Edit Roles & Permission</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent className='max-w-[560px] rounded-2xl p-8 gap-0 [&>button]:hidden'>
         {/* Header */}
@@ -109,4 +111,6 @@ export function EditRolesPermissionModal() {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export { EditRolesPermissionModal };

@@ -338,8 +338,7 @@ function StepReview({
   );
 }
 
-// ── Main export ───────────────────────────────────────────────────
-export function AddNewUserModal() {
+const AddNewUserModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [step, setStep] = useState<Step>(1);
   const [open, setOpen] = useState(false);
 
@@ -356,21 +355,14 @@ export function AddNewUserModal() {
         else setOpen(true);
       }}
     >
-      <DialogTrigger asChild>
-        <Button className='bg-[#0f766e] hover:bg-[#0a6360] text-white'>
-          Add User
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent className='max-w-[840px] p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'>
         <div className='flex min-h-[480px]'>
-          {/* Left sidebar */}
           <Sidebar current={step} />
 
-          {/* Vertical divider */}
           <div className='w-px bg-gray-200 flex-shrink-0' />
 
-          {/* Right content */}
           <div className='flex-1 flex flex-col'>
             {step === 1 && (
               <StepBasic onNext={() => setStep(2)} onCancel={close} />
@@ -386,4 +378,5 @@ export function AddNewUserModal() {
       </DialogContent>
     </Dialog>
   );
-}
+};
+export { AddNewUserModal };
