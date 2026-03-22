@@ -97,4 +97,9 @@ const menuItems = [
     text: "Market Place",
     path: "/admin/market-place",
   },
+  {
+    icon: AdminRulesAndPermissionsIcon,
+    text: "Users",
+    path: "/admin/users",
+  },
 ];
