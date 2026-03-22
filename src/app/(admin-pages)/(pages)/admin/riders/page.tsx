@@ -1,6 +1,9 @@
 "use client";
 import {
   Button,
+  Card,
+  CardContent,
+  ConfirmActionModal,
   Empty,
   EmptyHeader,
   EmptyTitle,
@@ -99,9 +102,16 @@ const Page = () => {
                     </TableCell>
                     <TableCell>
                       <div className='flex items-center gap-3'>
-                        <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
-                          Suspend
-                        </Button>
+                        <ConfirmActionModal
+                          trigger={
+                            <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
+                              Suspend
+                            </Button>
+                          }
+                          title='Suspend rider'
+                          description='Are you sure you want to suspend this rider'
+                          confirmActionFunction={() => {}}
+                        />
                         <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
                           View profile
                         </Button>
@@ -113,6 +123,47 @@ const Page = () => {
             </TableBody>
           )}
         </Table>
+      </div>
+
+      <div className='flex flex-col md:flex-row gap-4 md:gap-8'>
+        <div className='flex gap-2 flex-col flex-1'>
+          <p className='font-semibold text-xl'>Suspended user</p>
+          <Card className='p-5 gap-1 flex-1'>
+            <CardContent className='p-0'>
+              {[0, 1, 2].map((it) => (
+                <div
+                  key={it}
+                  className='flex items-center gap-3 justify-between first:py-3 py-6 px-1'
+                >
+                  <div className='flex items-center gap-3'>
+                    <Image
+                      src='/images/placeholder.jpg'
+                      alt='image'
+                      width={36}
+                      height={36}
+                      className='size-9 rounded-full object-cover'
+                    />
+                    <p className='text-sm font-medium'>Mark Spencer</p>
+                  </div>
+
+                  <ConfirmActionModal
+                    trigger={
+                      <Button
+                        variant='default'
+                        className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
+                      >
+                        Reactivate
+                      </Button>
+                    }
+                    title='Reactivate rider'
+                    description='Are you sure you want to reactivate this rider'
+                    confirmActionFunction={() => {}}
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </section>
   );
