@@ -3,22 +3,13 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  User,
-  Shield,
-  Car,
-  //   FileText,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { User, Shield, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib";
 
-// ── Types ──────────────────────────────────────────────────────────
-type Tab = "personal" | "ssn" | "vehicle" | "insurance";
+type Tab = "personal" | "ssn" | "vehicle";
 
-// ── Helpers ────────────────────────────────────────────────────────
+// ── Field ──────────────────────────────────────────────────────────
 function Field({
   label,
   value,
@@ -29,9 +20,9 @@ function Field({
   className?: string;
 }) {
   return (
-    <div className={cn("mb-4 px-6 flex flex-col gap-1", className)}>
+    <div className={cn("flex flex-col gap-0.5", className)}>
       <p className='text-sm text-[#858585]'>{label}</p>
-      <p className='text-[15px] font-semibold'>{value}</p>
+      <p className='text-[15px] font-semibold text-gray-900'>{value}</p>
     </div>
   );
 }
@@ -39,57 +30,37 @@ function Field({
 function ImgBox({ label }: { label: string }) {
   return (
     <div className='flex flex-col items-center gap-1'>
-      <div className='w-20 h-16 bg-red-500 rounded-md' />
+      <div className='w-16 h-14 sm:w-20 sm:h-16 bg-red-500 rounded-md flex-shrink-0' />
       <span className='text-xs text-primary'>{label}</span>
     </div>
   );
 }
 
-function SidebarBtn({
-  icon: Icon,
-  label,
-  active,
-  onClick,
-}: {
-  icon: React.ElementType;
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        `flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm md:text-base transition-colors text-black font-bold whitespace-nowrap cursor-pointer
-        `,
-        !active && "text-[#858585] hover:text-black",
-      )}
-    >
-      <Icon size={14} className={active ? "text-gray-700" : "text-gray-300"} />
-      {label}
-    </button>
-  );
-}
-
+// ── Tab contents ───────────────────────────────────────────────────
 function PersonalTab() {
   return (
-    <div className='flex flex-col gap-5 pt-7 pb-5'>
-      <div className='w-20 h-20 rounded-full bg-red-500 flex-shrink-0 ml-6' />
-      <div>
+    <div>
+      <div className='px-5 py-5'>
+        <div className='w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-500' />
+      </div>
+      <Separator />
+      <div className='px-5 py-4'>
         <Field label='Name' value='Mark Spencer' />
-        <Separator className='mb-4' />
+      </div>
+      <Separator />
+      <div className='px-5 py-4'>
         <Field label='Date of Birth' value='May 5th 2000' />
-        <Separator className='mb-4' />
+      </div>
+      <Separator />
+      <div className='px-5 py-4'>
         <Field label='Gender' value='Male' />
-        <Separator className='mb-4' />
-        <div className='flex items-center gap-2 justify-between px-6'>
-          <Field
-            label='Email Address'
-            value='markspencer@gmail.com'
-            className='px-0'
-          />
-          <p className='text-xs text-green-600'>Verified</p>
-        </div>
+      </div>
+      <Separator />
+      <div className='px-5 py-4 flex items-start justify-between gap-4'>
+        <Field label='Email Address' value='markspencer@gmail.com' />
+        <p className='text-xs text-green-600 font-medium flex-shrink-0 mt-5'>
+          Verified
+        </p>
       </div>
     </div>
   );
@@ -97,18 +68,22 @@ function PersonalTab() {
 
 function SsnTab() {
   return (
-    <div className='flex flex-col gap-5 pt-7 pb-5'>
-      <div>
+    <div>
+      <div className='px-5 py-4'>
         <Field label='Social Security Number' value='288 085 198 37' />
-        <Separator className='mb-4' />
-        <Field label="Driver's License Number" value='387 0966 UT' />
-        <Separator className='mb-4' />
-        <Field label='Issued Date' value='23 – 06 – 2025' />
-        <Separator className='mb-4' />
       </div>
-      <div className='px-6 flex-col flex gap-2'>
-        <p className='text-sm text-[#858585]'>Uploads</p>
-        <div className='flex gap-3'>
+      <Separator />
+      <div className='px-5 py-4'>
+        <Field label="Driver's License Number" value='387 0966 UT' />
+      </div>
+      <Separator />
+      <div className='px-5 py-4'>
+        <Field label='Issued Date' value='23 – 06 – 2025' />
+      </div>
+      <Separator />
+      <div className='px-5 py-4'>
+        <p className='text-sm text-[#858585] mb-3'>Uploads</p>
+        <div className='flex gap-3 flex-wrap'>
           <ImgBox label='Front' />
           <ImgBox label='Back' />
           <ImgBox label='Advanced' />
@@ -121,73 +96,89 @@ function SsnTab() {
 function VehicleTab() {
   const [page, setPage] = useState(1);
   return (
-    <div className='flex flex-col gap-5 pt-7 pb-5 justify-between h-full'>
-      {page === 1 ? (
-        <div>
-          <Field label='Vehicle Make' value='Tesla' />
-          <Separator className='mb-4' />
-          <Field label='Vehicle Model' value='Model Y' />
-          <Separator className='mb-4' />
-          <Field label='Vehicle Vin Number' value='0912 9883 000990' />
-          <Separator className='mb-4' />
-          <Field label='Vehicle Colour' value='Beige' />
-          <Separator className='mb-4' />
-        </div>
-      ) : (
-        <div className='px-6'>
-          <p className='text-xs text-gray-400 mb-2'>Uploads</p>
-          <div className='flex gap-3 mb-4'>
-            <ImgBox label='Side front' />
-            <ImgBox label='Interior' />
-            <ImgBox label='Side rear' />
-          </div>
-          <div className='flex flex-col gap-2 w-fit'>
-            <p className='text-xs text-[#858585]'>
+    <div className='flex flex-col min-h-full'>
+      <div className='flex-1'>
+        {page === 1 ? (
+          <>
+            <div className='px-5 py-4'>
+              <Field label='Vehicle Make' value='Tesla' />
+            </div>
+            <Separator />
+            <div className='px-5 py-4'>
+              <Field label='Vehicle Model' value='Model Y' />
+            </div>
+            <Separator />
+            <div className='px-5 py-4'>
+              <Field label='Vehicle Vin Number' value='0912 9883 000990' />
+            </div>
+            <Separator />
+            <div className='px-5 py-4'>
+              <Field label='Vehicle Colour' value='Beige' />
+            </div>
+            <Separator />
+          </>
+        ) : (
+          <div className='px-5 py-4'>
+            <p className='text-sm text-[#858585] mb-3'>Uploads</p>
+            <div className='flex gap-3 flex-wrap mb-5'>
+              <ImgBox label='Side front' />
+              <ImgBox label='Interior' />
+              <ImgBox label='Side rear' />
+            </div>
+            <p className='text-sm text-[#858585] mb-3'>
               Vehicle Registration Document
             </p>
             <ImgBox label='Vehicle Reg' />
           </div>
-        </div>
-      )}
-      <div className='flex items-center justify-end gap-1 mt-4 pr-4 text-xs text-primary'>
+        )}
+      </div>
+      <div className='flex items-center justify-end gap-1 px-4 py-3 text-sm text-primary'>
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className='hover:text-gray-800 cursor-pointer'
+          className='hover:text-gray-800 p-1'
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={17} />
         </button>
-        <span className='text-sm md:text-sm'>{page}/2</span>
+        <span className='tabular-nums'>{page}/2</span>
         <button
           onClick={() => setPage((p) => Math.min(2, p + 1))}
-          className='hover:text-gray-800 cursor-pointer'
+          className='hover:text-gray-800 p-1'
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={17} />
         </button>
       </div>
     </div>
   );
 }
 
-// function InsuranceTab() {
-//   return (
-//     <div>
-//       <Field label='Insurance Provider' value='StateFarm Auto' />
-//       <Field label='Policy Number' value='SF-00192-2024' />
-//       <Field label='Expiry Date' value='01 – 09 – 2026' />
-//       <p className='text-xs text-gray-400 mb-2'>Insurance Document</p>
-//       <ImgBox label='Insurance Doc' />
-//     </div>
-//   );
-// }
-
-// ── Main component ─────────────────────────────────────────────────
-const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
-  { key: "personal", label: "Personal Information", icon: User },
-  { key: "ssn", label: "Social Security Data", icon: Shield },
-  { key: "vehicle", label: "Vehicle Registration", icon: Car },
-  //   { key: "insurance", label: "Vehicle Insurance", icon: FileText },
+// ── Tab config ─────────────────────────────────────────────────────
+const TABS: {
+  key: Tab;
+  label: string;
+  shortLabel: string;
+  icon: React.ElementType;
+}[] = [
+  {
+    key: "personal",
+    label: "Personal Information",
+    shortLabel: "Personal",
+    icon: User,
+  },
+  {
+    key: "ssn",
+    label: "Social Security Data",
+    shortLabel: "Security",
+    icon: Shield,
+  },
+  {
+    key: "vehicle",
+    label: "Vehicle Registration",
+    shortLabel: "Vehicle",
+    icon: Car,
+  },
 ];
 
+// ── Main component ─────────────────────────────────────────────────
 export const DriverInfoModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [activeTab, setActiveTab] = useState<Tab>("personal");
 
@@ -199,44 +190,98 @@ export const DriverInfoModal = ({ trigger }: { trigger: React.ReactNode }) => {
         return <SsnTab />;
       case "vehicle":
         return <VehicleTab />;
-      //   case "insurance":
-      //     return <InsuranceTab />;
     }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
+
       <DialogContent
-        showCloseButton={false}
-        className='max-w-xl md:max-w-2xl md:min-w-2xl p-0 overflow-hidden mx-2'
+        // className={cn(
+        //   // Remove default padding & gap
+        //   "p-0 gap-0 overflow-hidden",
+        //   // On mobile: nearly full viewport width with small gutters
+        //   "w-[calc(100vw-20px)] max-w-[calc(100vw-20px)]",
+        //   // On sm+: fixed max-width
+        //   "sm:w-auto sm:max-w-2xl",
+        //   // Constrain height so content can scroll, not the modal itself
+        //   "max-h-[90dvh] flex flex-col",
+        //   // Hide default shadcn close button (caller controls close)
+        //   "[&>button.absolute]:hidden",
+        // )}
+        className={cn(
+          "p-0 gap-0 overflow-hidden",
+          // Mobile: fills screen with small gutters
+          "w-[calc(100vw-20px)] max-w-[calc(100vw-20px)]",
+          // sm+: lock to a big fixed size, never shrinks
+          "sm:w-[720px] sm:max-w-[720px] sm:min-w-[720px]",
+          "max-h-[90dvh] flex flex-col",
+          "[&>button.absolute]:hidden",
+        )}
       >
-        <div className='flex min-h-[450px]'>
-          <div className='p-4 flex flex-col gap-1 justify-between border-r border-[#CCCCCC'>
-            <div className='flex flex-col gap-2'>
-              {TABS.map((t) => (
-                <SidebarBtn
-                  key={t.key}
-                  icon={t.icon}
-                  label={t.label}
-                  active={activeTab === t.key}
-                  onClick={() => setActiveTab(t.key)}
-                />
+        <div className='flex flex-col sm:flex-row flex-1 min-h-0 sm:min-h-[450px]'>
+          <div className='flex sm:hidden border-b border-[#CCCCCC] flex-shrink-0 bg-white'>
+            {TABS.map(({ key, shortLabel, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={cn(
+                  "flex-1 flex flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors border-b-2 -mb-px",
+                  activeTab === key
+                    ? "border-primary text-gray-900"
+                    : "border-transparent text-[#858585]",
+                )}
+              >
+                <Icon size={15} />
+                {shortLabel}
+              </button>
+            ))}
+          </div>
+          <div className='hidden sm:flex flex-col justify-between border-r border-[#CCCCCC] p-4 flex-shrink-0'>
+            <div className='flex flex-col gap-1'>
+              {TABS.map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={cn(
+                    "flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm md:text-base font-bold transition-colors whitespace-nowrap cursor-pointer",
+                    activeTab !== key && "text-[#858585]",
+                  )}
+                >
+                  <Icon
+                    size={18}
+                    className={
+                      activeTab === key ? "text-gray-700" : "text-gray-300"
+                    }
+                  />
+                  {label}
+                </button>
               ))}
             </div>
-            <div className='flex flex-col gap-2'>
-              <Button className='rounded-xl'>Verify User</Button>
+
+            <div className='flex flex-col gap-2 pt-4'>
+              <Button className='rounded-xl text-sm'>Verify User</Button>
               <Button
                 variant='outline'
-                className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl'
+                className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm'
               >
                 Reject entry
               </Button>
             </div>
           </div>
+          <div className='flex-1 flex flex-col min-h-0 min-w-0'>
+            <div className='flex-1 overflow-y-auto'>{renderContent()}</div>
 
-          <div className='flex-1 flex flex-col'>
-            <div className='flex-1'>{renderContent()}</div>
+            <div className='sm:hidden flex-shrink-0 border-t border-gray-200 p-4 flex flex-col gap-2 bg-white'>
+              <Button className='rounded-xl text-sm w-full'>Verify User</Button>
+              <Button
+                variant='outline'
+                className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm w-full'
+              >
+                Reject entry
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
