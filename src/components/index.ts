@@ -7,3 +7,4 @@ export * from "./db";
 export * from "./nav-main";
 export * from "./driver-info-modal";
 export * from "./confirm-action-modal";
+export * from "./admin";
