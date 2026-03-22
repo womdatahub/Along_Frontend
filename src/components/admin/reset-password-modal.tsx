@@ -31,14 +31,13 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-[460px] rounded-2xl p-8 gap-0 [&>button]:hidden'>
+      <DialogContent className='max-w-sm md:max-w-[460px] rounded-2xl p-8 gap-0 [&>button]:hidden'>
         {state === "input" ? (
-          <>
+          <div>
             <h2 className='text-[20px] font-bold text-gray-900 mb-7'>
               Reset Password
             </h2>
 
-            {/* Generate Password button — large, light gray-teal bg */}
             <button
               type='button'
               className='w-full py-5 rounded-xl bg-[#e8f0f0] text-[13px] text-gray-500 hover:bg-[#dce9e9] transition-colors mb-4 text-center'
@@ -46,7 +45,6 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
               Generate Password
             </button>
 
-            {/* Type Password input */}
             <div className='mb-5'>
               <Input
                 placeholder='Type Password'
@@ -54,7 +52,6 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
               />
             </div>
 
-            {/* Checkbox */}
             <div className='flex items-center gap-3 mb-8'>
               <Checkbox defaultChecked className={tealCheckbox} />
               <label className='text-[13px] text-gray-700'>
@@ -62,16 +59,15 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
               </label>
             </div>
 
-            {/* Continue */}
             <Button
               onClick={() => setState("confirmation")}
-              className='h-10 px-8 rounded-full text-[13px] font-medium bg-[#6BBEBE] text-white hover:bg-[#5AADAD] shadow-none border-0'
+              className='rounded-full'
             >
               Continue
             </Button>
-          </>
+          </div>
         ) : (
-          <>
+          <div>
             <h2 className='text-[20px] font-bold text-gray-900 mb-7'>
               Password reset confirmation
             </h2>
@@ -92,14 +88,13 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
               <p className='text-[13px] text-gray-700'>HK877yhyyf&amp;998hhh</p>
             </div>
 
-            {/* Continue */}
             <Button
               onClick={close}
               className='h-10 px-8 rounded-full text-[13px] font-medium bg-[#0f766e] text-white hover:bg-[#0a6360] shadow-none border-0'
             >
               Continue
             </Button>
-          </>
+          </div>
         )}
       </DialogContent>
     </Dialog>
