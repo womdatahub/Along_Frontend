@@ -111,6 +111,7 @@ const Page = () => {
                           title='Suspend rider'
                           description='Are you sure you want to suspend this rider'
                           confirmActionFunction={() => {}}
+                          type='suspend'
                         />
                         <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
                           View profile
@@ -158,6 +159,7 @@ const Page = () => {
                     title='Reactivate rider'
                     description='Are you sure you want to reactivate this rider'
                     confirmActionFunction={() => {}}
+                    type='reactivate'
                   />
                 </div>
               ))}

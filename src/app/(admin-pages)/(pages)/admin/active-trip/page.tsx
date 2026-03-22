@@ -244,6 +244,7 @@ const Page = () => {
                   title='Terminate trip'
                   description='Are you sure you want to terminate this trip?'
                   confirmActionFunction={() => {}}
+                  type='delete'
                 />
               </div>
               <div className='grid grid-cols-1 md:grid-cols-3 gap-6 rounded-b-xl border p-5'>

@@ -1,6 +1,5 @@
 "use client";
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -119,6 +118,7 @@ const Page = () => {
                           title='Suspend driver'
                           description='Are you sure you want to suspend this driver'
                           confirmActionFunction={() => {}}
+                          type='suspend'
                         />
 
                         <Dialog>
@@ -128,8 +128,7 @@ const Page = () => {
                             </Button>
                           </DialogTrigger>
                           <DialogContent
-                            // showCloseButton={false}
-                            className='max-w-md px-6 py-10'
+                            className='max-w-sm md:max-w-md px-6 py-10'
                           >
                             <div className='flex items-start gap-3 mb-4'>
                               <div className='size-[120px] rounded-full bg-red-500 flex-shrink-0' />
@@ -350,6 +349,7 @@ const Page = () => {
                     title='Reactivate driver'
                     description='Are you sure you want to reactivate this driver'
                     confirmActionFunction={() => {}}
+                    type='reactivate'
                   />
 
                   {/* <Dialog>

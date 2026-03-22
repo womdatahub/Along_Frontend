@@ -132,6 +132,7 @@ const Page = () => {
               confirmActionFunction={() => {}}
               description='Are you sure you want to delete this user?'
               title='Delete User'
+              type='delete'
             />
           </div>
 
