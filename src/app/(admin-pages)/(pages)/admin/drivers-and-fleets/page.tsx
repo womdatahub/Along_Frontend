@@ -1,19 +1,27 @@
 "use client";
 import {
+  Badge,
   Button,
   Card,
   CardContent,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DriverInfoModal,
   Empty,
   EmptyHeader,
   EmptyTitle,
+  Separator,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  ConfirmActionModal,
 } from "@/components/";
 import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
+import { Car, Check, MapPin, Phone, Star } from "lucide-react";
 import Image from "next/image";
 
 const isEmpty = false;
@@ -102,12 +110,170 @@ const Page = () => {
                     </TableCell>
                     <TableCell>
                       <div className='flex items-center gap-3'>
-                        <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
-                          Suspend
-                        </Button>
-                        <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
-                          View profile
-                        </Button>
+                        <ConfirmActionModal
+                          trigger={
+                            <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
+                              Suspend
+                            </Button>
+                          }
+                          title='Suspend driver'
+                          description='Are you sure you want to suspend this driver'
+                          confirmActionFunction={() => {}}
+                        />
+
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
+                              View profile
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent
+                            // showCloseButton={false}
+                            className='max-w-md px-6 py-10'
+                          >
+                            <div className='flex items-start gap-3 mb-4'>
+                              <div className='size-[120px] rounded-full bg-red-500 flex-shrink-0' />
+                              <div className='flex w-full flex-col gap-5 relative'>
+                                <p className='text-sm font-bold absolute top-0 right-0'>
+                                  ID: #00224
+                                </p>
+                                <div className='flex flex-col'>
+                                  <h2 className='text-2xl font-bold truncate'>
+                                    Mark Spencer
+                                  </h2>
+                                  <p className='text-sm font-semibold mt-0.5'>
+                                    CabbageTown, Center Park
+                                  </p>
+                                </div>
+
+                                <div className='flex gap-3 mt-1'>
+                                  <div className='text-xl flex gap-3 items-center justify-center font-bold bg-primary text-white p-3 rounded-[5px]'>
+                                    4.5
+                                    <Star
+                                      size={18}
+                                      className='fill-white text-white'
+                                    />
+                                  </div>
+
+                                  <div className='font-semibold'>
+                                    <span className='text-xs '>Rating</span>
+                                    <div>
+                                      <div className='flex gap-3 items-center'>
+                                        <span className='text-xs '>
+                                          123 Reviews
+                                        </span>
+                                        <div className='flex gap-1 items-center'>
+                                          {[1, 2, 3, 4].map((i) => (
+                                            <Star
+                                              key={i}
+                                              size={12}
+                                              className='fill-icons text-icons'
+                                            />
+                                          ))}
+                                          <Star
+                                            size={12}
+                                            className='fill-gray-200 text-icons'
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <span className='flex items-center gap-2 text-sm font-semibold'>
+                                  <Phone
+                                    size={15}
+                                    className='fill-primary text-primary'
+                                  />{" "}
+                                  +19 867 8861
+                                </span>
+                                <div className='flex gap-2 items-center'>
+                                  <span className='flex gap-2 text-xs text-gray-500'>
+                                    <Car
+                                      size={18}
+                                      className='fill-primary text-white'
+                                    />
+                                    <div>
+                                      <p className='font-bold text-sm'>521</p>
+                                      <p className='text-xs'>Completed rides</p>
+                                    </div>
+                                  </span>
+                                  <Separator
+                                    orientation='vertical'
+                                    className='h-4 w-2 bg-[#CDD4D4]'
+                                  />
+
+                                  <span className='flex gap-2 text-xs text-gray-500'>
+                                    <MapPin
+                                      size={18}
+                                      className='fill-primary text-white'
+                                    />
+                                    <div>
+                                      <p className='font-bold text-sm'>521ml</p>
+                                      <p className='text-xs'>Distance shared</p>
+                                    </div>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <Separator className='mb-4' />
+
+                            <p className='text-base font-bold mb-'>
+                              Registered Vehicle
+                            </p>
+                            <div className='flex gap-8'>
+                              <div className='w-32 h-20 bg-red-500 rounded-lg' />
+                              <div className='flex flex-col gap-2'>
+                                <div>
+                                  <p className='text-xs text-icon'>Car model</p>
+                                  <p className='text-sm font-bold'>
+                                    Tesla Model 3 · 2020
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className='text-xs text-icon'>Licence</p>
+                                  <p className='text-sm font-bold'>LA23 N7NC</p>
+                                </div>
+                                <div className='flex flex-wrap gap-3'>
+                                  <div className='flex gap-1 items-center'>
+                                    <div className='size-3 bg-primary'>
+                                      <Check
+                                        size={10}
+                                        className='text-white fill-white'
+                                      />
+                                    </div>{" "}
+                                    <span className='text-xs font-semibold'>
+                                      4 seats
+                                    </span>
+                                  </div>
+                                  <div className='flex gap-1 items-center'>
+                                    <div className='size-3 bg-primary'>
+                                      <Check
+                                        size={10}
+                                        className='text-white fill-white'
+                                      />
+                                    </div>
+                                    <span className='text-xs font-semibold'>
+                                      Air condition
+                                    </span>
+                                  </div>
+                                  <div className='flex gap-1 items-center'>
+                                    <div className='size-3 bg-primary'>
+                                      <Check
+                                        size={10}
+                                        className='text-white fill-white'
+                                      />
+                                    </div>{" "}
+                                    <span className='text-xs font-semibold'>
+                                      Passenger/rear bag
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -138,7 +304,10 @@ const Page = () => {
                     />
                     <p className='text-sm font-medium'>Mark Spencer</p>
                   </div>
-                  <Button variant='ghost'>Open</Button>
+
+                  <DriverInfoModal
+                    trigger={<Button variant='ghost'>Open</Button>}
+                  />
                 </div>
               ))}
             </CardContent>
@@ -163,12 +332,62 @@ const Page = () => {
                     />
                     <p className='text-sm font-medium'>Mark Spencer</p>
                   </div>
-                  <Button
+                  {/* <Button
                     variant='default'
                     className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
                   >
                     Reactivate
-                  </Button>
+                  </Button> */}
+                  <ConfirmActionModal
+                    trigger={
+                      <Button
+                        variant='default'
+                        className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
+                      >
+                        Reactivate
+                      </Button>
+                    }
+                    title='Reactivate driver'
+                    description='Are you sure you want to reactivate this driver'
+                    confirmActionFunction={() => {}}
+                  />
+
+                  {/* <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant='default'
+                        className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
+                      >
+                        Reactivate
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className='max-w-sm p-0 overflow-hidden'>
+                      <div className='flex flex-col items-center gap-4 p-6 text-center'>
+                        <div className='text-4xl'>👆</div>
+                        <div>
+                          <h2 className='text-base font-semibold text-gray-800'>
+                            Reactivate driver
+                          </h2>
+                          <p className='text-sm text-gray-400 mt-1'>
+                            Are you sure you want to reactivate this user
+                          </p>
+                        </div>
+                      </div>
+                      <Separator />
+                      <div className='flex'>
+                        <button className='flex-1 py-3 text-sm text-gray-400 hover:text-gray-600 transition-colors'>
+                          Cancel
+                        </button>
+                        <Separator
+                          orientation='vertical'
+                          className='h-12 self-center'
+                        />
+                        <button className='flex-1 py-3 text-sm text-teal-600 font-medium hover:text-teal-700 transition-colors'>
+                          Yes
+                        </button>
+                      </div>
+                    </DialogContent>
+                  </Dialog> */}
                 </div>
               ))}
             </CardContent>

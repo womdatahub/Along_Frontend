@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components";
+import { Card, CardContent, Button, ConfirmActionModal } from "@/components";
 import { cn } from "@/lib";
 import {
   AdminSearchIcon,
@@ -232,9 +232,19 @@ const Page = () => {
                   </div>
                 </div>
 
-                <button className='ml-auto bg-red-600 text-white px-6 py-2 rounded-full text-sm'>
-                  Terminate this trip
-                </button>
+                <ConfirmActionModal
+                  trigger={
+                    <Button
+                      variant='destructive'
+                      className='ml-auto px-6 py-2 rounded-full text-sm'
+                    >
+                      Terminate this trip
+                    </Button>
+                  }
+                  title='Terminate trip'
+                  description='Are you sure you want to terminate this trip?'
+                  confirmActionFunction={() => {}}
+                />
               </div>
               <div className='grid grid-cols-1 md:grid-cols-3 gap-6 rounded-b-xl border p-5'>
                 <div className='flex items-center gap-2.5'>
