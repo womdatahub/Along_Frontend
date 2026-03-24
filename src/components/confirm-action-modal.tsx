@@ -1,13 +1,19 @@
+"use client";
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   Separator,
   Button,
+  AddInput,
+  SelectDropdown,
 } from "@/components";
-import { cn } from "@/lib";
+import { cn, marketPlaceSchema, TMarketPlaceSchema } from "@/lib";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { X, MousePointerClick, Power } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 type IconTypes = "delete" | "suspend" | "reactivate";
 const icons: Record<IconTypes, React.ReactNode> = {
@@ -29,27 +35,92 @@ const ConfirmActionModal = ({
   confirmActionFunction,
   type = "delete",
 }: Props) => {
+  const [open, setOpen] = useState(false);
+  const {
+    register,
+    setValue,
+    watch,
+    // handleSubmit,
+    // reset,
+    formState: { errors },
+  } = useForm<TMarketPlaceSchema>({
+    resolver: zodResolver(marketPlaceSchema),
+  });
+  const currency = watch("currency");
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
         className='max-w-sm overflow-hidden bg-[#E7EDED]'
       >
         <div className='flex flex-col items-center gap-2.5 text-center'>
-          <div className={cn('w-14 h-14 rounded-full border-2 border-red-500 flex items-center justify-center', type==='reactivate' && 'border-[#D4D3F0]')}>
+          <div
+            className={cn(
+              "w-14 h-14 rounded-full border-2 border-red-500 flex items-center justify-center",
+              type === "reactivate" && "border-[#D4D3F0]",
+            )}
+          >
             {icons[type]}{" "}
           </div>
-          {/* <div className='flex flex-col gap-1'> */}
           <h2 className='text-xl font-bold text-gray-800'>{title}</h2>
           <p className='text-xs'>{description}</p>
-          {/* </div> */}
         </div>
+        {type === "suspend" && <Separator className=' bg-[#768B8F38] mt-5' />}
+        {type === "suspend" && (
+          <div className='flex flex-col gap-2'>
+            <AddInput
+              label='Suspension Reason'
+              id='baseHagglePercentage'
+              errors={errors}
+              placeholder='0'
+              register={register}
+              required
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              labelClassName='text-xs font-medium ml-0'
+              iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+            <div className='flex gap-4 flex-col md:flex-row'>
+              <SelectDropdown
+                options={["TEMPORARY", "PERMANENT"]}
+                selected={currency}
+                setSelected={(value: string) => {
+                  setValue("currency", value);
+                }}
+                triggerLabel='TEMPORARY'
+                triggerClassName='bg-background-1 min-h-14 h-12'
+                labelClassName='ml-2'
+                label='Suspension Type'
+                groupClassName='shadow-lg'
+                errorMessage={errors.currency?.message ?? ""}
+              />
+              <SelectDropdown
+                options={Array(7)
+                  .fill("")
+                  .map((_, i) => `${i + 1} days`)}
+                selected={currency}
+                setSelected={(value: string) => {
+                  setValue("currency", value);
+                }}
+                triggerLabel='1'
+                triggerClassName='bg-background-1 min-h-14 h-12'
+                labelClassName='ml-2'
+                label='Suspension Duration'
+                groupClassName='shadow-lg'
+                errorMessage={errors.currency?.message ?? ""}
+              />
+            </div>
+          </div>
+        )}
         <Separator className=' bg-[#768B8F38] mt-5' />
         <div className='flex'>
           <Button
             variant='ghost'
             className='flex-1 text-icons  hover:bg-transparent'
+            onClick={() => setOpen(false)}
           >
             Cancel
           </Button>
@@ -60,7 +131,10 @@ const ConfirmActionModal = ({
           <Button
             variant='ghost'
             className='flex-1 hover:bg-transparent text-red-500 hover:text-red-600'
-            onClick={confirmActionFunction}
+            onClick={() => {
+              confirmActionFunction();
+              setOpen(false);
+            }}
           >
             Yes
           </Button>
