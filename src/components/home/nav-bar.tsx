@@ -84,10 +84,6 @@ export const Navbar = () => {
             {userRole && userRole !== "user" ? (
               <p>Dashboard</p>
             ) : (
-              // <NameAvatar
-              //   value={riderInitials || driverInitials || userInitials}
-              //   className='size-8 text-sm'
-              // />
               <Image
                 alt='profile img'
                 src='/images/account.png'
@@ -113,22 +109,27 @@ export const Navbar = () => {
             <li onClick={() => setMenuOpen(false)}>
               <Link href='/about'>About</Link>
             </li>
-            {userRole && userRole !== "driver" && (
+            {userRole && userRole !== "driver" && userRole !== "admin" && (
               <li onClick={() => setMenuOpen(false)}>
                 <Link href='/rent-ride'>Ride</Link>
               </li>
             )}
-            {userRole && userRole !== "driver" && userRole !== "rider" && (
-              <li onClick={() => setMenuOpen(false)}>
-                <Link href='/onboarding'>Drive</Link>
-              </li>
-            )}
+            {userRole &&
+              userRole !== "driver" &&
+              userRole !== "rider" &&
+              userRole !== "admin" && (
+                <li onClick={() => setMenuOpen(false)}>
+                  <Link href='/onboarding'>Drive</Link>
+                </li>
+              )}
             <li onClick={() => setMenuOpen(false)}>
               <Link href='#'>Help</Link>
             </li>
             <li onClick={() => setMenuOpen(false)}>
               <Link
-                href={userRole ? `/${userRole.toLowerCase()}-db` : "/sign-in"}
+                href={userRole ? userRole && userRole !== "user"
+                  ? `/${userRole.toLowerCase()}${userRole !== "admin" ? "-db" : ""}`
+             : "/sign-in"}
                 className='font-semibold flex items-center gap-2.5'
               >
                 {userRole && userRole !== "user" ? (
