@@ -19,12 +19,38 @@ import {
   TableRow,
   ConfirmActionModal,
 } from "@/components/";
+import { useAdmin } from "@/store";
 import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
 import { Car, Check, MapPin, Phone, Star } from "lucide-react";
 import Image from "next/image";
+import { useShallow } from "zustand/shallow";
+import { useEffect } from "react";
 
 const isEmpty = false;
 const Page = () => {
+  const {
+    actions: {
+      // getAllDrivers,
+      // getAllRiders,
+      // getAllAdmins,
+      getPendingDriversKYC,
+    },
+    pendingDriversKYC,
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+      pendingDriversKYC: state.pendingDriversKYC,
+    })),
+  );
+
+  useEffect(() => {
+    // getAllDrivers();
+    // getAllRiders();
+    // getAllAdmins();
+    getPendingDriversKYC();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-2xl md:text-4xl font-heebo'>Drivers & Fleets</p>
@@ -127,9 +153,7 @@ const Page = () => {
                               View profile
                             </Button>
                           </DialogTrigger>
-                          <DialogContent
-                            className='max-w-sm md:max-w-md px-6 py-10'
-                          >
+                          <DialogContent className='max-w-sm md:max-w-md px-6 py-10'>
                             <div className='flex items-start gap-3 mb-4'>
                               <div className='size-[120px] rounded-full bg-red-500 flex-shrink-0' />
                               <div className='flex w-full flex-col gap-5 relative'>
@@ -288,24 +312,37 @@ const Page = () => {
           <p className='font-semibold text-xl'>Pending Activation</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
-              {[0, 1, 2].map((it) => (
+              {pendingDriversKYC.length === 0 && (
+                <Empty className='py-20'>
+                  <EmptyHeader>
+                    <EmptyTitle>No information found</EmptyTitle>
+                  </EmptyHeader>
+                </Empty>
+              )}
+              {pendingDriversKYC.map((driver) => (
                 <div
-                  key={it}
+                  key={driver._id}
                   className='flex items-center gap-3 justify-between  first:py-3 border-b last:border-b-0 py-6 px-4'
                 >
                   <div className='flex items-center gap-3'>
                     <Image
-                      src='/images/placeholder.jpg'
-                      alt='image'
+                      src={
+                        driver.driverProfilePictureUri ??
+                        "/images/placeholder.jpg"
+                      }
+                      alt={`${driver.firstName} ${driver.lastName} profile picture`}
                       width={36}
                       height={36}
                       className='size-9 rounded-full object-cover'
                     />
-                    <p className='text-sm font-medium'>Mark Spencer</p>
+                    <p className='text-sm font-medium'>
+                      {driver.firstName} {driver.lastName}
+                    </p>
                   </div>
 
                   <DriverInfoModal
                     trigger={<Button variant='ghost'>Open</Button>}
+                    driverInfo={driver}
                   />
                 </div>
               ))}
@@ -313,7 +350,7 @@ const Page = () => {
           </Card>
         </div>
         <div className='flex gap-2 flex-col flex-1'>
-          <p className='font-semibold text-xl'>Suspended user</p>
+          <p className='font-semibold text-xl'>Suspended drivers</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
               {[0, 1, 2].map((it) => (
