@@ -6,12 +6,20 @@ import {
   DialogContent,
   DialogTrigger,
   Button,
-  Input,
   Checkbox,
   Separator,
+  AddInput,
+  SelectDropdown,
 } from "@/components";
 
-import { Check, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  marketPlaceSchema,
+  TMarketPlaceSchema,
+} from "@/lib/schemas/adminDBSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SelectValue } from "@radix-ui/react-select";
 
 type Step = 1 | 2 | 3;
 
@@ -43,11 +51,11 @@ function Sidebar({ current }: { current: Step }) {
   ];
 
   return (
-    <div className='flex flex-row md:flex-col px-2 md:px-6 pt-8 md:pb-6 w-full'>
+    <div className='flex flex-row md:flex-col px-2 md:px-6 pt-8 md:pb-6 w-full md:w-fit'>
       {steps.map((s, i) => (
         <div
           key={s.n}
-          className='flex items-center md:flex-col gap-2 mb-6 md:last:mb-0'
+          className='flex items-center md:items-start md:flex-col gap-2 mb-6 md:last:mb-0'
         >
           <div className='flex items-center gap-1 md:gap-3'>
             <StepCircle n={s.n} current={current} />
@@ -82,6 +90,13 @@ function StepBasic({
   onNext: () => void;
   onCancel: () => void;
 }) {
+  const {
+    register,
+    formState: { errors },
+  } = useForm<TMarketPlaceSchema>({
+    resolver: zodResolver(marketPlaceSchema),
+  });
+
   return (
     <>
       <div className='flex-1 px-4 md:px-8 pt-8 pb-6'>
@@ -94,33 +109,47 @@ function StepBasic({
         </p>
 
         <div className='flex flex-col md:flex-row gap-4 mb-5'>
-          <div className='flex-1'>
-            <label className='block text-[13px] text-gray-500 mb-1.5'>
-              First name
-            </label>
-            <Input
-              defaultValue='Adewale'
-              className='bg-[#f2f4f4] border-0 rounded-xl h-11 text-[13px] text-gray-700 focus-visible:ring-1 focus-visible:ring-teal-600 placeholder:text-gray-400'
-            />
-          </div>
-          <div className='flex-1'>
-            <label className='block text-[13px] text-gray-500 mb-1.5'>
-              Last name
-            </label>
-            <Input
-              defaultValue='Adewale'
-              className='bg-[#f2f4f4] border-0 rounded-xl h-11 text-[13px] text-gray-700 focus-visible:ring-1 focus-visible:ring-teal-600 placeholder:text-gray-400'
-            />
-          </div>
+          <AddInput
+            label='First name'
+            id='title'
+            errors={errors}
+            placeholder='Adewale'
+            register={register}
+            required
+            type='text'
+            width='full'
+            labelClassName='text-sm md:text-base font-semibold ml-2'
+            iconAndInputWrapperClassName='bg-background-1 rounded-xl p-0'
+            inputClassName='h-11 placeholder:text-placeholder rounded-xl text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+          <AddInput
+            label='Last name'
+            id='title'
+            errors={errors}
+            placeholder='Adewale'
+            register={register}
+            required
+            type='text'
+            width='full'
+            labelClassName='text-sm md:text-base font-semibold ml-2'
+            iconAndInputWrapperClassName='bg-background-1 rounded-xl p-0'
+            inputClassName='h-11 placeholder:text-placeholder rounded-xl text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
         </div>
 
         <div className='mb-7'>
-          <label className='block text-[13px] text-gray-500 mb-1.5'>
-            Username
-          </label>
-          <Input
-            defaultValue='whalesadd2334'
-            className='bg-[#f2f4f4] border-0 rounded-xl h-11 text-[13px] text-gray-700 focus-visible:ring-1 focus-visible:ring-teal-600 placeholder:text-gray-400'
+          <AddInput
+            label='Username'
+            id='title'
+            errors={errors}
+            placeholder='Adewale'
+            register={register}
+            required
+            type='text'
+            width='full'
+            labelClassName='text-sm md:text-base font-semibold ml-2'
+            iconAndInputWrapperClassName='bg-background-1 rounded-xl p-0'
+            inputClassName='h-11 placeholder:text-placeholder rounded-xl text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
           />
         </div>
 
@@ -167,6 +196,14 @@ function StepRoles({
 }) {
   const [opsOpen, setOpsOpen] = useState(true);
 
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useForm<TMarketPlaceSchema>({
+    resolver: zodResolver(marketPlaceSchema),
+  });
+
   return (
     <>
       <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
@@ -178,18 +215,24 @@ function StepRoles({
         </p>
 
         <div className='mb-1'>
-          <label className='block text-[13px] text-gray-500 mb-1.5'>
-            Select role
-          </label>
-          <div className='flex items-center justify-between border border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors'>
-            <span className='text-[13px] text-gray-700'>Support Agent</span>
-            <ChevronRight size={15} className='text-gray-400' />
-          </div>
+          <SelectDropdown
+            options={["Support Agent", "Support Agent2"]}
+            selected={""}
+            setSelected={(value: string) => {
+              // setValue("currency", value);
+            }}
+            triggerLabel='Support Agent'
+            triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
+            labelClassName='ml-2 text-sm md:text-base'
+            label='Select role'
+            groupClassName='shadow-lg'
+            // errorMessage={errors.currency?.message ?? ""}
+          />
         </div>
 
         <Separator className='my-5' />
 
-        <p className='text-[13px] font-semibold text-gray-800 mb-3'>
+        <p className='text-sm md:text-base font-semibold text-gray-800 mb-3'>
           Additional permission
         </p>
 
@@ -269,36 +312,34 @@ function StepReview({
 
         <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
           <div className='mb-4'>
-            <p className='text-[13px] font-semibold text-gray-800 mb-0.5'>
-              Name
-            </p>
-            <p className='text-[13px] text-gray-600'>Adewale Adewale</p>
+            <p className='text-base font-semibold text-gray-800 mb-0.5'>Name</p>
+            <p className='text-sm text-gray-600'>Adewale Adewale</p>
           </div>
           <Separator className='mb-4' />
 
           <div className='mb-4'>
-            <p className='text-[13px] font-semibold text-gray-800 mb-0.5'>
+            <p className='text-base font-semibold text-gray-800 mb-0.5'>
               Username
             </p>
-            <p className='text-[13px] text-gray-600'>whalesadd2334</p>
+            <p className='text-sm text-gray-600'>whalesadd2334</p>
           </div>
           <Separator className='mb-4' />
 
           <div>
-            <p className='text-[13px] font-semibold text-gray-800 mb-0.5'>
+            <p className='text-base font-semibold text-gray-800 mb-0.5'>
               Role and permissions
             </p>
-            <p className='text-[13px] text-gray-600 mb-3'>Support Agent</p>
+            <p className='text-sm text-gray-600 mb-3'>Support Agent</p>
             <div className='flex flex-col gap-3'>
               <div className='flex items-center gap-2.5'>
                 <Checkbox defaultChecked className={tealCheckbox} />
-                <label className='text-[13px] text-gray-600'>
+                <label className='text-sm text-gray-600'>
                   Assign ride to riders
                 </label>
               </div>
               <div className='flex items-center gap-2.5'>
                 <Checkbox defaultChecked className={tealCheckbox} />
-                <label className='text-[13px] text-gray-600'>
+                <label className='text-sm text-gray-600'>
                   Respond to queries
                 </label>
               </div>
