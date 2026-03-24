@@ -128,7 +128,7 @@ const Page = () => {
 
       <div className='flex flex-col md:flex-row gap-4 md:gap-8'>
         <div className='flex gap-2 flex-col flex-1'>
-          <p className='font-semibold text-xl'>Suspended user</p>
+          <p className='font-semibold text-xl'>Suspended riders</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
               {[0, 1, 2].map((it) => (
