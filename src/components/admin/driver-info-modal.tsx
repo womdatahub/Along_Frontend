@@ -178,7 +178,6 @@ const TABS: {
   },
 ];
 
-// ── Main component ─────────────────────────────────────────────────
 export const DriverInfoModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [activeTab, setActiveTab] = useState<Tab>("personal");
 
@@ -198,23 +197,9 @@ export const DriverInfoModal = ({ trigger }: { trigger: React.ReactNode }) => {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
-        // className={cn(
-        //   // Remove default padding & gap
-        //   "p-0 gap-0 overflow-hidden",
-        //   // On mobile: nearly full viewport width with small gutters
-        //   "w-[calc(100vw-20px)] max-w-[calc(100vw-20px)]",
-        //   // On sm+: fixed max-width
-        //   "sm:w-auto sm:max-w-2xl",
-        //   // Constrain height so content can scroll, not the modal itself
-        //   "max-h-[90dvh] flex flex-col",
-        //   // Hide default shadcn close button (caller controls close)
-        //   "[&>button.absolute]:hidden",
-        // )}
         className={cn(
           "p-0 gap-0 overflow-hidden",
-          // Mobile: fills screen with small gutters
           "w-[calc(100vw-20px)] max-w-[calc(100vw-20px)]",
-          // sm+: lock to a big fixed size, never shrinks
           "sm:w-[720px] sm:max-w-[720px] sm:min-w-[720px]",
           "max-h-[90dvh] flex flex-col",
           "[&>button.absolute]:hidden",
