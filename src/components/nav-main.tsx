@@ -15,6 +15,7 @@ import { JSX, SVGProps, useState } from "react";
 export const NavMain = () => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+
   return (
     <SidebarMenu className={cn("mt-6 px-4", isCollapsed && "px-2")}>
       {menuItems.map(({ icon: Icon, path, text }, index) => {
@@ -31,14 +32,20 @@ type SMenuButtonProps = {
 };
 const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
   const pathname = usePathname();
+  const { setOpenMobile, isMobile } = useSidebar();
+  const [hover, setHover] = useState(false);
+
   let isActive = (() => {
     if (path === "/admin") {
       return pathname === "/admin";
     }
     return pathname === path || pathname.startsWith(path + "/");
   })();
-  const [hover, setHover] = useState(false);
   isActive = isActive || hover;
+
+  const handleMenuClick = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   return (
     <SidebarMenuButton
@@ -48,6 +55,7 @@ const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
       )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      onClick={handleMenuClick}
       asChild
     >
       <Link href={path}>
