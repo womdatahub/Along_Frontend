@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { User, Shield, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib";
+import { DriverProfile } from "@/types";
 
 type Tab = "personal" | "ssn" | "vehicle";
 
@@ -178,7 +179,12 @@ const TABS: {
   },
 ];
 
-export const DriverInfoModal = ({ trigger }: { trigger: React.ReactNode }) => {
+export const DriverInfoModal = ({
+  trigger,
+}: {
+  trigger: React.ReactNode;
+  driverInfo: DriverProfile;
+}) => {
   const [activeTab, setActiveTab] = useState<Tab>("personal");
 
   const renderContent = () => {

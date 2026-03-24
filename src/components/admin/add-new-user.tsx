@@ -139,10 +139,10 @@ function StepBasic({
 
         <div className='mb-7'>
           <AddInput
-            label='Username'
+            label='Email'
             id='title'
             errors={errors}
-            placeholder='Adewale'
+            placeholder='johndoe@gmail.com'
             register={register}
             required
             type='text'
@@ -368,7 +368,7 @@ function StepReview({
   );
 }
 
-const AddNewUserModal = ({ trigger }: { trigger: React.ReactNode }) => {
+const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [step, setStep] = useState<Step>(1);
   const [open, setOpen] = useState(false);
 
@@ -409,4 +409,4 @@ const AddNewUserModal = ({ trigger }: { trigger: React.ReactNode }) => {
     </Dialog>
   );
 };
-export { AddNewUserModal };
+export { AddNewAdminModal };

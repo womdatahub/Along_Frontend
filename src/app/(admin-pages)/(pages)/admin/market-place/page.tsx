@@ -6,6 +6,7 @@ import {
   ButtonWithLoader,
   Card,
   CardContent,
+  ConfirmActionModal,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -152,7 +153,23 @@ const Page = () => {
                         {setting.maxHagglePercentage}
                       </TableCell>
                       <TableCell className=' flex gap-3 items-center'>
-                        <Button
+                        <ConfirmActionModal
+                          trigger={
+                            <Button className='rounded-full px-2 py-1 text-xs'>
+                              {setting.isActive ? "Deactivate" : "Activate"}
+                            </Button>
+                          }
+                          confirmActionFunction={() =>
+                            activateOrDeactivateCostSetting({
+                              costId: setting.id ?? "",
+                              isActive: !setting.isActive,
+                            })
+                          }
+                          description={`Are you sure you want to ${setting.isActive ? "deactivate" : "activate"} ${setting.title}`}
+                          title={`${setting.isActive ? "Deactivate" : "Activate"} ${setting.title}?`}
+                          type={setting.isActive ? "delete" : "reactivate"}
+                        />
+                        {/* <Button
                           onClick={() =>
                             activateOrDeactivateCostSetting({
                               costId: setting.id ?? "",
@@ -162,7 +179,7 @@ const Page = () => {
                           className='rounded-full px-2 py-1 text-xs'
                         >
                           {setting.isActive ? "Deactivate" : "Activate"}
-                        </Button>
+                        </Button> */}
 
                         <AddOrEditNewFareEngineProfileComponent
                           trigger={
@@ -191,12 +208,20 @@ const Page = () => {
                           isEdit
                         />
 
-                        <Button
-                          variant='destructive'
-                          className='rounded-full px-2 py-1 text-xs'
-                        >
-                          Delete
-                        </Button>
+                        <ConfirmActionModal
+                          trigger={
+                            <Button
+                              variant='destructive'
+                              className='rounded-full px-2 py-1 text-xs'
+                            >
+                              Delete
+                            </Button>
+                          }
+                          confirmActionFunction={() => {}}
+                          description={`Are you sure you want to delete ${setting.title}`}
+                          title={`Delete ${setting.title}?`}
+                          type='delete'
+                        />
                       </TableCell>
                     </TableRow>
                   );

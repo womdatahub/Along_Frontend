@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SelectorFn, AdminsType } from "@/types";
+import type { SelectorFn, AdminsType, DriverProfile } from "@/types";
 import { devtools, persist } from "zustand/middleware";
 import {
   adminApiStr,
@@ -14,6 +14,7 @@ type AdminType = {
   rideCostSettings: TMarketPlaceSchema[];
   allAdmins: AdminsType[];
   isLoading: boolean;
+  pendingDriversKYC: DriverProfile[];
   actions: {
     createRideCostSettings: (
       costSettings: TMarketPlaceSchema,
@@ -38,6 +39,12 @@ type AdminType = {
       resolution: string;
     }) => Promise<void>;
     getAllDrivers: () => Promise<void>;
+    getPendingDriversKYC: () => Promise<void>;
+    processDriverKYC: (data: {
+      userId: string;
+      action: "APPROVE" | "REJECT";
+      notes: string;
+    }) => Promise<void>;
     getAllRiders: () => Promise<void>;
     getAllAdmins: () => Promise<void>;
   };
@@ -48,6 +55,7 @@ const initialState = {
   rideCostSettings: [],
   allAdmins: [],
   isLoading: false,
+  pendingDriversKYC: [],
 };
 
 export const useAdmin = create<AdminType>()(
@@ -306,6 +314,36 @@ export const useAdmin = create<AdminType>()(
               toast.success(data.message ?? "Drivers fetched successfully");
             }
           },
+          getPendingDriversKYC: async () => {
+            set({ isLoading: true });
+            const path = adminApiStr("/compliance/kyc/pending");
+            const { data, error } = await callApi<DriverProfile[]>(path);
+            if (error) {
+              set({ isLoading: false });
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(data.message ?? "Pending KYC fetched successfully");
+              set({ isLoading: false, pendingDriversKYC: data.data });
+            }
+          },
+          processDriverKYC: async (driverKYCData) => {
+            set({ isLoading: true });
+            const path = adminApiStr("/compliance/kyc");
+            const { data, error } = await callApi(path, driverKYCData);
+            if (error) {
+              set({ isLoading: false });
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(data.message ?? "KYC processed successfully");
+              set({ isLoading: false });
+            }
+          },
           getAllRiders: async () => {
             const path = adminApiStr("/riders");
             const { data, error } = await callApi(path);
@@ -319,16 +357,19 @@ export const useAdmin = create<AdminType>()(
             }
           },
           getAllAdmins: async () => {
+            set({ isLoading: true });
             const path = adminApiStr("/admins?status=active&limit=50&offset=0");
             const { data, error } = await callApi<AdminsType[]>(path);
             if (error) {
               toast.error(error.message);
+              set({ isLoading: false });
               return;
             }
             if (data) {
               set({ allAdmins: data.data });
               toast.success(data.message ?? "Admins fetched successfully");
             }
+            set({ isLoading: false });
           },
         },
       }),
