@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Empty,
   EmptyHeader,
@@ -27,6 +27,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib";
+import { useAdmin } from "@/store";
+import { useShallow } from "zustand/shallow";
 
 const isEmpty = false;
 
@@ -34,7 +36,19 @@ const Page = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const hasSelection = selectedId !== null;
 
-  const allDrivers = [...drivers, ...drivers];
+  const {
+    actions: { getAllAdmins },
+    allAdmins,
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+      allAdmins: state.allAdmins,
+    })),
+  );
+
+  useEffect(() => {
+    getAllAdmins();
+  }, []);
 
   return (
     <section className='flex flex-col gap-8'>
@@ -68,14 +82,17 @@ const Page = () => {
           <div className='flex items-center gap-1 flex-wrap font-medium'>
             <AddNewUserModal
               trigger={
-                <button className='flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors'>
+                <button className='flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors'>
                   <UserPlus size={14} />
                   Add a user
                 </button>
               }
             />
 
-            <button className='flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors'>
+            <button
+              onClick={getAllAdmins}
+              className='flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors'
+            >
               <RefreshCw size={14} />
               Refresh
             </button>
@@ -167,7 +184,7 @@ const Page = () => {
             </TableBody>
           ) : (
             <TableBody>
-              {allDrivers.map((driver, i) => {
+              {allAdmins.map((admin, i) => {
                 const isSelected = selectedId === i;
                 return (
                   <TableRow
@@ -193,15 +210,15 @@ const Page = () => {
                     </TableCell>
 
                     <TableCell className='text-sm font-medium py-5'>
-                      <p>{driver.displayName}</p>
+                      <p>
+                        {admin.firstName} {admin.lastName}
+                      </p>
                     </TableCell>
                     <TableCell className='text-sm font-medium'>
-                      {driver.userName}
+                      {admin.email}
                     </TableCell>
                     <TableCell className='text-sm font-medium'>
-                      {driver.roles.map((role) => (
-                        <p key={role}>{role}</p>
-                      ))}
+                      {admin.role.split("_").join(" ")}
                     </TableCell>
                   </TableRow>
                 );

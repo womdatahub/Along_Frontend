@@ -11,3 +11,15 @@ export type CostSettingsType = {
   currency?: string;
   isActive?: boolean;
 };
+
+export type AdminsType = {
+  id: string;
+  adminId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: "SUPER_ADMIN";
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};

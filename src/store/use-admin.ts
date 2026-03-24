@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SelectorFn } from "@/types";
+import type { SelectorFn, AdminsType } from "@/types";
 import { devtools, persist } from "zustand/middleware";
 import {
   adminApiStr,
@@ -12,6 +12,8 @@ import { toast } from "sonner";
 type AdminType = {
   isCreatingCostSetting: boolean;
   rideCostSettings: TMarketPlaceSchema[];
+  allAdmins: AdminsType[];
+  isLoading: boolean;
   actions: {
     createRideCostSettings: (
       costSettings: TMarketPlaceSchema,
@@ -35,10 +37,18 @@ type AdminType = {
       alertId: string;
       resolution: string;
     }) => Promise<void>;
+    getAllDrivers: () => Promise<void>;
+    getAllRiders: () => Promise<void>;
+    getAllAdmins: () => Promise<void>;
   };
 };
 
-const initialState = { isCreatingCostSetting: false, rideCostSettings: [] };
+const initialState = {
+  isCreatingCostSetting: false,
+  rideCostSettings: [],
+  allAdmins: [],
+  isLoading: false,
+};
 
 export const useAdmin = create<AdminType>()(
   devtools(
@@ -282,6 +292,42 @@ export const useAdmin = create<AdminType>()(
             if (data) {
               console.log(path, data);
               toast.success(data.message ?? "SOS resolved successfully");
+            }
+          },
+          getAllDrivers: async () => {
+            const path = adminApiStr("/drivers");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(data.message ?? "Drivers fetched successfully");
+            }
+          },
+          getAllRiders: async () => {
+            const path = adminApiStr("/riders");
+            const { data, error } = await callApi(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              console.log(path, data);
+              toast.success(data.message ?? "Riders fetched successfully");
+            }
+          },
+          getAllAdmins: async () => {
+            const path = adminApiStr("/admins?status=active&limit=50&offset=0");
+            const { data, error } = await callApi<AdminsType[]>(path);
+            if (error) {
+              toast.error(error.message);
+              return;
+            }
+            if (data) {
+              set({ allAdmins: data.data });
+              toast.success(data.message ?? "Admins fetched successfully");
             }
           },
         },

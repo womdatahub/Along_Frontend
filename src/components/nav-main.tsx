@@ -99,7 +99,7 @@ const menuItems = [
   },
   {
     icon: AdminRulesAndPermissionsIcon,
-    text: "Users",
-    path: "/admin/users",
+    text: "Admins",
+    path: "/admin/admins",
   },
 ];
