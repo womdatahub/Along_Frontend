@@ -127,9 +127,12 @@ export const Navbar = () => {
             </li>
             <li onClick={() => setMenuOpen(false)}>
               <Link
-                href={userRole ? userRole && userRole !== "user"
-                  ? `/${userRole.toLowerCase()}${userRole !== "admin" ? "-db" : ""}`
-             : "/sign-in"}
+                href={{
+                  pathname:
+                    userRole && userRole !== "user"
+                      ? `/${userRole.toLowerCase()}${userRole !== "admin" ? "-db" : ""}`
+                      : "/sign-in",
+                }}
                 className='font-semibold flex items-center gap-2.5'
               >
                 {userRole && userRole !== "user" ? (

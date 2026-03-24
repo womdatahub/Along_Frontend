@@ -85,7 +85,10 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
             {...register(id, { required })}
             onBlur={onblur}
             placeholder={placeholder}
-            className={cn("rounded-lg", inputClassName)}
+            className={cn(
+              "rounded-lg focus-visible:ring-1 focus-visible:ring-teal-600",
+              inputClassName,
+            )}
           />
           {type === "password" && (
             <button
