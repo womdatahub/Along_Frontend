@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  AddNewUserModal,
+  AddNewAdminModal,
   EditRolesPermissionModal,
   ConfirmActionModal,
   ResetPasswordModal,
@@ -30,8 +30,6 @@ import { cn } from "@/lib";
 import { useAdmin } from "@/store";
 import { useShallow } from "zustand/shallow";
 
-const isEmpty = false;
-
 const Page = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const hasSelection = selectedId !== null;
@@ -39,15 +37,19 @@ const Page = () => {
   const {
     actions: { getAllAdmins },
     allAdmins,
+    isLoading,
   } = useAdmin(
     useShallow((state) => ({
       actions: state.actions,
       allAdmins: state.allAdmins,
+      isLoading: state.isLoading,
     })),
   );
 
   useEffect(() => {
     getAllAdmins();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -80,18 +82,19 @@ const Page = () => {
 
         <div className='flex items-center justify-between px-2 md:px-6 flex-wrap gap-3'>
           <div className='flex items-center gap-1 flex-wrap font-medium'>
-            <AddNewUserModal
+            <AddNewAdminModal
               trigger={
                 <button className='flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors'>
                   <UserPlus size={14} />
-                  Add a user
+                  Create new admin
                 </button>
               }
             />
 
             <button
               onClick={getAllAdmins}
-              className='flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors'
+              disabled={isLoading}
+              className='flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors disabled:text-gray-300 disabled:cursor-not-allowed"'
             >
               <RefreshCw size={14} />
               Refresh
@@ -170,7 +173,7 @@ const Page = () => {
             </TableRow>
           </TableHeader>
 
-          {isEmpty ? (
+          {allAdmins.length === 0 ? (
             <TableBody>
               <TableRow>
                 <TableCell colSpan={8} className='p-10'>
@@ -232,26 +235,3 @@ const Page = () => {
 };
 
 export default Page;
-
-const drivers = [
-  {
-    displayName: "John Doe",
-    userName: "maryjane@alongride.com",
-    roles: ["Super admin"],
-  },
-  {
-    displayName: "John Doe",
-    userName: "maryjane@alongride.com",
-    roles: ["Super admin"],
-  },
-  {
-    displayName: "John Doe",
-    userName: "maryjane@alongride.com",
-    roles: ["Super admin"],
-  },
-  {
-    displayName: "John Doe",
-    userName: "maryjane@alongride.com",
-    roles: ["Super admin"],
-  },
-];
