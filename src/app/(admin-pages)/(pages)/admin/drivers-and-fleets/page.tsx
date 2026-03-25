@@ -29,12 +29,7 @@ import { useEffect } from "react";
 const isEmpty = false;
 const Page = () => {
   const {
-    actions: {
-      // getAllDrivers,
-      // getAllRiders,
-      // getAllAdmins,
-      getPendingDriversKYC,
-    },
+    actions: { getAllDrivers, getPendingDriversKYC },
     pendingDriversKYC,
   } = useAdmin(
     useShallow((state) => ({
@@ -44,9 +39,7 @@ const Page = () => {
   );
 
   useEffect(() => {
-    // getAllDrivers();
-    // getAllRiders();
-    // getAllAdmins();
+    getAllDrivers();
     getPendingDriversKYC();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
