@@ -3,3 +3,4 @@ export * from "./use-session";
 export * from "./use-radar-map";
 export * from "./use-rental";
 export * from "./use-admin";
+export * from "./admin-store";

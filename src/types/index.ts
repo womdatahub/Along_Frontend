@@ -16,3 +16,4 @@ export * from "./radar-map-types";
 export * from "./rental-type";
 export * from "./session-types";
 export * from "./admin-types";
+export * from "./permissions.type";
