@@ -31,7 +31,7 @@ import {
 } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useAdmin } from "@/store";
+import { useMarketPlace } from "@/store";
 import { useShallow } from "zustand/shallow";
 import { ISOStringFormat } from "date-fns";
 
@@ -40,7 +40,7 @@ const Page = () => {
   const {
     actions: { getRideCostSettings, activateOrDeactivateCostSetting },
     rideCostSettings,
-  } = useAdmin(
+  } = useMarketPlace(
     useShallow((state) => ({
       actions: state.actions,
       rideCostSettings: state.rideCostSettings,
@@ -370,7 +370,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
   const {
     actions: { createRideCostSettings, updateRideCost: updateRideCostSetting },
     isCreatingCostSetting,
-  } = useAdmin(
+  } = useMarketPlace(
     useShallow((state) => ({
       actions: state.actions,
       isCreatingCostSetting: state.isCreatingCostSetting,
