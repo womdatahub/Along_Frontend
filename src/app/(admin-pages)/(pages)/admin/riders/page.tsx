@@ -14,10 +14,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/";
+import { useAdmin } from "@/store";
 import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 const isEmpty = false;
 const Page = () => {
+  const {
+    actions: { getAllRiders },
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+    })),
+  );
+
+  useEffect(() => {
+    getAllRiders();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-2xl md:text-4xl font-heebo'>Riders</p>
