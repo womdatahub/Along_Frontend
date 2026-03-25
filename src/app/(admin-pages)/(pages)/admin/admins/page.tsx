@@ -54,7 +54,7 @@ const Page = () => {
 
   return (
     <section className='flex flex-col gap-8'>
-      <p className='text-2xl md:text-4xl font-heebo'>Users</p>
+      <p className='text-2xl md:text-4xl font-heebo'>Admins</p>
 
       <div
         className={cn(
@@ -65,7 +65,7 @@ const Page = () => {
         )}
       >
         <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-2 md:px-6'>
-          <p className='text-xl text-left font-medium'>Active Users</p>
+          <p className='text-xl text-left font-medium'>Active Admins</p>
           <div className='flex items-center gap-5'>
             <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] w-full md:min-w-[325px]'>
               <AdminSearchIcon />

@@ -22,7 +22,7 @@ import { useShallow } from "zustand/shallow";
 const isEmpty = false;
 const Page = () => {
   const {
-    actions: { getAllRiders },
+    actions: { getAllRiders, getSuspendedRiders },
   } = useAdmin(
     useShallow((state) => ({
       actions: state.actions,
@@ -31,7 +31,7 @@ const Page = () => {
 
   useEffect(() => {
     getAllRiders();
-
+    getSuspendedRiders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (

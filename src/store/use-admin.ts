@@ -36,6 +36,7 @@ type AdminType = {
       notes: string;
     }) => Promise<void>;
     getAllRiders: () => Promise<void>;
+    getSuspendedRiders: () => Promise<void>;
     getAllAdmins: () => Promise<void>;
   };
 };

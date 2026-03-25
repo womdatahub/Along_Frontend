@@ -14,12 +14,11 @@ import {
 
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import {
-  marketPlaceSchema,
-  TMarketPlaceSchema,
+  createNewAdminSchema,
+  TCreateNewAdminSchema,
 } from "@/lib/schemas/adminDBSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SelectValue } from "@radix-ui/react-select";
 
 type Step = 1 | 2 | 3;
 
@@ -87,15 +86,20 @@ function StepBasic({
   onNext,
   onCancel,
 }: {
-  onNext: () => void;
+  onNext: (values: TCreateNewAdminSchema) => void;
   onCancel: () => void;
 }) {
   const {
     register,
+    handleSubmit,
     formState: { errors },
-  } = useForm<TMarketPlaceSchema>({
-    resolver: zodResolver(marketPlaceSchema),
+  } = useForm<TCreateNewAdminSchema>({
+    resolver: zodResolver(createNewAdminSchema),
   });
+
+  const onSubmit = async (values: TCreateNewAdminSchema) => {
+    onNext(values);
+  };
 
   return (
     <>
@@ -111,7 +115,7 @@ function StepBasic({
         <div className='flex flex-col md:flex-row gap-4 mb-5'>
           <AddInput
             label='First name'
-            id='title'
+            id='firstName'
             errors={errors}
             placeholder='Adewale'
             register={register}
@@ -124,7 +128,7 @@ function StepBasic({
           />
           <AddInput
             label='Last name'
-            id='title'
+            id='lastName'
             errors={errors}
             placeholder='Adewale'
             register={register}
@@ -140,7 +144,7 @@ function StepBasic({
         <div className='mb-7'>
           <AddInput
             label='Email'
-            id='title'
+            id='email'
             errors={errors}
             placeholder='johndoe@gmail.com'
             register={register}
@@ -180,7 +184,7 @@ function StepBasic({
         <Button variant='outline' onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={onNext}>Next</Button>
+        <Button onClick={handleSubmit(onSubmit)}>Next</Button>
       </div>
     </>
   );
@@ -371,6 +375,8 @@ function StepReview({
 const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [step, setStep] = useState<Step>(1);
   const [open, setOpen] = useState(false);
+  const [newAdminDetails, setNewAdminDetails] =
+    useState<TCreateNewAdminSchema>();
 
   const close = () => {
     setOpen(false);
@@ -395,7 +401,13 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
 
           <div className='flex-1 flex flex-col'>
             {step === 1 && (
-              <StepBasic onNext={() => setStep(2)} onCancel={close} />
+              <StepBasic
+                onNext={(values) => {
+                  setNewAdminDetails(values);
+                  setStep(2);
+                }}
+                onCancel={close}
+              />
             )}
             {step === 2 && (
               <StepRoles onNext={() => setStep(3)} onBack={() => setStep(1)} />

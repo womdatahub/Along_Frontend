@@ -41,4 +41,15 @@ export const marketPlaceSchema = z.object({
   id: z.string().optional(),
 });
 
+export const createNewAdminSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  firstName: z.string().min(3, {
+    message: "First name is required",
+  }),
+  lastName: z.string().min(3, {
+    message: "Last name is required",
+  }),
+});
+
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;
+export type TCreateNewAdminSchema = z.infer<typeof createNewAdminSchema>;
