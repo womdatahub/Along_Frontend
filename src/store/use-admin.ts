@@ -6,7 +6,7 @@ import type {
   SuspendedDriver,
 } from "@/types";
 import { devtools } from "zustand/middleware";
-import { adminApiStr, callApi } from "@/lib";
+import { adminApiStr, callApi, TCreateNewAdminSchema } from "@/lib";
 import { toast } from "sonner";
 
 type AdminType = {
@@ -38,6 +38,7 @@ type AdminType = {
     getAllRiders: () => Promise<void>;
     getSuspendedRiders: () => Promise<void>;
     getAllAdmins: () => Promise<void>;
+    createNewAdmin: (adminData: TCreateNewAdminSchema) => Promise<void>;
   };
 };
 
@@ -50,7 +51,7 @@ const initialState = {
 };
 
 export const useAdmin = create<AdminType>()(
-  devtools((set) => ({
+  devtools((set, get) => ({
     ...initialState,
     actions: {
       getAdminDashboardDetails: async () => {
@@ -261,6 +262,21 @@ export const useAdmin = create<AdminType>()(
         if (data) {
           set({ allAdmins: data.data });
           toast.success(data.message ?? "Admins fetched successfully");
+        }
+        set({ isLoading: false });
+      },
+      createNewAdmin: async (adminData) => {
+        set({ isLoading: true });
+        const path = adminApiStr("/admins");
+        const { data, error } = await callApi(path, adminData);
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+          return;
+        }
+        if (data) {
+          toast.success(data.message ?? "Admins created successfully");
+          await get().actions.getAllAdmins();
         }
         set({ isLoading: false });
       },

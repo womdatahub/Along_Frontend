@@ -17,9 +17,9 @@ import {
   createNewAdminSchema,
   TCreateNewAdminSchema,
 } from "@/lib/schemas/adminDBSchema";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePermission } from "@/store";
+import { useAdmin, usePermission } from "@/store";
 import { useShallow } from "zustand/shallow";
 
 type Step = 1 | 2 | 3;
@@ -83,21 +83,21 @@ const tealCheckbox =
 const StepBasic = ({
   onNext,
   onCancel,
-  selectedRole,
-  setSelectedRole,
 }: {
   onNext: (values: TCreateNewAdminSchema) => void;
   onCancel: () => void;
-  selectedRole: string;
-  setSelectedRole: Dispatch<SetStateAction<string>>;
 }) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
+    control,
     formState: { errors },
   } = useForm<TCreateNewAdminSchema>({
     resolver: zodResolver(createNewAdminSchema),
   });
+  const role = watch("role");
 
   const { allRolePermissions } = usePermission(
     useShallow((state) => ({
@@ -150,7 +150,7 @@ const StepBasic = ({
           />
         </div>
 
-        <div className='mb-7'>
+        <div className='flex flex-col md:flex-row gap-4 mb-7'>
           <AddInput
             label='Email'
             id='email'
@@ -164,24 +164,42 @@ const StepBasic = ({
             iconAndInputWrapperClassName='bg-background-1 rounded-xl p-0'
             inputClassName='h-11 placeholder:text-placeholder rounded-xl text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
           />
-        </div>
-
-        <div className='flex flex-col gap-3.5'>
-          <SelectDropdown
-            options={Object.keys(allRolePermissions ?? {}).map((role) =>
-              role.split("_").join(" "),
-            )}
-            selected={selectedRole}
-            setSelected={(role: string) => {
-              setSelectedRole(role);
-            }}
-            triggerLabel='Support Agent'
-            triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
-            labelClassName='ml-2 text-sm md:text-base'
-            label='Select role'
-            groupClassName='shadow-lg'
+          <AddInput
+            label='Phone number'
+            id='mobileNumber'
+            errors={errors}
+            placeholder='+234 000 000 0000'
+            register={register}
+            required
+            type='text'
+            inputMode='numeric'
+            pattern='[0-9]*'
+            width='full'
+            labelClassName='text-sm md:text-base font-semibold ml-2'
+            iconAndInputWrapperClassName='bg-background-1 rounded-xl p-0'
+            inputClassName='h-11 placeholder:text-placeholder rounded-xl text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
           />
         </div>
+
+        <Controller
+          name='role'
+          control={control}
+          render={({ field }) => (
+            <SelectDropdown
+              selected={field.value}
+              setSelected={field.onChange}
+              errorMessage={errors.role?.message}
+              options={Object.keys(allRolePermissions ?? {}).map((role) =>
+                role.split("_").join(" "),
+              )}
+              triggerLabel='Support Agent'
+              triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
+              labelClassName='ml-2 text-sm md:text-base'
+              label='Select role'
+              groupClassName='shadow-lg'
+            />
+          )}
+        />
       </div>
 
       <Separator />
@@ -195,130 +213,128 @@ const StepBasic = ({
   );
 };
 
-const StepRoles = ({
-  onNext,
-  onBack,
-  selectedRole,
-  setSelectedRole,
-}: {
-  onNext: () => void;
-  onBack: () => void;
-  selectedRole: string;
-  setSelectedRole: Dispatch<SetStateAction<string>>;
-}) => {
-  const [opsOpen, setOpsOpen] = useState(true);
+// const StepRoles = ({
+//   onNext,
+//   onBack,
+//   selectedRole,
+//   setSelectedRole,
+// }: {
+//   onNext: () => void;
+//   onBack: () => void;
+//   selectedRole: string;
+//   setSelectedRole: Dispatch<SetStateAction<string>>;
+// }) => {
+//   const [opsOpen, setOpsOpen] = useState(true);
 
-  const { allRolePermissions } = usePermission(
-    useShallow((state) => ({
-      actions: state.actions,
-      allRolePermissions: state.allRolePermissions,
-    })),
-  );
+//   const { allRolePermissions } = usePermission(
+//     useShallow((state) => ({
+//       actions: state.actions,
+//       allRolePermissions: state.allRolePermissions,
+//     })),
+//   );
 
-  return (
-    <>
-      <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
-        <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
-          Assign Roles and Permission
-        </h2>
-        <p className='text-[13px] text-gray-500 mb-6'>
-          Assign the Roles and permission you&apos;d like this user to have.
-        </p>
+//   return (
+//     <>
+//       <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
+//         <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
+//           Assign Roles and Permission
+//         </h2>
+//         <p className='text-[13px] text-gray-500 mb-6'>
+//           Assign the Roles and permission you&apos;d like this user to have.
+//         </p>
 
-        <div className='mb-1'>
-          <SelectDropdown
-            options={Object.keys(allRolePermissions ?? {}).map((role) =>
-              role.split("_").join(" "),
-            )}
-            selected={selectedRole}
-            setSelected={(role: string) => {
-              setSelectedRole(role);
-            }}
-            triggerLabel='Support Agent'
-            triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
-            labelClassName='ml-2 text-sm md:text-base'
-            label='Select role'
-            groupClassName='shadow-lg'
-          />
-        </div>
+//         <div className='mb-1'>
+//           <SelectDropdown
+//             options={Object.keys(allRolePermissions ?? {}).map((role) =>
+//               role.split("_").join(" "),
+//             )}
+//             selected={selectedRole}
+//             setSelected={(role: string) => {
+//               setSelectedRole(role);
+//             }}
+//             triggerLabel='Support Agent'
+//             triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
+//             labelClassName='ml-2 text-sm md:text-base'
+//             label='Select role'
+//             groupClassName='shadow-lg'
+//           />
+//         </div>
 
-        <Separator className='my-5' />
+//         <Separator className='my-5' />
 
-        <p className='text-sm md:text-base font-semibold text-gray-800 mb-3'>
-          Additional permission
-        </p>
+//         <p className='text-sm md:text-base font-semibold text-gray-800 mb-3'>
+//           Additional permission
+//         </p>
 
-        <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
-          {/* Operations */}
-          <div className='border-t border-gray-200'>
-            <button
-              type='button'
-              onClick={() => setOpsOpen((v) => !v)}
-              className='flex items-center justify-between w-full py-3 text-left'
-            >
-              <span className='text-[13px] text-gray-700'>Operations</span>
-              {opsOpen ? (
-                <ChevronUp size={15} className='text-gray-400' />
-              ) : (
-                <ChevronDown size={15} className='text-gray-400' />
-              )}
-            </button>
-            {opsOpen && (
-              <div className='flex flex-col gap-3 pb-4 pl-0.5'>
-                <div className='flex items-center gap-2.5'>
-                  <Checkbox defaultChecked className={tealCheckbox} />
-                  <label className='text-[13px] text-gray-600'>
-                    Assign ride to riders
-                  </label>
-                </div>
-                <div className='flex items-center gap-2.5'>
-                  <Checkbox className={tealCheckbox} />
-                  <label className='text-[13px] text-gray-600'>
-                    Respond to queries
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
+//         <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
+//           {/* Operations */}
+//           <div className='border-t border-gray-200'>
+//             <button
+//               type='button'
+//               onClick={() => setOpsOpen((v) => !v)}
+//               className='flex items-center justify-between w-full py-3 text-left'
+//             >
+//               <span className='text-[13px] text-gray-700'>Operations</span>
+//               {opsOpen ? (
+//                 <ChevronUp size={15} className='text-gray-400' />
+//               ) : (
+//                 <ChevronDown size={15} className='text-gray-400' />
+//               )}
+//             </button>
+//             {opsOpen && (
+//               <div className='flex flex-col gap-3 pb-4 pl-0.5'>
+//                 <div className='flex items-center gap-2.5'>
+//                   <Checkbox defaultChecked className={tealCheckbox} />
+//                   <label className='text-[13px] text-gray-600'>
+//                     Assign ride to riders
+//                   </label>
+//                 </div>
+//                 <div className='flex items-center gap-2.5'>
+//                   <Checkbox className={tealCheckbox} />
+//                   <label className='text-[13px] text-gray-600'>
+//                     Respond to queries
+//                   </label>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
 
-          {/* Compliance */}
-          <div className='border-t border-gray-200'>
-            <button
-              type='button'
-              className='flex items-center justify-between w-full py-3 text-left'
-            >
-              <span className='text-[13px] text-gray-700'>Compliance</span>
-              <ChevronDown size={15} className='text-gray-400' />
-            </button>
-          </div>
-        </div>
-      </div>
+//           {/* Compliance */}
+//           <div className='border-t border-gray-200'>
+//             <button
+//               type='button'
+//               className='flex items-center justify-between w-full py-3 text-left'
+//             >
+//               <span className='text-[13px] text-gray-700'>Compliance</span>
+//               <ChevronDown size={15} className='text-gray-400' />
+//             </button>
+//           </div>
+//         </div>
+//       </div>
 
-      <Separator />
-      <div className='flex items-center justify-between px-8 py-4'>
-        <Button
-          variant='outline'
-          onClick={onBack}
-          // className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
-        >
-          Back
-        </Button>
-        <Button onClick={onNext}>Next</Button>
-      </div>
-    </>
-  );
-};
+//       <Separator />
+//       <div className='flex items-center justify-between px-8 py-4'>
+//         <Button
+//           variant='outline'
+//           onClick={onBack}
+//           // className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
+//         >
+//           Back
+//         </Button>
+//         <Button onClick={onNext}>Next</Button>
+//       </div>
+//     </>
+//   );
+// };
 
 const StepReview = ({
   onBack,
   onFinish,
   details,
-  selectedRole,
 }: {
   onBack: () => void;
   onFinish: () => void;
   details: TCreateNewAdminSchema | undefined;
-  selectedRole: string;
 }) => {
   return (
     <>
@@ -341,15 +357,22 @@ const StepReview = ({
             <p className='text-sm text-gray-600'>{details?.email}</p>
           </div>
           <Separator className='mb-4' />
+          <div className='mb-4'>
+            <p className='text-base font-semibold text-gray-800 mb-0.5'>
+              Phone number
+            </p>
+            <p className='text-sm text-gray-600'>{details?.mobileNumber}</p>
+          </div>
+          <Separator className='mb-4' />
 
           <div>
             <p className='text-base font-semibold text-gray-800 mb-0.5'>
               Role and permissions
             </p>
             <p className='text-sm text-gray-600 mb-3'>
-              {selectedRole.toUpperCase()}
+              {details?.role.toUpperCase()}
             </p>
-            <div className='flex flex-col gap-3'>
+            {/* <div className='flex flex-col gap-3'>
               <div className='flex items-center gap-2.5'>
                 <Checkbox defaultChecked className={tealCheckbox} />
                 <label className='text-sm text-gray-600'>
@@ -362,7 +385,7 @@ const StepReview = ({
                   Respond to queries
                 </label>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -392,7 +415,6 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [newAdminDetails, setNewAdminDetails] =
     useState<TCreateNewAdminSchema>();
-  const [selectedRole, setSelectedRole] = useState("");
 
   const {
     actions: { getAllRolePermissions },
@@ -404,12 +426,26 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
     })),
   );
 
+  const {
+    actions: { createNewAdmin },
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+    })),
+  );
+
   useEffect(() => {
     if (Object.keys(allRolePermissions ?? {}).length === 0) {
       getAllRolePermissions();
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const close = () => {
+  const close = async () => {
+    await createNewAdmin({
+      ...newAdminDetails!,
+      role: newAdminDetails!.role.split(" ").join("_").toUpperCase()!,
+    });
     setOpen(false);
     setTimeout(() => setStep(1), 300);
   };
@@ -438,8 +474,6 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
                   setStep(2);
                 }}
                 onCancel={close}
-                selectedRole={selectedRole}
-                setSelectedRole={setSelectedRole}
               />
             )}
             {/* {step === 2 && (
@@ -455,7 +489,6 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
                 onBack={() => setStep(1)}
                 onFinish={close}
                 details={newAdminDetails}
-                selectedRole={selectedRole}
               />
             )}
           </div>

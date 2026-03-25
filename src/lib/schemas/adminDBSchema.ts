@@ -49,6 +49,12 @@ export const createNewAdminSchema = z.object({
   lastName: z.string().min(3, {
     message: "Last name is required",
   }),
+  mobileNumber: z.string({ message: "Invalid mobile number" }).min(10, {
+    message: "Phone number must be at least 10 digits long",
+  }),
+  role: z.string().min(1, {
+    message: "Role is required",
+  }),
 });
 
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;
