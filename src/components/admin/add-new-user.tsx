@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,11 +19,12 @@ import {
 } from "@/lib/schemas/adminDBSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePermission } from "@/store";
+import { useShallow } from "zustand/shallow";
 
 type Step = 1 | 2 | 3;
 
-// ── Step circle indicator ──────────────────────────────────────────
-function StepCircle({ n, current }: { n: number; current: Step }) {
+const StepCircle = ({ n, current }: { n: number; current: Step }) => {
   if (n < current) {
     return (
       <div className='size-3 md:size-4 rounded-full flex-shrink-0 flex items-center justify-center bg-[#0f766e]'>
@@ -39,18 +40,17 @@ function StepCircle({ n, current }: { n: number; current: Step }) {
   return (
     <div className='size-3 md:size-4 rounded-full flex-shrink-0 bg-gray-300' />
   );
-}
+};
 
-// ── Left sidebar ───────────────────────────────────────────────────
-function Sidebar({ current }: { current: Step }) {
+const Sidebar = ({ current }: { current: Step }) => {
   const steps = [
     { n: 1 as const, label: "Basic" },
-    { n: 2 as const, label: "Roles and Permission" },
-    { n: 3 as const, label: "Finish" },
+    // { n: 2 as const, label: "Roles and Permission" },
+    { n: 2 as const, label: "Finish" },
   ];
 
   return (
-    <div className='flex flex-row md:flex-col px-2 md:px-6 pt-8 md:pb-6 w-full md:w-fit'>
+    <div className='flex flex-row md:flex-col px-2 md:px-6 pt-8 md:pb-6 w-full md:max-w-48 md:min-w-48'>
       {steps.map((s, i) => (
         <div
           key={s.n}
@@ -75,20 +75,22 @@ function Sidebar({ current }: { current: Step }) {
       ))}
     </div>
   );
-}
+};
 
-// ── Shared teal checkbox className ────────────────────────────────
 const tealCheckbox =
   "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
 
-// ── Step 1: Basic ─────────────────────────────────────────────────
-function StepBasic({
+const StepBasic = ({
   onNext,
   onCancel,
+  selectedRole,
+  setSelectedRole,
 }: {
   onNext: (values: TCreateNewAdminSchema) => void;
   onCancel: () => void;
-}) {
+  selectedRole: string;
+  setSelectedRole: Dispatch<SetStateAction<string>>;
+}) => {
   const {
     register,
     handleSubmit,
@@ -96,6 +98,13 @@ function StepBasic({
   } = useForm<TCreateNewAdminSchema>({
     resolver: zodResolver(createNewAdminSchema),
   });
+
+  const { allRolePermissions } = usePermission(
+    useShallow((state) => ({
+      actions: state.actions,
+      allRolePermissions: state.allRolePermissions,
+    })),
+  );
 
   const onSubmit = async (values: TCreateNewAdminSchema) => {
     onNext(values);
@@ -158,24 +167,20 @@ function StepBasic({
         </div>
 
         <div className='flex flex-col gap-3.5'>
-          <div className='flex items-center gap-3'>
-            <Checkbox id='auto-pwd' defaultChecked className={tealCheckbox} />
-            <label
-              htmlFor='auto-pwd'
-              className='text-[13px] text-gray-700 cursor-pointer'
-            >
-              Automatically generate password
-            </label>
-          </div>
-          <div className='flex items-center gap-3'>
-            <Checkbox id='req-change' defaultChecked className={tealCheckbox} />
-            <label
-              htmlFor='req-change'
-              className='text-[13px] text-gray-700 cursor-pointer'
-            >
-              Require user to change their password when they first sign in
-            </label>
-          </div>
+          <SelectDropdown
+            options={Object.keys(allRolePermissions ?? {}).map((role) =>
+              role.split("_").join(" "),
+            )}
+            selected={selectedRole}
+            setSelected={(role: string) => {
+              setSelectedRole(role);
+            }}
+            triggerLabel='Support Agent'
+            triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
+            labelClassName='ml-2 text-sm md:text-base'
+            label='Select role'
+            groupClassName='shadow-lg'
+          />
         </div>
       </div>
 
@@ -188,25 +193,27 @@ function StepBasic({
       </div>
     </>
   );
-}
+};
 
-// ── Step 2: Roles and Permission ──────────────────────────────────
-function StepRoles({
+const StepRoles = ({
   onNext,
   onBack,
+  selectedRole,
+  setSelectedRole,
 }: {
   onNext: () => void;
   onBack: () => void;
-}) {
+  selectedRole: string;
+  setSelectedRole: Dispatch<SetStateAction<string>>;
+}) => {
   const [opsOpen, setOpsOpen] = useState(true);
 
-  const {
-    register,
-    setValue,
-    formState: { errors },
-  } = useForm<TMarketPlaceSchema>({
-    resolver: zodResolver(marketPlaceSchema),
-  });
+  const { allRolePermissions } = usePermission(
+    useShallow((state) => ({
+      actions: state.actions,
+      allRolePermissions: state.allRolePermissions,
+    })),
+  );
 
   return (
     <>
@@ -220,17 +227,18 @@ function StepRoles({
 
         <div className='mb-1'>
           <SelectDropdown
-            options={["Support Agent", "Support Agent2"]}
-            selected={""}
-            setSelected={(value: string) => {
-              // setValue("currency", value);
+            options={Object.keys(allRolePermissions ?? {}).map((role) =>
+              role.split("_").join(" "),
+            )}
+            selected={selectedRole}
+            setSelected={(role: string) => {
+              setSelectedRole(role);
             }}
             triggerLabel='Support Agent'
             triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
             labelClassName='ml-2 text-sm md:text-base'
             label='Select role'
             groupClassName='shadow-lg'
-            // errorMessage={errors.currency?.message ?? ""}
           />
         </div>
 
@@ -299,16 +307,19 @@ function StepRoles({
       </div>
     </>
   );
-}
+};
 
-// ── Step 3: Review ────────────────────────────────────────────────
-function StepReview({
+const StepReview = ({
   onBack,
   onFinish,
+  details,
+  selectedRole,
 }: {
   onBack: () => void;
   onFinish: () => void;
-}) {
+  details: TCreateNewAdminSchema | undefined;
+  selectedRole: string;
+}) => {
   return (
     <>
       <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
@@ -317,7 +328,9 @@ function StepReview({
         <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
           <div className='mb-4'>
             <p className='text-base font-semibold text-gray-800 mb-0.5'>Name</p>
-            <p className='text-sm text-gray-600'>Adewale Adewale</p>
+            <p className='text-sm text-gray-600'>
+              {details?.firstName} {details?.lastName}
+            </p>
           </div>
           <Separator className='mb-4' />
 
@@ -325,7 +338,7 @@ function StepReview({
             <p className='text-base font-semibold text-gray-800 mb-0.5'>
               Username
             </p>
-            <p className='text-sm text-gray-600'>whalesadd2334</p>
+            <p className='text-sm text-gray-600'>{details?.email}</p>
           </div>
           <Separator className='mb-4' />
 
@@ -333,7 +346,9 @@ function StepReview({
             <p className='text-base font-semibold text-gray-800 mb-0.5'>
               Role and permissions
             </p>
-            <p className='text-sm text-gray-600 mb-3'>Support Agent</p>
+            <p className='text-sm text-gray-600 mb-3'>
+              {selectedRole.toUpperCase()}
+            </p>
             <div className='flex flex-col gap-3'>
               <div className='flex items-center gap-2.5'>
                 <Checkbox defaultChecked className={tealCheckbox} />
@@ -370,14 +385,30 @@ function StepReview({
       </div>
     </>
   );
-}
+};
 
 const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
   const [step, setStep] = useState<Step>(1);
   const [open, setOpen] = useState(false);
   const [newAdminDetails, setNewAdminDetails] =
     useState<TCreateNewAdminSchema>();
+  const [selectedRole, setSelectedRole] = useState("");
 
+  const {
+    actions: { getAllRolePermissions },
+    allRolePermissions,
+  } = usePermission(
+    useShallow((state) => ({
+      actions: state.actions,
+      allRolePermissions: state.allRolePermissions,
+    })),
+  );
+
+  useEffect(() => {
+    if (Object.keys(allRolePermissions ?? {}).length === 0) {
+      getAllRolePermissions();
+    }
+  }, []);
   const close = () => {
     setOpen(false);
     setTimeout(() => setStep(1), 300);
@@ -407,13 +438,25 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
                   setStep(2);
                 }}
                 onCancel={close}
+                selectedRole={selectedRole}
+                setSelectedRole={setSelectedRole}
               />
             )}
+            {/* {step === 2 && (
+              <StepRoles
+                onNext={() => setStep(3)}
+                onBack={() => setStep(1)}
+                selectedRole={selectedRole}
+                setSelectedRole={setSelectedRole}
+              />
+            )} */}
             {step === 2 && (
-              <StepRoles onNext={() => setStep(3)} onBack={() => setStep(1)} />
-            )}
-            {step === 3 && (
-              <StepReview onBack={() => setStep(2)} onFinish={close} />
+              <StepReview
+                onBack={() => setStep(1)}
+                onFinish={close}
+                details={newAdminDetails}
+                selectedRole={selectedRole}
+              />
             )}
           </div>
         </div>
@@ -421,4 +464,5 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
     </Dialog>
   );
 };
+
 export { AddNewAdminModal };
