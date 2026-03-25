@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import type { SelectorFn, AdminsType, DriverProfile } from "@/types";
+import type {
+  SelectorFn,
+  AdminsType,
+  DriverProfile,
+  SuspendedDriver,
+} from "@/types";
 import { devtools } from "zustand/middleware";
 import { adminApiStr, callApi } from "@/lib";
 import { toast } from "sonner";
@@ -8,6 +13,8 @@ type AdminType = {
   allAdmins: AdminsType[];
   isLoading: boolean;
   pendingDriversKYC: DriverProfile[];
+  suspendedDrivers: SuspendedDriver[];
+  suspendedRiders: SuspendedDriver[];
   actions: {
     getAdminDashboardDetails: () => Promise<void>;
     getActiveRides: () => Promise<void>;
@@ -21,6 +28,7 @@ type AdminType = {
       resolution: string;
     }) => Promise<void>;
     getAllDrivers: () => Promise<void>;
+    getSuspendedDrivers: () => Promise<void>;
     getPendingDriversKYC: () => Promise<void>;
     processDriverKYC: (data: {
       userId: string;
@@ -36,6 +44,8 @@ const initialState = {
   allAdmins: [],
   isLoading: false,
   pendingDriversKYC: [],
+  suspendedDrivers: [],
+  suspendedRiders: [],
 };
 
 export const useAdmin = create<AdminType>()(
@@ -162,6 +172,23 @@ export const useAdmin = create<AdminType>()(
           toast.success(data.message ?? "Drivers fetched successfully");
         }
       },
+      getSuspendedDrivers: async () => {
+        set({ isLoading: true });
+        const path = adminApiStr("/drivers/suspended");
+        const { data, error } = await callApi<SuspendedDriver[]>(path);
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          console.log(path, data);
+          set({ suspendedDrivers: data.data, isLoading: false });
+          toast.success(
+            data.message ?? "Suspended drivers fetched successfully",
+          );
+        }
+      },
       getPendingDriversKYC: async () => {
         set({ isLoading: true });
         const path = adminApiStr("/compliance/kyc/pending");
@@ -202,6 +229,23 @@ export const useAdmin = create<AdminType>()(
         if (data) {
           console.log(path, data);
           toast.success(data.message ?? "Riders fetched successfully");
+        }
+      },
+      getSuspendedRiders: async () => {
+        set({ isLoading: true });
+        const path = adminApiStr("/riders/suspended");
+        const { data, error } = await callApi<SuspendedDriver[]>(path);
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          console.log(path, data);
+          set({ suspendedDrivers: data.data, isLoading: false });
+          toast.success(
+            data.message ?? "Suspended riders fetched successfully",
+          );
         }
       },
       getAllAdmins: async () => {
