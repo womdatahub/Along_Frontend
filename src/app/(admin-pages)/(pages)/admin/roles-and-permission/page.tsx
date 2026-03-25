@@ -16,13 +16,56 @@ import {
   TableRow,
 } from "@/components/";
 import { cn } from "@/lib";
+import { usePermission, useAdmin } from "@/store";
 import { AdminSearchIcon } from "@public/svgs";
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useShallow } from "zustand/shallow";
 
-const isEmpty = false;
 const Page = () => {
   const [userORRoles, setUserOrRoles] = useState<"user" | "roles">("user");
+
+  const {
+    actions: { getAllAdmins },
+    allAdmins,
+    isLoading,
+  } = useAdmin(
+    useShallow((state) => ({
+      actions: state.actions,
+      allAdmins: state.allAdmins,
+      isLoading: state.isLoading,
+    })),
+  );
+
+  const {
+    actions: {
+      // getAllAdminPermissions,
+      // getAllEndpoints,
+      getAllRolePermissions,
+      // getEndpointPermissions,
+      // getSingleAdminPermissions,
+      // getSingleRolePermissions,
+    },
+    allRolePermissions,
+  } = usePermission(
+    useShallow((state) => ({
+      actions: state.actions,
+      allRolePermissions: state.allRolePermissions,
+    })),
+  );
+
+  useEffect(() => {
+    getAllAdmins();
+
+    // getAllAdminPermissions();
+    // getAllEndpoints();
+    getAllRolePermissions();
+    // getEndpointPermissions();
+    // getSingleAdminPermissions("adminId");
+    // getSingleRolePermissions("roleId");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section className='flex flex-col gap-8'>
       <p className='text-2xl md:text-4xl font-heebo'>Roles and Permission</p>
@@ -75,7 +118,7 @@ const Page = () => {
                 </TableRow>
               </TableHeader>
 
-              {isEmpty ? (
+              {allAdmins.length === 0 ? (
                 <TableBody>
                   <TableRow>
                     <TableCell colSpan={4} className='p-10'>
@@ -89,31 +132,35 @@ const Page = () => {
                 </TableBody>
               ) : (
                 <TableBody>
-                  {users.map((user, i) => {
+                  {allAdmins.map((admin, i) => {
                     return (
                       <TableRow key={i} className='last:border-b-0'>
                         <TableCell className='text-sm font-medium py-5'>
                           <div className='flex items-center gap-2'>
-                            <Image
+                            {/* <Image
                               src='/images/about-vision.png'
                               alt='Profile image'
                               className='rounded-full size-12 object-cover'
                               width={42}
                               height={42}
-                            />
+                            /> */}
                             <div className='flex flex-col'>
-                              <p className='font-medium text-xl'>{user.name}</p>
-                              <p className='text-sm font-light'>{user.email}</p>
+                              <p className='font-medium text-xl'>
+                                {admin.firstName} {admin.lastName}
+                              </p>
+                              <p className='text-sm font-light'>
+                                {admin.email}
+                              </p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell className='text-sm'>
-                          <p className='bg-[#E0E6E6] px-3 py-1 rounded-full w-fit'>
-                            {user.role}
+                          <p className='bg-[#E0E6E6] px-3 py-1 rounded-full w-fit capitalize'>
+                            {admin.role.toLowerCase().split("_").join(" ")}
                           </p>
                         </TableCell>
                         <TableCell>
-                          <Switch checked={user.isActive} />
+                          <Switch checked={admin.status === "active"} />
                         </TableCell>
                         <TableCell>
                           <Button className='rounded-full'>Edit Role</Button>
@@ -134,15 +181,25 @@ const Page = () => {
             </div>
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6 pb-6'>
-            {roles.map((r) => {
+            {Object.keys(allRolePermissions ?? {}).map((role) => {
               return (
                 <div
-                  key={r.role}
+                  key={role}
                   className='flex flex-col md:flex-row bg-[#F4F4F4] justify-between md:items-center gap-5 rounded-2xl p-6'
                 >
                   <div className='flex flex-col gap-1'>
-                    <p className='text-xl font-bold'>{r.role}</p>
-                    <p className='text-sm font-light'>{r.permission}</p>
+                    <p className='text-xl font-bold capitalize'>
+                      {role.split("_").join(" ")}
+                    </p>
+                    <div>
+                      {(allRolePermissions ?? {})[role].endpoints
+                        .slice(0, 3)
+                        .map((endpoint, id) => (
+                          <p key={id} className='text-sm font-light'>
+                            {endpoint.description}
+                          </p>
+                        ))}
+                    </div>
                   </div>
                   <Button className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'>
                     Edit permission
@@ -157,88 +214,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-// const drivers = [
-//   {
-//     name: "John Doe",
-//     vehicleRegNumber: "ABC-123-KJA",
-//     driverID: "DRV-001",
-//     phoneNumber: "+2348012345678",
-//     address: "12 Adeola Street, Lagos",
-//     socialSecurityNo: "SSN-112233",
-//   },
-//   {
-//     name: "Jane Smith",
-//     vehicleRegNumber: "GGE-889-PH",
-//     driverID: "DRV-002",
-//     phoneNumber: "+2348098765432",
-//     address: "5 Odili Road, PH",
-//     socialSecurityNo: "SSN-445566",
-//   },
-//   {
-//     name: "Ahmed Musa",
-//     vehicleRegNumber: "KAN-552-KN",
-//     driverID: "DRV-003",
-//     phoneNumber: "+2348076543210",
-//     address: "Kano Central, Kano",
-//     socialSecurityNo: "SSN-778899",
-//   },
-// ];
-
-const roles = [
-  {
-    role: "Super Admin",
-    permission: "Assign a super admin role to a user",
-  },
-  {
-    role: "Safety Officer",
-    permission: "Assign safety officer role to a user",
-  },
-  {
-    role: "Ops Manager",
-    permission: "Assign a super admin role to a user",
-  },
-  {
-    role: "Finance",
-    permission: "Assign finance role to a user",
-  },
-  {
-    role: "Support Agent",
-    permission: "Assign support agent role to a user",
-  },
-  {
-    role: "Compliance",
-    permission: "Assign compliance role to a user",
-  },
-];
-
-const users = [
-  {
-    name: "Mary Jane",
-    email: "maryjane@gmail.com",
-    role: "Super Admin",
-    isActive: true,
-    avatar: "/images/user1.png",
-  },
-  {
-    name: "Derek Lawson",
-    email: "derek.lawson@example.com",
-    role: "Admin",
-    isActive: false,
-    avatar: "/images/user2.png",
-  },
-  {
-    name: "Fatima Bello",
-    email: "fatima.bello@example.com",
-    role: "Moderator",
-    isActive: true,
-    avatar: "/images/user3.png",
-  },
-  {
-    name: "Kelvin Torres",
-    email: "kelvin.torres@example.com",
-    role: "Viewer",
-    isActive: false,
-    avatar: "/images/user4.png",
-  },
-];
