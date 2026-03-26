@@ -20,3 +20,13 @@ export const BtnLoader = ({
     </div>
   );
 };
+
+export const LoadingSpinner = ({
+  className,
+  size = 40,
+}: {
+  className?: string;
+  size?: number;
+}) => {
+  return <Loader2Icon className={cn("animate-spin", className)} size={size} />;
+};

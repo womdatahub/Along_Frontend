@@ -195,6 +195,7 @@ export const usePermission = create<PermissionType>()(
         }
       },
       revokeRolePermission: async (revokePermissionData) => {
+        if (revokePermissionData.endpointIds.length === 0) return;
         set({ isLoading: true });
         const path = adminApiStr("/permissions/roles/revoke");
         const { data, error } = await callApi(path, revokePermissionData);
@@ -225,6 +226,7 @@ export const usePermission = create<PermissionType>()(
         }
       },
       revokeAdminPermission: async (revokeAdminPermissionData) => {
+        if (revokeAdminPermissionData.endpointIds.length === 0) return;
         set({ isLoading: true });
         const path = adminApiStr("/permissions/users/revoke");
         const { data, error } = await callApi(path, revokeAdminPermissionData);
