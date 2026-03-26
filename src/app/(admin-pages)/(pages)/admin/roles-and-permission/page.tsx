@@ -323,7 +323,9 @@ const RolesModal = ({
     }
   }, [singleRolePermission, singleAdminPermission, type]);
 
-  const currentPermissionIds = new Set(currentPermissions.map((ep) => ep.id));
+  const currentPermissionIds = new Set(
+    (currentPermissions ?? []).map((ep) => ep.id),
+  );
 
   const additionalMap = new Map<
     string,
@@ -438,7 +440,7 @@ const RolesModal = ({
         </div>
       );
     });
-
+  console.log(isFetching, "is fetching");
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>

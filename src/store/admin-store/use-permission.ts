@@ -54,7 +54,7 @@ const initialState = {
   allEndpoints: [],
   allEndpointsPermissions: null,
   allRolePermissions: null,
-  singleRolePermission: null,
+  singleRolePermission: [],
   allAdminPermissions: [],
   singleAdminPermission: [],
 };
@@ -120,9 +120,13 @@ export const usePermission = create<PermissionType>()(
         }
         if (data) {
           console.log(path, data);
-          set({ isFetching: false, singleRolePermission: data.data.endpoints });
+          set({
+            isFetching: false,
+            singleRolePermission: data.data.endpoints,
+          });
           toast.success(data.message ?? "Role permission fetched successfully");
         }
+        set({ isFetching: false });
       },
       getAllRolePermissions: async () => {
         set({ isLoading: true });
