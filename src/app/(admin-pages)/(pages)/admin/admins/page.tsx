@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Empty,
   EmptyHeader,
@@ -12,11 +12,12 @@ import {
   TableHeader,
   TableRow,
   AddNewAdminModal,
-  EditRolesPermissionModal,
+  // EditRolesPermissionModal,
   ConfirmActionModal,
   ResetPasswordModal,
+  RolesModal,
 } from "@/components/";
-import { AdminSearchIcon } from "@public/svgs";
+// import { AdminSearchIcon } from "@public/svgs";
 import {
   UserPlus,
   RefreshCw,
@@ -27,27 +28,49 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib";
-import { useAdmin } from "@/store";
+import { useAdmin, usePermission } from "@/store";
 import { useShallow } from "zustand/shallow";
+import { AdminsType } from "@/types";
 
 const Page = () => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const hasSelection = selectedId !== null;
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminsType | null>(null);
+  const hasSelection = selectedAdmin !== null;
 
   const {
-    actions: { getAllAdmins },
-    allAdmins,
+    actions: { getAllActiveAdmins, getAllSuspendedAdmins },
+    allActiveAdmins,
+    allSuspendedAdmins,
     isLoading,
   } = useAdmin(
     useShallow((state) => ({
       actions: state.actions,
-      allAdmins: state.allAdmins,
+      allActiveAdmins: state.allActiveAdmins,
+      allSuspendedAdmins: state.allSuspendedAdmins,
       isLoading: state.isLoading,
+    })),
+  );
+  const allAdmins = useMemo(
+    () => [...allActiveAdmins, ...allSuspendedAdmins],
+    [allActiveAdmins, allSuspendedAdmins],
+  );
+  const {
+    actions: {
+      getSingleAdminPermissions,
+      grantAdminPermission,
+      revokeAdminPermission,
+    },
+  } = usePermission(
+    useShallow((state) => ({
+      actions: state.actions,
+      allRolePermissions: state.allRolePermissions,
+      singleAdminPermission: state.singleAdminPermission,
+      singleRolePermission: state.singleRolePermission,
     })),
   );
 
   useEffect(() => {
-    getAllAdmins();
+    getAllActiveAdmins();
+    getAllSuspendedAdmins();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -67,7 +90,7 @@ const Page = () => {
         <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-2 md:px-6'>
           <p className='text-xl text-left font-medium'>Active Admins</p>
           <div className='flex items-center gap-5'>
-            <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] w-full md:min-w-[325px]'>
+            {/* <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] w-full md:min-w-[325px]'>
               <AdminSearchIcon />
               <input
                 type='text'
@@ -76,7 +99,7 @@ const Page = () => {
                 className='bg-transparent focus:outline-none'
                 placeholder='Search'
               />
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -92,7 +115,7 @@ const Page = () => {
             />
 
             <button
-              onClick={getAllAdmins}
+              onClick={getAllActiveAdmins}
               disabled={isLoading}
               className='flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors disabled:text-gray-300 disabled:cursor-not-allowed"'
             >
@@ -100,7 +123,7 @@ const Page = () => {
               Refresh
             </button>
 
-            <EditRolesPermissionModal
+            {/* <EditRolesPermissionModal
               trigger={
                 <button
                   disabled={!hasSelection}
@@ -115,6 +138,45 @@ const Page = () => {
                   Manage Roles
                 </button>
               }
+            /> */}
+
+            <RolesModal
+              trigger={
+                <button
+                  disabled={!hasSelection}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors",
+                    hasSelection
+                      ? "text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      : "text-gray-300 cursor-not-allowed",
+                  )}
+                  onClick={async () => {
+                    if (!selectedAdmin) return;
+                    await getSingleAdminPermissions(selectedAdmin.adminId);
+                  }}
+                >
+                  <Shield size={14} />
+                  Manage Roles
+                </button>
+              }
+              onNext={async (CHECKED_IDS, UNCHECKED_IDS) => {
+                if (!selectedAdmin) return;
+                await grantAdminPermission({
+                  adminId: selectedAdmin.adminId,
+                  endpointIds: CHECKED_IDS,
+                  expiresAt: new Date(
+                    Date.now() + 30 * 24 * 60 * 60 * 1000,
+                  ).toISOString(),
+                });
+                await revokeAdminPermission({
+                  adminId: selectedAdmin.adminId,
+                  endpointIds: UNCHECKED_IDS,
+                });
+              }}
+              role={selectedAdmin?.role.split("_").join(" ") ?? ""}
+              title={`Edit Roles for ${selectedAdmin?.firstName} ${selectedAdmin?.lastName}`}
+              description="Select the Roles and permission you'd like this user to have."
+              type={"role"}
             />
 
             <ResetPasswordModal
@@ -188,11 +250,11 @@ const Page = () => {
           ) : (
             <TableBody>
               {allAdmins.map((admin, i) => {
-                const isSelected = selectedId === i;
+                const isSelected = selectedAdmin?.adminId === admin.adminId;
                 return (
                   <TableRow
                     key={i}
-                    onClick={() => setSelectedId(isSelected ? null : i)}
+                    onClick={() => setSelectedAdmin(isSelected ? null : admin)}
                     className={cn(
                       "last:border-b-0 cursor-pointer transition-colors",
                       isSelected ? "bg-[#EAF4F4]" : "hover:bg-gray-50",
@@ -206,7 +268,9 @@ const Page = () => {
                         <input
                           type='checkbox'
                           checked={isSelected}
-                          onChange={() => setSelectedId(isSelected ? null : i)}
+                          onChange={() =>
+                            setSelectedAdmin(isSelected ? null : admin)
+                          }
                           className='w-4 h-4 accent-[#4A9CA0] cursor-pointer'
                         />
                       </div>

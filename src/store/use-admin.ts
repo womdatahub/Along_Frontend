@@ -10,7 +10,8 @@ import { adminApiStr, callApi, TCreateNewAdminSchema } from "@/lib";
 import { toast } from "sonner";
 
 type AdminType = {
-  allAdmins: AdminsType[];
+  allActiveAdmins: AdminsType[];
+  allSuspendedAdmins: AdminsType[];
   isLoading: boolean;
   pendingDriversKYC: DriverProfile[];
   suspendedDrivers: SuspendedDriver[];
@@ -49,13 +50,20 @@ type AdminType = {
       suspensionDuration?: number;
     }) => Promise<void>;
     getSuspendedRiders: () => Promise<void>;
-    getAllAdmins: () => Promise<void>;
+    getAllActiveAdmins: () => Promise<void>;
+    getAllSuspendedAdmins: () => Promise<void>;
     createNewAdmin: (adminData: TCreateNewAdminSchema) => Promise<void>;
+    suspendAdmin: (suspendData: {
+      adminId: string;
+      reason: string;
+    }) => Promise<void>;
+    restoreAdmin: (restoreData: { adminId: string }) => Promise<void>;
   };
 };
 
 const initialState = {
-  allAdmins: [],
+  allActiveAdmins: [],
+  allSuspendedAdmins: [],
   isLoading: false,
   pendingDriversKYC: [],
   suspendedDrivers: [],
@@ -292,7 +300,7 @@ export const useAdmin = create<AdminType>()(
           toast.success(data.message ?? "Rider suspended successfully");
         }
       },
-      getAllAdmins: async () => {
+      getAllActiveAdmins: async () => {
         set({ isLoading: true });
         const path = adminApiStr("/admins?status=active&limit=50&offset=0");
         const { data, error } = await callApi<AdminsType[]>(path);
@@ -302,7 +310,22 @@ export const useAdmin = create<AdminType>()(
           return;
         }
         if (data) {
-          set({ allAdmins: data.data });
+          set({ allActiveAdmins: data.data });
+          toast.success(data.message ?? "Admins fetched successfully");
+        }
+        set({ isLoading: false });
+      },
+      getAllSuspendedAdmins: async () => {
+        set({ isLoading: true });
+        const path = adminApiStr("/admins?status=suspended&limit=50&offset=0");
+        const { data, error } = await callApi<AdminsType[]>(path);
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+          return;
+        }
+        if (data) {
+          set({ allSuspendedAdmins: data.data });
           toast.success(data.message ?? "Admins fetched successfully");
         }
         set({ isLoading: false });
@@ -318,9 +341,41 @@ export const useAdmin = create<AdminType>()(
         }
         if (data) {
           toast.success(data.message ?? "Admins created successfully");
-          await get().actions.getAllAdmins();
+          await get().actions.getAllActiveAdmins();
         }
         set({ isLoading: false });
+      },
+      suspendAdmin: async (suspendDetails) => {
+        set({ isLoading: true });
+        const path = adminApiStr("/admins/suspend");
+        const { data, error } = await callApi(path, suspendDetails, "PATCH");
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          await get().actions.getAllSuspendedAdmins();
+          await get().actions.getAllActiveAdmins();
+          set({ isLoading: false });
+          toast.success(data.message ?? "Admin suspended successfully");
+        }
+      },
+      restoreAdmin: async (restoreData) => {
+        set({ isLoading: true });
+        const path = adminApiStr("/admins/restore");
+        const { data, error } = await callApi(path, restoreData, "PATCH");
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          await get().actions.getAllActiveAdmins();
+          await get().actions.getAllSuspendedAdmins();
+          set({ isLoading: false });
+          toast.success(data.message ?? "Admin restored successfully");
+        }
       },
     },
   })),
