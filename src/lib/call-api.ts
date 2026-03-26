@@ -3,6 +3,7 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { ApiResponse } from "@/types";
 
 import { toast } from "sonner";
+import { useSession } from "@/store";
 
 const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 // const cookie = process.env.NEXT_PUBLIC_FRONTEND_COOKIE ?? "";
@@ -79,6 +80,15 @@ export const callApi = async <T>(
       const { status, data } = error.response;
       apiError = data;
       switch (status) {
+        case 403: {
+          if (data.message === "Admin account is suspended") {
+            toast.error(
+              "Your account has been suspended and logged out. \n Please contact support.",
+            );
+            useSession.getState().actions.logOut();
+          }
+          break;
+        }
         case 401:
           {
             // useInitSession.getState().actions.clearSession();
