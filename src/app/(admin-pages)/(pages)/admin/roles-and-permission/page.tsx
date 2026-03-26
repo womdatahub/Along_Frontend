@@ -187,7 +187,6 @@ const Page = () => {
                                 adminId: admin.adminId,
                                 endpointIds: UNCHECKED_IDS,
                               });
-                              await getSingleAdminPermissions(admin.adminId);
                             }}
                             role={admin.role.split("_").join(" ")}
                             title={`Edit Roles for ${admin.firstName} ${admin.lastName}`}
@@ -254,9 +253,6 @@ const Page = () => {
                           role: role.toUpperCase().split(" ").join("_"),
                           endpointIds: UNCHECKED_IDS,
                         });
-                        await getSingleRolePermissions(
-                          role.toUpperCase().split(" ").join("_"),
-                        );
                       }}
                       role={role.split("_").join(" ")}
                       title='Assign Roles and Permission'
