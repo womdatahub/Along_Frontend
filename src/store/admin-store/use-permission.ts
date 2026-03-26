@@ -10,6 +10,7 @@ import { adminApiStr, callApi } from "@/lib";
 import { toast } from "sonner";
 
 type PermissionType = {
+  isFetching: boolean;
   isLoading: boolean;
   allEndpoints: Endpoint[];
   allEndpointsPermissions: EndpointPermission | null;
@@ -44,8 +45,12 @@ type PermissionType = {
   };
 };
 
+// /permissions/users/grant => grant single admin permission
+// /permissions/roles/grant => grant a role permission
+
 const initialState = {
   isLoading: false,
+  isFetching: false,
   allEndpoints: [],
   allEndpointsPermissions: null,
   allRolePermissions: null,
