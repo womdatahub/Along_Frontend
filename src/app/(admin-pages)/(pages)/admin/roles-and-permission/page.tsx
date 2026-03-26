@@ -8,7 +8,6 @@ import {
   Empty,
   EmptyHeader,
   EmptyTitle,
-  SelectDropdown,
   Separator,
   Switch,
   Table,
@@ -24,10 +23,10 @@ import {
 } from "@/components/";
 import { cn } from "@/lib";
 import { usePermission, useAdmin } from "@/store";
-import { Endpoint, RolePermission } from "@/types";
+import { RolePermission } from "@/types";
 import { AdminSearchIcon } from "@public/svgs";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 const Page = () => {
@@ -58,8 +57,6 @@ const Page = () => {
       revokeRolePermission,
     },
     allRolePermissions,
-    singleAdminPermission,
-    singleRolePermission,
   } = usePermission(
     useShallow((state) => ({
       actions: state.actions,
@@ -71,18 +68,10 @@ const Page = () => {
 
   useEffect(() => {
     getAllAdmins();
-
-    // getAllAdminPermissions();
-    // getAllEndpoints();
     getAllRolePermissions();
-    // getEndpointPermissions();
-    // getSingleAdminPermissions("adminId");
-    // getSingleRolePermissions("roleId");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log(singleRolePermission, "single role permission from page");
 
   return (
     <section className='flex flex-col gap-8'>
@@ -155,13 +144,6 @@ const Page = () => {
                       <TableRow key={i} className='last:border-b-0'>
                         <TableCell className='text-sm font-medium py-5'>
                           <div className='flex items-center gap-2'>
-                            {/* <Image
-                              src='/images/about-vision.png'
-                              alt='Profile image'
-                              className='rounded-full size-12 object-cover'
-                              width={42}
-                              height={42}
-                            /> */}
                             <div className='flex flex-col'>
                               <p className='font-medium text-xl'>
                                 {admin.firstName} {admin.lastName}
@@ -209,7 +191,7 @@ const Page = () => {
                             role={admin.role.split("_").join(" ")}
                             title={`Edit Roles for ${admin.firstName} ${admin.lastName}`}
                             description="Select the Roles and permission you'd like this user to have."
-                            currentPermissions={singleAdminPermission}
+                            type={"role"}
                           />
                         </TableCell>
                       </TableRow>
@@ -278,7 +260,7 @@ const Page = () => {
                     role={role.split("_").join(" ")}
                     title='Assign Roles and Permission'
                     description="Assign the Roles and permission you'd like this user to have."
-                    currentPermissions={[]}
+                    type={"permission"}
                   />
                 </div>
               );
@@ -293,204 +275,6 @@ export default Page;
 
 const tealCheckbox =
   "h-[15px] w-[15px] cursor-pointer rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
-// const RolesModal = ({
-//   onNext,
-//   role,
-//   title,
-//   description,
-//   trigger,
-// }: {
-//   onNext: (checked: string[], unchecked: string[]) => Promise<void>;
-//   role: string;
-//   title: string;
-//   description: string;
-//   trigger: React.ReactNode;
-// }) => {
-//   const [selectedRole] = useState(role);
-//   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
-//     {},
-//   );
-//   const [checkedPermissions, setCheckedPermissions] = useState<
-//     Record<string, boolean>
-//   >({});
-
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   const { allRolePermissions } = usePermission(
-//     useShallow((state) => ({
-//       allRolePermissions: state.allRolePermissions,
-//     })),
-//   );
-
-//   const selectedRoleKey = selectedRole.toUpperCase().split(" ").join("_");
-
-//   const selectedRoleEndpoints =
-//     allRolePermissions?.[selectedRoleKey]?.endpoints ?? [];
-
-//   const selectedRoleIds = new Set(selectedRoleEndpoints.map((ep) => ep.id));
-
-//   const additionalMap = new Map<
-//     string,
-//     RolePermission[string]["endpoints"][number]
-//   >();
-//   Object.entries(allRolePermissions ?? {}).forEach(([role, data]) => {
-//     if (role === selectedRoleKey) return;
-//     data.endpoints.forEach((ep) => {
-//       if (!selectedRoleIds.has(ep.id) && !additionalMap.has(ep.id)) {
-//         additionalMap.set(ep.id, ep);
-//       }
-//     });
-//   });
-
-//   const additionalEndpoints = Array.from(additionalMap.values());
-
-//   const groupEndpoints = (endpoints: typeof additionalEndpoints) =>
-//     endpoints.reduce<Record<string, typeof additionalEndpoints>>((acc, ep) => {
-//       if (!acc[ep.category]) acc[ep.category] = [];
-//       acc[ep.category].push(ep);
-//       return acc;
-//     }, {});
-
-//   const selectedGrouped = groupEndpoints(selectedRoleEndpoints);
-//   const additionalGrouped = groupEndpoints(additionalEndpoints);
-
-//   // Checked and unchecked IDs
-//   const CHECKED_IDS = Object.entries(checkedPermissions)
-//     .filter(([, checked]) => checked)
-//     .map(([id]) => id);
-
-//   const UNCHECKED_IDS = Object.entries(checkedPermissions)
-//     .filter(([, checked]) => !checked)
-//     .map(([id]) => id);
-
-//   useEffect(() => {
-//     const initial: Record<string, boolean> = {};
-//     selectedRoleEndpoints.forEach((ep) => {
-//       initial[ep.id] = true;
-//     });
-//     additionalEndpoints.forEach((ep) => {
-//       initial[ep.id] = false;
-//     });
-//     setCheckedPermissions(initial);
-//     setOpenCategories({});
-//   }, [selectedRoleKey]);
-
-//   const toggleCategory = (cat: string, section: "role" | "additional") =>
-//     setOpenCategories((prev) => ({
-//       ...prev,
-//       [`${section}_${cat}`]: !prev[`${section}_${cat}`],
-//     }));
-
-//   const togglePermission = (id: string) =>
-//     setCheckedPermissions((prev) => ({ ...prev, [id]: !prev[id] }));
-
-//   const formatCategory = (cat: string) =>
-//     cat
-//       .split("_")
-//       .map((w) => w[0] + w.slice(1).toLowerCase())
-//       .join(" ");
-
-//   const renderGroup = (
-//     grouped: Record<string, typeof additionalEndpoints>,
-//     section: "role" | "additional",
-//   ) =>
-//     Object.entries(grouped).map(([category, endpoints]) => {
-//       const key = `${section}_${category}`;
-//       const isOpen = openCategories[key] ?? false;
-//       return (
-//         <div key={key} className='border-t border-gray-200'>
-//           <button
-//             type='button'
-//             onClick={() => toggleCategory(category, section)}
-//             className='flex items-center justify-between w-full py-3 text-left'
-//           >
-//             <span className='text-sm md:text-base font-medium text-gray-700'>
-//               {formatCategory(category)}
-//             </span>
-//             {isOpen ? (
-//               <ChevronUp size={15} className='text-gray-400' />
-//             ) : (
-//               <ChevronDown size={15} className='text-gray-400' />
-//             )}
-//           </button>
-
-//           {isOpen && (
-//             <div className='flex flex-col gap-3 pb-4 pl-0.5'>
-//               {endpoints.map((ep) => (
-//                 <div key={ep.id} className='flex items-center gap-2.5'>
-//                   <Checkbox
-//                     checked={checkedPermissions[ep.id] ?? false}
-//                     onCheckedChange={() => togglePermission(ep.id)}
-//                     className={tealCheckbox}
-//                   />
-//                   <label
-//                     className='text-sm md:text-base text-gray-600 cursor-pointer'
-//                     onClick={() => togglePermission(ep.id)}
-//                   >
-//                     {ep.description}
-//                   </label>
-//                 </div>
-//               ))}
-//             </div>
-//           )}
-//         </div>
-//       );
-//     });
-
-//   return (
-//     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-//       <DialogTrigger asChild>{trigger}</DialogTrigger>
-
-//       <DialogContent className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'>
-//         <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
-//           <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
-//             {title}
-//           </h2>
-//           <p className='text-[13px] text-gray-500 mb-6'>{description}</p>
-
-//           <div className='mb-1'>
-//             <p className='text-xl font-bold'>Role: {role}</p>
-//           </div>
-
-//           <Separator className='my-5' />
-
-//           <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
-//             <p className='text-base md:text-lg font-semibold text-gray-800 mb-3'>
-//               Role permissions
-//             </p>
-//             {renderGroup(selectedGrouped, "role")}
-
-//             <p className='text-base md:text-lg font-semibold text-gray-800 mt-6 mb-3'>
-//               Additional permissions
-//             </p>
-//             {renderGroup(additionalGrouped, "additional")}
-
-//             {Object.keys(additionalGrouped).length === 0 && (
-//               <p className='text-[13px] text-gray-400 py-4'>
-//                 No additional permissions available for this role.
-//               </p>
-//             )}
-//           </div>
-//         </div>
-
-//         <Separator />
-//         <div className='flex items-center justify-between px-8 py-4'>
-
-//           <ButtonWithLoader
-//             text='Save'
-//             isLoading={false}
-//             className='rounded-full'
-//             onClick={() =>
-//               onNext(CHECKED_IDS, UNCHECKED_IDS).finally(() =>
-//                 setIsModalOpen(false),
-//               )
-//             }
-//           />
-//         </div>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
 
 const RolesModal = ({
   onNext,
@@ -498,16 +282,15 @@ const RolesModal = ({
   title,
   description,
   trigger,
-  currentPermissions,
+  type,
 }: {
   onNext: (checked: string[], unchecked: string[]) => Promise<void>;
   role: string;
   title: string;
   description: string;
   trigger: React.ReactNode;
-  currentPermissions: Endpoint[];
+  type: "role" | "permission";
 }) => {
-  const [selectedRole] = useState(role);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     {},
   );
@@ -516,33 +299,39 @@ const RolesModal = ({
   >({});
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { allRolePermissions } = usePermission(
+  const {
+    allRolePermissions,
+    isLoading,
+    isFetching,
+    singleAdminPermission,
+    singleRolePermission,
+  } = usePermission(
     useShallow((state) => ({
       allRolePermissions: state.allRolePermissions,
       isLoading: state.isLoading,
       isFetching: state.isFetching,
+      singleRolePermission: state.singleRolePermission,
+      singleAdminPermission: state.singleAdminPermission,
     })),
   );
 
-  const currentPermissionsMap = new Map(
-    currentPermissions.map((ep) => [ep.id, ep.isActive]),
-  );
+  const currentPermissions = useMemo(() => {
+    if (type === "permission") {
+      return singleRolePermission;
+    } else {
+      return singleAdminPermission ?? [];
+    }
+  }, [singleRolePermission, singleAdminPermission, type]);
 
-  const selectedRoleKey = selectedRole.toUpperCase().split(" ").join("_");
-
-  const selectedRoleEndpoints =
-    allRolePermissions?.[selectedRoleKey]?.endpoints ?? [];
-
-  const selectedRoleIds = new Set(selectedRoleEndpoints.map((ep) => ep.id));
+  const currentPermissionIds = new Set(currentPermissions.map((ep) => ep.id));
 
   const additionalMap = new Map<
     string,
     RolePermission[string]["endpoints"][number]
   >();
-  Object.entries(allRolePermissions ?? {}).forEach(([role, data]) => {
-    if (role === selectedRoleKey) return;
+  Object.entries(allRolePermissions ?? {}).forEach(([, data]) => {
     data.endpoints.forEach((ep) => {
-      if (!selectedRoleIds.has(ep.id) && !additionalMap.has(ep.id)) {
+      if (!currentPermissionIds.has(ep.id) && !additionalMap.has(ep.id)) {
         additionalMap.set(ep.id, ep);
       }
     });
@@ -557,7 +346,7 @@ const RolesModal = ({
       return acc;
     }, {});
 
-  const selectedGrouped = groupEndpoints(selectedRoleEndpoints);
+  const selectedGrouped = groupEndpoints(currentPermissions);
   const additionalGrouped = groupEndpoints(additionalEndpoints);
 
   const CHECKED_IDS = Object.entries(checkedPermissions)
@@ -568,24 +357,25 @@ const RolesModal = ({
     .filter(([, checked]) => !checked)
     .map(([id]) => id);
 
+  // Re-run whenever currentPermissions actually loads in from the store
   useEffect(() => {
+    if (currentPermissions.length === 0) return;
+
     const initial: Record<string, boolean> = {};
 
-    selectedRoleEndpoints.forEach((ep) => {
-      initial[ep.id] = currentPermissionsMap.has(ep.id)
-        ? (currentPermissionsMap.get(ep.id) ?? true)
-        : true;
+    currentPermissions.forEach((ep) => {
+      initial[ep.id] = ep.isActive;
     });
 
     additionalEndpoints.forEach((ep) => {
-      initial[ep.id] = currentPermissionsMap.has(ep.id)
-        ? (currentPermissionsMap.get(ep.id) ?? false)
-        : false;
+      initial[ep.id] = false;
     });
 
     setCheckedPermissions(initial);
     setOpenCategories({});
-  }, [selectedRoleKey]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPermissions]);
 
   const toggleCategory = (cat: string, section: "role" | "additional") =>
     setOpenCategories((prev) => ({
@@ -653,52 +443,60 @@ const RolesModal = ({
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'>
-        <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
-          <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
-            {title}
-          </h2>
-          <p className='text-[13px] text-gray-500 mb-6'>{description}</p>
-
-          <div className='mb-1'>
-            <p className='text-xl font-bold'>Role: {role}</p>
+      {isFetching ? (
+        <DialogContent className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'>
+          <div className='flex flex-1 justify-center items-center animate-pulse'>
+            Loading
           </div>
+        </DialogContent>
+      ) : (
+        <DialogContent className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'>
+          <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
+            <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
+              {title}
+            </h2>
+            <p className='text-[13px] text-gray-500 mb-6'>{description}</p>
 
-          <Separator className='my-5' />
+            <div className='mb-1'>
+              <p className='text-xl font-bold'>Role: {role}</p>
+            </div>
 
-          <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
-            <p className='text-base md:text-lg font-semibold text-gray-800 mb-3'>
-              Role permissions
-            </p>
-            {renderGroup(selectedGrouped, "role")}
+            <Separator className='my-5' />
 
-            <p className='text-base md:text-lg font-semibold text-gray-800 mt-6 mb-3'>
-              Additional permissions
-            </p>
-            {renderGroup(additionalGrouped, "additional")}
-
-            {Object.keys(additionalGrouped).length === 0 && (
-              <p className='text-[13px] text-gray-400 py-4'>
-                No additional permissions available for this role.
+            <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
+              <p className='text-base md:text-lg font-semibold text-gray-800 mb-3'>
+                Role permissions
               </p>
-            )}
-          </div>
-        </div>
+              {renderGroup(selectedGrouped, "role")}
 
-        <Separator />
-        <div className='flex items-center justify-between px-8 py-4'>
-          <ButtonWithLoader
-            text='Save'
-            isLoading={false}
-            className='rounded-full'
-            onClick={() =>
-              onNext(CHECKED_IDS, UNCHECKED_IDS).finally(() =>
-                setIsModalOpen(false),
-              )
-            }
-          />
-        </div>
-      </DialogContent>
+              <p className='text-base md:text-lg font-semibold text-gray-800 mt-6 mb-3'>
+                Additional permissions
+              </p>
+              {renderGroup(additionalGrouped, "additional")}
+
+              {Object.keys(additionalGrouped).length === 0 && (
+                <p className='text-[13px] text-gray-400 py-4'>
+                  No additional permissions available for this role.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <Separator />
+          <div className='flex items-center justify-between px-8 py-4'>
+            <ButtonWithLoader
+              text='Save'
+              isLoading={isLoading}
+              className='rounded-full'
+              onClick={() =>
+                onNext(CHECKED_IDS, UNCHECKED_IDS).finally(() =>
+                  setIsModalOpen(false),
+                )
+              }
+            />
+          </div>
+        </DialogContent>
+      )}
     </Dialog>
   );
 };

@@ -14,7 +14,7 @@ type PermissionType = {
   isLoading: boolean;
   allEndpoints: Endpoint[];
   allEndpointsPermissions: EndpointPermission | null;
-  singleRolePermission: RolePermission | null;
+  singleRolePermission: Endpoint[];
   allRolePermissions: RolePermission | null;
   allAdminPermissions: Endpoint[];
   singleAdminPermission: Endpoint[];
@@ -88,23 +88,21 @@ export const usePermission = create<PermissionType>()(
         }
       },
       getSingleAdminPermissions: async (adminID) => {
-        set({ isLoading: true });
+        set({ isFetching: true });
         const path = adminApiStr(
           `/permissions/users/direct-permissions?adminId=${adminID}`,
         );
-        const { data, error } = await callApi<{ rolePermissions: Endpoint[] }>(
-          path,
-        );
+        const { data, error } = await callApi<{ endpoints: Endpoint[] }>(path);
         if (error) {
-          set({ isLoading: false });
+          set({ isFetching: false });
           toast.error(error.message);
           return;
         }
         if (data) {
           console.log(path, data);
           set({
-            isLoading: false,
-            singleAdminPermission: data.data.rolePermissions,
+            isFetching: false,
+            singleAdminPermission: data.data.endpoints,
           });
           toast.success(
             data.message ?? "Single permission fetched successfully",
@@ -112,17 +110,17 @@ export const usePermission = create<PermissionType>()(
         }
       },
       getSingleRolePermissions: async (role) => {
-        set({ isLoading: true });
+        set({ isFetching: true });
         const path = adminApiStr(`/permissions/roles/permissions?role=${role}`);
-        const { data, error } = await callApi<RolePermission>(path);
+        const { data, error } = await callApi<{ endpoints: Endpoint[] }>(path);
         if (error) {
-          set({ isLoading: false });
+          set({ isFetching: false });
           toast.error(error.message);
           return;
         }
         if (data) {
           console.log(path, data);
-          set({ isLoading: false, singleRolePermission: data.data });
+          set({ isFetching: false, singleRolePermission: data.data.endpoints });
           toast.success(data.message ?? "Role permission fetched successfully");
         }
       },
