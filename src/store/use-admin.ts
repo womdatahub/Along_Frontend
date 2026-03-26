@@ -29,6 +29,12 @@ type AdminType = {
     }) => Promise<void>;
     getAllDrivers: () => Promise<void>;
     getSuspendedDrivers: () => Promise<void>;
+    suspendDriver: (suspendDetails: {
+      userId: string;
+      reason: string;
+      suspensionType: "TEMPORARY" | "PERMANENT";
+      suspensionDuration?: number;
+    }) => Promise<void>;
     getPendingDriversKYC: () => Promise<void>;
     processDriverKYC: (data: {
       userId: string;
@@ -36,6 +42,12 @@ type AdminType = {
       notes: string;
     }) => Promise<void>;
     getAllRiders: () => Promise<void>;
+    suspendRider: (suspendDetails: {
+      userId: string;
+      reason: string;
+      suspensionType: "TEMPORARY" | "PERMANENT";
+      suspensionDuration?: number;
+    }) => Promise<void>;
     getSuspendedRiders: () => Promise<void>;
     getAllAdmins: () => Promise<void>;
     createNewAdmin: (adminData: TCreateNewAdminSchema) => Promise<void>;
@@ -191,6 +203,21 @@ export const useAdmin = create<AdminType>()(
           );
         }
       },
+      suspendDriver: async (suspendDetails) => {
+        set({ isLoading: true });
+        const path = adminApiStr("/compliance/drivers/suspend");
+        const { data, error } = await callApi(path, suspendDetails);
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          console.log(path, data);
+          set({ isLoading: false });
+          toast.success(data.message ?? "Driver suspended successfully");
+        }
+      },
       getPendingDriversKYC: async () => {
         set({ isLoading: true });
         const path = adminApiStr("/compliance/kyc/pending");
@@ -248,6 +275,21 @@ export const useAdmin = create<AdminType>()(
           toast.success(
             data.message ?? "Suspended riders fetched successfully",
           );
+        }
+      },
+      suspendRider: async (suspendDetails) => {
+        set({ isLoading: true });
+        const path = adminApiStr("/compliance/users/suspend");
+        const { data, error } = await callApi(path, suspendDetails);
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          console.log(path, data);
+          set({ isLoading: false });
+          toast.success(data.message ?? "Rider suspended successfully");
         }
       },
       getAllAdmins: async () => {
