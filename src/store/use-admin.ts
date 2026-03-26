@@ -183,7 +183,7 @@ export const useAdmin = create<AdminType>()(
         }
       },
       getAllDrivers: async () => {
-        const path = adminApiStr("/drivers");
+        const path = adminApiStr("/users/drivers");
         const { data, error } = await callApi(path);
         if (error) {
           toast.error(error.message);
@@ -196,7 +196,7 @@ export const useAdmin = create<AdminType>()(
       },
       getSuspendedDrivers: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/drivers/suspended");
+        const path = adminApiStr("/users/drivers/suspended");
         const { data, error } = await callApi<SuspendedDriver[]>(path);
         if (error) {
           set({ isLoading: false });
@@ -257,7 +257,7 @@ export const useAdmin = create<AdminType>()(
         }
       },
       getAllRiders: async () => {
-        const path = adminApiStr("/riders");
+        const path = adminApiStr("/users/riders");
         const { data, error } = await callApi(path);
         if (error) {
           toast.error(error.message);
@@ -270,7 +270,7 @@ export const useAdmin = create<AdminType>()(
       },
       getSuspendedRiders: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/riders/suspended");
+        const path = adminApiStr("/users/riders/suspended");
         const { data, error } = await callApi<SuspendedDriver[]>(path);
         if (error) {
           set({ isLoading: false });
