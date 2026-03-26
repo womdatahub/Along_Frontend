@@ -20,7 +20,7 @@ import {
   ConfirmActionModal,
 } from "@/components/";
 import { useAdmin } from "@/store";
-import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
+// import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
 import { Car, Check, MapPin, Phone, Star } from "lucide-react";
 import Image from "next/image";
 import { useShallow } from "zustand/shallow";
@@ -52,7 +52,7 @@ const Page = () => {
       <div className='rounded-xl md:rounded-3xl border bg-white border-gray-300 flex flex-col gap-4 py-4'>
         <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-2 md:px-6'>
           <p className='text-xl text-left font-medium'>Drivers information</p>
-          <div className='flex items-center gap-5'>
+          {/* <div className='flex items-center gap-5'>
             <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] md:min-w-[325px]'>
               <AdminSearchIcon />
               <input
@@ -64,7 +64,7 @@ const Page = () => {
               />
             </div>
             <AdminFilterIcon />
-          </div>
+          </div> */}
         </div>
         <Table>
           <TableHeader>

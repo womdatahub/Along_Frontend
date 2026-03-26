@@ -18,7 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components";
-import { AdminRefreshIcon, AdminSearchIcon } from "@public/svgs";
+import {
+  AdminRefreshIcon,
+  // AdminSearchIcon
+} from "@public/svgs";
 
 const isEmpty = false;
 const Page = () => {
@@ -86,7 +89,7 @@ const Page = () => {
         <CardContent className='p-0 gap-4 flex flex-col'>
           <div className='flex justify-between gap-5 items-center px-3 md:px-6'>
             <p className='text-xl font-medium text-nowrap'>Alert logs</p>
-            <div className='flex items-center gap-5'>
+            {/* <div className='flex items-center gap-5'>
               <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] md:min-w-[325px]'>
                 <AdminSearchIcon />
                 <input
@@ -97,7 +100,7 @@ const Page = () => {
                   placeholder='Search'
                 />
               </div>
-            </div>
+            </div> */}
           </div>
           <Table>
             <TableHeader>
