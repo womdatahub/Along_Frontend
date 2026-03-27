@@ -516,23 +516,23 @@ export const BlackClockIcon = () => (
     <path
       d='M14.5 28C21.9559 28 28 21.9559 28 14.5C28 7.04416 21.9559 1 14.5 1C7.04416 1 1 7.04416 1 14.5C1 21.9559 7.04416 28 14.5 28Z'
       stroke='black'
-      stroke-width='2'
-      stroke-linecap='round'
-      stroke-linejoin='round'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
     />
     <path
       d='M14.5 5.50006V14.5001'
       stroke='black'
-      stroke-width='2'
-      stroke-linecap='round'
-      stroke-linejoin='round'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
     />
     <path
       d='M21.25 21.25L14.5 14.5'
       stroke='black'
-      stroke-width='2'
-      stroke-linecap='round'
-      stroke-linejoin='round'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
     />
   </svg>
 );

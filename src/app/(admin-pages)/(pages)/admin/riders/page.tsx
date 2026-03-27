@@ -7,6 +7,7 @@ import {
   Empty,
   EmptyHeader,
   EmptyTitle,
+  NameAvatar,
   Table,
   TableBody,
   TableCell,
@@ -16,16 +17,18 @@ import {
 } from "@/components/";
 import { useAdmin } from "@/store";
 // import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
-import Image from "next/image";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
-const isEmpty = false;
 const Page = () => {
   const {
-    actions: { getAllRiders, getSuspendedRiders },
+    actions: { getAllRiders, getSuspendedRiders, suspendRider },
+    allRiders,
+    suspendedRiders,
   } = useAdmin(
     useShallow((state) => ({
       actions: state.actions,
+      allRiders: state.allRiders,
+      suspendedRiders: state.suspendedRiders,
     })),
   );
 
@@ -58,24 +61,19 @@ const Page = () => {
         <Table>
           <TableHeader>
             <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-              <TableHead className='text-[#768B8F]'>Driver Name</TableHead>
-              <TableHead className='text-[#768B8F]'>
-                Vehicle Reg Number
-              </TableHead>
-              <TableHead className='text-[#768B8F]'>Drivers ID</TableHead>
+              <TableHead className='text-[#768B8F]'>Riders Name</TableHead>
+              <TableHead className='text-[#768B8F]'>Email</TableHead>
               <TableHead className='text-[#768B8F]'>Phone Number</TableHead>
-              <TableHead className='text-[#768B8F]'>Address</TableHead>
-              <TableHead className='text-[#768B8F]'>
-                Social Security No
-              </TableHead>
+              <TableHead className='text-[#768B8F]'>Riders ID</TableHead>
+              <TableHead className='text-[#768B8F]'>Gender</TableHead>
               <TableHead className='text-[#768B8F]'>Action</TableHead>
             </TableRow>
           </TableHeader>
 
-          {isEmpty ? (
+          {allRiders.length === 0 ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={7} className='p-10'>
+                <TableCell colSpan={6} className='p-10'>
                   <Empty>
                     <EmptyHeader>
                       <EmptyTitle>No information found</EmptyTitle>
@@ -86,36 +84,33 @@ const Page = () => {
             </TableBody>
           ) : (
             <TableBody>
-              {[...drivers, ...drivers].map((driver, i) => {
+              {allRiders.map((rider, i) => {
                 return (
                   <TableRow key={i} className='last:border-b-0'>
                     <TableCell className='text-sm font-medium py-5'>
                       <div className='flex items-center gap-2'>
-                        <Image
-                          src='/images/about-vision.png'
-                          alt='Profile image'
-                          className='rounded-full size-8 object-cover'
-                          width={32}
-                          height={32}
+                        <NameAvatar
+                          value={`${rider.rider.firstName[0] ?? ""}${rider.rider.lastName[0] ?? ""}`}
+                          className='size-8 md:size-8 text-base md:text-base'
                         />
-                        <p>{driver.name}</p>
+                        <p>
+                          {rider.rider.firstName} {rider.rider.lastName}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.vehicleRegNumber}
+                      {rider.email}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.driverID}
+                      {rider.mobileNumber}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.phoneNumber}
+                      {rider.rider.userId}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.address}
+                      {rider.gender ?? "Male"}
                     </TableCell>
-                    <TableCell className=' text-sm font-medium'>
-                      {driver.socialSecurityNo}
-                    </TableCell>
+
                     <TableCell>
                       <div className='flex items-center gap-3'>
                         <ConfirmActionModal
@@ -126,12 +121,23 @@ const Page = () => {
                           }
                           title='Suspend rider'
                           description='Are you sure you want to suspend this rider'
-                          confirmActionFunction={() => {}}
+                          confirmActionFunction={async (values) => {
+                            if (!values) return;
+                            await suspendRider({
+                              userId: rider.rider.userId,
+                              reason: values.reason,
+                              suspensionType:
+                                values.suspensionType.toUpperCase(),
+                              suspensionDuration: Number(
+                                values.suspensionDuration,
+                              ),
+                            });
+                          }}
                           type='suspend'
                         />
-                        <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
+                        {/* <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
                           View profile
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -147,20 +153,26 @@ const Page = () => {
           <p className='font-semibold text-xl'>Suspended riders</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
-              {[0, 1, 2].map((it) => (
+              {suspendedRiders.length === 0 && (
+                <Empty className='py-20'>
+                  <EmptyHeader>
+                    <EmptyTitle>No information found</EmptyTitle>
+                  </EmptyHeader>
+                </Empty>
+              )}
+              {suspendedRiders.map((rider) => (
                 <div
-                  key={it}
+                  key={rider.rider.userId}
                   className='flex items-center gap-3 justify-between first:py-3 py-6 px-1'
                 >
                   <div className='flex items-center gap-3'>
-                    <Image
-                      src='/images/placeholder.jpg'
-                      alt='image'
-                      width={36}
-                      height={36}
-                      className='size-9 rounded-full object-cover'
+                    <NameAvatar
+                      value={`${rider.rider.firstName[0] ?? ""}${rider.rider.lastName[0] ?? ""}`}
+                      className='size-8 md:size-8 text-base md:text-base'
                     />
-                    <p className='text-sm font-medium'>Mark Spencer</p>
+                    <p className='text-sm font-medium'>
+                      {rider.rider.firstName} {rider.rider.lastName}
+                    </p>
                   </div>
 
                   <ConfirmActionModal

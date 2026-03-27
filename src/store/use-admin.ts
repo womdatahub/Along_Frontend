@@ -4,6 +4,8 @@ import type {
   AdminsType,
   DriverProfile,
   SuspendedDriver,
+  AllRiderAccount,
+  AllDriversAccount,
 } from "@/types";
 import { devtools } from "zustand/middleware";
 import { adminApiStr, callApi, TCreateNewAdminSchema } from "@/lib";
@@ -15,7 +17,9 @@ type AdminType = {
   isLoading: boolean;
   pendingDriversKYC: DriverProfile[];
   suspendedDrivers: SuspendedDriver[];
-  suspendedRiders: SuspendedDriver[];
+  suspendedRiders: AllRiderAccount[];
+  allRiders: AllRiderAccount[];
+  allDrivers: AllDriversAccount[];
   actions: {
     getAdminDashboardDetails: () => Promise<void>;
     getActiveRides: () => Promise<void>;
@@ -33,7 +37,7 @@ type AdminType = {
     suspendDriver: (suspendDetails: {
       userId: string;
       reason: string;
-      suspensionType: "TEMPORARY" | "PERMANENT";
+      suspensionType: string;
       suspensionDuration?: number;
     }) => Promise<void>;
     getPendingDriversKYC: () => Promise<void>;
@@ -46,7 +50,7 @@ type AdminType = {
     suspendRider: (suspendDetails: {
       userId: string;
       reason: string;
-      suspensionType: "TEMPORARY" | "PERMANENT";
+      suspensionType: string;
       suspensionDuration?: number;
     }) => Promise<void>;
     getSuspendedRiders: () => Promise<void>;
@@ -68,6 +72,8 @@ const initialState = {
   pendingDriversKYC: [],
   suspendedDrivers: [],
   suspendedRiders: [],
+  allRiders: [],
+  allDrivers: [],
 };
 
 export const useAdmin = create<AdminType>()(
@@ -183,15 +189,17 @@ export const useAdmin = create<AdminType>()(
         }
       },
       getAllDrivers: async () => {
+        set({ isLoading: false });
         const path = adminApiStr("/users/drivers");
-        const { data, error } = await callApi(path);
+        const { data, error } = await callApi<AllDriversAccount[]>(path);
         if (error) {
+          set({ isLoading: false });
           toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(data.message ?? "Drivers fetched successfully");
+          set({ isLoading: false, allDrivers: data.data });
+          // toast.success(data.message ?? "Drivers fetched successfully");
         }
       },
       getSuspendedDrivers: async () => {
@@ -206,9 +214,9 @@ export const useAdmin = create<AdminType>()(
         if (data) {
           console.log(path, data);
           set({ suspendedDrivers: data.data, isLoading: false });
-          toast.success(
-            data.message ?? "Suspended drivers fetched successfully",
-          );
+          // toast.success(
+          //   data.message ?? "Suspended drivers fetched successfully",
+          // );
         }
       },
       suspendDriver: async (suspendDetails) => {
@@ -257,21 +265,26 @@ export const useAdmin = create<AdminType>()(
         }
       },
       getAllRiders: async () => {
+        set({ isLoading: true });
         const path = adminApiStr("/users/riders");
-        const { data, error } = await callApi(path);
+        const { data, error } = await callApi<AllRiderAccount[]>(path);
         if (error) {
+          set({ isLoading: false });
           toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(data.message ?? "Riders fetched successfully");
+          set({
+            isLoading: false,
+            allRiders: data.data.filter((r) => r.isSuspended !== true),
+          });
+          // toast.success(data.message ?? "Riders fetched successfully");
         }
       },
       getSuspendedRiders: async () => {
         set({ isLoading: true });
         const path = adminApiStr("/users/riders/suspended");
-        const { data, error } = await callApi<SuspendedDriver[]>(path);
+        const { data, error } = await callApi<AllRiderAccount[]>(path);
         if (error) {
           set({ isLoading: false });
           toast.error(error.message);
@@ -279,10 +292,10 @@ export const useAdmin = create<AdminType>()(
         }
         if (data) {
           console.log(path, data);
-          set({ suspendedDrivers: data.data, isLoading: false });
-          toast.success(
-            data.message ?? "Suspended riders fetched successfully",
-          );
+          set({ suspendedRiders: data.data, isLoading: false });
+          // toast.success(
+          //   data.message ?? "Suspended riders fetched successfully",
+          // );
         }
       },
       suspendRider: async (suspendDetails) => {
@@ -297,6 +310,8 @@ export const useAdmin = create<AdminType>()(
         if (data) {
           console.log(path, data);
           set({ isLoading: false });
+          await get().actions.getAllRiders();
+          await get().actions.getSuspendedRiders();
           toast.success(data.message ?? "Rider suspended successfully");
         }
       },
@@ -311,7 +326,7 @@ export const useAdmin = create<AdminType>()(
         }
         if (data) {
           set({ allActiveAdmins: data.data });
-          toast.success(data.message ?? "Admins fetched successfully");
+          // toast.success(data.message ?? "Admins fetched successfully");
         }
         set({ isLoading: false });
       },
@@ -326,7 +341,7 @@ export const useAdmin = create<AdminType>()(
         }
         if (data) {
           set({ allSuspendedAdmins: data.data });
-          toast.success(data.message ?? "Admins fetched successfully");
+          // toast.success(data.message ?? "Admins fetched successfully");
         }
         set({ isLoading: false });
       },

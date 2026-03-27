@@ -104,13 +104,71 @@ export interface RiderProfile {
   __v: number;
 }
 
+export type AllRiderAccount = {
+  _id: string;
+  email: string;
+  isEmailVerified: boolean;
+  mobileNumber: string;
+  isMobileNumberVerified: boolean;
+  passwordResetOtp: string | null;
+  isGoogleUser: boolean;
+  isAppleUser: boolean;
+  isFacebookUser: boolean;
+  isSuspended: boolean;
+  suspensionReason: string | null;
+  suspensionNotes: string | null;
+  suspensionType: string | null;
+  suspensionEndDate: string | null;
+  role: "rider";
+  createdAt: string;
+  updatedAt: string;
+  gender: "male" | "female";
+  rider: {
+    _id: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    profilePictureUri: string | null;
+  };
+};
+
+export type AllDriversAccount = {
+  _id: string;
+  email: string;
+  isEmailVerified: boolean;
+  mobileNumber: string;
+  isMobileNumberVerified: boolean;
+  passwordResetOtp: string | null;
+  isGoogleUser: boolean;
+  isAppleUser: boolean;
+  isFacebookUser: boolean;
+  isSuspended: boolean;
+  suspensionReason: string | null;
+  suspensionNotes: string | null;
+  suspensionType: string | null;
+  suspensionEndDate: number | null;
+  role: "driver";
+  createdAt: string;
+  updatedAt: string;
+  driver: {
+    _id: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    rating: {
+      totalRating: number;
+      numberOfRatings: number;
+    };
+    driverProfilePictureUri: string;
+  };
+};
 export interface UserProfile {
   _id: string;
   email: string;
   role: string;
   createdAt: string;
   updatedAt: string;
-  isEmailVerified: true;
+  isEmailVerified: boolean;
   isMobileNumberVerified: boolean;
   mobileNumber: string;
 }

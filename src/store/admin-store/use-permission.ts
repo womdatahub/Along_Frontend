@@ -82,9 +82,9 @@ export const usePermission = create<PermissionType>()(
             isLoading: false,
             allAdminPermissions: data.data.rolePermissions,
           });
-          toast.success(
-            data.message ?? "All admin permissions fetched successfully",
-          );
+          // toast.success(
+          //   data.message ?? "All admin permissions fetched successfully",
+          // );
         }
       },
       getSingleAdminPermissions: async (adminID) => {
@@ -104,9 +104,9 @@ export const usePermission = create<PermissionType>()(
             isFetching: false,
             singleAdminPermission: data.data.endpoints,
           });
-          toast.success(
-            data.message ?? "Single permission fetched successfully",
-          );
+          // toast.success(
+          //   data.message ?? "Single permission fetched successfully",
+          // );
         }
       },
       getSingleRolePermissions: async (role) => {
@@ -124,7 +124,7 @@ export const usePermission = create<PermissionType>()(
             isFetching: false,
             singleRolePermission: data.data.endpoints,
           });
-          toast.success(data.message ?? "Role permission fetched successfully");
+          // toast.success(data.message ?? "Role permission fetched successfully");
         }
         set({ isFetching: false });
       },
@@ -140,9 +140,9 @@ export const usePermission = create<PermissionType>()(
         if (data) {
           console.log(path, data);
           set({ isLoading: false, allRolePermissions: data.data });
-          toast.success(
-            data.message ?? "All role permissions fetched successfully",
-          );
+          // toast.success(
+          //   data.message ?? "All role permissions fetched successfully",
+          // );
         }
       },
       getAllEndpoints: async () => {
@@ -157,7 +157,7 @@ export const usePermission = create<PermissionType>()(
         if (data) {
           console.log(path, data);
           set({ isLoading: false, allEndpoints: data.data });
-          toast.success(data.message ?? "All endpoints fetched successfully");
+          // toast.success(data.message ?? "All endpoints fetched successfully");
         }
       },
       getEndpointPermissions: async (endpointId) => {
@@ -174,9 +174,9 @@ export const usePermission = create<PermissionType>()(
         if (data) {
           console.log(path, data);
           set({ isLoading: false, allEndpointsPermissions: data.data });
-          toast.success(
-            data.message ?? "All endpoint permissions fetched successfully",
-          );
+          // toast.success(
+          //   data.message ?? "All endpoint permissions fetched successfully",
+          // );
         }
       },
       grantRolePermission: async (rolePermissionData) => {
@@ -222,7 +222,7 @@ export const usePermission = create<PermissionType>()(
         if (data) {
           console.log(path, data);
           set({ isLoading: false });
-          toast.success(data.message ?? "Role granted");
+          // toast.success(data.message ?? "Role granted");
         }
       },
       revokeAdminPermission: async (revokeAdminPermissionData) => {

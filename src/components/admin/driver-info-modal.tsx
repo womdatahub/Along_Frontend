@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { User, Shield, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib";
 import { DriverProfile } from "@/types";
+import Image from "next/image";
 
 type Tab = "personal" | "ssn" | "vehicle";
 
@@ -38,15 +39,24 @@ function ImgBox({ label }: { label: string }) {
 }
 
 // ── Tab contents ───────────────────────────────────────────────────
-function PersonalTab() {
+function PersonalTab({ driverInfo }: { driverInfo: DriverProfile }) {
   return (
     <div>
       <div className='px-5 py-5'>
-        <div className='w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-500' />
+        <Image
+          src={driverInfo.driverProfilePictureUri ?? "/images/placeholder.jpg"}
+          alt={`${driverInfo.firstName} ${driverInfo.lastName} profile picture`}
+          width={36}
+          height={36}
+          className='size-9 rounded-full object-cover'
+        />{" "}
       </div>
       <Separator />
       <div className='px-5 py-4'>
-        <Field label='Name' value='Mark Spencer' />
+        <Field
+          label='Name'
+          value={`${driverInfo.firstName} ${driverInfo.lastName}`}
+        />
       </div>
       <Separator />
       <div className='px-5 py-4'>
@@ -67,7 +77,7 @@ function PersonalTab() {
   );
 }
 
-function SsnTab() {
+function SsnTab({ driverInfo }: { driverInfo: DriverProfile }) {
   return (
     <div>
       <div className='px-5 py-4'>
@@ -94,7 +104,7 @@ function SsnTab() {
   );
 }
 
-function VehicleTab() {
+function VehicleTab({ driverInfo }: { driverInfo: DriverProfile }) {
   const [page, setPage] = useState(1);
   return (
     <div className='flex flex-col min-h-full'>
@@ -114,7 +124,7 @@ function VehicleTab() {
             </div>
             <Separator />
             <div className='px-5 py-4'>
-              <Field label='Vehicle Colour' value='Beige' />
+              <Field label='Vehicle Color' value='Beige' />
             </div>
             <Separator />
           </>
@@ -181,6 +191,7 @@ const TABS: {
 
 export const DriverInfoModal = ({
   trigger,
+  driverInfo,
 }: {
   trigger: React.ReactNode;
   driverInfo: DriverProfile;
@@ -190,11 +201,11 @@ export const DriverInfoModal = ({
   const renderContent = () => {
     switch (activeTab) {
       case "personal":
-        return <PersonalTab />;
+        return <PersonalTab driverInfo={driverInfo} />;
       case "ssn":
-        return <SsnTab />;
+        return <SsnTab driverInfo={driverInfo} />;
       case "vehicle":
-        return <VehicleTab />;
+        return <VehicleTab driverInfo={driverInfo} />;
     }
   };
 

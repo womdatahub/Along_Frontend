@@ -30,6 +30,7 @@ export interface AddInputProps<T extends FieldValues> {
   icon?: React.ReactNode;
   iconAndInputWrapperClassName?: string;
   isReverse?: boolean;
+  withFocusRing?: boolean;
 }
 
 const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
@@ -52,6 +53,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
     iconAndInputWrapperClassName,
     isReverse,
     pattern,
+    withFocusRing,
   } = props;
 
   const [realType, setRealType] = useState(type);
@@ -86,8 +88,10 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
             onBlur={onblur}
             placeholder={placeholder}
             className={cn(
-              "rounded-lg focus-visible:ring-1 focus-visible:ring-teal-600",
+              "rounded-lg",
               inputClassName,
+              withFocusRing &&
+                "focus-visible:ring-1 focus-visible:ring-teal-600",
             )}
           />
           {type === "password" && (

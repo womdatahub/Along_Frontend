@@ -411,6 +411,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             type='text'
             labelClassName='text-sm font-semibold ml-2'
             iconAndInputWrapperClassName='bg-background-1 rounded-2xl p-0'
+            withFocusRing
             inputClassName='h-14 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
           />
           <SelectDropdown
@@ -439,6 +440,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               pattern='[0-9]*'
               labelClassName='text-xs font-medium ml-2'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              withFocusRing
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
             />
             <AddInput
@@ -453,6 +455,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               pattern='[0-9]*'
               labelClassName='text-xs font-medium ml-2'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              withFocusRing
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
             />
             <AddInput
@@ -467,6 +470,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               pattern='[0-9]*'
               labelClassName='text-xs font-medium ml-0'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              withFocusRing
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
             />
             <AddInput
@@ -479,6 +483,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               type='text'
               inputMode='numeric'
               pattern='[0-9]*'
+              withFocusRing
               labelClassName='text-xs font-medium ml-0'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
@@ -495,6 +500,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               type='text'
               inputMode='numeric'
               pattern='[0-9]*'
+              withFocusRing
               labelClassName='text-xs font-medium ml-0'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
@@ -509,6 +515,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               type='text'
               inputMode='numeric'
               pattern='[0-9]*'
+              withFocusRing
               labelClassName='text-xs font-medium ml-0'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
@@ -523,6 +530,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               type='text'
               inputMode='numeric'
               pattern='[0-9]*'
+              withFocusRing
               labelClassName='text-xs font-medium ml-0'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
@@ -537,6 +545,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
               type='text'
               inputMode='numeric'
               pattern='[0-9]*'
+              withFocusRing
               labelClassName='text-xs font-medium ml-0'
               iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
               inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'

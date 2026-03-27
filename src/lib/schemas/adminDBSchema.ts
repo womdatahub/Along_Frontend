@@ -56,6 +56,12 @@ export const createNewAdminSchema = z.object({
     message: "Role is required",
   }),
 });
+export const suspensionSchema = z.object({
+  reason: z.string(),
+  suspensionDuration: z.string(),
+  suspensionType: z.string(),
+});
 
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;
 export type TCreateNewAdminSchema = z.infer<typeof createNewAdminSchema>;
+export type TSuspensionSchema = z.infer<typeof suspensionSchema>;
