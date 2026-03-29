@@ -95,11 +95,11 @@ const menuItems = [
     text: "SOS",
     path: "/admin/sos",
   },
-  {
-    icon: AdminRulesAndPermissionsIcon,
-    text: "Active trip",
-    path: "/admin/active-trip",
-  },
+  // {
+  //   icon: AdminRulesAndPermissionsIcon,
+  //   text: "Active trip",
+  //   path: "/admin/active-trip",
+  // },
   {
     icon: AdminRulesAndPermissionsIcon,
     text: "Market Place",

@@ -13,8 +13,8 @@ import {
   TableRow,
   AddNewAdminModal,
   // EditRolesPermissionModal,
-  ConfirmActionModal,
-  ResetPasswordModal,
+  // ConfirmActionModal,
+  // ResetPasswordModal,
   RolesModal,
 } from "@/components/";
 // import { AdminSearchIcon } from "@public/svgs";
@@ -22,8 +22,8 @@ import {
   UserPlus,
   RefreshCw,
   Shield,
-  KeyRound,
-  Trash2,
+  // KeyRound,
+  // Trash2,
   SlidersHorizontal,
   ChevronRight,
 } from "lucide-react";
@@ -179,7 +179,7 @@ const Page = () => {
               type={"role"}
             />
 
-            <ResetPasswordModal
+            {/* <ResetPasswordModal
               trigger={
                 <button
                   disabled={!hasSelection}
@@ -194,9 +194,9 @@ const Page = () => {
                   Reset Password
                 </button>
               }
-            />
+            /> */}
 
-            <ConfirmActionModal
+            {/* <ConfirmActionModal
               trigger={
                 <button
                   disabled={!hasSelection}
@@ -215,7 +215,7 @@ const Page = () => {
               description='Are you sure you want to delete this user?'
               title='Delete User'
               type='delete'
-            />
+            /> */}
           </div>
 
           <button className='flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors'>

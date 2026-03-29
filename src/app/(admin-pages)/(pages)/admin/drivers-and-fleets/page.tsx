@@ -18,7 +18,6 @@ import {
   TableHeader,
   TableRow,
   ConfirmActionModal,
-  DialogTitle,
 } from "@/components/";
 import { useAdmin } from "@/store";
 // import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
@@ -26,7 +25,6 @@ import { Car, Check, MapPin, Phone, Star } from "lucide-react";
 import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import { useEffect } from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const Page = () => {
   const {
@@ -379,7 +377,7 @@ const Page = () => {
           <p className='font-semibold text-xl'>Suspended drivers</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
-              {pendingDriversKYC.length === 0 && (
+              {suspendedDrivers.length === 0 && (
                 <Empty className='py-20'>
                   <EmptyHeader>
                     <EmptyTitle>No information found</EmptyTitle>
