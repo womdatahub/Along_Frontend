@@ -80,7 +80,7 @@ const Page = () => {
               </TableHead>
               <TableHead className='text-[#768B8F]'>Drivers ID</TableHead>
               <TableHead className='text-[#768B8F]'>Phone Number</TableHead>
-              <TableHead className='text-[#768B8F]'>Address</TableHead>
+              {/* <TableHead className='text-[#768B8F]'>Address</TableHead> */}
               <TableHead className='text-[#768B8F]'>
                 Social Security No
               </TableHead>
@@ -131,9 +131,8 @@ const Page = () => {
                     <TableCell className=' text-sm font-medium'>
                       {driver.mobileNumber}
                     </TableCell>
-                    <TableCell className=' text-sm font-medium'>
-                      {/* {driver.address} */}
-                    </TableCell>
+                    {/* <TableCell className=' text-sm font-medium'>
+                    </TableCell> */}
                     <TableCell className=' text-sm font-medium'>
                       {/* {driver.} */}
                     </TableCell>
@@ -382,6 +381,13 @@ const Page = () => {
           <p className='font-semibold text-xl'>Suspended drivers</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
+              {pendingDriversKYC.length === 0 && (
+                <Empty className='py-20'>
+                  <EmptyHeader>
+                    <EmptyTitle>No information found</EmptyTitle>
+                  </EmptyHeader>
+                </Empty>
+              )}
               {suspendedDrivers.map((driver) => (
                 <div
                   key={driver.email}
@@ -402,12 +408,7 @@ const Page = () => {
                       {/* {driver.driver.firstName} {driver.driver.lastName} */}
                     </p>
                   </div>
-                  {/* <Button
-                    variant='default'
-                    className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
-                  >
-                    Reactivate
-                  </Button> */}
+
                   <ConfirmActionModal
                     trigger={
                       <Button
@@ -422,43 +423,6 @@ const Page = () => {
                     confirmActionFunction={() => {}}
                     type='reactivate'
                   />
-
-                  {/* <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant='default'
-                        className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
-                      >
-                        Reactivate
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className='max-w-sm p-0 overflow-hidden'>
-                      <div className='flex flex-col items-center gap-4 p-6 text-center'>
-                        <div className='text-4xl'>👆</div>
-                        <div>
-                          <h2 className='text-base font-semibold text-gray-800'>
-                            Reactivate driver
-                          </h2>
-                          <p className='text-sm text-gray-400 mt-1'>
-                            Are you sure you want to reactivate this user
-                          </p>
-                        </div>
-                      </div>
-                      <Separator />
-                      <div className='flex'>
-                        <button className='flex-1 py-3 text-sm text-gray-400 hover:text-gray-600 transition-colors'>
-                          Cancel
-                        </button>
-                        <Separator
-                          orientation='vertical'
-                          className='h-12 self-center'
-                        />
-                        <button className='flex-1 py-3 text-sm text-teal-600 font-medium hover:text-teal-700 transition-colors'>
-                          Yes
-                        </button>
-                      </div>
-                    </DialogContent>
-                  </Dialog> */}
                 </div>
               ))}
             </CardContent>
