@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
   ConfirmActionModal,
+  DialogTitle,
 } from "@/components/";
 import { useAdmin } from "@/store";
 // import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
@@ -25,16 +26,20 @@ import { Car, Check, MapPin, Phone, Star } from "lucide-react";
 import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import { useEffect } from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
-const isEmpty = false;
 const Page = () => {
   const {
     actions: { getAllDrivers, getPendingDriversKYC, getSuspendedDrivers },
     pendingDriversKYC,
+    allDrivers,
+    suspendedDrivers,
   } = useAdmin(
     useShallow((state) => ({
       actions: state.actions,
       pendingDriversKYC: state.pendingDriversKYC,
+      allDrivers: state.allDrivers,
+      suspendedDrivers: state.suspendedDrivers,
     })),
   );
 
@@ -83,7 +88,7 @@ const Page = () => {
             </TableRow>
           </TableHeader>
 
-          {isEmpty ? (
+          {allDrivers.length === 0 ? (
             <TableBody>
               <TableRow>
                 <TableCell colSpan={7} className='p-10'>
@@ -97,35 +102,40 @@ const Page = () => {
             </TableBody>
           ) : (
             <TableBody>
-              {[...drivers, ...drivers, ...drivers].map((driver, i) => {
+              {allDrivers.map((driver, i) => {
                 return (
                   <TableRow key={i} className='last:border-b-0'>
                     <TableCell className='text-sm font-medium py-5'>
                       <div className='flex items-center gap-2'>
                         <Image
-                          src='/images/about-vision.png'
-                          alt='Profile image'
+                          src={
+                            driver.driver.driverProfilePictureUri ??
+                            "/images/placeholder.jpg"
+                          }
+                          alt={driver.driver.firstName}
                           className='rounded-full size-8 object-cover'
                           width={32}
                           height={32}
                         />
-                        <p>{driver.name}</p>
+                        <p>
+                          {driver.driver.firstName} {driver.driver.lastName}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.vehicleRegNumber}
+                      {/* {driver.driver.} */}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.driverID}
+                      {driver.driver.userId.slice(0, 4)}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.phoneNumber}
+                      {driver.mobileNumber}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.address}
+                      {/* {driver.address} */}
                     </TableCell>
                     <TableCell className=' text-sm font-medium'>
-                      {driver.socialSecurityNo}
+                      {/* {driver.} */}
                     </TableCell>
                     <TableCell>
                       <div className='flex items-center gap-3'>
@@ -148,15 +158,28 @@ const Page = () => {
                             </Button>
                           </DialogTrigger>
                           <DialogContent className='max-w-sm md:max-w-md px-6 py-10'>
+                            <VisuallyHidden>
+                              <DialogTitle>
+                                Select a vehicle type: Economy, Comfort, Comfort
+                                XL, Luxury or Luxury XL
+                              </DialogTitle>
+                            </VisuallyHidden>
                             <div className='flex items-start gap-3 mb-4'>
-                              <div className='size-[120px] rounded-full bg-red-500 flex-shrink-0' />
-                              <div className='flex w-full flex-col gap-5 relative'>
-                                <p className='text-sm font-bold absolute top-0 right-0'>
-                                  ID: #00224
-                                </p>
+                              <Image
+                                src={
+                                  driver.driver.driverProfilePictureUri ??
+                                  "/images/placeholder.jpg"
+                                }
+                                alt={driver.driver.firstName}
+                                className='rounded-full size-[120px] object-cover'
+                                width={120}
+                                height={120}
+                              />
+                              <div className='flex w-full flex-col gap-5'>
                                 <div className='flex flex-col'>
                                   <h2 className='text-2xl font-bold truncate'>
-                                    Mark Spencer
+                                    {driver.driver.firstName}{" "}
+                                    {driver.driver.lastName}
                                   </h2>
                                   <p className='text-sm font-semibold mt-0.5'>
                                     CabbageTown, Center Park
@@ -165,7 +188,7 @@ const Page = () => {
 
                                 <div className='flex gap-3 mt-1'>
                                   <div className='text-xl flex gap-3 items-center justify-center font-bold bg-primary text-white p-3 rounded-[5px]'>
-                                    4.5
+                                    {driver.driver.rating.totalRating}
                                     <Star
                                       size={18}
                                       className='fill-white text-white'
@@ -177,20 +200,32 @@ const Page = () => {
                                     <div>
                                       <div className='flex gap-3 items-center'>
                                         <span className='text-xs '>
-                                          123 Reviews
+                                          0 Reviews
                                         </span>
                                         <div className='flex gap-1 items-center'>
-                                          {[1, 2, 3, 4].map((i) => (
-                                            <Star
-                                              key={i}
-                                              size={12}
-                                              className='fill-icons text-icons'
-                                            />
-                                          ))}
-                                          <Star
-                                            size={12}
-                                            className='fill-gray-200 text-icons'
-                                          />
+                                          {Array(
+                                            driver.driver.rating.totalRating,
+                                          )
+                                            .fill(0)
+                                            .map((_, i) => (
+                                              <Star
+                                                key={i}
+                                                size={12}
+                                                className='fill-icons text-icons'
+                                              />
+                                            ))}
+                                          {Array(
+                                            5 -
+                                              driver.driver.rating.totalRating,
+                                          )
+                                            .fill(0)
+                                            .map((_, i) => (
+                                              <Star
+                                                key={i}
+                                                size={12}
+                                                className='fill-gray-200 text-icons'
+                                              />
+                                            ))}
                                         </div>
                                       </div>
                                     </div>
@@ -202,7 +237,7 @@ const Page = () => {
                                     size={15}
                                     className='fill-primary text-primary'
                                   />{" "}
-                                  +19 867 8861
+                                  {driver.mobileNumber}
                                 </span>
                                 <div className='flex gap-2 items-center'>
                                   <span className='flex gap-2 text-xs text-gray-500'>
@@ -211,7 +246,7 @@ const Page = () => {
                                       className='fill-primary text-white'
                                     />
                                     <div>
-                                      <p className='font-bold text-sm'>521</p>
+                                      <p className='font-bold text-sm'>0</p>
                                       <p className='text-xs'>Completed rides</p>
                                     </div>
                                   </span>
@@ -226,7 +261,7 @@ const Page = () => {
                                       className='fill-primary text-white'
                                     />
                                     <div>
-                                      <p className='font-bold text-sm'>521ml</p>
+                                      <p className='font-bold text-sm'>0ml</p>
                                       <p className='text-xs'>Distance shared</p>
                                     </div>
                                   </span>
@@ -313,9 +348,9 @@ const Page = () => {
                   </EmptyHeader>
                 </Empty>
               )}
-              {pendingDriversKYC.map((driver) => (
+              {pendingDriversKYC.map((driver, i) => (
                 <div
-                  key={driver._id}
+                  key={i}
                   className='flex items-center gap-3 justify-between  first:py-3 border-b last:border-b-0 py-6 px-4'
                 >
                   <div className='flex items-center gap-3'>
@@ -347,20 +382,25 @@ const Page = () => {
           <p className='font-semibold text-xl'>Suspended drivers</p>
           <Card className='p-5 gap-1 flex-1'>
             <CardContent className='p-0'>
-              {[0, 1, 2].map((it) => (
+              {suspendedDrivers.map((driver) => (
                 <div
-                  key={it}
+                  key={driver.email}
                   className='flex items-center gap-3 justify-between first:py-3 py-6 px-1'
                 >
                   <div className='flex items-center gap-3'>
                     <Image
-                      src='/images/placeholder.jpg'
-                      alt='image'
+                      src={
+                        // driver.driver.driverProfilePictureUri ??
+                        "/images/placeholder.jpg"
+                      }
+                      alt={` profile picture`}
                       width={36}
                       height={36}
                       className='size-9 rounded-full object-cover'
                     />
-                    <p className='text-sm font-medium'>Mark Spencer</p>
+                    <p className='text-sm font-medium'>
+                      {/* {driver.driver.firstName} {driver.driver.lastName} */}
+                    </p>
                   </div>
                   {/* <Button
                     variant='default'
@@ -429,30 +469,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-const drivers = [
-  {
-    name: "John Doe",
-    vehicleRegNumber: "ABC-123-KJA",
-    driverID: "DRV-001",
-    phoneNumber: "+2348012345678",
-    address: "12 Adeola Street, Lagos",
-    socialSecurityNo: "SSN-112233",
-  },
-  {
-    name: "Jane Smith",
-    vehicleRegNumber: "GGE-889-PH",
-    driverID: "DRV-002",
-    phoneNumber: "+2348098765432",
-    address: "5 Odili Road, PH",
-    socialSecurityNo: "SSN-445566",
-  },
-  {
-    name: "Ahmed Musa",
-    vehicleRegNumber: "KAN-552-KN",
-    driverID: "DRV-003",
-    phoneNumber: "+2348076543210",
-    address: "Kano Central, Kano",
-    socialSecurityNo: "SSN-778899",
-  },
-];
