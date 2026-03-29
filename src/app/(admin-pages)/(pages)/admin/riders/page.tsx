@@ -21,7 +21,12 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 const Page = () => {
   const {
-    actions: { getAllRiders, getSuspendedRiders, suspendRider },
+    actions: {
+      getAllRiders,
+      getSuspendedRiders,
+      suspendDriverOrRider,
+      reactivateDriverOrRider,
+    },
     allRiders,
     suspendedRiders,
   } = useAdmin(
@@ -123,21 +128,21 @@ const Page = () => {
                           description='Are you sure you want to suspend this rider'
                           confirmActionFunction={async (values) => {
                             if (!values) return;
-                            await suspendRider({
-                              userId: rider.rider.userId,
-                              reason: values.reason,
-                              suspensionType:
-                                values.suspensionType.toUpperCase(),
-                              suspensionDuration: Number(
-                                values.suspensionDuration,
-                              ),
-                            });
+                            await suspendDriverOrRider(
+                              {
+                                userId: rider.rider.userId,
+                                reason: values.reason,
+                                suspensionType:
+                                  values.suspensionType.toUpperCase(),
+                                suspensionDuration: Number(
+                                  values.suspensionDuration,
+                                ),
+                              },
+                              "rider",
+                            );
                           }}
                           type='suspend'
                         />
-                        {/* <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
-                          View profile
-                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -186,7 +191,14 @@ const Page = () => {
                     }
                     title='Reactivate rider'
                     description='Are you sure you want to reactivate this rider'
-                    confirmActionFunction={() => {}}
+                    confirmActionFunction={async () => {
+                      await reactivateDriverOrRider(
+                        {
+                          userId: rider.rider.userId,
+                        },
+                        "rider",
+                      );
+                    }}
                     type='reactivate'
                   />
                 </div>
@@ -199,30 +211,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-const drivers = [
-  {
-    name: "John Doe",
-    vehicleRegNumber: "ABC-123-KJA",
-    driverID: "DRV-001",
-    phoneNumber: "+2348012345678",
-    address: "12 Adeola Street, Lagos",
-    socialSecurityNo: "SSN-112233",
-  },
-  {
-    name: "Jane Smith",
-    vehicleRegNumber: "GGE-889-PH",
-    driverID: "DRV-002",
-    phoneNumber: "+2348098765432",
-    address: "5 Odili Road, PH",
-    socialSecurityNo: "SSN-445566",
-  },
-  {
-    name: "Ahmed Musa",
-    vehicleRegNumber: "KAN-552-KN",
-    driverID: "DRV-003",
-    phoneNumber: "+2348076543210",
-    address: "Kano Central, Kano",
-    socialSecurityNo: "SSN-778899",
-  },
-];

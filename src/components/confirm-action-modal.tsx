@@ -57,7 +57,7 @@ const ConfirmActionModal = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
-      dialogTitle={`${type}-${title}-${description}?`}
+        dialogTitle={`${type}-${title}-${description}?`}
         showCloseButton={false}
         className='max-w-sm overflow-hidden bg-[#E7EDED]'
       >

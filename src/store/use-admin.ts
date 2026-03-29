@@ -8,7 +8,7 @@ import type {
   AllDriversAccount,
 } from "@/types";
 import { devtools } from "zustand/middleware";
-import { adminApiStr, callApi, TCreateNewAdminSchema } from "@/lib";
+import { adminApiStr, callApi, TCreateNewAdminSchema, userApiStr } from "@/lib";
 import { toast } from "sonner";
 
 type AdminType = {
@@ -34,12 +34,23 @@ type AdminType = {
     }) => Promise<void>;
     getAllDrivers: () => Promise<void>;
     getSuspendedDrivers: () => Promise<void>;
-    suspendDriver: (suspendDetails: {
-      userId: string;
-      reason: string;
-      suspensionType: string;
-      suspensionDuration?: number;
-    }) => Promise<void>;
+    suspendDriverOrRider: (
+      suspendDetails: {
+        userId: string;
+        reason: string;
+        suspensionType: string;
+        suspensionDuration?: number;
+      },
+      type: "driver" | "rider",
+    ) => Promise<void>;
+    reactivateDriverOrRider: (
+      reactivateDetails: {
+        userId: string;
+        reason?: string;
+        notes?: string;
+      },
+      type: "driver" | "rider",
+    ) => Promise<void>;
     getPendingDriversKYC: () => Promise<void>;
     processDriverKYC: (data: {
       userId: string;
@@ -47,12 +58,7 @@ type AdminType = {
       notes: string;
     }) => Promise<void>;
     getAllRiders: () => Promise<void>;
-    suspendRider: (suspendDetails: {
-      userId: string;
-      reason: string;
-      suspensionType: string;
-      suspensionDuration?: number;
-    }) => Promise<void>;
+
     getSuspendedRiders: () => Promise<void>;
     getAllActiveAdmins: () => Promise<void>;
     getAllSuspendedAdmins: () => Promise<void>;
@@ -62,6 +68,7 @@ type AdminType = {
       reason: string;
     }) => Promise<void>;
     restoreAdmin: (restoreData: { adminId: string }) => Promise<void>;
+    getSingleDriverDetails: (driverID: string) => Promise<void>;
   };
 };
 
@@ -219,10 +226,31 @@ export const useAdmin = create<AdminType>()(
           // );
         }
       },
-      suspendDriver: async (suspendDetails) => {
+      suspendDriverOrRider: async (suspendDetails, type) => {
         set({ isLoading: true });
-        const path = adminApiStr("/compliance/drivers/suspend");
+        const path = adminApiStr("/compliance/users/suspend");
         const { data, error } = await callApi(path, suspendDetails);
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          set({ isLoading: false });
+          if (type === "driver") {
+            await get().actions.getAllDrivers();
+            await get().actions.getSuspendedDrivers();
+          } else if (type === "rider") {
+            await get().actions.getAllRiders();
+            await get().actions.getSuspendedRiders();
+          }
+          toast.success(data.message ?? "User suspended successfully");
+        }
+      },
+      reactivateDriverOrRider: async (reactivateDetails, type) => {
+        set({ isLoading: true });
+        const path = adminApiStr("/compliance/users/reactivate");
+        const { data, error } = await callApi(path, reactivateDetails);
         if (error) {
           set({ isLoading: false });
           toast.error(error.message);
@@ -231,7 +259,14 @@ export const useAdmin = create<AdminType>()(
         if (data) {
           console.log(path, data);
           set({ isLoading: false });
-          toast.success(data.message ?? "Driver suspended successfully");
+          if (type === "driver") {
+            await get().actions.getAllDrivers();
+            await get().actions.getSuspendedDrivers();
+          } else if (type === "rider") {
+            await get().actions.getAllRiders();
+            await get().actions.getSuspendedRiders();
+          }
+          toast.success(data.message ?? "User reactivated successfully");
         }
       },
       getPendingDriversKYC: async () => {
@@ -298,23 +333,7 @@ export const useAdmin = create<AdminType>()(
           // );
         }
       },
-      suspendRider: async (suspendDetails) => {
-        set({ isLoading: true });
-        const path = adminApiStr("/compliance/users/suspend");
-        const { data, error } = await callApi(path, suspendDetails);
-        if (error) {
-          set({ isLoading: false });
-          toast.error(error.message);
-          return;
-        }
-        if (data) {
-          console.log(path, data);
-          set({ isLoading: false });
-          await get().actions.getAllRiders();
-          await get().actions.getSuspendedRiders();
-          toast.success(data.message ?? "Rider suspended successfully");
-        }
-      },
+
       getAllActiveAdmins: async () => {
         set({ isLoading: true });
         const path = adminApiStr("/admins?status=active&limit=50&offset=0");
@@ -390,6 +409,21 @@ export const useAdmin = create<AdminType>()(
           await get().actions.getAllSuspendedAdmins();
           set({ isLoading: false });
           toast.success(data.message ?? "Admin restored successfully");
+        }
+      },
+      getSingleDriverDetails: async (driverID) => {
+        set({ isLoading: true });
+        const path = userApiStr(`/user/driver/${driverID}`);
+        const { data, error } = await callApi(path);
+        if (error) {
+          set({ isLoading: false });
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          console.log(path, data);
+          set({ isLoading: false });
+          // toast.success(data.message ?? "Admin restored successfully");
         }
       },
     },

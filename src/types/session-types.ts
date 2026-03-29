@@ -135,21 +135,9 @@ export type AllRiderAccount = {
 export type AllDriversAccount = {
   _id: string;
   email: string;
-  isEmailVerified: boolean;
   mobileNumber: string;
-  isMobileNumberVerified: boolean;
-  passwordResetOtp: string | null;
-  isGoogleUser: boolean;
-  isAppleUser: boolean;
-  isFacebookUser: boolean;
   isSuspended: boolean;
-  suspensionReason: string | null;
-  suspensionNotes: string | null;
-  suspensionType: string | null;
-  suspensionEndDate: number | null;
   role: "driver";
-  createdAt: string;
-  updatedAt: string;
   driver: {
     _id: string;
     userId: string;
@@ -160,6 +148,7 @@ export type AllDriversAccount = {
       numberOfRatings: number;
     };
     driverProfilePictureUri: string;
+    driverSocialSecurityNumber: string;
   };
 };
 export interface UserProfile {
