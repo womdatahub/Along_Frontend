@@ -8,7 +8,6 @@ import {
   Button,
   DialogFooter,
 } from "@/components";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type Props = {
   isTermsModalOpen: boolean;
@@ -26,12 +25,11 @@ const TermsModal = ({
     <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
+        dialogTitle='Terms and Conditions'
         className='sm:max-w-[700px] max-h-[75%] overflow-y-scroll px-5 md:px-10 py-8 rounded-[20px] bg-background-1'
         showCloseButton={false}
       >
-        <VisuallyHidden>
-          <DialogTitle>Terms and conditions</DialogTitle>
-        </VisuallyHidden>
+        
         <DialogTitle className='font-semibold text-2xl'>
           Terms and Conditions
         </DialogTitle>

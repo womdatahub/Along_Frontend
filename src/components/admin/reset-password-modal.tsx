@@ -31,7 +31,10 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-sm md:max-w-[460px] rounded-2xl p-8 gap-0 [&>button]:hidden'>
+      <DialogContent
+        dialogTitle='Reset Password'
+        className='max-w-sm md:max-w-[460px] rounded-2xl p-8 gap-0 [&>button]:hidden'
+      >
         {state === "input" ? (
           <div>
             <h2 className='text-[20px] font-bold text-gray-900 mb-7'>

@@ -90,14 +90,14 @@ const StepBasic = ({
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    // setValue,
+    // watch,
     control,
     formState: { errors },
   } = useForm<TCreateNewAdminSchema>({
     resolver: zodResolver(createNewAdminSchema),
   });
-  const role = watch("role");
+  // const role = watch("role");
 
   const { allRolePermissions } = usePermission(
     useShallow((state) => ({
@@ -460,7 +460,10 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-sm md:max-w-[840px] p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'>
+      <DialogContent
+        dialogTitle='Add New Admin'
+        className='max-w-sm md:max-w-[840px] p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'
+      >
         <div className='flex flex-col md:flex-row min-h-[480px]'>
           <Sidebar current={step} />
 

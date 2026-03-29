@@ -6,12 +6,10 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
 } from "@/components";
 import { cn, carTypes } from "@/lib";
 import { AccuracyIcon, WhiteForwardIcon } from "@public/svgs";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AddressResult } from "@/types";
@@ -56,13 +54,13 @@ const Ride = () => {
             </div>
             <div
               className={cn(
-                "flex items-center gap-8 rounded-2xl"
+                "flex items-center gap-8 rounded-2xl",
                 // selectedVehicleType && "bg-primaryLight"
               )}
             >
               <div
                 className={cn(
-                  "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl w-full"
+                  "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl w-full",
                   //   selectedVehicleType && "bg-transparent"
                 )}
               >
@@ -92,15 +90,11 @@ const Ride = () => {
                     </Button>
                   </DialogTrigger>
                   <DialogContent
+                    dialogTitle='Select a vehicle type: Economy, Comfort, Comfort XL,
+                        Luxury or Luxury XL'
                     className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
                     showCloseButton={false}
                   >
-                    <VisuallyHidden>
-                      <DialogTitle>
-                        Select a vehicle type: Economy, Comfort, Comfort XL,
-                        Luxury or Luxury XL
-                      </DialogTitle>
-                    </VisuallyHidden>
                     <div className='flex flex-col gap-6'>
                       <div className='flex flex-col pl-7'>
                         <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
@@ -131,7 +125,7 @@ const Ride = () => {
                                   className={cn(
                                     "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
                                     rentalType === title &&
-                                      "bg-primary text-white"
+                                      "bg-primary text-white",
                                   )}
                                 >
                                   <Image
@@ -149,15 +143,12 @@ const Ride = () => {
                                 </Button>
                               </DialogTrigger>
                               <DialogContent
+                                dialogTitle=' Select a vehicle type: Economy, Comfort,
+                                    Comfort XL, Luxury or Luxury XL'
                                 className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
                                 showCloseButton={false}
                               >
-                                <VisuallyHidden>
-                                  <DialogTitle>
-                                    Select a vehicle type: Economy, Comfort,
-                                    Comfort XL, Luxury or Luxury XL
-                                  </DialogTitle>
-                                </VisuallyHidden>
+                                
                                 <div className='flex flex-col gap-6'>
                                   <div className='flex flex-col pl-7'>
                                     <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
@@ -178,7 +169,7 @@ const Ride = () => {
                                           // disabled
                                           onClick={() => {
                                             router.push(
-                                              `/ride?rentalType=${rentalType}&vehicleType=${title}`
+                                              `/ride?rentalType=${rentalType}&vehicleType=${title}`,
                                             );
                                             // setSelectedVehicleType(
                                             //   title
@@ -188,7 +179,7 @@ const Ride = () => {
                                           className={cn(
                                             "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
                                             vehicleType === title &&
-                                              "bg-primary text-white"
+                                              "bg-primary text-white",
                                           )}
                                         >
                                           <Image

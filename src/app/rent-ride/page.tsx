@@ -193,13 +193,9 @@ const RentRide = () => {
                 <DialogContent
                   className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
                   showCloseButton={false}
+                  dialogTitle='Select a vehicle type: Economy, Comfort, Comfort XL,
+                      Luxury or Luxury XL'
                 >
-                  <VisuallyHidden>
-                    <DialogTitle>
-                      Select a vehicle type: Economy, Comfort, Comfort XL,
-                      Luxury or Luxury XL
-                    </DialogTitle>
-                  </VisuallyHidden>
                   <div className='flex flex-col gap-6'>
                     <div className='flex flex-col pl-7'>
                       <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
@@ -356,12 +352,10 @@ const RentRide = () => {
                               </div>
                             </DialogTrigger>
                             <DialogContent
+                              dialogTitle='Choose rent duration'
                               className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
                               showCloseButton={false}
                             >
-                              <VisuallyHidden>
-                                <DialogTitle>Choose rent duration</DialogTitle>
-                              </VisuallyHidden>
                               <RentRideDialogComponent
                                 title='Rent duration'
                                 subTitle='Choose how long to ride'
@@ -435,12 +429,10 @@ const RentRide = () => {
                               </div>
                             </DialogTrigger>
                             <DialogContent
+                              dialogTitle='Choose a pick up time'
                               className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
                               showCloseButton={false}
                             >
-                              <VisuallyHidden>
-                                <DialogTitle>Choose a pick up time</DialogTitle>
-                              </VisuallyHidden>
                               <RentRideDialogComponent
                                 title='Pick up time'
                                 subTitle='Choose the time you’d like to be picked up'
@@ -525,12 +517,10 @@ const RentRide = () => {
                               </div>
                             </DialogTrigger>
                             <DialogContent
+                              dialogTitle='Choose rent date'
                               className='sm:max-w-[425px] w-fit p-0  rounded-[20px] overflow-hidden bg-background-1'
                               showCloseButton={false}
                             >
-                              <VisuallyHidden>
-                                <DialogTitle>Choose rent date</DialogTitle>
-                              </VisuallyHidden>
                               <RentRideDialogComponent
                                 title={
                                   date ? formatDateToDDMMYYYY(date as Date) : ""

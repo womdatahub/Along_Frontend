@@ -214,6 +214,7 @@ export const DriverInfoModal = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
+        dialogTitle='Driver Information'
         className={cn(
           "p-0 gap-0 overflow-hidden",
           "w-[calc(100vw-20px)] max-w-[calc(100vw-20px)]",

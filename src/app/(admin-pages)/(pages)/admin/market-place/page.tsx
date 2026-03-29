@@ -9,7 +9,6 @@ import {
   ConfirmActionModal,
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
   Empty,
   EmptyHeader,
@@ -23,7 +22,6 @@ import {
   TableRow,
 } from "@/components";
 import { ReactNode, useEffect, useState } from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
   TMarketPlaceSchema,
   formatDateToDDMMYYYY,
@@ -389,14 +387,10 @@ const AddOrEditNewFareEngineProfileComponent = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
+        dialogTitle={`${isEdit ? "Edit" : "Add new"} Fare Engine Profile`}
         className='sm:max-w-[425px] md:max-w-[520px] px-4 py-8 rounded-[20px]'
         showCloseButton={false}
       >
-        <VisuallyHidden>
-          <DialogTitle>
-            {isEdit ? "Edit" : "Add new"} Fare Engine Profile
-          </DialogTitle>
-        </VisuallyHidden>
         <div className='flex flex-col gap-6'>
           <p className='-5 font-bold text-2xl'>
             {isEdit ? "Edit" : "New"} Profile

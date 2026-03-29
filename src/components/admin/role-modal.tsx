@@ -181,17 +181,23 @@ export const RolesModal = ({
         </div>
       );
     });
-  console.log(isFetching, "is fetching");
+
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       {isFetching ? (
-        <DialogContent className='max-w-sm md:max-w-[840px] min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'>
+        <DialogContent
+          dialogTitle='Loading'
+          className='max-w-sm md:max-w-[840px] min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'
+        >
           <LoadingSpinner />
         </DialogContent>
       ) : (
-        <DialogContent className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'>
+        <DialogContent
+          dialogTitle={`${title} - ${role} - ${description}`}
+          className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'
+        >
           <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
             <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
               {title}
@@ -382,11 +388,17 @@ export const RolesModalDisplay = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       {isFetching ? (
-        <DialogContent className='max-w-sm md:max-w-[840px] min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'>
+        <DialogContent
+          dialogTitle='Loading'
+          className='max-w-sm md:max-w-[840px] min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'
+        >
           <LoadingSpinner />
         </DialogContent>
       ) : (
-        <DialogContent className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'>
+        <DialogContent
+          dialogTitle={`${title} - ${role} - ${description}`}
+          className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'
+        >
           <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
             <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
               {title}

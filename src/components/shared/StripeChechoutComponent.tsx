@@ -34,7 +34,10 @@ const StripeCheckOutComponent = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[425px] rounded-[20px] p-6'>
+      <DialogContent
+        dialogTitle='Complete Payment'
+        className='sm:max-w-[425px] rounded-[20px] p-6'
+      >
         <DialogTitle>Complete Payment</DialogTitle>
         <Elements stripe={stripePromise} options={options}>
           <CheckoutForm onClose={onClose} cost={intent.cost} />

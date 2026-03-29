@@ -130,15 +130,11 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
+        dialogTitle='Select a vehicle type: Economy, Comfort, Comfort XL, Luxury or
+            Luxury XL'
         className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
         showCloseButton={false}
       >
-        <VisuallyHidden>
-          <DialogTitle>
-            Select a vehicle type: Economy, Comfort, Comfort XL, Luxury or
-            Luxury XL
-          </DialogTitle>
-        </VisuallyHidden>
         <div className='flex flex-col gap-6'>
           <div className='flex flex-col pl-7'>
             <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
@@ -184,15 +180,11 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
                     </Button>
                   </DialogTrigger>
                   <DialogContent
+                    dialogTitle='Select a vehicle type: Economy, Comfort, Comfort XL,
+                        Luxury or Luxury XL'
                     className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
                     showCloseButton={false}
                   >
-                    <VisuallyHidden>
-                      <DialogTitle>
-                        Select a vehicle type: Economy, Comfort, Comfort XL,
-                        Luxury or Luxury XL
-                      </DialogTitle>
-                    </VisuallyHidden>
                     <div className='flex flex-col gap-6'>
                       <div className='flex flex-col pl-7'>
                         <HeadingHeebo className='text-primary font-semibold text-xl text-left'>

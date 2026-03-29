@@ -105,15 +105,11 @@ const ScheduleRidePage = () => {
               </DialogTrigger>
 
               <DialogContent
+              dialogTitle="Select a vehicle type: Economy, Comfort, Comfort XL, Luxury
+                    or Luxury XL"
                 className='w-fit p-0  rounded-[20px] overflow-hidden bg-background-1'
                 showCloseButton={false}
               >
-                <VisuallyHidden>
-                  <DialogTitle>
-                    Select a vehicle type: Economy, Comfort, Comfort XL, Luxury
-                    or Luxury XL
-                  </DialogTitle>
-                </VisuallyHidden>
                 <div className='flex flex-col bg-white'>
                   <div className='flex gap-12 justify-evenly bg-primaryLight2 px-4 py-8'>
                     <div
@@ -257,15 +253,12 @@ const ScheduleRidePage = () => {
                     </div>
                   </DialogTrigger>
                   <DialogContent
+                  dialogTitle="Select a vehicle type: Economy, Comfort, Comfort XL,
+                        Luxury or Luxury XL"
                     className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
                     showCloseButton={false}
                   >
-                    <VisuallyHidden>
-                      <DialogTitle>
-                        Select a vehicle type: Economy, Comfort, Comfort XL,
-                        Luxury or Luxury XL
-                      </DialogTitle>
-                    </VisuallyHidden>
+                   
                     <div className='flex flex-col gap-6'>
                       <div className='flex flex-col pl-7'>
                         <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
@@ -341,10 +334,9 @@ const ScheduleRidePage = () => {
                     <DialogContent
                       className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
                       showCloseButton={false}
+                      dialogTitle='Choose a pick up time'
                     >
-                      <VisuallyHidden>
-                        <DialogTitle>Choose a pick up time</DialogTitle>
-                      </VisuallyHidden>
+                      
                       <RentRideDialogComponent
                         title='Pick up time'
                         subTitle='Choose the time you’d like to be picked up'

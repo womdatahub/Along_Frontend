@@ -156,13 +156,11 @@ const Page = () => {
                               View profile
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className='max-w-sm md:max-w-md px-6 py-10'>
-                            <VisuallyHidden>
-                              <DialogTitle>
-                                Select a vehicle type: Economy, Comfort, Comfort
-                                XL, Luxury or Luxury XL
-                              </DialogTitle>
-                            </VisuallyHidden>
+                          <DialogContent
+                            dialogTitle='Select a vehicle type: Economy, Comfort, Comfort
+                                XL, Luxury or Luxury XL'
+                            className='max-w-sm md:max-w-md px-6 py-10'
+                          >
                             <div className='flex items-start gap-3 mb-4'>
                               <Image
                                 src={

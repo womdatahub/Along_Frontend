@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const tealCheckbox =
   "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
@@ -20,7 +21,10 @@ const EditRolesPermissionModal = ({
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className='max-w-sm md:max-w-[560px] p-8 gap-0 [&>button]:hidden'>
+      <DialogContent
+        dialogTitle='Edit Roles and Permission'
+        className='max-w-sm md:max-w-[560px] p-8 gap-0 [&>button]:hidden'
+      >
         {/* Header */}
         <h2 className='text-[20px] font-bold text-gray-900 leading-tight mb-1'>
           Edit roles and permission
