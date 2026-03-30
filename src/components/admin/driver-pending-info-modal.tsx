@@ -105,6 +105,7 @@ function SsnTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
         <Field
           label='Social Security Number'
           value={driverInfo?.driverSocialSecurityNumber ?? ""}
+          className='capitalize'
         />
       </div>
       <Separator />
@@ -112,11 +113,16 @@ function SsnTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
         <Field
           label="Driver's License Number"
           value={driverInfo?.vehicleIdentificationNumber ?? ""}
+          className='capitalize'
         />
       </div>
       <Separator />
       <div className='px-5 py-4'>
-        <Field label='Issued Date' value='23 – 06 – 2025' />
+        <Field
+          label='Issued Date'
+          value='23 – 06 – 2025'
+          className='capitalize'
+        />
       </div>
       <Separator />
       <div className='px-5 py-4'>
@@ -147,6 +153,7 @@ function VehicleTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
               <Field
                 label='Vehicle Make'
                 value={driverInfo?.vehicleMake ?? ""}
+                className='capitalize'
               />
             </div>
             <Separator />
@@ -154,6 +161,7 @@ function VehicleTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
               <Field
                 label='Vehicle Model'
                 value={driverInfo?.vehicleModel ?? ""}
+                className='capitalize'
               />
             </div>
             <Separator />
@@ -161,6 +169,7 @@ function VehicleTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
               <Field
                 label='Vehicle Vin Number'
                 value={driverInfo?.vehicleIdentificationNumber ?? ""}
+                className='capitalize'
               />
             </div>
             <Separator />
@@ -168,6 +177,7 @@ function VehicleTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
               <Field
                 label='Vehicle Color'
                 value={driverInfo?.vehicleColor ?? ""}
+                className='capitalize'
               />
             </div>
             <Separator />

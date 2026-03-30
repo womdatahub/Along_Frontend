@@ -234,6 +234,7 @@ const Page = () => {
               trigger={<Button>Add New</Button>}
             />
           </div>
+
           <Table>
             <TableHeader>
               <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
@@ -295,7 +296,6 @@ const Page = () => {
                         </TableCell>
                       ))}
                       <TableCell className=' text-sm font-medium'>
-                        {formatDateToDDMMYYYY(new Date(voucher.validFrom))} to{" "}
                         {formatDateToDDMMYYYY(new Date(voucher.validUntil))}
                       </TableCell>
 
