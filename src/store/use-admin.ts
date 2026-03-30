@@ -15,6 +15,7 @@ type AdminType = {
   allActiveAdmins: AdminsType[];
   allSuspendedAdmins: AdminsType[];
   isLoading: boolean;
+  isProcessingKYC: boolean;
   pendingDriversKYC: DriverProfile[];
   suspendedDrivers: SuspendedDriver[];
   suspendedRiders: AllRiderAccount[];
@@ -54,12 +55,12 @@ type AdminType = {
     ) => Promise<void>;
     getPendingDriversKYC: () => Promise<void>;
     processDriverKYC: (data: {
-      userId: string;
+      driverId: string;
       action: "APPROVE" | "REJECT";
-      notes: string;
+      notes?: string;
+      reason?: string;
     }) => Promise<void>;
     getAllRiders: () => Promise<void>;
-
     getSuspendedRiders: () => Promise<void>;
     getAllActiveAdmins: () => Promise<void>;
     getAllSuspendedAdmins: () => Promise<void>;
@@ -77,6 +78,7 @@ const initialState = {
   allActiveAdmins: [],
   allSuspendedAdmins: [],
   isLoading: false,
+  isProcessingKYC: false,
   pendingDriversKYC: [],
   suspendedDrivers: [],
   suspendedRiders: [],
@@ -292,18 +294,18 @@ export const useAdmin = create<AdminType>()(
         }
       },
       processDriverKYC: async (driverKYCData) => {
-        set({ isLoading: true });
-        const path = adminApiStr("/compliance/kyc");
+        set({ isProcessingKYC: true });
+        const path = adminApiStr("/compliance/drivers/approval");
         const { data, error } = await callApi(path, driverKYCData);
         if (error) {
-          set({ isLoading: false });
+          set({ isProcessingKYC: false });
           toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
+          await get().actions.getPendingDriversKYC();
           toast.success(data.message ?? "KYC processed successfully");
-          set({ isLoading: false });
+          set({ isProcessingKYC: false });
         }
       },
       getAllRiders: async () => {

@@ -146,9 +146,9 @@ const Page = () => {
                             await suspendDriverOrRider(
                               {
                                 userId: driver.driver.userId,
-                                reason: values.reason,
+                                reason: values.reason!,
                                 suspensionType:
-                                  values.suspensionType.toUpperCase(),
+                                  values.suspensionType!.toUpperCase(),
                                 suspensionDuration: Number(
                                   values.suspensionDuration,
                                 ),

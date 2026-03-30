@@ -57,9 +57,9 @@ export const createNewAdminSchema = z.object({
   }),
 });
 export const suspensionSchema = z.object({
-  reason: z.string(),
-  suspensionDuration: z.string(),
-  suspensionType: z.string(),
+  reason: z.string().optional(),
+  suspensionDuration: z.string().optional(),
+  suspensionType: z.string().optional(),
 });
 
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;

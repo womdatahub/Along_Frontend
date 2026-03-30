@@ -15,11 +15,12 @@ import { X, MousePointerClick, Power } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-type IconTypes = "delete" | "suspend" | "reactivate";
+type IconTypes = "delete" | "suspend" | "reactivate" | "reject-kyc";
 const icons: Record<IconTypes, React.ReactNode> = {
   delete: <X className='text-red-500' size={32} />,
   suspend: <MousePointerClick className='text-red-500' size={32} />,
   reactivate: <Power className='text-[#D4D3F0]' size={32} />,
+  "reject-kyc": <X className='text-red-500' size={32} />,
 };
 type Props = {
   trigger: React.ReactNode;
@@ -51,6 +52,8 @@ const ConfirmActionModal = ({
     await confirmActionFunction(values);
     setOpen(false);
   };
+
+  const reason = watch("reason");
   const suspensionType = watch("suspensionType");
   const suspensionDuration = watch("suspensionDuration");
   return (
@@ -73,7 +76,10 @@ const ConfirmActionModal = ({
           <h2 className='text-xl font-bold text-gray-800'>{title}</h2>
           <p className='text-xs'>{description}</p>
         </div>
-        {type === "suspend" && <Separator className=' bg-[#768B8F38] mt-5' />}
+        {type === "suspend" ||
+          (type === "reject-kyc" && (
+            <Separator className=' bg-[#768B8F38] mt-5' />
+          ))}
         {type === "suspend" && (
           <div className='flex flex-col gap-2'>
             <AddInput
@@ -94,7 +100,7 @@ const ConfirmActionModal = ({
             <div className='flex gap-4 flex-col md:flex-row'>
               <SelectDropdown
                 options={["TEMPORARY", "PERMANENT"]}
-                selected={suspensionType}
+                selected={suspensionType ?? ""}
                 setSelected={(value: string) => {
                   setValue("suspensionType", value);
                 }}
@@ -109,7 +115,7 @@ const ConfirmActionModal = ({
                 options={Array(7)
                   .fill("")
                   .map((_, i) => `${i + 1}`)}
-                selected={suspensionDuration}
+                selected={suspensionDuration ?? ""}
                 setSelected={(value: string) => {
                   setValue("suspensionDuration", value);
                 }}
@@ -122,6 +128,21 @@ const ConfirmActionModal = ({
               />
             </div>
           </div>
+        )}
+        {type === "reject-kyc" && (
+          <AddInput
+            label='Rejection Reason'
+            id='reason'
+            errors={errors}
+            placeholder='Violation of'
+            register={register}
+            required
+            type='text'
+            labelClassName='text-xs font-medium ml-0'
+            iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+            withFocusRing
+            inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
         )}
         <Separator className=' bg-[#768B8F38] mt-5' />
         <div className='flex'>
@@ -140,7 +161,7 @@ const ConfirmActionModal = ({
             variant='ghost'
             className='flex-1 hover:bg-transparent text-red-500 hover:text-red-600'
             onClick={() => {
-              if (type === "suspend") {
+              if (type === "suspend" || type === "reject-kyc") {
                 handleSubmit(onSubmit)();
                 setOpen(false);
                 return;

@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useAdmin } from "@/store";
 import { useShallow } from "zustand/shallow";
 import { LoadingSpinner } from "../shared";
+import { ConfirmActionModal } from "../confirm-action-modal";
 
 type Tab = "personal" | "ssn" | "vehicle";
 
@@ -247,10 +248,17 @@ export const DriverPendingInfoModal = ({
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>("personal");
 
-  const { singleDriverDetails, isLoading } = useAdmin(
+  const {
+    actions: { processDriverKYC },
+    singleDriverDetails,
+    isLoading,
+    isProcessingKYC,
+  } = useAdmin(
     useShallow((state) => ({
+      actions: state.actions,
       singleDriverDetails: state.singleDriverDetails,
       isLoading: state.isLoading,
+      isProcessingKYC: state.isProcessingKYC,
     })),
   );
 
@@ -328,28 +336,79 @@ export const DriverPendingInfoModal = ({
               </div>
 
               <div className='flex flex-col gap-2 pt-4'>
-                <Button className='rounded-xl text-sm'>Verify User</Button>
                 <Button
-                  variant='outline'
-                  className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm'
+                  className='rounded-xl text-sm'
+                  onClick={() =>
+                    processDriverKYC({
+                      driverId: singleDriverDetails?.driverId ?? "",
+                      action: "APPROVE",
+                    })
+                  }
+                  disabled={isProcessingKYC}
                 >
-                  Reject entry
+                  Verify User
                 </Button>
+
+                <ConfirmActionModal
+                  trigger={
+                    <Button
+                      variant='outline'
+                      className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm'
+                      disabled={isProcessingKYC}
+                    >
+                      Reject entry
+                    </Button>
+                  }
+                  title='Reject driver'
+                  description='Are you sure you want to reject this driver? This action cannot be undone.'
+                  confirmActionFunction={async (values) => {
+                    await processDriverKYC({
+                      driverId: singleDriverDetails?.driverId ?? "",
+                      action: "REJECT",
+                      reason: values?.reason ?? "",
+                    });
+                  }}
+                  type='reject-kyc'
+                />
               </div>
             </div>
             <div className='flex-1 flex flex-col min-h-0 min-w-0'>
               <div className='flex-1 overflow-y-auto'>{renderContent()}</div>
 
               <div className='sm:hidden shrink-0 border-t border-gray-200 p-4 flex flex-col gap-2 bg-white'>
-                <Button className='rounded-xl text-sm w-full'>
+                <Button
+                  onClick={() =>
+                    processDriverKYC({
+                      driverId: singleDriverDetails?.driverId ?? "",
+                      action: "APPROVE",
+                    })
+                  }
+                  className='rounded-xl text-sm w-full'
+                >
                   Verify User
                 </Button>
-                <Button
-                  variant='outline'
-                  className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm w-full'
-                >
-                  Reject entry
-                </Button>
+
+                <ConfirmActionModal
+                  trigger={
+                    <Button
+                      variant='outline'
+                      className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm w-full'
+                      disabled={isProcessingKYC}
+                    >
+                      Reject entry
+                    </Button>
+                  }
+                  title='Reject driver'
+                  description='Are you sure you want to reject this driver? This action cannot be undone.'
+                  confirmActionFunction={async (values) => {
+                    await processDriverKYC({
+                      driverId: singleDriverDetails?.driverId ?? "",
+                      action: "REJECT",
+                      reason: values?.reason ?? "",
+                    });
+                  }}
+                  type='reject-kyc'
+                />
               </div>
             </div>
           </div>

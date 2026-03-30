@@ -66,12 +66,12 @@ const Page = () => {
         <Table>
           <TableHeader>
             <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-              <TableHead className='text-[#768B8F]'>Riders Name</TableHead>
-              <TableHead className='text-[#768B8F]'>Email</TableHead>
-              <TableHead className='text-[#768B8F]'>Phone Number</TableHead>
-              <TableHead className='text-[#768B8F]'>Riders ID</TableHead>
-              <TableHead className='text-[#768B8F]'>Gender</TableHead>
-              <TableHead className='text-[#768B8F]'>Action</TableHead>
+              <TableHead className='text-icons'>Riders Name</TableHead>
+              <TableHead className='text-icons'>Email</TableHead>
+              <TableHead className='text-icons'>Phone Number</TableHead>
+              <TableHead className='text-icons'>Riders ID</TableHead>
+              <TableHead className='text-icons'>Gender</TableHead>
+              <TableHead className='text-icons'>Action</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -131,9 +131,9 @@ const Page = () => {
                             await suspendDriverOrRider(
                               {
                                 userId: rider.rider.userId,
-                                reason: values.reason,
+                                reason: values.reason!,
                                 suspensionType:
-                                  values.suspensionType.toUpperCase(),
+                                  values.suspensionType!.toUpperCase(),
                                 suspensionDuration: Number(
                                   values.suspensionDuration,
                                 ),
