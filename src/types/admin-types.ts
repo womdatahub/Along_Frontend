@@ -1,3 +1,5 @@
+import { TPromoAndVoucherSchema } from "@/lib";
+
 export type CostSettingsType = {
   title: string;
   baseFare?: number;
@@ -23,3 +25,16 @@ export type AdminsType = {
   createdAt: string;
   updatedAt: string;
 };
+
+type PromoAndVoucherExtras = {
+  totalUsageCount: number;
+  validFrom: Date;
+  validUntil: Date;
+  status: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+};
+
+export type PromoVoucherType = TPromoAndVoucherSchema & PromoAndVoucherExtras;

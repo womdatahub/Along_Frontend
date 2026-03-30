@@ -36,19 +36,21 @@ import { useMarketPlace } from "@/store";
 import { useShallow } from "zustand/shallow";
 import { ISOStringFormat } from "date-fns";
 
-const isEmpty = true;
 const Page = () => {
   const {
     actions: {
       getRideCostSettings,
       activateOrDeactivateCostSetting,
       getVouchers,
+      updateVoucher,
     },
     rideCostSettings,
+    allVouchers,
   } = useMarketPlace(
     useShallow((state) => ({
       actions: state.actions,
       rideCostSettings: state.rideCostSettings,
+      allVouchers: state.allVouchers,
     })),
   );
 
@@ -172,7 +174,6 @@ const Page = () => {
                         >
                           {setting.isActive ? "Deactivate" : "Activate"}
                         </Button> */}
-
                         <AddOrEditNewFareEngineProfileComponent
                           trigger={
                             <Button
@@ -199,7 +200,6 @@ const Page = () => {
                           }}
                           isEdit
                         />
-
                         <ConfirmActionModal
                           trigger={
                             <Button
@@ -223,6 +223,7 @@ const Page = () => {
           </Table>
         </CardContent>
       </Card>
+
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
           <div className='flex justify-between gap-5 items-center px-6 pb-3 border-b border-b-gray-300'>
@@ -234,59 +235,30 @@ const Page = () => {
             />
           </div>
           <Table>
-            {isEmpty ? (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={4} className='p-10'>
-                    <Empty>
-                      <EmptyHeader>
-                        <EmptyTitle>No information found</EmptyTitle>
-                      </EmptyHeader>
-                    </Empty>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            ) : (
-              <TableBody>
-                {alertTables.map((alert, i) => {
-                  return (
-                    <TableRow key={i} className='last:border-b-0'>
-                      <TableCell className=' text-sm font-medium pl-6'>
-                        {alert.type}
-                      </TableCell>
-                      <TableCell className=' text-sm font-medium'>
-                        {alert.timeStamp}
-                      </TableCell>
-                      <TableCell className=' text-sm font-medium'>
-                        {alert.tripID}
-                      </TableCell>
-                      <TableCell className=' text-sm font-medium'>
-                        {alert.initiator}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            )}
-          </Table>
-        </CardContent>
-      </Card>
-      <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
-        <CardContent className='p-0 gap-4 flex flex-col'>
-          <div className='flex justify-between gap-5 items-center px-6'>
-            <p className='text-lg md:text-xl font-medium'>Active Promo</p>
-          </div>
-          <Table>
             <TableHeader>
               <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-                <TableHead className='text-icons pl-6'>Promo type</TableHead>
-                <TableHead className='text-icons'>Category</TableHead>
-                <TableHead className='text-icons'>Duration</TableHead>
-                <TableHead className='text-icons'>Promo unit</TableHead>
+                {[
+                  "Code",
+                  "Description",
+                  "Status",
+                  "Applicable For",
+                  "Discount Type",
+                  "Discount Value",
+                  "Max Discount Amount",
+                  "Min Order Amount",
+                  "Max Total Usage",
+                  "Total Usage Count",
+                  "Duration",
+                  "Action",
+                ].map((title) => (
+                  <TableHead key={title} className='text-icons'>
+                    {title}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
 
-            {isEmpty ? (
+            {allVouchers.length === 0 ? (
               <TableBody>
                 <TableRow>
                   <TableCell colSpan={4} className='p-10'>
@@ -300,20 +272,59 @@ const Page = () => {
               </TableBody>
             ) : (
               <TableBody>
-                {alertTables.map((alert, i) => {
+                {allVouchers.map((voucher, i) => {
                   return (
                     <TableRow key={i} className='last:border-b-0'>
-                      <TableCell className=' text-sm font-medium pl-6'>
-                        {alert.type}
-                      </TableCell>
+                      {[
+                        "code",
+                        "description",
+                        "status",
+                        "applicableFor",
+                        "discountType",
+                        "discountValue",
+                        "maxDiscountAmount",
+                        "minOrderAmount",
+                        "maxTotalUsage",
+                        "totalUsageCount",
+                      ].map((key) => (
+                        <TableCell
+                          key={key}
+                          className=' text-sm font-medium capitalize'
+                        >
+                          {voucher[key as keyof TPromoAndVoucherSchema]}
+                        </TableCell>
+                      ))}
                       <TableCell className=' text-sm font-medium'>
-                        {alert.timeStamp}
+                        {formatDateToDDMMYYYY(new Date(voucher.validFrom))} to{" "}
+                        {formatDateToDDMMYYYY(new Date(voucher.validUntil))}
                       </TableCell>
+
                       <TableCell className=' text-sm font-medium'>
-                        {alert.tripID}
-                      </TableCell>
-                      <TableCell className=' text-sm font-medium'>
-                        {alert.initiator}
+                        <ConfirmActionModal
+                          trigger={
+                            <Button className='rounded-full px-2 py-1 text-xs'>
+                              {voucher.status === "ACTIVE"
+                                ? "Deactivate"
+                                : "Activate"}
+                            </Button>
+                          }
+                          confirmActionFunction={() =>
+                            updateVoucher({
+                              voucherId: voucher.id ?? "",
+                              status:
+                                voucher.status === "ACTIVE"
+                                  ? "DISABLED"
+                                  : "ACTIVE",
+                            })
+                          }
+                          description={`Are you sure you want to ${voucher.status === "ACTIVE" ? "deactivate" : "activate"} ${voucher.code}`}
+                          title={`${voucher.status === "ACTIVE" ? "Deactivate" : "Activate"} ${voucher.code}?`}
+                          type={
+                            voucher.status === "ACTIVE"
+                              ? "delete"
+                              : "reactivate"
+                          }
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -327,15 +338,6 @@ const Page = () => {
   );
 };
 export default Page;
-
-type Alert = {
-  type: string;
-  timeStamp: string;
-  tripID: string;
-  initiator: string;
-};
-
-const alertTables: Alert[] = [];
 
 type AddOrEditNewFareEngineProfileComponentType = {
   trigger: ReactNode;

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SelectorFn } from "@/types";
+import type { PromoVoucherType, SelectorFn } from "@/types";
 import { devtools } from "zustand/middleware";
 import {
   adminApiStr,
@@ -9,19 +9,6 @@ import {
   TPromoAndVoucherSchema,
 } from "@/lib";
 import { toast } from "sonner";
-
-type PromoAndVoucherExtras = {
-  totalUsageCount: number;
-  validFrom: Date;
-  validUntil: Date;
-  status: string;
-  createdBy: string;
-  createdAt: Date;
-  updatedAt: Date;
-  id: string;
-};
-
-type PromoVoucherType = TPromoAndVoucherSchema & PromoAndVoucherExtras;
 
 type MarketPlaceType = {
   isCreatingCostSetting: boolean;
@@ -230,7 +217,8 @@ export const useMarketPlace = create<MarketPlaceType>()(
           return;
         }
         if (data) {
-          // toast.success(data.message ?? "Cost settings fetched successfully");
+          await get().actions.getVouchers();
+          toast.success(data.message ?? "Voucher updated successfully");
         }
       },
     },
