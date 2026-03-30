@@ -20,6 +20,7 @@ type Props = {
   label?: string;
   errorMessage?: string;
   labelClassName?: string;
+  fullWidth?: boolean;
 };
 export const SelectDropdown = ({
   triggerLabel,
@@ -33,9 +34,10 @@ export const SelectDropdown = ({
   label,
   errorMessage,
   labelClassName,
+  fullWidth,
 }: Props) => {
   return (
-    <div className='flex flex-col gap-1'>
+    <div className={cn("flex flex-col gap-1", fullWidth && "flex-1 w-full")}>
       <label className={cn("text-sm font-semibold ml-5", labelClassName)}>
         <span>{label}</span>
       </label>

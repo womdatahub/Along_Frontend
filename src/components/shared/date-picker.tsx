@@ -20,6 +20,9 @@ type Props = {
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   label: string;
   placeholder: string;
+  className?: string;
+  fullWidth?: boolean;
+  labelClassName?: string;
 };
 export const DatePicker = ({
   date,
@@ -28,10 +31,16 @@ export const DatePicker = ({
   setOpen,
   label,
   placeholder,
+  className,
+  fullWidth,
+  labelClassName,
 }: Props) => {
   return (
-    <div className='flex flex-col gap-1'>
-      <Label htmlFor='date' className='font-medium text-sm ml-5'>
+    <div className={cn("flex flex-col gap-1", fullWidth && "flex-1 w-full")}>
+      <Label
+        htmlFor='date'
+        className={cn("font-medium text-sm ml-5", labelClassName)}
+      >
         {label}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>
@@ -41,7 +50,8 @@ export const DatePicker = ({
             id='date'
             className={cn(
               "w-full justify-between font-normal placeholder:text-placeholder bg-white h-16 rounded-2xl px-4 text-sm hover:cursor-pointer focus:outline-none focus:ring-0 hover:bg-white",
-              date ? "text-black" : "text-placeholder"
+              date ? "text-black" : "text-placeholder",
+              className,
             )}
           >
             {date ? date.toLocaleDateString() : placeholder}

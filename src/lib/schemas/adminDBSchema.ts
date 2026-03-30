@@ -62,6 +62,49 @@ export const suspensionSchema = z.object({
   suspensionType: z.string().optional(),
 });
 
+const DiscountType = z.enum(["PERCENTAGE", "FIXED"]);
+const ApplicableFor = z.enum(["both", "delivery", "pickup"]);
+
+export const promoAndVoucherSchema = z.object({
+  code: z
+    .string()
+    .min(3)
+    .max(50)
+    .regex(/^[A-Z0-9_-]+$/, "Invalid code format")
+    .transform((v) => v.toUpperCase()),
+  discountType: DiscountType,
+  discountValue: z
+    .string()
+    .min(1, "Base Fare is required!")
+    .regex(/^\d+$/, "Only numbers are allowed!"),
+
+  maxDiscountAmount: z
+    .string()
+    .min(1, "Base Fare is required!")
+    .regex(/^\d+$/, "Only numbers are allowed!"),
+
+  minOrderAmount: z
+    .string()
+    .min(1, "Base Fare is required!")
+    .regex(/^\d+$/, "Only numbers are allowed!"),
+
+  maxUsagePerUser: z
+    .string()
+    .min(1, "Base Fare is required!")
+    .regex(/^\d+$/, "Only numbers are allowed!"),
+
+  maxTotalUsage: z
+    .string()
+    .min(1, "Base Fare is required!")
+    .regex(/^\d+$/, "Only numbers are allowed!"),
+
+  validFrom: z.string(),
+  validUntil: z.string(),
+  applicableFor: ApplicableFor,
+  description: z.string().max(255).optional(),
+});
+
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;
 export type TCreateNewAdminSchema = z.infer<typeof createNewAdminSchema>;
 export type TSuspensionSchema = z.infer<typeof suspensionSchema>;
+export type TPromoAndVoucherSchema = z.infer<typeof promoAndVoucherSchema>;

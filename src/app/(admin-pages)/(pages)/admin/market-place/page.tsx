@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   ConfirmActionModal,
+  DatePicker,
   Dialog,
   DialogContent,
   DialogTrigger,
@@ -24,8 +25,10 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 import {
   TMarketPlaceSchema,
+  TPromoAndVoucherSchema,
   formatDateToDDMMYYYY,
   marketPlaceSchema,
+  promoAndVoucherSchema,
 } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -74,28 +77,24 @@ const Page = () => {
                   title: "Rush 23",
                 }}
               />
-              <Button variant={"ghost"} className='rounded-full'>
+              {/* <Button variant={"ghost"} className='rounded-full'>
                 Batch Delete
-              </Button>
+              </Button> */}
             </div>
           </div>
           <Table>
             <TableHeader>
               <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-                <TableHead className='text-[#768B8F] pl-6'>
-                  Profile Name
-                </TableHead>
-                <TableHead className='text-[#768B8F]'>Timestamp</TableHead>
-                <TableHead className='text-[#768B8F]'>Base Fare %</TableHead>
-                <TableHead className='text-[#768B8F]'>
-                  Surge Multiplier %
-                </TableHead>
-                <TableHead className='text-[#768B8F]'>
+                <TableHead className='text-icons pl-6'>Profile Name</TableHead>
+                <TableHead className='text-icons'>Timestamp</TableHead>
+                <TableHead className='text-icons'>Base Fare %</TableHead>
+                <TableHead className='text-icons'>Surge Multiplier %</TableHead>
+                <TableHead className='text-icons'>
                   Driver to Rider Fee %
                 </TableHead>
-                <TableHead className='text-[#768B8F]'>Base Haggle %</TableHead>
-                <TableHead className='text-[#768B8F]'>Max Haggle %</TableHead>
-                <TableHead className='text-[#768B8F]'>Action</TableHead>
+                <TableHead className='text-icons'>Base Haggle %</TableHead>
+                <TableHead className='text-icons'>Max Haggle %</TableHead>
+                <TableHead className='text-icons'>Action</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -231,8 +230,11 @@ const Page = () => {
       </Card>
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
-          <div className='flex justify-between gap-5 items-center px-6 pb-3 border-b-[1px] border-b-gray-300'>
+          <div className='flex justify-between gap-5 items-center px-6 pb-3 border-b border-b-gray-300'>
             <p className='text-xl font-medium'>Promotion and Vouchers</p>
+            <AddOrEditNewPromoVoucherComponent
+              trigger={<Button>Add New</Button>}
+            />
           </div>
           <Table>
             {isEmpty ? (
@@ -280,12 +282,10 @@ const Page = () => {
           <Table>
             <TableHeader>
               <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-                <TableHead className='text-[#768B8F] pl-6'>
-                  Promo type
-                </TableHead>
-                <TableHead className='text-[#768B8F]'>Category</TableHead>
-                <TableHead className='text-[#768B8F]'>Duration</TableHead>
-                <TableHead className='text-[#768B8F]'>Promo unit</TableHead>
+                <TableHead className='text-icons pl-6'>Promo type</TableHead>
+                <TableHead className='text-icons'>Category</TableHead>
+                <TableHead className='text-icons'>Duration</TableHead>
+                <TableHead className='text-icons'>Promo unit</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -388,7 +388,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         dialogTitle={`${isEdit ? "Edit" : "Add new"} Fare Engine Profile`}
-        className='sm:max-w-[425px] md:max-w-[520px] px-4 py-8 rounded-[20px]'
+        className='sm:max-w-106.25 md:max-w-130 px-4 py-8 rounded-[20px]'
         showCloseButton={false}
       >
         <div className='flex flex-col gap-6'>
@@ -548,6 +548,238 @@ const AddOrEditNewFareEngineProfileComponent = ({
           <ButtonWithLoader
             text={isEdit ? "Edit" : "Save"}
             isLoading={isCreatingCostSetting}
+            onClick={() => {
+              handleSubmit(onSubmit)();
+            }}
+            className='px-14'
+            shouldChildrenShowWhenSpinning
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+type AddOrEditNewPromoVoucherType = {
+  trigger: ReactNode;
+  defaultValues?: Partial<TPromoAndVoucherSchema>;
+  isEdit?: boolean;
+};
+const AddOrEditNewPromoVoucherComponent = ({
+  trigger,
+  defaultValues,
+  isEdit,
+}: AddOrEditNewPromoVoucherType) => {
+  const [open, setOpen] = useState(false);
+  const [validFrom, setValidFrom] = useState<Date>();
+  const [validFromOpen, setValidFromOpen] = useState(false);
+  const [validTo, setValidTo] = useState<Date>();
+  const [validToOpen, setValidToOpen] = useState(false);
+
+  const {
+    register,
+    setValue,
+    watch,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TPromoAndVoucherSchema>({
+    defaultValues,
+    resolver: zodResolver(promoAndVoucherSchema),
+  });
+
+  const discountType = watch("discountType");
+  const applicableFor = watch("applicableFor");
+
+  const onSubmit = async (data: TPromoAndVoucherSchema) => {
+    console.log(data);
+    setOpen(false);
+    reset();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent
+        dialogTitle={`${isEdit ? "Edit" : "Add new"} Promo Voucher`}
+        className='sm:max-w-106.25 md:max-w-xl px-4 py-8 rounded-[20px] overflow-y-auto max-h-[90vh]'
+        showCloseButton={false}
+      >
+        <div className='flex flex-col gap-4 md:gap-6'>
+          <p className='-5 font-bold text-2xl'>
+            {isEdit ? "Edit" : "New"} Promo Voucher
+          </p>
+          <AddInput
+            label='Promo Code'
+            id='code'
+            errors={errors}
+            placeholder='SUMMER26'
+            register={register}
+            required
+            type='text'
+            labelClassName='text-sm font-semibold ml-2'
+            iconAndInputWrapperClassName='bg-background-1 rounded-lg p-0'
+            withFocusRing
+            inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+          <AddInput
+            label='Promo description'
+            id='description'
+            errors={errors}
+            placeholder='This promo is for summer'
+            register={register}
+            required
+            type='text'
+            labelClassName='text-sm font-semibold ml-2'
+            iconAndInputWrapperClassName='bg-background-1 rounded-lg p-0'
+            withFocusRing
+            inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+          <div className='flex flex-col md:flex-row gap-4 md:gap-6 md:items-center'>
+            <SelectDropdown
+              options={["PERCENTAGE", "FIXED"]}
+              selected={discountType}
+              setSelected={(value: string) => {
+                setValue("discountType", value as "PERCENTAGE" | "FIXED");
+              }}
+              triggerLabel='Discount Type'
+              triggerClassName='bg-background-1 min-h-12 h-12 rounded-lg flex-1'
+              labelClassName='text-sm font-semibold ml-2'
+              label='Percentage or Fixed Amount'
+              groupClassName='shadow-lg'
+              fullWidth
+              errorMessage={errors.discountType?.message ?? ""}
+            />
+            <SelectDropdown
+              fullWidth
+              options={["both", "delivery", "pickup"]}
+              selected={applicableFor}
+              setSelected={(value: string) => {
+                setValue(
+                  "applicableFor",
+                  value as "both" | "delivery" | "pickup",
+                );
+              }}
+              triggerLabel='Applicable For'
+              triggerClassName='bg-background-1 min-h-12 h-12 rounded-lg flex-1'
+              labelClassName='text-sm font-semibold ml-2'
+              label='Both, Delivery or Pickup'
+              groupClassName='shadow-lg'
+              errorMessage={errors.applicableFor?.message ?? ""}
+            />
+          </div>
+
+          <div className='flex flex-col md:flex-row gap-4 md:gap-6'>
+            <AddInput
+              label='Discount Value'
+              id='discountValue'
+              errors={errors}
+              placeholder='10'
+              register={register}
+              required
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              width='full'
+              labelClassName='text-sm font-semibold ml-2'
+              iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              withFocusRing
+              inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+            <AddInput
+              label='Max Discount Amount'
+              id='maxDiscountAmount'
+              errors={errors}
+              placeholder='10'
+              register={register}
+              required
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              withFocusRing
+              width='full'
+              labelClassName='text-sm font-semibold ml-2'
+              iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+            <AddInput
+              label='Minimum Order Amount'
+              id='minOrderAmount'
+              errors={errors}
+              placeholder='5'
+              register={register}
+              required
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              withFocusRing
+              width='full'
+              labelClassName='text-sm font-semibold ml-0'
+              iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+          </div>
+          <div className='flex flex-col md:flex-row gap-4 md:gap-6'>
+            <AddInput
+              label='Max Usage per user'
+              id='maxUsagePerUser'
+              errors={errors}
+              placeholder='1'
+              register={register}
+              required
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              withFocusRing
+              width='full'
+              labelClassName='text-sm font-semibold ml-0'
+              iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+            <AddInput
+              width='full'
+              label='Max Total Usage'
+              id='maxTotalUsage'
+              errors={errors}
+              placeholder='2'
+              register={register}
+              required
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              withFocusRing
+              labelClassName='text-sm font-semibold ml-0'
+              iconAndInputWrapperClassName='bg-background-1 rounded-lg flex-1 px-0'
+              inputClassName='h-12 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+          </div>
+          <div className='flex flex-col md:flex-row gap-4 md:gap-6'>
+            <DatePicker
+              date={validFrom}
+              open={validFromOpen}
+              setOpen={setValidFromOpen}
+              setDate={setValidFrom}
+              label='Valid from'
+              placeholder='MM/DD/YYYY'
+              fullWidth
+              className='h-12 bg-background-1 rounded-lg'
+              labelClassName='ml-2 font-semibold'
+            />
+            <DatePicker
+              date={validTo}
+              open={validToOpen}
+              setOpen={setValidToOpen}
+              setDate={setValidTo}
+              label='Valid to'
+              placeholder='MM/DD/YYYY'
+              fullWidth
+              className='h-12 bg-background-1 rounded-lg'
+              labelClassName='ml-2 font-semibold'
+            />
+          </div>
+
+          <ButtonWithLoader
+            text={isEdit ? "Edit" : "Save"}
+            isLoading={false}
             onClick={() => {
               handleSubmit(onSubmit)();
             }}
