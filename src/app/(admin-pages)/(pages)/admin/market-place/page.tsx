@@ -39,7 +39,11 @@ import { ISOStringFormat } from "date-fns";
 const isEmpty = true;
 const Page = () => {
   const {
-    actions: { getRideCostSettings, activateOrDeactivateCostSetting },
+    actions: {
+      getRideCostSettings,
+      activateOrDeactivateCostSetting,
+      getVouchers,
+    },
     rideCostSettings,
   } = useMarketPlace(
     useShallow((state) => ({
@@ -50,6 +54,7 @@ const Page = () => {
 
   useEffect(() => {
     getRideCostSettings();
+    getVouchers();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -59,23 +64,13 @@ const Page = () => {
 
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
-          <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-6'>
-            <p className='text-xl font-medium'>Fare Engine Profile</p>
+          <div className='flex justify-between gap-5 md:items-center px-6'>
+            <p className='text-lg md:text-xl font-medium'>
+              Fare Engine Profile
+            </p>
             <div className='flex items-center gap-5'>
               <AddOrEditNewFareEngineProfileComponent
                 trigger={<Button>Add New</Button>}
-                defaultValues={{
-                  baseFare: "10",
-                  baseHagglePercentage: "10",
-                  currency: "usd",
-                  driverToRiderFee: "10",
-                  maxHagglePercentage: "10",
-                  platformFeePercentage: "10",
-                  waitingChargePerMinute: "10",
-                  taxPercentage: "10",
-                  surgeMultiplier: "10",
-                  title: "Rush 23",
-                }}
               />
               {/* <Button variant={"ghost"} className='rounded-full'>
                 Batch Delete
@@ -231,7 +226,9 @@ const Page = () => {
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
           <div className='flex justify-between gap-5 items-center px-6 pb-3 border-b border-b-gray-300'>
-            <p className='text-xl font-medium'>Promotion and Vouchers</p>
+            <p className='text-lg md:text-xl font-medium'>
+              Promotion and Vouchers
+            </p>
             <AddOrEditNewPromoVoucherComponent
               trigger={<Button>Add New</Button>}
             />
@@ -277,7 +274,7 @@ const Page = () => {
       <Card className='border border-gray-300 flex flex-col gap-4 py-4'>
         <CardContent className='p-0 gap-4 flex flex-col'>
           <div className='flex justify-between gap-5 items-center px-6'>
-            <p className='text-xl font-medium'>Active Promo</p>
+            <p className='text-lg md:text-xl font-medium'>Active Promo</p>
           </div>
           <Table>
             <TableHeader>
@@ -572,7 +569,7 @@ const AddOrEditNewPromoVoucherComponent = ({
   const [open, setOpen] = useState(false);
   const [validFrom, setValidFrom] = useState<Date>();
   const [validFromOpen, setValidFromOpen] = useState(false);
-  const [validTo, setValidTo] = useState<Date>();
+  const [validUntil, setValidUntil] = useState<Date>();
   const [validToOpen, setValidToOpen] = useState(false);
 
   const {
@@ -587,11 +584,25 @@ const AddOrEditNewPromoVoucherComponent = ({
     resolver: zodResolver(promoAndVoucherSchema),
   });
 
+  const {
+    actions: { createVoucher },
+  } = useMarketPlace(
+    useShallow((state) => ({
+      actions: state.actions,
+    })),
+  );
+
   const discountType = watch("discountType");
   const applicableFor = watch("applicableFor");
 
   const onSubmit = async (data: TPromoAndVoucherSchema) => {
-    console.log(data);
+    if (!validFrom || !validUntil) return;
+    await createVoucher({
+      ...data,
+      validFrom,
+      validUntil,
+    });
+
     setOpen(false);
     reset();
   };
@@ -636,10 +647,10 @@ const AddOrEditNewPromoVoucherComponent = ({
           />
           <div className='flex flex-col md:flex-row gap-4 md:gap-6 md:items-center'>
             <SelectDropdown
-              options={["PERCENTAGE", "FIXED"]}
+              options={["percentage", "fixed"]}
               selected={discountType}
               setSelected={(value: string) => {
-                setValue("discountType", value as "PERCENTAGE" | "FIXED");
+                setValue("discountType", value as "percentage" | "fixed");
               }}
               triggerLabel='Discount Type'
               triggerClassName='bg-background-1 min-h-12 h-12 rounded-lg flex-1'
@@ -765,10 +776,10 @@ const AddOrEditNewPromoVoucherComponent = ({
               labelClassName='ml-2 font-semibold'
             />
             <DatePicker
-              date={validTo}
+              date={validUntil}
               open={validToOpen}
               setOpen={setValidToOpen}
-              setDate={setValidTo}
+              setDate={setValidUntil}
               label='Valid to'
               placeholder='MM/DD/YYYY'
               fullWidth

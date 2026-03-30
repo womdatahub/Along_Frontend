@@ -62,7 +62,7 @@ export const suspensionSchema = z.object({
   suspensionType: z.string().optional(),
 });
 
-const DiscountType = z.enum(["PERCENTAGE", "FIXED"]);
+const DiscountType = z.enum(["percentage", "fixed"]);
 const ApplicableFor = z.enum(["both", "delivery", "pickup"]);
 
 export const promoAndVoucherSchema = z.object({
@@ -98,10 +98,10 @@ export const promoAndVoucherSchema = z.object({
     .min(1, "Base Fare is required!")
     .regex(/^\d+$/, "Only numbers are allowed!"),
 
-  validFrom: z.string(),
-  validUntil: z.string(),
+  // validFrom: z.string(),
+  // validUntil: z.string(),
   applicableFor: ApplicableFor,
-  description: z.string().max(255).optional(),
+  description: z.string().max(255),
 });
 
 export type TMarketPlaceSchema = z.infer<typeof marketPlaceSchema>;

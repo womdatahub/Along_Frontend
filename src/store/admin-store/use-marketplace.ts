@@ -6,13 +6,28 @@ import {
   callApi,
   removeFieldsFromObject,
   TMarketPlaceSchema,
+  TPromoAndVoucherSchema,
 } from "@/lib";
 import { toast } from "sonner";
+
+type PromoAndVoucherExtras = {
+  totalUsageCount: number;
+  validFrom: Date;
+  validUntil: Date;
+  status: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+};
+
+type PromoVoucherType = TPromoAndVoucherSchema & PromoAndVoucherExtras;
 
 type MarketPlaceType = {
   isCreatingCostSetting: boolean;
   rideCostSettings: TMarketPlaceSchema[];
   isLoading: boolean;
+  allVouchers: PromoVoucherType[];
   actions: {
     createRideCostSettings: (
       costSettings: TMarketPlaceSchema,
@@ -25,6 +40,17 @@ type MarketPlaceType = {
       costId: string;
       isActive: boolean;
     }) => Promise<void>;
+    createVoucher: (
+      voucherDetails: TPromoAndVoucherSchema & {
+        validFrom: Date;
+        validUntil: Date;
+      },
+    ) => Promise<void>;
+    getVouchers: () => Promise<void>;
+    updateVoucher: (voucherDetails: {
+      status: string;
+      voucherId: string;
+    }) => Promise<void>;
   };
 };
 
@@ -32,6 +58,7 @@ const initialState = {
   isLoading: false,
   isCreatingCostSetting: false,
   rideCostSettings: [],
+  allVouchers: [],
 };
 
 export const useMarketPlace = create<MarketPlaceType>()(
@@ -158,6 +185,52 @@ export const useMarketPlace = create<MarketPlaceType>()(
           set({ rideCostSettings: data.data });
           if (!hideToast)
             toast.success(data.message ?? "Cost settings fetched successfully");
+        }
+      },
+      createVoucher: async (voucherDetails) => {
+        const { data, error } = await callApi(adminApiStr("/vouchers"), {
+          ...voucherDetails,
+          discountValue: Number(voucherDetails.discountValue),
+          minOrderAmount: Number(voucherDetails.minOrderAmount),
+          maxDiscountAmount: Number(voucherDetails.maxDiscountAmount),
+          maxUsagePerUser: Number(voucherDetails.maxUsagePerUser),
+          maxTotalUsage: Number(voucherDetails.maxTotalUsage),
+          discountType: voucherDetails.discountType.toUpperCase(),
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          await get().actions.getVouchers();
+          toast.success(data.message ?? "Voucher created successfully");
+        }
+      },
+      getVouchers: async () => {
+        const { data, error } = await callApi<PromoVoucherType[]>(
+          adminApiStr("/vouchers"),
+        );
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          set({ allVouchers: data.data });
+          toast.success(data.message ?? "Vouchers fetched successfully");
+        }
+      },
+      updateVoucher: async (voucherDetails) => {
+        const { data, error } = await callApi(
+          adminApiStr("/vouchers"),
+          voucherDetails,
+          "PATCH",
+        );
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        if (data) {
+          // toast.success(data.message ?? "Cost settings fetched successfully");
         }
       },
     },
