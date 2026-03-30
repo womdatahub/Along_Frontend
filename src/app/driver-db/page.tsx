@@ -10,10 +10,7 @@ import { FilledGreenStarIcon, LocationPointerSvg } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import {
-  useSession,
-  // useRental, useRadarMap
-} from "@/store";
+import { useSession, useRental, useRadarMap } from "@/store";
 import { useShallow } from "zustand/shallow";
 import Image from "next/image";
 
@@ -34,17 +31,17 @@ const Page = () => {
     })),
   );
 
-  // const {
-  //   actions: { listVehicleForRental },
-  // } = useRental(
-  //   useShallow((state) => ({
-  //     actions: state.actions,
-  //   })),
-  // );
+  const {
+    actions: { listVehicleForRental },
+  } = useRental(
+    useShallow((state) => ({
+      actions: state.actions,
+    })),
+  );
 
-  // const { autoCompleteAddress } = useRadarMap(
-  //   useShallow((state) => ({ autoCompleteAddress: state.autoCompleteAddress })),
-  // );
+  const { autoCompleteAddress } = useRadarMap(
+    useShallow((state) => ({ autoCompleteAddress: state.autoCompleteAddress })),
+  );
 
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 md:h-[calc(100vh-80px)] md:overflow-hidden'>
@@ -68,8 +65,8 @@ const Page = () => {
                   {driverProfile?.firstName}
                 </p>
               </PopoverTrigger>
-              <PopoverContent className='w-[270px] p-0'>
-                <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-[270px] pt-4'>
+              <PopoverContent className='w-67.5 p-0'>
+                <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-67.5 pt-4'>
                   <div className='flex flex-col gap-4 px-4 pb-4'>
                     <div className='flex gap-3 items-center'>
                       <Image
@@ -98,7 +95,7 @@ const Page = () => {
                     <FilledGreenStarIcon />
                     <p>{driverProfile?.rating.numberOfRatings ?? 0}%</p>
                   </div>
-                  {/* <div
+                  <div
                     onClick={async () => {
                       const link = await listVehicleForRental({
                         address: autoCompleteAddress?.formattedAddress ?? "",
@@ -112,10 +109,10 @@ const Page = () => {
                     className='text-center cursor-pointer font-bold'
                   >
                     List vehicle for Rent
-                  </div> */}
+                  </div>
                   <div
                     onClick={logOut}
-                    className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'
+                    className='p-3 bg-icons rounded-b-2xl text-center cursor-pointer text-white font-bold'
                   >
                     Sign out
                   </div>
@@ -159,7 +156,7 @@ const Page = () => {
               <DynamicDriversChart />
             </div>
           </div>
-          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto md:relative md:pb-32'>
+          <div className='flex flex-col gap-4 mr-5 w-full md:w-65 overflow-y-auto md:relative md:pb-32'>
             <HeadingHeebo className='text-left md:sticky md:top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>

@@ -28,23 +28,17 @@ export type AdminProfile = {
 
 export type SuspendedDriver = {
   _id: string;
-  email: string;
-  isEmailVerified: boolean;
-  mobileNumber: string;
-  isMobileNumberVerified: boolean;
-  passwordResetOtp: string;
-  isGoogleUser: boolean;
-  isAppleUser: boolean;
-  isFacebookUser: boolean;
   isSuspended: boolean;
-  suspensionReason: string;
-  suspensionNotes: string;
-  suspensionType: "PERMANENT" | "TEMPORARY";
-  suspensionEndDate: string;
   role: "driver";
   createdAt: string;
   updatedAt: string;
-  driver: null;
+  driver: {
+    _id: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    driverProfilePictureUri: string;
+  };
 };
 
 export type DriverProfile = {
@@ -85,6 +79,21 @@ export type DriverProfile = {
   insuranceDocumentUri: string;
   isActive: boolean;
   __v: number;
+  referralCode: string;
+  kycStatus: string;
+  rideProfile: {
+    currentLocation: {
+      location: string;
+      longitude: number;
+      latitude: number;
+    };
+    ratePerHour: string;
+    allowPets: boolean;
+    luggageCapacity: number;
+  };
+  driverSocialSecurityNumber: string;
+
+  id: "69c581bc7900183e6b33f627";
 };
 
 export interface RiderProfile {

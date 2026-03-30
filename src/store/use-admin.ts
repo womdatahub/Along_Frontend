@@ -20,6 +20,7 @@ type AdminType = {
   suspendedRiders: AllRiderAccount[];
   allRiders: AllRiderAccount[];
   allDrivers: AllDriversAccount[];
+  singleDriverDetails: DriverProfile | null;
   actions: {
     getAdminDashboardDetails: () => Promise<void>;
     getActiveRides: () => Promise<void>;
@@ -81,6 +82,7 @@ const initialState = {
   suspendedRiders: [],
   allRiders: [],
   allDrivers: [],
+  singleDriverDetails: null,
 };
 
 export const useAdmin = create<AdminType>()(
@@ -205,7 +207,12 @@ export const useAdmin = create<AdminType>()(
           return;
         }
         if (data) {
-          set({ isLoading: false, allDrivers: data.data });
+          set({
+            isLoading: false,
+            allDrivers: data.data.filter(
+              (driver) => driver.isSuspended !== true,
+            ),
+          });
           // toast.success(data.message ?? "Drivers fetched successfully");
         }
       },
@@ -412,9 +419,9 @@ export const useAdmin = create<AdminType>()(
         }
       },
       getSingleDriverDetails: async (driverID) => {
-        set({ isLoading: true });
+        set({ isLoading: true, singleDriverDetails: null });
         const path = userApiStr(`/user/driver/${driverID}`);
-        const { data, error } = await callApi(path);
+        const { data, error } = await callApi<DriverProfile>(path);
         if (error) {
           set({ isLoading: false });
           toast.error(error.message);
@@ -422,7 +429,7 @@ export const useAdmin = create<AdminType>()(
         }
         if (data) {
           console.log(path, data);
-          set({ isLoading: false });
+          set({ isLoading: false, singleDriverDetails: data.data });
           // toast.success(data.message ?? "Admin restored successfully");
         }
       },
