@@ -27,19 +27,17 @@ type Step = 1 | 2 | 3;
 const StepCircle = ({ n, current }: { n: number; current: Step }) => {
   if (n < current) {
     return (
-      <div className='size-3 md:size-4 rounded-full flex-shrink-0 flex items-center justify-center bg-[#0f766e]'>
+      <div className='size-3 md:size-4 rounded-full shrink-0 flex items-center justify-center bg-[#0f766e]'>
         <Check size={10} strokeWidth={3} className='text-white' />
       </div>
     );
   }
   if (n === current) {
     return (
-      <div className='size-3 md:size-4 rounded-full flex-shrink-0 bg-primary' />
+      <div className='size-3 md:size-4 rounded-full shrink-0 bg-primary' />
     );
   }
-  return (
-    <div className='size-3 md:size-4 rounded-full flex-shrink-0 bg-gray-300' />
-  );
+  return <div className='size-3 md:size-4 rounded-full shrink-0 bg-gray-300' />;
 };
 
 const Sidebar = ({ current }: { current: Step }) => {
@@ -461,13 +459,14 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
+        showCloseButton
         dialogTitle='Add New Admin'
-        className='max-w-sm md:max-w-[840px] p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'
+        className='max-w-sm md:max-w-210 p-0 overflow-hidden rounded-2xl gap-0 [&>button]:hidden'
       >
-        <div className='flex flex-col md:flex-row min-h-[480px]'>
+        <div className='flex flex-col md:flex-row min-h-120'>
           <Sidebar current={step} />
 
-          <div className='w-px bg-gray-200 flex-shrink-0 hidden md:block' />
+          <div className='w-px bg-gray-200 hrink-0 hidden md:block' />
 
           <div className='flex-1 flex flex-col'>
             {step === 1 && (
