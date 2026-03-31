@@ -1,18 +1,25 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  // Dispatch, SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
   Button,
-  Checkbox,
+  // Checkbox,
   Separator,
   AddInput,
   SelectDropdown,
 } from "@/components";
 
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Check,
+  // ChevronDown, ChevronUp
+} from "lucide-react";
 import {
   createNewAdminSchema,
   TCreateNewAdminSchema,
@@ -75,8 +82,8 @@ const Sidebar = ({ current }: { current: Step }) => {
   );
 };
 
-const tealCheckbox =
-  "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
+// const tealCheckbox =
+//   "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";
 
 const StepBasic = ({
   onNext,
@@ -211,119 +218,119 @@ const StepBasic = ({
   );
 };
 
-const StepRoles = ({
-  onNext,
-  onBack,
-  selectedRole,
-  setSelectedRole,
-}: {
-  onNext: () => void;
-  onBack: () => void;
-  selectedRole: string;
-  setSelectedRole: Dispatch<SetStateAction<string>>;
-}) => {
-  const [opsOpen, setOpsOpen] = useState(true);
+// const StepRoles = ({
+//   onNext,
+//   onBack,
+//   selectedRole,
+//   setSelectedRole,
+// }: {
+//   onNext: () => void;
+//   onBack: () => void;
+//   selectedRole: string;
+//   setSelectedRole: Dispatch<SetStateAction<string>>;
+// }) => {
+//   const [opsOpen, setOpsOpen] = useState(true);
 
-  const { allRolePermissions } = usePermission(
-    useShallow((state) => ({
-      actions: state.actions,
-      allRolePermissions: state.allRolePermissions,
-    })),
-  );
+//   const { allRolePermissions } = usePermission(
+//     useShallow((state) => ({
+//       actions: state.actions,
+//       allRolePermissions: state.allRolePermissions,
+//     })),
+//   );
 
-  return (
-    <>
-      <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
-        <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
-          Assign Roles and Permission
-        </h2>
-        <p className='text-[13px] text-gray-500 mb-6'>
-          Assign the Roles and permission you&apos;d like this user to have.
-        </p>
+//   return (
+//     <>
+//       <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
+//         <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
+//           Assign Roles and Permission
+//         </h2>
+//         <p className='text-[13px] text-gray-500 mb-6'>
+//           Assign the Roles and permission you&apos;d like this user to have.
+//         </p>
 
-        <div className='mb-1'>
-          <SelectDropdown
-            options={Object.keys(allRolePermissions ?? {}).map((role) =>
-              role.split("_").join(" "),
-            )}
-            selected={selectedRole}
-            setSelected={(role: string) => {
-              setSelectedRole(role);
-            }}
-            triggerLabel='Support Agent'
-            triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
-            labelClassName='ml-2 text-sm md:text-base'
-            label='Select role'
-            groupClassName='shadow-lg'
-          />
-        </div>
+//         <div className='mb-1'>
+//           <SelectDropdown
+//             options={Object.keys(allRolePermissions ?? {}).map((role) =>
+//               role.split("_").join(" "),
+//             )}
+//             selected={selectedRole}
+//             setSelected={(role: string) => {
+//               setSelectedRole(role);
+//             }}
+//             triggerLabel='Support Agent'
+//             triggerClassName='border  border-black/50 min-h-12 max-h-12 h-12'
+//             labelClassName='ml-2 text-sm md:text-base'
+//             label='Select role'
+//             groupClassName='shadow-lg'
+//           />
+//         </div>
 
-        <Separator className='my-5' />
+//         <Separator className='my-5' />
 
-        <p className='text-sm md:text-base font-semibold text-gray-800 mb-3'>
-          Additional permission
-        </p>
+//         <p className='text-sm md:text-base font-semibold text-gray-800 mb-3'>
+//           Additional permission
+//         </p>
 
-        <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
-          {/* Operations */}
-          <div className='border-t border-gray-200'>
-            <button
-              type='button'
-              onClick={() => setOpsOpen((v) => !v)}
-              className='flex items-center justify-between w-full py-3 text-left'
-            >
-              <span className='text-[13px] text-gray-700'>Operations</span>
-              {opsOpen ? (
-                <ChevronUp size={15} className='text-gray-400' />
-              ) : (
-                <ChevronDown size={15} className='text-gray-400' />
-              )}
-            </button>
-            {opsOpen && (
-              <div className='flex flex-col gap-3 pb-4 pl-0.5'>
-                <div className='flex items-center gap-2.5'>
-                  <Checkbox defaultChecked className={tealCheckbox} />
-                  <label className='text-[13px] text-gray-600'>
-                    Assign ride to riders
-                  </label>
-                </div>
-                <div className='flex items-center gap-2.5'>
-                  <Checkbox className={tealCheckbox} />
-                  <label className='text-[13px] text-gray-600'>
-                    Respond to queries
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
+//         <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
+//           {/* Operations */}
+//           <div className='border-t border-gray-200'>
+//             <button
+//               type='button'
+//               onClick={() => setOpsOpen((v) => !v)}
+//               className='flex items-center justify-between w-full py-3 text-left'
+//             >
+//               <span className='text-[13px] text-gray-700'>Operations</span>
+//               {opsOpen ? (
+//                 <ChevronUp size={15} className='text-gray-400' />
+//               ) : (
+//                 <ChevronDown size={15} className='text-gray-400' />
+//               )}
+//             </button>
+//             {opsOpen && (
+//               <div className='flex flex-col gap-3 pb-4 pl-0.5'>
+//                 <div className='flex items-center gap-2.5'>
+//                   <Checkbox defaultChecked className={tealCheckbox} />
+//                   <label className='text-[13px] text-gray-600'>
+//                     Assign ride to riders
+//                   </label>
+//                 </div>
+//                 <div className='flex items-center gap-2.5'>
+//                   <Checkbox className={tealCheckbox} />
+//                   <label className='text-[13px] text-gray-600'>
+//                     Respond to queries
+//                   </label>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
 
-          {/* Compliance */}
-          <div className='border-t border-gray-200'>
-            <button
-              type='button'
-              className='flex items-center justify-between w-full py-3 text-left'
-            >
-              <span className='text-[13px] text-gray-700'>Compliance</span>
-              <ChevronDown size={15} className='text-gray-400' />
-            </button>
-          </div>
-        </div>
-      </div>
+//           {/* Compliance */}
+//           <div className='border-t border-gray-200'>
+//             <button
+//               type='button'
+//               className='flex items-center justify-between w-full py-3 text-left'
+//             >
+//               <span className='text-[13px] text-gray-700'>Compliance</span>
+//               <ChevronDown size={15} className='text-gray-400' />
+//             </button>
+//           </div>
+//         </div>
+//       </div>
 
-      <Separator />
-      <div className='flex items-center justify-between px-8 py-4'>
-        <Button
-          variant='outline'
-          onClick={onBack}
-          // className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
-        >
-          Back
-        </Button>
-        <Button onClick={onNext}>Next</Button>
-      </div>
-    </>
-  );
-};
+//       <Separator />
+//       <div className='flex items-center justify-between px-8 py-4'>
+//         <Button
+//           variant='outline'
+//           onClick={onBack}
+//           // className='h-10 px-6 rounded-xl text-[13px] font-medium text-gray-600 border-gray-300 hover:bg-gray-50'
+//         >
+//           Back
+//         </Button>
+//         <Button onClick={onNext}>Next</Button>
+//       </div>
+//     </>
+//   );
+// };
 
 const StepReview = ({
   onBack,
@@ -449,13 +456,7 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(v) => {
-        if (!v) close();
-        else setOpen(true);
-      }}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent

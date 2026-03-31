@@ -229,9 +229,9 @@ const Page = () => {
           <TableHeader>
             <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
               <TableHead className='w-10' />
-              <TableHead className='text-[#768B8F]'>Display Name</TableHead>
-              <TableHead className='text-[#768B8F]'>User name</TableHead>
-              <TableHead className='text-[#768B8F]'>Roles</TableHead>
+              <TableHead className='text-icons'>Display Name</TableHead>
+              <TableHead className='text-icons'>User name</TableHead>
+              <TableHead className='text-icons'>Roles</TableHead>
             </TableRow>
           </TableHeader>
 
