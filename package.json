@@ -65,5 +65,8 @@
   "supportedArchitectures": {
     "os": ["current", "linux"],
     "cpu": ["current", "x64"]
+},
+"optionalDependencies": {
+  "lightningcss-linux-x64-gnu": "1.32.0"
 }
 }
