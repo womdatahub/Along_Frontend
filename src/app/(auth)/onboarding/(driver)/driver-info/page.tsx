@@ -49,7 +49,7 @@ const Page = () => {
   const selectedGender = watch("gender");
 
   const onSubmit = async (data: TDriverBasicInfoSchema) => {
-    if (!driverProfile?.email && !userProfile?.email) {
+    if (!driverProfile?.email || !userProfile?.email) {
       toast.error("User email not found. Please sign up again.");
       return;
     }
