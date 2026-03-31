@@ -39,7 +39,7 @@ const DriverInformationModal = ({ trigger }: Props) => {
             <Image
               src={driver?.driverProfilePictureUri ?? "/images/placeholder.jpg"}
               alt={driver?.firstName ?? "Driver profile picture"}
-              className='rounded-full size-30 object-cover'
+              className='rounded-full size-28 max-size-28 object-cover'
               width={120}
               height={120}
             />

@@ -262,7 +262,7 @@ const Page = () => {
             {allVouchers.length === 0 ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={4} className='p-10'>
+                  <TableCell colSpan={12} className='p-10'>
                     <Empty>
                       <EmptyHeader>
                         <EmptyTitle>No information found</EmptyTitle>

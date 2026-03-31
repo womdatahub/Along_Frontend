@@ -53,7 +53,6 @@ const ConfirmActionModal = ({
     setOpen(false);
   };
 
-  const reason = watch("reason");
   const suspensionType = watch("suspensionType");
   const suspensionDuration = watch("suspensionDuration");
   return (
@@ -109,6 +108,7 @@ const ConfirmActionModal = ({
                 labelClassName='ml-2'
                 label='Suspension Type'
                 groupClassName='shadow-lg'
+                fullWidth
                 errorMessage={errors.suspensionType?.message ?? ""}
               />
               <SelectDropdown
@@ -124,6 +124,7 @@ const ConfirmActionModal = ({
                 labelClassName='ml-2'
                 label='Suspension Duration'
                 groupClassName='shadow-lg'
+                fullWidth
                 errorMessage={errors.suspensionDuration?.message ?? ""}
               />
             </div>
