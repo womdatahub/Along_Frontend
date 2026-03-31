@@ -389,7 +389,7 @@ export const DriverPendingInfoModal = ({
                 <Button
                   onClick={() =>
                     processDriverKYC({
-                      driverId: singleDriverDetails?.driverId ?? "",
+                      driverId: singleDriverDetails?.userId ?? "",
                       action: "APPROVE",
                     })
                   }
@@ -412,7 +412,7 @@ export const DriverPendingInfoModal = ({
                   description='Are you sure you want to reject this driver? This action cannot be undone.'
                   confirmActionFunction={async (values) => {
                     await processDriverKYC({
-                      driverId: singleDriverDetails?.driverId ?? "",
+                      driverId: singleDriverDetails?.userId ?? "",
                       action: "REJECT",
                       reason: values?.reason ?? "",
                     });
