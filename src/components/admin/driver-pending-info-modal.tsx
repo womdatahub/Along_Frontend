@@ -323,7 +323,7 @@ export const DriverPendingInfoModal = ({
                 </button>
               ))}
             </div>
-            <div className='hidden sm:flex flex-col justify-between border-r border-[#CCCCCC] p-4 shrink-0'>
+            <div className='hidden sm:flex flex-col md:gap-32 justify-between border-r border-[#CCCCCC] p-4 shrink-0'>
               <div className='flex flex-col gap-1'>
                 {TABS.map(({ key, label, icon: Icon }) => (
                   <button
@@ -345,7 +345,7 @@ export const DriverPendingInfoModal = ({
                 ))}
               </div>
 
-              <div className='flex flex-col gap-2 pt-4'>
+              <div className='flex flex-col gap-2'>
                 <Button
                   className='rounded-xl text-sm'
                   onClick={() =>
