@@ -1,12 +1,15 @@
 "use client";
 import {
   Button,
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
   HeadingHeebo,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components";
-import { FilledGreenStarIcon, LocationPointerSvg } from "@public/svgs";
+import { FilledGreenStarIcon } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -160,7 +163,7 @@ const Page = () => {
             <HeadingHeebo className='text-left md:sticky md:top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
-            {Array(10)
+            {/* {Array(10)
               .fill(0)
               .map((_, i) => (
                 <div
@@ -184,7 +187,16 @@ const Page = () => {
                     </HeadingHeebo>
                   </div>
                 </div>
-              ))}
+              ))} */}
+            <div className='flex py-10 items-center justify-center'>
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle className='font-bold text-xl'>
+                    No recent activities
+                  </EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            </div>
           </div>
         </div>
       </div>

@@ -6,6 +6,9 @@ import {
   CardContent,
   CardFooter,
   CompleteHeroServiceDialog,
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
   HeadingHeebo,
   NameAvatar,
   Popover,
@@ -16,7 +19,7 @@ import {
 import { useRadarMap, useSession } from "@/store";
 import {
   AccuracyIcon,
-  LocationPointerSvg,
+  // LocationPointerSvg,
   RemoveCardIcon,
   WhiteForwardIcon,
 } from "@public/svgs";
@@ -54,7 +57,7 @@ const Page = () => {
           <div className='flex flex-col gap-2 w-full md:w-fit'>
             <HeadingHeebo className='text-left'>Quick trip</HeadingHeebo>
             <div className='flex items-center gap-4 md:gap-8'>
-              <div className='flex gap-2 md:gap-4 items-center px-2 md:px-4 py-3 bg-white rounded-2xl w-full md:w-[375px]'>
+              <div className='flex gap-2 md:gap-4 items-center px-2 md:px-4 py-3 bg-white rounded-2xl w-full md:w-93.75'>
                 <AccuracyIcon />
                 <RadarAutocomplete
                   setAutoCompleteAddress={setAutoCompleteAddress}
@@ -91,13 +94,13 @@ const Page = () => {
                   {riderProfile?.firstName}
                 </p>
               </PopoverTrigger>
-              <PopoverContent className='w-[270px] p-0'>
-                <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-[270px] pt-4'>
+              <PopoverContent className='w-67.5 p-0'>
+                <div className='flex rounded-t-2xl overflow-hidden flex-col bg-white w-67.5 pt-4'>
                   <div className='flex flex-col gap-4 px-4 pb-4'>
                     <div className='flex gap-3 items-center'>
                       <NameAvatar
                         value={`${riderProfile?.firstName[0] ?? ""}${riderProfile?.lastName[0] ?? ""}`}
-                        className='size-8 text-sm'
+                        className='size-8 md:size-8 md:text-sm text-sm'
                       />
                       <p className='font-semibold text-base'>
                         {riderProfile?.firstName} {riderProfile?.lastName}
@@ -112,7 +115,7 @@ const Page = () => {
                   </div>
                   <div
                     onClick={logOut}
-                    className='p-3 bg-[#768B8F] rounded-b-2xl text-center cursor-pointer text-white font-bold'
+                    className='p-3 bg-icons rounded-b-2xl text-center cursor-pointer text-white font-bold'
                   >
                     Sign out
                   </div>
@@ -183,7 +186,7 @@ const Page = () => {
                     </Button>
                   </CardFooter>
                 </Card>
-                <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-[#E7ECED] border-0 shadow-none px-6'>
+                <Card className='flex gap-4 justify-between rounded-2xl w-full  bg-gray-2 border-0 shadow-none px-6'>
                   <div className='flex flex-col gap-11'>
                     <HeadingHeebo className='text-sm text-left'>
                       Along wallet
@@ -192,7 +195,7 @@ const Page = () => {
                       <div className='flex flex-col'>
                         <p>Balance</p>
                         <HeadingHeebo className='text-2xl text-left'>
-                          $4652.98
+                          $0.00
                         </HeadingHeebo>
                       </div>
                       <Image
@@ -214,11 +217,11 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className='flex flex-col gap-4 mr-5 w-full md:w-[260px] overflow-y-auto md:relative pb-16 md:pb-32'>
+          <div className='flex flex-col gap-4 mr-5 w-full md:w-65 overflow-y-auto md:relative pb-16 md:pb-32'>
             <HeadingHeebo className='text-left md:sticky md:top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+            {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
               <div
                 key={item}
                 className='flex gap-3 pb-5 border-b border-b-[#D3D3D3] hover:cursor-pointer'
@@ -241,7 +244,16 @@ const Page = () => {
                   </HeadingHeebo>
                 </div>
               </div>
-            ))}
+            ))} */}
+            <div className='flex py-10 items-center justify-center'>
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle className='font-bold text-xl'>
+                    No recent activities
+                  </EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            </div>
           </div>
         </div>
       </div>
