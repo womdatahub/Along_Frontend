@@ -1,2 +1,5 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "npm-9_x"]
+
 [phases.install]
-cmds = ["npm install --include=optional"]
+cmds = ["rm -rf node_modules && npm install --include=optional"]
