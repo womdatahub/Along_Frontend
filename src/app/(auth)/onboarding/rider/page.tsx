@@ -57,14 +57,14 @@ const Page = () => {
   };
 
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] -mt-10 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
+    <div className='flex flex-col gap-10 rounded-[20px] max-w-125 -mt-10 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
       <div className='flex flex-col gap-1'>
         <HeadingHeebo>Lets get you started</HeadingHeebo>
         <p className='text-sm text-center'>
           Tell us a bit about yourself to help us set up your account.
         </p>
       </div>
-      <div className='flex gap-4 px-4 py-7 rounded-lg bg-[#87C4C4] items-center'>
+      <div className='flex gap-4 px-4 py-7 rounded-lg bg-lightgreen items-center'>
         <Image
           src='/images/passenger.png'
           alt={"driver"}

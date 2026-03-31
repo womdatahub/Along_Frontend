@@ -4,7 +4,6 @@ import {
   Calendar,
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
   DriverInfoAccordion,
   HeadingHeebo,
@@ -28,7 +27,6 @@ import {
   TimerIcon,
   WhiteForwardIcon,
 } from "@public/svgs";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -191,7 +189,7 @@ const RentRide = () => {
                   )}
                 </DialogTrigger>
                 <DialogContent
-                  className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
+                  className='sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background-1'
                   showCloseButton={false}
                   dialogTitle='Select a vehicle type: Economy, Comfort, Comfort XL,
                       Luxury or Luxury XL'
@@ -220,7 +218,7 @@ const RentRide = () => {
                             }}
                             key={car.name}
                             className={cn(
-                              "flex gap-4 items-center rounded-lg bg-white px-4 h-[71px] hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
+                              "flex gap-4 items-center rounded-lg bg-white px-4 h-17.75 hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
                               vehicleType === title && "bg-primary text-white",
                             )}
                           >
@@ -267,7 +265,7 @@ const RentRide = () => {
                       alt={"car"}
                       width={40}
                       height={40}
-                      className='w-[100px] aspect-square object-cover rounded-2xl'
+                      className='w-25 aspect-square object-cover rounded-2xl'
                     />
                     <div className='flex flex-col'>
                       <p className=' text-xs font-semibold capitalize'>
@@ -278,14 +276,14 @@ const RentRide = () => {
                     </div>
                   </div>
                   <div className='flex flex-col items-center'>
-                    <div className='p-[2px] rounded-full bg-white'>
+                    <div className='p-0.5 rounded-full bg-white'>
                       <Image
                         src={
                           selectedDriverDetails?.driverInfo
                             .driverProfilePictureUri ?? ""
                         }
                         alt='profile-image'
-                        className='rounded-full w-[66px] object-cover aspect-square'
+                        className='rounded-full w-16.5 object-cover aspect-square'
                         width={40}
                         height={40}
                       />
@@ -353,7 +351,7 @@ const RentRide = () => {
                             </DialogTrigger>
                             <DialogContent
                               dialogTitle='Choose rent duration'
-                              className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              className='sm:max-w-106.25 p-0  rounded-[20px] overflow-hidden bg-background-1'
                               showCloseButton={false}
                             >
                               <RentRideDialogComponent
@@ -430,7 +428,7 @@ const RentRide = () => {
                             </DialogTrigger>
                             <DialogContent
                               dialogTitle='Choose a pick up time'
-                              className='sm:max-w-[425px] p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              className='sm:max-w-106.25p-0  rounded-[20px] overflow-hidden bg-background-1'
                               showCloseButton={false}
                             >
                               <RentRideDialogComponent
@@ -453,7 +451,7 @@ const RentRide = () => {
                                           setSelected={setSelectedHours}
                                         />
                                       </div>
-                                      <div className='w-[1px] h-4 bg-primaryLight2 self-center' />
+                                      <div className='w-px h-4 bg-primaryLight2 self-center' />
                                       <div className='flex p-4 gap-2 items-center'>
                                         <p className='text-sm'>Min</p>
                                         <SelectDropdown
@@ -518,7 +516,7 @@ const RentRide = () => {
                             </DialogTrigger>
                             <DialogContent
                               dialogTitle='Choose rent date'
-                              className='sm:max-w-[425px] w-fit p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              className='sm:max-w-106.25 w-fit p-0  rounded-[20px] overflow-hidden bg-background-1'
                               showCloseButton={false}
                             >
                               <RentRideDialogComponent
