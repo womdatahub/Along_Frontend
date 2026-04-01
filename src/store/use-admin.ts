@@ -95,84 +95,84 @@ export const useAdmin = create<AdminType>()(
         const path = adminApiStr("/operations/dashboard");
         const { data, error } = await callApi(path);
         if (error) {
-          toast.error(error.message);
+          // toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(
-            data.message ?? "Dashboard details fetched successfully",
-          );
+          // console.log(path, data);
+          // toast.success(
+          //   data.message ?? "Dashboard details fetched successfully",
+          // );
         }
       },
       getActiveRides: async () => {
         const path = adminApiStr("/operations/rides/active");
         const { data, error } = await callApi(path);
         if (error) {
-          toast.error(error.message);
+          // toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(
-            data.message ?? "Dashboard details fetched successfully",
-          );
+          // console.log(path, data);
+          // toast.success(
+          //   data.message ?? "Dashboard details fetched successfully",
+          // );
         }
       },
       getPendingRequests: async () => {
         const path = adminApiStr("/operations/rides/pending");
         const { data, error } = await callApi(path);
         if (error) {
-          toast.error(error.message);
+          // toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(
-            data.message ?? "Dashboard details fetched successfully",
-          );
+          // console.log(path, data);
+          // toast.success(
+          //   data.message ?? "Dashboard details fetched successfully",
+          // );
         }
       },
       getActiveRentals: async () => {
         const path = adminApiStr("/operations/rentals/active");
         const { data, error } = await callApi(path);
         if (error) {
-          toast.error(error.message);
+          // toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(
-            data.message ?? "Dashboard details fetched successfully",
-          );
+          // console.log(path, data);
+          // toast.success(
+          //   data.message ?? "Dashboard details fetched successfully",
+          // );
         }
       },
       getDriverAvailability: async () => {
         const path = adminApiStr("/operations/driver/availability");
         const { data, error } = await callApi(path);
         if (error) {
-          toast.error(error.message);
+          // toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(
-            data.message ?? "Dashboard details fetched successfully",
-          );
+          // console.log(path, data);
+          // toast.success(
+          //   data.message ?? "Dashboard details fetched successfully",
+          // );
         }
       },
       getRideRoutePlayback: async () => {
         const path = adminApiStr("/operations/rides/playback");
         const { data, error } = await callApi(path);
         if (error) {
-          toast.error(error.message);
+          // toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
-          toast.success(
-            data.message ?? "Dashboard details fetched successfully",
-          );
+          // console.log(path, data);
+          // toast.success(
+          //   data.message ?? "Dashboard details fetched successfully",
+          // );
         }
       },
       getSOSAlerts: async () => {
@@ -228,7 +228,7 @@ export const useAdmin = create<AdminType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
+          // console.log(path, data);
           set({ suspendedDrivers: data.data, isLoading: false });
           // toast.success(
           //   data.message ?? "Suspended drivers fetched successfully",
@@ -288,7 +288,7 @@ export const useAdmin = create<AdminType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
+          // console.log(path, data);
           toast.success(data.message ?? "Pending KYC fetched successfully");
           set({ isLoading: false, pendingDriversKYC: data.data });
         }
@@ -335,7 +335,7 @@ export const useAdmin = create<AdminType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
+          // console.log(path, data);
           set({ suspendedRiders: data.data, isLoading: false });
           // toast.success(
           //   data.message ?? "Suspended riders fetched successfully",
@@ -430,7 +430,7 @@ export const useAdmin = create<AdminType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
+          // console.log(path, data);
           set({ isLoading: false, singleDriverDetails: data.data });
           // toast.success(data.message ?? "Admin restored successfully");
         }
