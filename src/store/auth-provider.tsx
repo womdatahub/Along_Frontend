@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Rider onboarding check (only on non-public routes)
       if (userRole === "rider" && !isPublic && !riderProfile?.firstName) {
-        router.replace("/onboarding/driver-info");
+        router.replace("/onboarding/rider");
         return;
       }
 
