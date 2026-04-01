@@ -115,54 +115,42 @@ const Page = () => {
   };
 
   return (
-    <div className='flex flex-col gap-10 mx-4 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
-      <div className='flex flex-col gap-2'>
-        <HeadingHeebo>Vehicle Registration</HeadingHeebo>
-        <p className='text-center text-sm'>
-          Enter your car details to complete your registration and access
-          related services{" "}
-        </p>
-      </div>
-      <div className='flex flex-col gap-8'>
-        <SelectDropdown
-          options={Object.keys(CAR_MAKES)}
-          selected={vehicleMake}
-          setSelected={(value: string) => {
-            setValue("vehicleMake", value);
-            setValue("vehicleModel", "");
-          }}
-          triggerLabel='Tesla'
-          label='Car Make'
-          errorMessage={errors.vehicleMake?.message ?? ""}
-        />
+    <div className='flex justify-center items-center h-full px-4 md:px-0'>
+      <div className='flex flex-col gap-10 mx-4 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
+        <div className='flex flex-col gap-2'>
+          <HeadingHeebo>Vehicle Registration</HeadingHeebo>
+          <p className='text-center text-sm'>
+            Enter your car details to complete your registration and access
+            related services{" "}
+          </p>
+        </div>
+        <div className='flex flex-col gap-8'>
+          <SelectDropdown
+            options={Object.keys(CAR_MAKES)}
+            selected={vehicleMake}
+            setSelected={(value: string) => {
+              setValue("vehicleMake", value);
+              setValue("vehicleModel", "");
+            }}
+            triggerLabel='Tesla'
+            label='Car Make'
+            errorMessage={errors.vehicleMake?.message ?? ""}
+          />
 
-        <SelectDropdown
-          options={CAR_MAKES[vehicleMake] ?? []}
-          selected={vehicleModel}
-          setSelected={(value: string) => setValue("vehicleModel", value)}
-          triggerLabel='Model Y'
-          label='Car Model'
-          disabled={!vehicleMake}
-          errorMessage={errors.vehicleModel?.message ?? ""}
-        />
+          <SelectDropdown
+            options={CAR_MAKES[vehicleMake] ?? []}
+            selected={vehicleModel}
+            setSelected={(value: string) => setValue("vehicleModel", value)}
+            triggerLabel='Model Y'
+            label='Car Model'
+            disabled={!vehicleMake}
+            errorMessage={errors.vehicleModel?.message ?? ""}
+          />
 
-        <AddInput
-          label='Car ID number'
-          placeholder='1HGCM82633A004352'
-          id='vehicleIdentificationNumber'
-          errors={errors}
-          register={register}
-          disabled={false}
-          required
-          type='text'
-          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
-        />
-        <div className='flex gap-4'>
           <AddInput
-            label='Car color'
-            placeholder='Beige white'
-            id='vehicleColor'
+            label='Car ID number'
+            placeholder='1HGCM82633A004352'
+            id='vehicleIdentificationNumber'
             errors={errors}
             register={register}
             disabled={false}
@@ -171,92 +159,108 @@ const Page = () => {
             iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
             inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
           />
-          <AddInput
-            label='Year'
-            placeholder='2025'
-            id='vehicleYear'
-            errors={errors}
-            register={register}
-            disabled={false}
-            required
-            type='tel'
-            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
-          />
+          <div className='flex gap-4'>
+            <AddInput
+              label='Car color'
+              placeholder='Beige white'
+              id='vehicleColor'
+              errors={errors}
+              register={register}
+              disabled={false}
+              required
+              type='text'
+              iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+              inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
+            />
+            <AddInput
+              label='Year'
+              placeholder='2025'
+              id='vehicleYear'
+              errors={errors}
+              register={register}
+              disabled={false}
+              required
+              type='tel'
+              iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+              inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
+            />
+          </div>
         </div>
+        <div className='flex flex-col gap-8 mt-5 text-center'>
+          <div className='flex flex-col gap-1'>
+            <p className='font-bold text-base'>Car pictures</p>
+            <p className='text-sm font-medium text-gray-3'>
+              Take and upload clear photos of your car’s front, side and back,
+              registration and insurance. This helps verify your vehicle.
+            </p>
+          </div>
+          <div className='flex gap-5'>
+            <UploadingImagesReusableComponent
+              key={0}
+              index={0}
+              previews={previews}
+              setPreviews={setPreviews}
+              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
+              imageToastDescription='Front of the driver license'
+            >
+              <div className='flex gap-2 justify-center items-center'>
+                <UploadImageIcon />
+                <p className='text-sm font-medium'>Side front</p>
+              </div>
+            </UploadingImagesReusableComponent>
+            <UploadingImagesReusableComponent
+              key={1}
+              index={1}
+              previews={previews}
+              setPreviews={setPreviews}
+              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
+              imageToastDescription='Back of the driver license'
+            >
+              <div className='flex gap-2 justify-center items-center'>
+                <UploadImageIcon />
+                <p className='text-sm font-medium'>Interior</p>
+              </div>
+            </UploadingImagesReusableComponent>
+            <UploadingImagesReusableComponent
+              key={2}
+              index={2}
+              previews={previews}
+              setPreviews={setPreviews}
+              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
+              imageToastDescription='Back of the driver license'
+            >
+              <div className='flex gap-2 justify-center items-center'>
+                <UploadImageIcon />
+                <p className='text-sm font-medium'>Side rear</p>
+              </div>
+            </UploadingImagesReusableComponent>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <label className='font-semibold text-sm ml-5'>
+              Car registration
+            </label>
+            <UploadingImagesReusableComponent
+              key={3}
+              index={3}
+              previews={previews}
+              setPreviews={setPreviews}
+              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
+              imageToastDescription='Front of the driver license'
+            >
+              <div className='flex flex-col gap-2 justify-center items-center'>
+                <UploadImageIcon />
+                <p className='text-sm font-medium'>Upload Photo</p>
+              </div>
+            </UploadingImagesReusableComponent>
+          </div>
+        </div>
+        <AuthBackAndContinueButton
+          backActive={!isLoading}
+          continueActive={!isLoading}
+          continueFnc={handleSubmit(onSubmit)}
+          continueIsLoading={isLoading}
+        />
       </div>
-      <div className='flex flex-col gap-8 mt-5 text-center'>
-        <div className='flex flex-col gap-1'>
-          <p className='font-bold text-base'>Car pictures</p>
-          <p className='text-sm font-medium text-[#858585]'>
-            Take and upload clear photos of your car’s front, side and back,
-            registration and insurance. This helps verify your vehicle.
-          </p>
-        </div>
-        <div className='flex gap-5'>
-          <UploadingImagesReusableComponent
-            key={0}
-            index={0}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-            imageToastDescription='Front of the driver license'
-          >
-            <div className='flex gap-2 justify-center items-center'>
-              <UploadImageIcon />
-              <p className='text-sm font-medium'>Side front</p>
-            </div>
-          </UploadingImagesReusableComponent>
-          <UploadingImagesReusableComponent
-            key={1}
-            index={1}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-            imageToastDescription='Back of the driver license'
-          >
-            <div className='flex gap-2 justify-center items-center'>
-              <UploadImageIcon />
-              <p className='text-sm font-medium'>Interior</p>
-            </div>
-          </UploadingImagesReusableComponent>
-          <UploadingImagesReusableComponent
-            key={2}
-            index={2}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-            imageToastDescription='Back of the driver license'
-          >
-            <div className='flex gap-2 justify-center items-center'>
-              <UploadImageIcon />
-              <p className='text-sm font-medium'>Side rear</p>
-            </div>
-          </UploadingImagesReusableComponent>
-        </div>
-        <div className='flex flex-col gap-1'>
-          <label className='font-semibold text-sm ml-5'>Car registration</label>
-          <UploadingImagesReusableComponent
-            key={3}
-            index={3}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-[80px]'
-            imageToastDescription='Front of the driver license'
-          >
-            <div className='flex flex-col gap-2 justify-center items-center'>
-              <UploadImageIcon />
-              <p className='text-sm font-medium'>Upload Photo</p>
-            </div>
-          </UploadingImagesReusableComponent>
-        </div>
-      </div>
-      <AuthBackAndContinueButton
-        backActive={!isLoading}
-        continueActive={!isLoading}
-        continueFnc={handleSubmit(onSubmit)}
-        continueIsLoading={isLoading}
-      />
     </div>
   );
 };

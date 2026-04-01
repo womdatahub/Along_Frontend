@@ -56,7 +56,7 @@ const Page = () => {
 
     const driverData = {
       ...data,
-      email: driverProfile?.email || userProfile?.email,
+      email: driverProfile?.email && userProfile?.email,
     };
 
     const isSuccess = await registerDriver(driverData);
@@ -77,114 +77,118 @@ const Page = () => {
     ];
 
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
-      <div className='flex flex-col gap-2'>
-        <HeadingHeebo>Driver Information</HeadingHeebo>
-        <p className='text-center text-sm text-gray-600'>
-          Please provide your basic information
-        </p>
-      </div>
-
-      <div className='flex flex-col gap-5'>
-        <div className='flex flex-col md:flex-row gap-4'>
-          <AddInput
-            label='First Name'
-            id='firstName'
-            errors={errors}
-            placeholder='Enter first name'
-            register={register}
-            disabled={isSubmitting || isLoading}
-            required
-            type='text'
-            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
-          />
-
-          <AddInput
-            label='Last Name'
-            id='lastName'
-            errors={errors}
-            placeholder='Enter last name'
-            register={register}
-            disabled={isSubmitting || isLoading}
-            required
-            type='text'
-            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
-          />
-        </div>
-
-        <AddInput
-          label='Date of Birth'
-          id='dateOfBirth'
-          errors={errors}
-          placeholder='Select date'
-          register={register}
-          disabled={isSubmitting || isLoading}
-          required
-          type='date'
-          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
-        />
-
+    <div className='flex justify-center items-center h-full px-4 md:px-0'>
+      <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
         <div className='flex flex-col gap-2'>
-          <label className='font-semibold text-sm ml-5'>
-            Gender <span className='text-red-500'>*</span>
-          </label>
-          <div className='flex gap-3'>
-            {genderOptions.map((option) => (
-              <button
-                key={option.value}
-                type='button'
-                onClick={() => setValue("gender", option.value)}
-                className={cn(
-                  "flex-1 px-4 py-4 rounded-2xl bg-white border-2 border-transparent transition-all duration-200 text-sm font-medium",
-                  selectedGender === option.value
-                    ? "border-primary bg-primary/5"
-                    : "hover:border-gray-300",
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-          {errors.gender && (
-            <p className='text-red-500 text-xs ml-5'>{errors.gender.message}</p>
-          )}
+          <HeadingHeebo>Driver Information</HeadingHeebo>
+          <p className='text-center text-sm text-gray-600'>
+            Please provide your basic information
+          </p>
         </div>
 
-        <AddInput
-          label='First Emergency Contact'
-          id='firstEmergencyContact'
-          errors={errors}
-          placeholder='+234 000 000 0000'
-          register={register}
-          disabled={isSubmitting || isLoading}
-          required
-          type='tel'
-          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
-        />
+        <div className='flex flex-col gap-5'>
+          <div className='flex flex-col md:flex-row gap-4'>
+            <AddInput
+              label='First Name'
+              id='firstName'
+              errors={errors}
+              placeholder='Enter first name'
+              register={register}
+              disabled={isSubmitting || isLoading}
+              required
+              type='text'
+              iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+              inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
 
-        <AddInput
-          label='Second Emergency Contact'
-          id='secondEmergencyContact'
-          errors={errors}
-          placeholder='+234 000 000 0000'
-          register={register}
-          disabled={isSubmitting || isLoading}
-          required
-          type='tel'
-          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
-        />
+            <AddInput
+              label='Last Name'
+              id='lastName'
+              errors={errors}
+              placeholder='Enter last name'
+              register={register}
+              disabled={isSubmitting || isLoading}
+              required
+              type='text'
+              iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+              inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+            />
+          </div>
 
-        <AuthBackAndContinueButton
-          backActive={!isSubmitting && !isLoading}
-          continueActive={!isSubmitting && !isLoading}
-          continueFnc={handleSubmit(onSubmit)}
-          continueIsLoading={isSubmitting || isLoading}
-        />
+          <AddInput
+            label='Date of Birth'
+            id='dateOfBirth'
+            errors={errors}
+            placeholder='Select date'
+            register={register}
+            disabled={isSubmitting || isLoading}
+            required
+            type='date'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+
+          <div className='flex flex-col gap-2'>
+            <label className='font-semibold text-sm ml-5'>
+              Gender <span className='text-red-500'>*</span>
+            </label>
+            <div className='flex gap-3'>
+              {genderOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type='button'
+                  onClick={() => setValue("gender", option.value)}
+                  className={cn(
+                    "flex-1 px-4 py-4 rounded-2xl bg-white border-2 border-transparent transition-all duration-200 text-sm font-medium",
+                    selectedGender === option.value
+                      ? "border-primary bg-primary/5"
+                      : "hover:border-gray-300",
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {errors.gender && (
+              <p className='text-red-500 text-xs ml-5'>
+                {errors.gender.message}
+              </p>
+            )}
+          </div>
+
+          <AddInput
+            label='First Emergency Contact'
+            id='firstEmergencyContact'
+            errors={errors}
+            placeholder='+234 000 000 0000'
+            register={register}
+            disabled={isSubmitting || isLoading}
+            required
+            type='tel'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+
+          <AddInput
+            label='Second Emergency Contact'
+            id='secondEmergencyContact'
+            errors={errors}
+            placeholder='+234 000 000 0000'
+            register={register}
+            disabled={isSubmitting || isLoading}
+            required
+            type='tel'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+
+          <AuthBackAndContinueButton
+            backActive={!isSubmitting && !isLoading}
+            continueActive={!isSubmitting && !isLoading}
+            continueFnc={handleSubmit(onSubmit)}
+            continueIsLoading={isSubmitting || isLoading}
+          />
+        </div>
       </div>
     </div>
   );

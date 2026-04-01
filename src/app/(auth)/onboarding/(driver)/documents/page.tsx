@@ -85,114 +85,118 @@ const Page = () => {
   };
 
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
-      <div className='flex flex-col gap-5'>
-        <div className='flex flex-col'>
-          <div className='flex flex-col gap-1 justify-center items-center w-fit'>
-            <DriverInformationIcon />
-            <p className='font-semibold text-lg'>Driver Information</p>
+    <div className='flex justify-center items-center h-full px-4 md:px-0'>
+      <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
+        <div className='flex flex-col gap-5'>
+          <div className='flex flex-col'>
+            <div className='flex flex-col gap-1 justify-center items-center w-fit'>
+              <DriverInformationIcon />
+              <p className='font-semibold text-lg'>Driver Information</p>
+            </div>
+
+            <div className='flex flex-col gap-2'>
+              <UploadingImagesReusableComponent
+                key={0}
+                index={0}
+                previews={previews}
+                setPreviews={setPreviews}
+                className='justify-center items-center rounded-[10px] bg-[#FAFAFA] text-placeholder self-end w-[157px] h-[98px]'
+                imageToastDescription='Profile image'
+              >
+                <div className='flex flex-col gap-2 justify-center items-center'>
+                  <AddPhotoIcon />
+                  <p className='text-sm font-medium'>Profile photo</p>
+                </div>
+              </UploadingImagesReusableComponent>
+            </div>
+          </div>
+
+          <AddInput
+            label='Social Security Number'
+            id='socialSecurityNumber'
+            errors={errors}
+            placeholder='AAA-GG-SSSS'
+            register={register}
+            disabled={false}
+            required
+            type='text'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+
+          <div className='flex flex-col gap-1'>
+            <label className='font-semibold text-sm ml-5'>
+              Drivers License
+            </label>
+            <div className='flex gap-5'>
+              <div className='flex flex-col gap-2 flex-1'>
+                <UploadingImagesReusableComponent
+                  key={1}
+                  index={1}
+                  previews={previews}
+                  setPreviews={setPreviews}
+                  className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-20'
+                  imageToastDescription='Front of the driver license'
+                >
+                  <div className='flex gap-2 justify-center items-center'>
+                    <UploadImageIcon />
+                    <p className='text-sm font-medium'>Front</p>
+                  </div>
+                </UploadingImagesReusableComponent>
+              </div>
+
+              <div className='flex flex-col gap-2 flex-1'>
+                <UploadingImagesReusableComponent
+                  key={2}
+                  index={2}
+                  previews={previews}
+                  setPreviews={setPreviews}
+                  className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-20'
+                  imageToastDescription='Back of the driver license'
+                >
+                  <div className='flex gap-2 justify-center items-center'>
+                    <UploadImageIcon />
+                    <p className='text-sm font-medium'>Back</p>
+                  </div>
+                </UploadingImagesReusableComponent>
+              </div>
+            </div>
           </div>
 
           <div className='flex flex-col gap-2'>
+            <div className='flex flex-col'>
+              <label className='font-semibold text-sm ml-5'>
+                Advanced Verification
+              </label>
+              <p className='font-medium text-sm ml-5 text-gray-3'>
+                Please upload a picture of you holding <br />
+                your drivers license
+              </p>
+            </div>
+
             <UploadingImagesReusableComponent
-              key={0}
-              index={0}
+              key={3}
+              index={3}
               previews={previews}
               setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-[#FAFAFA] text-placeholder self-end w-[157px] h-[98px]'
-              imageToastDescription='Profile image'
+              className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-20'
+              imageToastDescription='Advanced verification photo'
             >
               <div className='flex flex-col gap-2 justify-center items-center'>
                 <AddPhotoIcon />
-                <p className='text-sm font-medium'>Profile photo</p>
+                <p className='text-sm font-medium'>Upload Photo</p>
               </div>
             </UploadingImagesReusableComponent>
           </div>
         </div>
 
-        <AddInput
-          label='Social Security Number'
-          id='socialSecurityNumber'
-          errors={errors}
-          placeholder='AAA-GG-SSSS'
-          register={register}
-          disabled={false}
-          required
-          type='text'
-          iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-          inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+        <AuthBackAndContinueButton
+          backActive={!isLoading}
+          continueActive={!isLoading}
+          continueFnc={handleSubmit(onSubmit)}
+          continueIsLoading={isLoading}
         />
-
-        <div className='flex flex-col gap-1'>
-          <label className='font-semibold text-sm ml-5'>Drivers License</label>
-          <div className='flex gap-5'>
-            <div className='flex flex-col gap-2 flex-1'>
-              <UploadingImagesReusableComponent
-                key={1}
-                index={1}
-                previews={previews}
-                setPreviews={setPreviews}
-                className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-[80px]'
-                imageToastDescription='Front of the driver license'
-              >
-                <div className='flex gap-2 justify-center items-center'>
-                  <UploadImageIcon />
-                  <p className='text-sm font-medium'>Front</p>
-                </div>
-              </UploadingImagesReusableComponent>
-            </div>
-
-            <div className='flex flex-col gap-2 flex-1'>
-              <UploadingImagesReusableComponent
-                key={2}
-                index={2}
-                previews={previews}
-                setPreviews={setPreviews}
-                className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-[80px]'
-                imageToastDescription='Back of the driver license'
-              >
-                <div className='flex gap-2 justify-center items-center'>
-                  <UploadImageIcon />
-                  <p className='text-sm font-medium'>Back</p>
-                </div>
-              </UploadingImagesReusableComponent>
-            </div>
-          </div>
-        </div>
-
-        <div className='flex flex-col gap-2'>
-          <div className='flex flex-col'>
-            <label className='font-semibold text-sm ml-5'>
-              Advanced Verification
-            </label>
-            <p className='font-medium text-sm ml-5 text-[#858585]'>
-              Please upload a picture of you holding <br />
-              your drivers license
-            </p>
-          </div>
-
-          <UploadingImagesReusableComponent
-            key={3}
-            index={3}
-            previews={previews}
-            setPreviews={setPreviews}
-            className='justify-center items-center rounded-[10px] bg-white text-placeholder w-full h-[80px]'
-            imageToastDescription='Advanced verification photo'
-          >
-            <div className='flex flex-col gap-2 justify-center items-center'>
-              <AddPhotoIcon />
-              <p className='text-sm font-medium'>Upload Photo</p>
-            </div>
-          </UploadingImagesReusableComponent>
-        </div>
       </div>
-
-      <AuthBackAndContinueButton
-        backActive={!isLoading}
-        continueActive={!isLoading}
-        continueFnc={handleSubmit(onSubmit)}
-        continueIsLoading={isLoading}
-      />
     </div>
   );
 };
