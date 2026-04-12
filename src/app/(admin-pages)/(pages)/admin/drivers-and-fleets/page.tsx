@@ -159,6 +159,7 @@ const Page = () => {
                           type='suspend'
                         />
                         <DriverInformationModal
+                          phoneNumber={driver?.mobileNumber ?? ""}
                           trigger={
                             <Button
                               onClick={() =>

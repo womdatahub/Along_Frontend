@@ -69,7 +69,7 @@ export default function AdminDashboardLayout({
             </p>
           </div>
           <div className='flex items-center gap-5'>
-            <AdminNotificationIcon />
+            {/* <AdminNotificationIcon /> */}
             <Popover>
               <PopoverTrigger asChild>
                 <div className='flex items-center gap-2 cursor-pointer'>
@@ -82,7 +82,7 @@ export default function AdminDashboardLayout({
                   </p>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className='w-[200px] p-0'>
+              <PopoverContent className='w-50 p-0'>
                 <div className='shadow-md rounded-md'>
                   <div className='flex flex-col p-4 gap-3'>
                     <p className='hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer'>

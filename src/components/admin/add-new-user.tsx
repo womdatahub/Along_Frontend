@@ -476,7 +476,7 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
                   setNewAdminDetails(values);
                   setStep(2);
                 }}
-                onCancel={close}
+                onCancel={() => setOpen(false)}
               />
             )}
             {/* {step === 2 && (
