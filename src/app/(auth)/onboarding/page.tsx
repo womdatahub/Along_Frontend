@@ -52,7 +52,7 @@ const Page = () => {
     <div className='flex justify-center items-center h-full px-4 md:px-0'>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col gap-6 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black text-4xl'
+        className='flex flex-col gap-6 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black text-4xl'
       >
         <HeadingHeebo>Let’s get you onboard</HeadingHeebo>
         <AddInput
@@ -184,14 +184,14 @@ const Page = () => {
               isTermsModalOpen={isTermsModalOpen}
               setIsTermsModalOpen={setIsTermsModalOpen}
               trigger={
-                <p className='font-fustat text-xs text-center text-primary'>
+                <p className='font-fustat text-sm md:text-base text-center text-primary'>
                   Terms and Conditions apply modal
                 </p>
               }
             />
           </div>
 
-          <p className='text-gray text-xs font-light text-center'>
+          <p className='text-gray text-sm font-light text-center'>
             By continuing, you agree that Along and its affiliates may contact
             you at the number you provide via calls, WhatsApp, or SMS/RCS
             messages, which may sometimes be sent automatically.
