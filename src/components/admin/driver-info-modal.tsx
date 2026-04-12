@@ -12,8 +12,9 @@ import { useShallow } from "zustand/shallow";
 
 type Props = {
   trigger: React.ReactNode;
+  phoneNumber?: string;
 };
-const DriverInformationModal = ({ trigger }: Props) => {
+const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
   const { isLoading, driver } = useAdmin(
     useShallow((state) => ({
       isLoading: state.isLoading,
@@ -91,7 +92,7 @@ const DriverInformationModal = ({ trigger }: Props) => {
 
               <span className='flex items-center gap-2 text-sm font-semibold'>
                 <Phone size={15} className='fill-primary text-primary' />{" "}
-                {driver?.mobileNumber}
+                {driver?.mobileNumber ?? phoneNumber}
               </span>
               <div className='flex gap-2 items-center'>
                 <span className='flex gap-2 text-xs text-gray-500'>
