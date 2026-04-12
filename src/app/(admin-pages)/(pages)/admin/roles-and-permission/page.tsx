@@ -125,10 +125,10 @@ const Page = () => {
             <Table>
               <TableHeader>
                 <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-                  <TableHead className='text-[#768B8F]'>User</TableHead>
-                  <TableHead className='text-[#768B8F]'>Role</TableHead>
-                  <TableHead className='text-[#768B8F]'>Active</TableHead>
-                  <TableHead className='text-[#768B8F]'>Action</TableHead>
+                  <TableHead className='text-icons'>User</TableHead>
+                  <TableHead className='text-icons'>Role</TableHead>
+                  <TableHead className='text-icons'>Active</TableHead>
+                  <TableHead className='text-icons'>Action</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -258,7 +258,7 @@ const Page = () => {
                               role.toUpperCase().split(" ").join("_"),
                             )
                           }
-                          className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
+                          className='bg-primary hover:bg-primary/90 rounded-full'
                         >
                           Edit permission
                         </Button>
@@ -286,7 +286,7 @@ const Page = () => {
                               role.toUpperCase().split(" ").join("_"),
                             )
                           }
-                          className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
+                          className='bg-primary hover:bg-primary/90 rounded-full'
                         >
                           View all
                         </Button>

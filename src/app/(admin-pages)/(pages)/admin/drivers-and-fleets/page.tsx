@@ -135,7 +135,7 @@ const Page = () => {
                       <div className='flex items-center gap-3'>
                         <ConfirmActionModal
                           trigger={
-                            <Button className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'>
+                            <Button className='rounded-full bg-primary hover:bg-primary'>
                               Suspend
                             </Button>
                           }
@@ -165,7 +165,7 @@ const Page = () => {
                               onClick={() =>
                                 getSingleDriverDetails(driver.driver.userId)
                               }
-                              className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'
+                              className='rounded-full bg-primary hover:bg-primary'
                             >
                               View profile
                             </Button>
@@ -265,7 +265,7 @@ const Page = () => {
                       trigger={
                         <Button
                           variant='default'
-                          className='bg-[#B3BFBF] hover:bg-[#B3BFBF]/90 rounded-full'
+                          className='bg-primary hover:bg-primary/90 rounded-full'
                         >
                           Reactivate
                         </Button>
@@ -286,7 +286,7 @@ const Page = () => {
                       trigger={
                         <Button
                           onClick={() => getSingleDriverDetails(driver._id)}
-                          className='rounded-full bg-[#B3BFBF] hover:bg-[#B3BFBF]'
+                          className='rounded-full bg-primary hover:bg-primary'
                         >
                           View profile
                         </Button>
