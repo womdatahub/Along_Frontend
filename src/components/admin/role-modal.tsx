@@ -114,8 +114,10 @@ export const RolesModal = ({
       initial[ep.id] = false;
     });
 
-    setCheckedPermissions(initial);
-    setOpenCategories({});
+   queueMicrotask(() => {
+     setCheckedPermissions(initial);
+     setOpenCategories({});
+   });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPermissions]);
@@ -188,41 +190,41 @@ export const RolesModal = ({
 
       {isFetching ? (
         <DialogContent
-          dialogTitle='Loading'
-          className='max-w-sm md:max-w-[840px] min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'
+          dialogTitle="Loading"
+          className="max-w-sm md:max-w-210 min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center"
         >
           <LoadingSpinner />
         </DialogContent>
       ) : (
         <DialogContent
           dialogTitle={`${title} - ${role} - ${description}`}
-          className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'
+          className="max-w-sm md:max-w-210 max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden"
         >
-          <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
-            <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
+          <div className="flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden">
+            <h2 className="text-[22px] font-bold text-gray-900 leading-tight mb-1">
               {title}
             </h2>
-            <p className='text-[13px] text-gray-500 mb-6'>{description}</p>
+            <p className="text-[13px] text-gray-500 mb-6">{description}</p>
 
-            <div className='mb-1'>
-              <p className='text-xl font-bold'>Role: {role}</p>
+            <div className="mb-1">
+              <p className="text-xl font-bold">Role: {role}</p>
             </div>
 
-            <Separator className='my-5' />
+            <Separator className="my-5" />
 
-            <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
-              <p className='text-base md:text-lg font-semibold text-gray-800 mb-3'>
+            <div className="flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3">
+              <p className="text-base md:text-lg font-semibold text-gray-800 mb-3">
                 Role permissions
               </p>
               {renderGroup(selectedGrouped, "role")}
 
-              <p className='text-base md:text-lg font-semibold text-gray-800 mt-6 mb-3'>
+              <p className="text-base md:text-lg font-semibold text-gray-800 mt-6 mb-3">
                 Additional permissions
               </p>
               {renderGroup(additionalGrouped, "additional")}
 
               {Object.keys(additionalGrouped).length === 0 && (
-                <p className='text-[13px] text-gray-400 py-4'>
+                <p className="text-[13px] text-gray-400 py-4">
                   No additional permissions available for this role.
                 </p>
               )}
@@ -230,12 +232,12 @@ export const RolesModal = ({
           </div>
 
           <Separator />
-          <div className='flex items-center justify-between px-8 py-4'>
+          <div className="flex items-center justify-between px-8 py-4">
             <ButtonWithLoader
-              text='Save'
+              text="Save"
               shouldChildrenShowWhenSpinning
               isLoading={isLoading}
-              className='rounded-full'
+              className="rounded-full"
               onClick={() =>
                 onNext(CHECKED_IDS, UNCHECKED_IDS).finally(() =>
                   setIsModalOpen(false),
@@ -328,7 +330,9 @@ export const RolesModalDisplay = ({
       initial[ep.id] = false;
     });
 
-    setOpenCategories({});
+   queueMicrotask(() => {
+     setOpenCategories({});
+   });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPermissions]);
@@ -389,30 +393,30 @@ export const RolesModalDisplay = ({
 
       {isFetching ? (
         <DialogContent
-          dialogTitle='Loading'
-          className='max-w-sm md:max-w-[840px] min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'
+          dialogTitle="Loading"
+          className="max-w-sm md:max-w-210 min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center"
         >
           <LoadingSpinner />
         </DialogContent>
       ) : (
         <DialogContent
           dialogTitle={`${title} - ${role} - ${description}`}
-          className='max-w-sm md:max-w-[840px] max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden'
+          className="max-w-sm md:max-w-210 max-h-[80vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden"
         >
-          <div className='flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden'>
-            <h2 className='text-[22px] font-bold text-gray-900 leading-tight mb-1'>
+          <div className="flex-1 px-8 pt-8 pb-6 flex flex-col overflow-hidden">
+            <h2 className="text-[22px] font-bold text-gray-900 leading-tight mb-1">
               {title}
             </h2>
-            <p className='text-[13px] text-gray-500 mb-6'>{description}</p>
+            <p className="text-[13px] text-gray-500 mb-6">{description}</p>
 
-            <div className='mb-1'>
-              <p className='text-xl font-bold'>Role: {role}</p>
+            <div className="mb-1">
+              <p className="text-xl font-bold">Role: {role}</p>
             </div>
 
-            <Separator className='my-5' />
+            <Separator className="my-5" />
 
-            <div className='flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3'>
-              <p className='text-base md:text-lg font-semibold text-gray-800 mb-3'>
+            <div className="flex-1 overflow-y-auto border-r border-gray-200 pr-3 -mr-3">
+              <p className="text-base md:text-lg font-semibold text-gray-800 mb-3">
                 Granted permissions
               </p>
               {renderGroup(selectedGrouped, "role")}

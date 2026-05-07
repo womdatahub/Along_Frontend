@@ -21,7 +21,6 @@ import {
   EditIcon,
   PickupAddressIcon,
 } from "@public/svgs";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -258,7 +257,7 @@ const ScheduleRidePage = () => {
                     className='sm:max-w-[425px] px-4 py-8 rounded-[20px] bg-background-1'
                     showCloseButton={false}
                   >
-                   
+
                     <div className='flex flex-col gap-6'>
                       <div className='flex flex-col pl-7'>
                         <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
@@ -336,7 +335,7 @@ const ScheduleRidePage = () => {
                       showCloseButton={false}
                       dialogTitle='Choose a pick up time'
                     >
-                      
+
                       <RentRideDialogComponent
                         title='Pick up time'
                         subTitle='Choose the time you’d like to be picked up'

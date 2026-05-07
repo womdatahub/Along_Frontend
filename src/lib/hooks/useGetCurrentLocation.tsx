@@ -67,12 +67,17 @@ export const useGetCurrentLocation = (): GeolocationState => {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setLocation((prev) => ({
-        ...prev,
-        error: "Geolocation is not supported by your browser",
-        loading: false,
-      }));
-      return;
+      const updateUnsupported = () => {
+        setLocation((prev) => ({
+          ...prev,
+          error: "Geolocation is not supported by your browser",
+          loading: false,
+        }));
+      };
+
+      if (!navigator.geolocation) {
+        queueMicrotask(updateUnsupported);
+      }
     }
 
     const successHandler = (position: GeolocationPosition) => {

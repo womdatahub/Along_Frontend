@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const tealCheckbox =
   "h-[15px] w-[15px] rounded-sm border-gray-300 data-[state=checked]:bg-[#0f766e] data-[state=checked]:border-[#0f766e]";

@@ -23,14 +23,22 @@ const Page = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   // Preload the hero image so the section never disappears while waiting
-  useEffect(() => {
-    const img = new Image();
-    img.src = HERO_IMAGE;
-    img.onload = () => setIsImageLoaded(true);
+useEffect(() => {
+  const img = new Image();
+  img.src = HERO_IMAGE;
 
-    // If image is already cached, onload fires synchronously
-    if (img.complete) setIsImageLoaded(true);
-  }, []);
+  const handleLoad = () => {
+    queueMicrotask(() => {
+      setIsImageLoaded(true);
+    });
+  };
+
+  img.onload = handleLoad;
+
+  if (img.complete) {
+    handleLoad();
+  }
+}, []);
 
   const {
     autoCompleteAddress,
