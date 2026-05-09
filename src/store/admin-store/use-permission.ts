@@ -77,7 +77,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({
             isLoading: false,
             allAdminPermissions: data.data.rolePermissions,
@@ -99,7 +98,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({
             isFetching: false,
             singleAdminPermission: data.data.endpoints,
@@ -119,7 +117,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({
             isFetching: false,
             singleRolePermission: data.data.endpoints,
@@ -138,7 +135,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false, allRolePermissions: data.data });
           // toast.success(
           //   data.message ?? "All role permissions fetched successfully",
@@ -155,7 +151,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false, allEndpoints: data.data });
           // toast.success(data.message ?? "All endpoints fetched successfully");
         }
@@ -172,7 +167,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false, allEndpointsPermissions: data.data });
           // toast.success(
           //   data.message ?? "All endpoint permissions fetched successfully",
@@ -189,7 +183,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false });
           toast.success(data.message ?? "Role granted");
         }
@@ -205,7 +198,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false });
           toast.success(data.message ?? "Role revoked");
         }
@@ -220,7 +212,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false });
           // toast.success(data.message ?? "Role granted");
         }
@@ -236,7 +227,6 @@ export const usePermission = create<PermissionType>()(
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false });
           toast.success(data.message ?? "Role revoked");
         }

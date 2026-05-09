@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/store";
+import { toast } from "sonner";
 
 const Page = () => {
   const router = useRouter();
@@ -26,10 +27,12 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TSignInValidator) => {
-    // console.log(values, errors);
     await login(values).then((val) => {
       if (!val) return;
-      // console.log("val from login", val);
+      if (val !== "admin") {
+        toast.error("This account does not have admin access.");
+        return;
+      }
       router.push("/admin");
     });
   };

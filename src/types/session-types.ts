@@ -110,6 +110,10 @@ export interface RiderProfile {
   createdAt: string;
   updatedAt: string;
   dateOfBirth: string;
+  licenseStatus?: "pending" | "approved" | "rejected" | string;
+  riderLicenseFrontViewUri?: string;
+  riderLicenseBackViewUri?: string;
+  riderLicenseSelfieUri?: string;
   __v: number;
 }
 

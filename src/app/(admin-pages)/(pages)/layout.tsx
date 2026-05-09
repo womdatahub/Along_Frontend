@@ -5,10 +5,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import {
-  AdminNotificationIcon,
-  //  AdminSearchIcon
-} from "@public/svgs";
 // import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

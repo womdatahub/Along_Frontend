@@ -1,12 +1,14 @@
 export type RentAndCreateIntentType = {
   vehicleId: string;
+  bookingType: "SELF_DRIVE" | "WITH_DRIVER";
   pickUpLat: number;
   pickUpLong: number;
   pickUpAddress: string;
-  // "pickUpTime": "{{current_date}}", // When to pick rider, applies only to scheduled rentals: Optional
+  pickUpTime?: string;
+  requestedEndAt?: string;
   duration: number; // Duration in hours, 30mins is 0.5.
   luggage?: number; // Size of luggage in kg: Optional (must be number)
-  pets?: string[]; // List of pets a rider plans to ride with: Optional
+  pets?: string; // Optional pet note
   recurring?: boolean; // Optional
   flexibility: boolean;
   days: string[];
@@ -27,6 +29,8 @@ export type VehicleLocation = {
   __v: number;
   vehicleInfo: VehicleInfo;
   driverInfo: DriverInfo;
+  supportsSelfDrive?: boolean;
+  supportsWithDriver?: boolean;
 };
 
 export type VehicleInfo = {
@@ -100,6 +104,10 @@ export type PaymentIntentResponse = {
   createdAt: string;
   updatedAt: string;
   id: string;
+  _id?: string;
+  paymentIntentId?: string;
+  reservedUntil?: string;
+  bookingType?: "SELF_DRIVE" | "WITH_DRIVER";
   vehicle: VehicleLocation;
   driver: DriverInfo;
   cost: IntentCost;
@@ -122,4 +130,41 @@ type PaymentIntent = IntentCost & {
   paymentMethodTypes: "card" | "link" | "cashapp"[];
   id: string;
   publishableKey: string;
+};
+
+export type RentalRecord = Partial<PaymentIntentResponse> & {
+  _id?: string;
+  id?: string;
+  status?: string;
+  bookingType?: "SELF_DRIVE" | "WITH_DRIVER";
+  rentalType?: "instant" | "scheduled";
+  vehicleId?: string;
+  driverId?: string;
+  riderId?: string;
+  pickUpAddress?: string;
+  pickUpTime?: string;
+  requestedEndAt?: string;
+  duration?: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type RentalPaymentStatus = {
+  rentalId?: string;
+  paymentId?: string;
+  status?: string;
+  amount?: number;
+  currency?: string;
+  paymentIntentId?: string;
+  receiptUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type RentalCostEstimate = {
+  baseCost: number;
+  pickUpCharge?: number;
+  tax: number;
+  total: number | string;
+  currency?: string;
 };

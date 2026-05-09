@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fustat, Heebo } from "next/font/google";
-import {
-  // CheckWindowSize,
-  // CheckWindowSize,
-  Toaster,
-} from "@/components";
-// import { AuthProvider } from "@/store";
+import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
-import { AuthProvider } from "@/store";
+import { AuthProvider } from "@/store/auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
