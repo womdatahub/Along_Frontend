@@ -47,14 +47,14 @@ const OTPVerification = () => {
     });
   };
   return (
-    <div className='flex flex-col gap-2 justify-center items-center h-full  px-4 md:px-0'>
-      <div className='flex flex-col gap-10 md:gap-14 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
+    <div className="flex flex-col gap-2 justify-center items-center h-full  px-4 md:px-0">
+      <div className="flex flex-col gap-10 md:gap-14 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black">
         <HeadingHeebo>Let’s get you verified.</HeadingHeebo>
-        <div className='flex flex-col gap-4'>
-          <p className='text-center text-sm'>
+        <div className="flex flex-col gap-4">
+          <p className="text-center text-sm">
             Enter the 4-digit verification code sent to you.
           </p>
-          <div className='w-full flex justify-center'>
+          <div className="w-full flex justify-center">
             <InputOTP
               maxLength={4}
               value={otpValue}
@@ -63,26 +63,26 @@ const OTPVerification = () => {
               autoFocus
               onComplete={continueFnc}
             >
-              <InputOTPGroup className='gap-7'>
+              <InputOTPGroup className="gap-7">
                 {[0, 1, 2, 3].map((v) => {
                   return (
                     <InputOTPSlot
                       key={v}
                       index={v}
-                      className='bg-white size-15 aspect-square rounded-lg data-[active=true]:border-primary text-center text-2xl shadow-none'
+                      className="bg-white size-15 aspect-square rounded-lg data-[active=true]:border-primary text-center text-2xl shadow-none"
                     />
                   );
                 })}
               </InputOTPGroup>
             </InputOTP>
           </div>
-          <div className='flex flex-col gap-7'>
-            <div className='flex gap-1 justify-center items-center text-center'>
-              <p className='text-sm'>Didn’t get the code?</p>
+          <div className="flex flex-col gap-7">
+            <div className="flex gap-1 justify-center items-center text-center">
+              <p className="text-sm">Didn’t get the code?</p>
               <Button
                 variant={"link"}
                 disabled={isResendingVerificationOTP}
-                className='text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline disabled:cursor-progress disabled:text-gray'
+                className="text-icons text-base font-semibold hover:cursor-pointer w-fit h-fit p-0 hover:no-underline disabled:cursor-progress disabled:text-gray"
                 onClick={() => {
                   if (!email) return;
                   resendVerificationOTP({ email: email });
@@ -93,17 +93,17 @@ const OTPVerification = () => {
               </Button>
             </div>
             {isLoading && (
-              <div className='flex w-full justify-center items-center'>
+              <div className="flex w-full justify-center items-center">
                 <ButtonWithLoader
                   isLoading={isLoading}
-                  text='Verifying OTP...'
+                  text="Verifying OTP..."
                 />
               </div>
             )}
           </div>
         </div>
       </div>
-      <p className='text-base text-gray'>
+      <p className="text-base text-gray">
         If you don’t see the code, check your spam folder too.
       </p>
     </div>

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
 import { ApiResponse } from "@/types";
 
@@ -12,13 +12,24 @@ if (!BASEURL) {
   throw new Error("add BASEURL to your env file");
 }
 
-interface ApiError {
+export interface ApiError {
   message: string;
   status: string | number;
   error?: unknown;
   headers?: Record<string, unknown>;
   accountLink?: string;
+  errors?: Array<{ path?: string; message: string }>;
 }
+
+type HttpMethod = "GET" | "POST" | "DELETE" | "PATCH";
+
+type CallApiOptions = {
+  method?: HttpMethod;
+  idempotencyKey?: string;
+  headers?: Record<string, string>;
+  skipToast?: boolean;
+  retries?: number;
+};
 
 export const isObject = (value: unknown): value is Record<string, unknown> => {
   const isArray = Array.isArray(value);
@@ -31,88 +42,188 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASEURL,
   withCredentials: true,
-  // timeout: 10000,
+  timeout: 30000,
 });
+
+const authTokenStorageKey = "alongAccessToken";
+
+export const clearStoredAuthToken = () => {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(authTokenStorageKey);
+};
+
+const resolveMethod = (
+  data?: Record<string, unknown> | FormData,
+  legacyMethod?: HttpMethod,
+  options?: CallApiOptions,
+): HttpMethod => options?.method ?? legacyMethod ?? (data ? "POST" : "GET");
+
+const normalizeApiError = (
+  status: number | string,
+  responseData: unknown,
+): ApiError => {
+  if (responseData && typeof responseData === "object") {
+    const body = responseData as Record<string, unknown>;
+    const message =
+      typeof body.message === "string"
+        ? body.message
+        : typeof body.error === "string"
+          ? body.error
+          : "Request failed";
+    return {
+      ...(body as Partial<ApiError>),
+      message,
+      status: (body.status as string | number | undefined) ?? status,
+    };
+  }
+  return {
+    message: typeof responseData === "string" ? responseData : "Request failed",
+    status,
+  };
+};
+
+const normalizeApiResponse = <T>(responseData: unknown): ApiResponse<T> => {
+  if (!responseData || typeof responseData !== "object") {
+    return {
+      message: "Request completed",
+      data: responseData as T,
+      status: "Success",
+    };
+  }
+
+  const body = responseData as Record<string, unknown>;
+  if ("data" in body) return body as ApiResponse<T>;
+
+  const dataKey = [
+    "rental",
+    "payment",
+    "rentals",
+    "vehicles",
+    "vehicle",
+    "drivers",
+    "riders",
+    "admins",
+    "alerts",
+    "conversation",
+    "call",
+  ].find((key) => key in body);
+
+  return {
+    ...(body as Partial<ApiResponse<T>>),
+    status:
+      typeof body.status === "string"
+        ? body.status
+        : body.success === false
+          ? "Failed"
+          : "Success",
+    message:
+      typeof body.message === "string" ? body.message : "Request completed",
+    data: (dataKey ? body[dataKey] : body) as T,
+  };
+};
+
+const frontendOrigin =
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  process.env.NEXT_PUBLIC_BASE_FRONTEND_URL ??
+  "http://localhost:3001";
 
 export const callApi = async <T>(
   endpoint: string,
   data?: Record<string, unknown> | FormData,
-  extraMethods?: "PUT" | "DELETE" | "PATCH",
+  extraMethods?: HttpMethod,
+  options?: CallApiOptions,
 ): Promise<{ data?: ApiResponse<T>; error?: ApiError }> => {
-  const cancelTokenSource = axios.CancelToken.source();
+  const method = resolveMethod(data, extraMethods, options);
+  const isFormData = data instanceof FormData;
+  const maxAttempts = (options?.retries ?? 0) + 1;
 
-  try {
-    const response: AxiosResponse<ApiResponse<T>> = await apiClient.request<
-      ApiResponse<T>
-    >({
-      method:
-        extraMethods && data
-          ? extraMethods
-          : data && !extraMethods
-            ? "POST"
-            : "GET",
-      url: endpoint,
-      ...(data && { data }),
-      headers: {
-        platform: process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "",
-        "x-referrer":
-          process.env.NEXT_PUBLIC_FRONTEND_URL ?? "http://localhost:3000",
-        ...(isObject(data)
-          ? {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              // Authorization: "Bearer " + cookie,
-            }
-          : {
-              "Content-Type": "multipart/form-data",
-            }),
-      },
-      cancelToken: cancelTokenSource.token,
-    });
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const cancelTokenSource = axios.CancelToken.source();
+    try {
+      const requestConfig: AxiosRequestConfig = {
+        method,
+        url: endpoint,
+        ...(data !== undefined && method !== "GET" ? { data } : {}),
+        headers: {
+          platform: process.env.NEXT_PUBLIC_FRONTEND_PLATFORM ?? "web-platform",
+          "x-referrer": frontendOrigin,
+          Accept: "application/json",
+          ...(isFormData
+            ? { "Content-Type": "multipart/form-data" }
+            : { "Content-Type": "application/json" }),
+          ...(options?.idempotencyKey
+            ? { "Idempotency-Key": options.idempotencyKey }
+            : {}),
+          ...options?.headers,
+        },
+        cancelToken: cancelTokenSource.token,
+      };
 
-    return { data: response.data };
-  } catch (error) {
-    let apiError: ApiError | undefined;
-    if (axios.isCancel(error)) {
-      console.error("Previous request was canceled");
-    }
-    if (axios.isAxiosError(error) && error.response) {
-      const { status, data } = error.response;
-      apiError = data;
-      switch (status) {
-        case 403: {
-          if (data.message === "Admin account is suspended") {
-            toast.error(
-              "Your account has been suspended and logged out. \n Please contact support.",
-            );
-            useSession.getState().actions.logOut();
-          }
-          break;
-        }
-        case 401:
-          {
-            // useInitSession.getState().actions.clearSession();
-          }
-          break;
-        case 429:
-          toast.error(error.message);
-          console.error("Bad request");
-          break;
-        case 500:
-          toast.error(error.message);
-          console.error(`Internal server error`);
-          break;
-        case 422:
-          toast.error(error.message);
-          break;
-        default:
-          console.error(`Unknown API error: ${status}`);
-      }
-    } else {
-      if (error instanceof Error) {
-        apiError = { message: error.message, status: "Error" };
+      const response: AxiosResponse<ApiResponse<T>> =
+        await apiClient.request<ApiResponse<T>>(requestConfig);
+
+      return { data: normalizeApiResponse<T>(response.data) };
+    } catch (error) {
+      const apiError = handleApiError(error, {
+        ...options,
+        skipToast: options?.skipToast || attempt < maxAttempts,
+      });
+      if (attempt === maxAttempts) {
+        return {
+          error: apiError ?? { message: "Request failed", status: "Error" },
+        };
       }
     }
-    return { error: apiError };
   }
+
+  return { error: { message: "Request failed", status: "Error" } };
+};
+
+const handleApiError = (error: unknown, options?: CallApiOptions): ApiError => {
+  if (axios.isCancel(error)) {
+    return { message: "Request canceled", status: "Canceled" };
+  }
+
+  if (axios.isAxiosError(error) && error.response) {
+    const { status, data } = error.response;
+    const apiError = normalizeApiError(status, data);
+
+    switch (status) {
+      case 403: {
+        if (apiError.message === "Admin account is suspended") {
+          toast.error(
+            "Your account has been suspended and logged out. \n Please contact support.",
+          );
+          useSession.getState().actions.logOut();
+        } else if (!options?.skipToast) {
+          toast.error(apiError.message);
+        }
+        break;
+      }
+      case 401:
+        clearStoredAuthToken();
+        if (!options?.skipToast) toast.error(apiError.message);
+        break;
+      default:
+        if (!options?.skipToast) toast.error(apiError.message);
+        break;
+    }
+
+    return apiError;
+  }
+
+  if (axios.isAxiosError(error) && error.request) {
+    const apiError = {
+      message:
+        "Unable to reach the backend gateway. Check that the gateway is running and CORS allows this frontend origin.",
+      status: "Network Error",
+    };
+    if (!options?.skipToast) toast.error(apiError.message);
+    return apiError;
+  }
+
+  const message = error instanceof Error ? error.message : "Request failed";
+  const apiError = { message, status: "Error" };
+  if (!options?.skipToast) toast.error(message);
+  return apiError;
 };

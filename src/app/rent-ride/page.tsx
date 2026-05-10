@@ -16,7 +16,7 @@ import {
 import { StripeCheckOutComponent } from "@/components/shared/StripeChechoutComponent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
-import { useRadarMap, useRental } from "@/store";
+import { useRadarMap, useRental, useSession } from "@/store";
 import { VehicleLocation } from "@/types";
 import {
   AccuracyIcon,
@@ -55,6 +55,9 @@ const RentRide = () => {
   const [proceedToCheckout, setProceedToCheckout] = useState<boolean>(false);
 
   const router = useRouter();
+  const { riderProfile } = useSession(
+    useShallow((state) => ({ riderProfile: state.riderProfile })),
+  );
 
   const searchParams = useSearchParams();
   const vehicleType = searchParams.get("vehicleType");
@@ -62,6 +65,14 @@ const RentRide = () => {
   const isReview = !!searchParams.get("isReview");
   const rawIsLater = searchParams.get("isLater");
   const isLater = rawIsLater === "true";
+  const queryBookingType = searchParams.get("bookingType");
+  const bookingType =
+    queryBookingType === "SELF_DRIVE" || queryBookingType === "WITH_DRIVER"
+      ? queryBookingType
+      : "WITH_DRIVER";
+  const licenseApproved =
+    String(riderProfile?.licenseStatus ?? "").toLowerCase() === "approved";
+  const requiresLicenseReview = bookingType === "SELF_DRIVE" && !licenseApproved;
 
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
@@ -100,6 +111,7 @@ const RentRide = () => {
     if (!autoCompleteAddress || !vehicleType) return;
     retrieveAvailableVehicles({
       vehicleClass: vehicleType as string,
+      bookingType,
       longitude: `${autoCompleteAddress.longitude}`,
       latitude: `${autoCompleteAddress.latitude}`,
     });
@@ -107,6 +119,7 @@ const RentRide = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     vehicleType,
+    bookingType,
     autoCompleteAddress?.longitude,
     autoCompleteAddress?.latitude,
   ]);
@@ -127,9 +140,31 @@ const RentRide = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
 
+  const getPickupWindow = () => {
+    const duration = Number(selectedHoursLength.split(" ")[0]);
+    const durationHours = selectedTab === "hours" ? duration : duration * 24;
+    const startDate = isLater && date ? new Date(date) : new Date();
+    const hour = Number(selectedHours);
+    const minute = Number(selectedMins);
+    const isPm = selectAmOrPm.toLowerCase() === "pm";
+    const normalizedHour =
+      hour === 12 ? (isPm ? 12 : 0) : isPm ? hour + 12 : hour;
+
+    startDate.setHours(normalizedHour, minute, 0, 0);
+
+    const endDate = new Date(startDate);
+    endDate.setHours(endDate.getHours() + durationHours);
+
+    return {
+      durationHours,
+      pickUpTime: startDate.toISOString(),
+      requestedEndAt: endDate.toISOString(),
+    };
+  };
+
   // console.log("isLater from rent ride component: ", isLater);
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 h-[calc(100vh-80px) overflow-y-scroll'>
+    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 min-h-[calc(100vh-80px)] overflow-y-auto'>
       <div className='flex flex-col md:flex-row gap-8 md:gap-4 h-full'>
         <div className='flex flex-col gap-10 min-w-[40%] h-full'>
           <div className='flex flex-col'>
@@ -212,7 +247,9 @@ const RentRide = () => {
                         return (
                           <Button
                             onClick={() => {
-                              router.push(`/rent-ride?vehicleType=${title}`);
+                              router.push(
+                                `/rent-ride?vehicleType=${title}&bookingType=${bookingType}`,
+                              );
 
                               setOpen(false);
                             }}
@@ -245,10 +282,33 @@ const RentRide = () => {
           )}
           {vehicleType && !selectedDriver && (
             <div className='flex flex-col gap-8'>
+              <div className='grid grid-cols-2 gap-3 rounded-2xl bg-white p-2'>
+                {[
+                  { label: "With driver", value: "WITH_DRIVER" as const },
+                  { label: "Self-drive", value: "SELF_DRIVE" as const },
+                ].map((item) => (
+                  <Button
+                    key={item.value}
+                    type='button'
+                    onClick={() => {
+                      router.push(
+                        `/rent-ride?vehicleType=${vehicleType}&bookingType=${item.value}`,
+                      );
+                    }}
+                    className={cn(
+                      "rounded-xl bg-transparent text-black shadow-none hover:bg-primaryLight2",
+                      bookingType === item.value && "bg-primary text-white",
+                    )}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </div>
               <DriverInfoAccordion
                 func={func}
                 vehicleType={vehicleType ?? ""}
                 isLater={isLater}
+                bookingType={bookingType}
               />
             </div>
           )}
@@ -320,6 +380,7 @@ const RentRide = () => {
                             query: {
                               vehicleType,
                               isLater,
+                              bookingType,
                             },
                           }}
                         >
@@ -579,6 +640,13 @@ const RentRide = () => {
                     <div className='flex flex-col gap-5 border-t border-primaryLight2 pt-8'>
                       {[
                         {
+                          title: "Rental mode",
+                          value:
+                            bookingType === "SELF_DRIVE"
+                              ? "Self-drive"
+                              : "With driver",
+                        },
+                        {
                           title: "Rent Duration",
                           value: selectedHoursLength,
                         },
@@ -613,6 +681,19 @@ const RentRide = () => {
                       })}
                     </div>
                   )}
+                  {requiresLicenseReview && (
+                    <div className='rounded-2xl bg-white border border-primaryLight2 p-4 flex flex-col gap-3 text-sm'>
+                      <p className='font-bold'>License review required</p>
+                      <p className='text-gray-5'>
+                        Self-drive rentals require an approved license before
+                        payment. You can continue with a driver, or submit your
+                        license for review.
+                      </p>
+                      <Button asChild className='rounded-full w-fit'>
+                        <Link href='/rider-db/license'>Submit license</Link>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </section>
               <div className='flex gap-6 items-center'>
@@ -624,27 +705,41 @@ const RentRide = () => {
                     !selectedMins ||
                     !selectAmOrPm ||
                     !selectedHoursLength ||
-                    isCreatingIntent
+                    isCreatingIntent ||
+                    requiresLicenseReview
                   }
                   onClick={async () => {
+                    if (requiresLicenseReview) {
+                      toast.error(
+                        "An approved license is required for self-drive rentals",
+                      );
+                      return;
+                    }
                     if (isLater && !date) {
                       toast.error("Please select a date");
                       return;
                     }
-                    const duration = Number(selectedHoursLength.split(" ")[0]);
                     if (!autoCompleteAddress || !selectedDriverDetails) return;
+                    const { durationHours, pickUpTime, requestedEndAt } =
+                      getPickupWindow();
                     // await cancelRental(intent?.id ?? "");
                     if (!intent?.cost) {
-                      await rentAndCreateIntent({
+                      const createdIntent = await rentAndCreateIntent({
+                        bookingType,
                         flexibility,
                         days: [],
-                        duration:
-                          selectedTab === "hours" ? duration : duration * 24,
+                        duration: durationHours,
                         vehicleId: selectedDriverDetails.vehicleId,
                         pickUpLat: autoCompleteAddress.latitude,
                         pickUpLong: autoCompleteAddress.longitude,
                         pickUpAddress: autoCompleteAddress.formattedAddress,
+                        pickUpTime,
+                        requestedEndAt,
                       });
+                      if (createdIntent?.paymentIntent.paymentIntent) {
+                        setProceedToCheckout(true);
+                      }
+                      return;
                     }
                     if (intent?.paymentIntent.paymentIntent) {
                       setProceedToCheckout(true);
@@ -667,6 +762,7 @@ const RentRide = () => {
                           selectedDriver,
                           isReview: true,
                           isLater,
+                          bookingType,
                         },
                       }}
                     >
@@ -730,7 +826,6 @@ const RentRide = () => {
           onClose={() => {
             useRental.persist.clearStorage();
             setProceedToCheckout(false);
-            console.log("cleared and closed successfully!!!");
           }}
         />
       </div>

@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { X, MousePointerClick, Power } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 type IconTypes = "delete" | "suspend" | "reactivate" | "reject-kyc";
 const icons: Record<IconTypes, React.ReactNode> = {
@@ -40,7 +40,7 @@ const ConfirmActionModal = ({
   const {
     register,
     setValue,
-    watch,
+    control,
     handleSubmit,
     // reset,
     formState: { errors },
@@ -53,8 +53,8 @@ const ConfirmActionModal = ({
     setOpen(false);
   };
 
-  const suspensionType = watch("suspensionType");
-  const suspensionDuration = watch("suspensionDuration");
+  const suspensionType = useWatch({ control, name: "suspensionType" });
+  const suspensionDuration = useWatch({ control, name: "suspensionDuration" });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>

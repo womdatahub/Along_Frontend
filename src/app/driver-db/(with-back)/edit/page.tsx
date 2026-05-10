@@ -1,23 +1,113 @@
 "use client";
-import { Button, CustomAuthInput, HeadingHeebo } from "@/components";
+
+import { AddInput, Button, HeadingHeebo } from "@/components";
+import {
+  TUpdateMobileNumberSchemaValidator,
+  updateMobileNumberSchema,
+} from "@/lib";
+import { useSession } from "@/store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { useShallow } from "zustand/shallow";
 
 const Page = () => {
+  const router = useRouter();
+  const {
+    driverProfile,
+    isLoading,
+    actions: { updateDriverDetails },
+  } = useSession(
+    useShallow((state) => ({
+      driverProfile: state.driverProfile,
+      isLoading: state.isLoading,
+      actions: state.actions,
+    })),
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TUpdateMobileNumberSchemaValidator>({
+    defaultValues: {
+      firstName: driverProfile?.firstName ?? "",
+      lastName: driverProfile?.lastName ?? "",
+      mobileNumber: driverProfile?.mobileNumber ?? "",
+      dateOfBirth: driverProfile?.dateOfBirth?.slice(0, 10) ?? "",
+      gender: driverProfile?.gender ?? "male",
+    },
+    resolver: zodResolver(updateMobileNumberSchema),
+  });
+
+  const onSubmit = async (values: TUpdateMobileNumberSchemaValidator) => {
+    const updated = await updateDriverDetails({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      mobileNumber: values.mobileNumber,
+      dateOfBirth: values.dateOfBirth,
+      gender: values.gender,
+    });
+    if (updated) router.push("/driver-db/account");
+  };
+
   return (
     <div className='flex flex-col gap-5'>
-      <HeadingHeebo className='text-start pl-4'>Edit</HeadingHeebo>
-      <div className='flex flex-col gap-6'>
-        <CustomAuthInput
-          label='Phone number'
-          placeholder='+1 67 988 90098'
-          className='w-full md:w-[446px] '
-          inputClassName='font-medium text-sm h-[45px]'
-          labelClassName='font-light font-heebo text-sm'
-        />
-        <Button className='rounded-full px-8 text-xs cursor-pointer w-fit'>
-          Save
+      <HeadingHeebo className='text-start pl-4'>Edit profile</HeadingHeebo>
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+        <div className='grid gap-4 w-full md:w-111.5'>
+          <AddInput
+            id='firstName'
+            errors={errors}
+            placeholder='First name'
+            register={register}
+            type='text'
+            label='First name'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-[45px]'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+          <AddInput
+            id='lastName'
+            errors={errors}
+            placeholder='Last name'
+            register={register}
+            type='text'
+            label='Last name'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-[45px]'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+          <AddInput
+            id='mobileNumber'
+            errors={errors}
+            placeholder='+1 67 988 90098'
+            register={register}
+            required
+            type='text'
+            label='Phone number'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-[45px]'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+          <AddInput
+            id='dateOfBirth'
+            errors={errors}
+            placeholder='YYYY-MM-DD'
+            register={register}
+            type='date'
+            label='Date of birth'
+            iconAndInputWrapperClassName='bg-white rounded-2xl h-[45px]'
+            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none'
+          />
+        </div>
+        <Button
+          type='submit'
+          disabled={isLoading}
+          className='rounded-full px-8 text-xs cursor-pointer w-fit'
+        >
+          {isLoading ? "Saving..." : "Save"}
         </Button>
-      </div>
+      </form>
     </div>
   );
 };
+
 export default Page;

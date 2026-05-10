@@ -2,5 +2,8 @@ export * from "./auth-provider";
 export * from "./use-session";
 export * from "./use-radar-map";
 export * from "./use-rental";
+export * from "./use-payment";
+export * from "./use-communication";
+export * from "./use-location";
 export * from "./use-admin";
 export * from "./admin-store";

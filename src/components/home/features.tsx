@@ -54,22 +54,22 @@ export const Features = () => {
   const currentSlide = slides[currentIndex];
 
   return (
-    <section className='pt-14 md:pt-36 pb-16 px-6 bg-white relative overflow-hidden'>
-      <div className='relative h-[400px] max-w-6xl mx-auto flex items-center justify-center'>
+    <section className="pt-14 md:pt-36 pb-16 px-6 bg-white relative overflow-hidden">
+      <div className="relative h-100 max-w-6xl mx-auto flex items-center justify-center">
         <button
           onClick={handlePrev}
-          className='absolute left-0 top-1/2 -translate-y-1/2 z-10 rotate-180 transition cursor-pointer'
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rotate-180 transition cursor-pointer"
         >
           <svg
             width={14}
             height={18}
-            viewBox='0 0 14 18'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
+            viewBox="0 0 14 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d='M1.38061 0.153104C1.04369 -0.068301 0.522992 -0.0461605 0.216701 0.197385C-0.0895907 0.440931 -0.0589624 0.817319 0.277958 1.03872L12.1315 8.7879C12.4377 8.98716 12.4377 9.27499 12.1315 9.47425L0.27796 16.9577C-0.058961 17.1791 -0.0895882 17.5555 0.186074 17.7991C0.492366 18.0426 1.01306 18.0648 1.34998 17.8655L13.2035 10.3599C14.2449 9.69565 14.2755 8.58863 13.2341 7.90228L1.38061 0.153104Z'
-              fill='black'
+              d="M1.38061 0.153104C1.04369 -0.068301 0.522992 -0.0461605 0.216701 0.197385C-0.0895907 0.440931 -0.0589624 0.817319 0.277958 1.03872L12.1315 8.7879C12.4377 8.98716 12.4377 9.27499 12.1315 9.47425L0.27796 16.9577C-0.058961 17.1791 -0.0895882 17.5555 0.186074 17.7991C0.492366 18.0426 1.01306 18.0648 1.34998 17.8655L13.2035 10.3599C14.2449 9.69565 14.2755 8.58863 13.2341 7.90228L1.38061 0.153104Z"
+              fill="black"
               fillOpacity={0.5}
             />
           </svg>
@@ -77,18 +77,18 @@ export const Features = () => {
 
         <button
           onClick={handleNext}
-          className='absolute right-0 top-1/2 -translate-y-1/2 z-10  transition cursor-pointer'
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10  transition cursor-pointer"
         >
           <svg
             width={14}
             height={18}
-            viewBox='0 0 14 18'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
+            viewBox="0 0 14 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d='M1.38061 0.153104C1.04369 -0.068301 0.522992 -0.0461605 0.216701 0.197385C-0.0895907 0.440931 -0.0589624 0.817319 0.277958 1.03872L12.1315 8.7879C12.4377 8.98716 12.4377 9.27499 12.1315 9.47425L0.27796 16.9577C-0.058961 17.1791 -0.0895882 17.5555 0.186074 17.7991C0.492366 18.0426 1.01306 18.0648 1.34998 17.8655L13.2035 10.3599C14.2449 9.69565 14.2755 8.58863 13.2341 7.90228L1.38061 0.153104Z'
-              fill='black'
+              d="M1.38061 0.153104C1.04369 -0.068301 0.522992 -0.0461605 0.216701 0.197385C-0.0895907 0.440931 -0.0589624 0.817319 0.277958 1.03872L12.1315 8.7879C12.4377 8.98716 12.4377 9.27499 12.1315 9.47425L0.27796 16.9577C-0.058961 17.1791 -0.0895882 17.5555 0.186074 17.7991C0.492366 18.0426 1.01306 18.0648 1.34998 17.8655L13.2035 10.3599C14.2449 9.69565 14.2755 8.58863 13.2341 7.90228L1.38061 0.153104Z"
+              fill="black"
               fillOpacity={0.5}
             />
           </svg>
@@ -105,11 +105,11 @@ export const Features = () => {
                 : "animate-slide-in-from-left"),
           )}
         >
-          <div className='flex flex-col gap-4 text-left w-full md:w-1/2'>
-            <h2 className='text-2xl md:text-4xl font-extrabold text-black'>
+          <div className="flex flex-col gap-4 text-left w-full md:w-1/2">
+            <h2 className="text-2xl md:text-4xl font-extrabold text-black">
               {currentSlide.title}
             </h2>
-            <p className='text-black font-light text-lg md:text-xl'>
+            <p className="text-black font-light text-lg md:text-xl">
               {currentSlide.description}
             </p>
           </div>
@@ -118,7 +118,7 @@ export const Features = () => {
             alt={currentSlide.description}
             width={237}
             height={337}
-            className='w-auto'
+            className="w-auto"
           />
         </div>
       </div>

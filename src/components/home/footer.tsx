@@ -48,16 +48,16 @@ export const Footer = () => {
 
           <div className='flex flex-col gap-8'>
             <div className='flex gap-6 flex-wrap justify-between md:gap-20'>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
+              <Link href='/about' className='font-heebo text-sm font-semibold'>
                 About
               </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
+              <Link href='/rent-ride' className='font-heebo text-sm font-semibold'>
                 Ride
               </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
+              <Link href='/onboarding' className='font-heebo text-sm font-semibold'>
                 Drive
               </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
+              <Link href='mailto:support@alongcities.com' className='font-heebo text-sm font-semibold'>
                 Support
               </Link>
             </div>
@@ -82,8 +82,8 @@ export const Footer = () => {
         <div className='max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 items-center font-heebo text-xs'>
           <p>©2025 Along Inc. All Rights Reserved</p>
           <div className='flex items-center gap-8'>
-            <p>Privacy & Policy</p>
-            <p>Terms & Conditions</p>
+            <Link href='/privacy-policy'>Privacy & Policy</Link>
+            <Link href='/terms-of-service'>Terms & Conditions</Link>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { cn } from "@/lib";
 import { useSession } from "@/store";
 import { AshForwardIcon } from "@public/svgs";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useShallow } from "zustand/shallow";
 
@@ -15,10 +16,10 @@ const Page = () => {
     useShallow((state) => ({ driverProfile: state.driverProfile })),
   );
   return (
-    <div className='flex flex-col gap-5'>
-      <HeadingHeebo className='text-start pl-4'>Profile</HeadingHeebo>
-      <div className='flex flex-col gap-2'>
-        <div className='flex gap-4'>
+    <div className="flex flex-col gap-5">
+      <HeadingHeebo className="text-start pl-4">Profile</HeadingHeebo>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-4">
           <Button
             onClick={() => setActive("personal-info")}
             className={cn(
@@ -38,10 +39,10 @@ const Page = () => {
             Security
           </Button>
         </div>
-        <Card className='w-full md:w-[446px] rounded-2xl shadow-none'>
+        <Card className="w-full md:w-111.5 rounded-2xl shadow-none">
           {active === "personal-info" ? (
-            <CardContent className='flex flex-col gap-8'>
-              <div className='flex gap-6 items-center'>
+            <CardContent className="flex flex-col gap-8">
+              <div className="flex gap-6 items-center">
                 <Image
                   alt={`${driverProfile?.firstName}-${driverProfile?.lastName}`}
                   src={
@@ -50,64 +51,69 @@ const Page = () => {
                   }
                   width={96}
                   height={96}
-                  className='size-24 rounded-full object-cover bg-gray-200'
+                  className="size-24 rounded-full object-cover bg-gray-200"
                 />
-                <p className='text-lg font-heebo'>
+                <p className="text-lg font-heebo">
                   {driverProfile?.firstName} {driverProfile?.lastName}
                 </p>
               </div>
-              <div className='flex gap-4 flex-col'>
+              <Button asChild className="rounded-full w-fit">
+                <Link href="/driver-db/edit">Edit profile</Link>
+              </Button>
+              <div className="flex gap-4 flex-col">
                 <ContainerWithArrow>
-                  <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>Phone number</p>
-                    <p className='font-semibold'>
+                  <div className="flex gap-1 flex-col font-heebo text-black  text-sm pb-4">
+                    <p className=" font-light text-gray-5">Phone number</p>
+                    <p className="font-semibold">
                       {driverProfile?.mobileNumber}
                     </p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>
-                  <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>Email address</p>
-                    <p className='font-semibold'>{driverProfile?.email}</p>
+                  <div className="flex gap-1 flex-col font-heebo text-black  text-sm pb-4">
+                    <p className=" font-light text-gray-5">Email address</p>
+                    <p className="font-semibold">{driverProfile?.email}</p>
                   </div>
                 </ContainerWithArrow>
 
                 <ContainerWithArrow withoutBottomBorder>
-                  <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>Address</p>
-                    <p className='font-semibold'>Cabbagetown, Candeler Park</p>
+                  <div className="flex gap-1 flex-col font-heebo text-black  text-sm pb-4">
+                    <p className=" font-light text-gray-5">KYC status</p>
+                    <p className="font-semibold capitalize">
+                      {driverProfile?.kycStatus ?? "pending"}
+                    </p>
                   </div>
                 </ContainerWithArrow>
               </div>
             </CardContent>
           ) : (
-            <CardContent className='flex flex-col gap-8'>
-              <div className='flex gap-4 flex-col'>
+            <CardContent className="flex flex-col gap-8">
+              <div className="flex gap-4 flex-col">
                 <ContainerWithArrow>
-                  <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>Password</p>
-                    <p className='font-semibold'>******************</p>
+                  <div className="flex gap-1 flex-col font-heebo text-black  text-sm pb-4">
+                    <p className=" font-light text-gray-5">Password</p>
+                    <p className="font-semibold">******************</p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>
-                  <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>
+                  <div className="flex gap-1 flex-col font-heebo text-black  text-sm pb-4">
+                    <p className=" font-light text-gray-5">
                       Enable 2-step verification
                     </p>
-                    <p className='font-semibold'>
+                    <p className="font-semibold">
                       Add additional security to you account
                     </p>
                   </div>
                 </ContainerWithArrow>
                 <ContainerWithArrow>
-                  <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>Passkeys</p>
-                    <p className='font-semibold'>Set up passkey</p>
+                  <div className="flex gap-1 flex-col font-heebo text-black  text-sm pb-4">
+                    <p className=" font-light text-gray-5">Passkeys</p>
+                    <p className="font-semibold">Set up passkey</p>
                   </div>
                 </ContainerWithArrow>
-                <div className='flex gap-1 justify-between font-heebo text-black text-sm pb-4'>
-                  <p className='font-semibold'>Notification</p>
-                  <Switch color='primary' />
+                <div className="flex gap-1 justify-between font-heebo text-black text-sm pb-4">
+                  <p className="font-semibold">Notification</p>
+                  <Switch color="primary" />
                 </div>
               </div>
             </CardContent>

@@ -17,7 +17,7 @@ const getDriverOnboardingRedirect = (
     | {
         firstName?: string;
         driverProfilePictureUri?: string;
-        vehicleFrontViewImageUri?: string;
+        isVehicleAdded?: boolean;
       }
     | undefined,
   servicesCount: number,
@@ -28,8 +28,7 @@ const getDriverOnboardingRedirect = (
       ? "/onboarding/services"
       : "/onboarding/documents";
   }
-  if (!driverProfile?.vehicleFrontViewImageUri)
-    return "/onboarding/vehicle-info";
+  if (!driverProfile?.isVehicleAdded) return "/onboarding/vehicle-info";
   return null;
 };
 

@@ -35,8 +35,8 @@ const StripeCheckOutComponent = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        dialogTitle='Complete Payment'
-        className='sm:max-w-[425px] rounded-[20px] p-6'
+        dialogTitle="Complete Payment"
+        className="sm:max-w-106.25 rounded-[20px] p-6"
       >
         <DialogTitle>Complete Payment</DialogTitle>
         <Elements stripe={stripePromise} options={options}>
@@ -77,7 +77,7 @@ const CheckoutForm = ({
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${frontendBaseUrl}/rider-db/success`,
+        return_url: `${frontendBaseUrl}/rent-ride/success`,
       },
     });
 

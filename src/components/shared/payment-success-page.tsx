@@ -63,13 +63,13 @@ export const PaymentSuccess = () => {
               variant='secondary'
               className='bg-green-100 text-green-700 hover:bg-green-100 text-xs tracking-wide uppercase'
             >
-              Payment Successful
+              Payment Submitted
             </Badge>
             <h1 className='text-2xl font-semibold text-foreground tracking-tight pt-1'>
-              Your payment was received
+              Your rental payment is processing
             </h1>
             <p className='text-sm text-muted-foreground'>
-              A confirmation has been sent to your email.
+              We will confirm the rental as soon as Stripe sends the webhook.
             </p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export const PaymentSuccess = () => {
         <p className='text-center text-xs text-muted-foreground'>
           Need help?{" "}
           <a
-            href='#'
+            href='mailto:support@alongcities.com'
             className='underline underline-offset-2 hover:text-foreground transition-colors'
           >
             Contact support

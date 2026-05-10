@@ -35,7 +35,7 @@ export const Updates = () => {
           {updates.map((u, i) => (
             <div
               key={i}
-              className="shadow hover:shadow-lg transition h-[229px] w-full flex flex-col justify-between p-6"
+              className="shadow hover:shadow-lg transition h-57.25 w-full flex flex-col justify-between p-6"
               style={{
                 backgroundImage: `url('${u.img}')`,
                 backgroundRepeat: "no-repeat",

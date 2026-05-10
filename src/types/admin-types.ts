@@ -1,4 +1,6 @@
 import { TPromoAndVoucherSchema } from "@/lib";
+import { DriverInfo, VehicleInfo } from "./rental-type";
+import { RiderProfile } from "./session-types";
 
 export type CostSettingsType = {
   title: string;
@@ -26,6 +28,12 @@ export type AdminsType = {
   updatedAt: string;
 };
 
+export type PendingKycType = {
+  drivers: DriverInfo[];
+  riders: RiderProfile[];
+  riderLicenses: unknown[];
+  vehicles: VehicleInfo[];
+};
 type PromoAndVoucherExtras = {
   totalUsageCount: number;
   validFrom: Date;

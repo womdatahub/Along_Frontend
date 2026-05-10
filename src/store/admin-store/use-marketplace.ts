@@ -80,7 +80,6 @@ export const useMarketPlace = create<MarketPlaceType>()(
           },
         );
         if (error) {
-          console.log(error);
           toast.error(error.message ?? "Something went wrong");
           set({ isCreatingCostSetting: false });
           return false;
@@ -127,7 +126,6 @@ export const useMarketPlace = create<MarketPlaceType>()(
           "PATCH",
         );
         if (error) {
-          console.log(error);
           toast.error(error.message ?? "Something went wrong");
           set({ isCreatingCostSetting: false });
           return false;
@@ -147,7 +145,6 @@ export const useMarketPlace = create<MarketPlaceType>()(
           "PATCH",
         );
         if (error) {
-          console.log(error);
           toast.error(error.message ?? "Something went wrong");
           set({ isCreatingCostSetting: false });
           return;

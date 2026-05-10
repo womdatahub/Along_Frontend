@@ -31,7 +31,7 @@ import {
   promoAndVoucherSchema,
 } from "@/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useMarketPlace } from "@/store";
 import { useShallow } from "zustand/shallow";
 import { ISOStringFormat } from "date-fns";
@@ -354,7 +354,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
   const {
     register,
     setValue,
-    watch,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -362,7 +362,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
     defaultValues,
     resolver: zodResolver(marketPlaceSchema),
   });
-  const currency = watch("currency") ?? "";
+  const currency = useWatch({ control, name: "currency" }) ?? "";
 
   const {
     actions: { createRideCostSettings, updateRideCost: updateRideCostSetting },
@@ -577,7 +577,7 @@ const AddOrEditNewPromoVoucherComponent = ({
   const {
     register,
     setValue,
-    watch,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -594,8 +594,8 @@ const AddOrEditNewPromoVoucherComponent = ({
     })),
   );
 
-  const discountType = watch("discountType");
-  const applicableFor = watch("applicableFor");
+  const discountType = useWatch({ control, name: "discountType" });
+  const applicableFor = useWatch({ control, name: "applicableFor" });
 
   const onSubmit = async (data: TPromoAndVoucherSchema) => {
     if (!validFrom || !validUntil) return;

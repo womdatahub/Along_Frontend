@@ -22,16 +22,16 @@ const Page = () => {
     }
   };
   return (
-    <div className='flex justify-center items-center h-full px-4 md:px-0'>
-      <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
-        <div className='flex flex-col gap-2'>
+    <div className="flex justify-center items-center h-full px-4 md:px-0">
+      <div className="flex flex-col gap-10 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black">
+        <div className="flex flex-col gap-2">
           <HeadingHeebo>Offered services</HeadingHeebo>
-          <p className='text-center text-sm'>
+          <p className="text-center text-sm">
             Please select a service (s) you are interested in
           </p>
         </div>
-        <div className='flex flex-col gap-4'>
-          <div className='flex flex-col gap-1'>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
             {servicesItems.map((service) => {
               return (
                 <button
@@ -46,18 +46,18 @@ const Page = () => {
                     service.isComingSoon && "cursor-not-allowed",
                   )}
                 >
-                  <div className='flex flex-1 items-center justify-between gap-5'>
-                    <div className='flex gap-4 items-center'>
+                  <div className="flex flex-1 items-center justify-between gap-5">
+                    <div className="flex gap-4 items-center">
                       <Image
                         src={service.img}
                         alt={service.state}
                         width={40}
                         height={40}
                       />
-                      <p className='font-medium text-xs'>{service.title}</p>
+                      <p className="font-medium text-xs">{service.title}</p>
                     </div>
                     {service.isComingSoon && (
-                      <p className='font-bold text-xs text-red-600 animate-pulse'>
+                      <p className="font-bold text-xs text-red-600 animate-pulse">
                         Coming Soon
                       </p>
                     )}
@@ -72,7 +72,7 @@ const Page = () => {
                 </button>
               );
             })}
-            <div className='flex justify-between items-center gap-3 px-4 mt-3'>
+            <div className="flex justify-between items-center gap-3 px-4 mt-3">
               <p>Select all</p>
               <div
                 onClick={() =>

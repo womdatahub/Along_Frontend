@@ -52,11 +52,17 @@ export const nonModalItems = [
 export const PUBLIC_ROUTES = [
   "/",
   "/about",
+  "/privacy-policy",
+  "/terms-of-service",
+  "/ride",
+  "/schedule-ride",
+  "/admin-sign-in",
   "/onboarding",
   "/onboarding/driver-info",
   "/onboarding/services",
   "/onboarding/documents",
   "/onboarding/vehicle-info",
+  "/onboarding/vehicle-insurance",
 ] as const;
 
 // Routes that authenticated users should be redirected away from

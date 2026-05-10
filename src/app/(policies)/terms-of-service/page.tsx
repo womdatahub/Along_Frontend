@@ -86,7 +86,7 @@ const terms = [
 const Page = () => {
   //   const router = useRouter();
   return (
-    <div className="flex flex-col gap-4 w-[500px] aspect-square overflow-y-scroll text-black font-fustat">
+    <div className="flex flex-col gap-4 w-125 aspect-square overflow-y-scroll text-black font-fustat">
       <p className="font-bold text-xl text-center sticky top-0 bg-white pb-2">
         Terms Of Service
       </p>

@@ -14,7 +14,7 @@ export const HowItWorks = () => {
 
   const nextStep = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % steps.length);
-  }, [steps.length]);
+  }, []);
 
   // const prevStep = useCallback(() => {
   //   setActiveIndex((prev) => (prev - 1 + steps.length) % steps.length);
@@ -40,46 +40,46 @@ export const HowItWorks = () => {
   // const router = useRouter();
 
   return (
-    <section className='py-16 px-6 bg-white overflow-hidden'>
-      <div className='flex flex-col md:flex-row items-center gap-10 max-w-5xl mx-auto relative'>
+    <section className="py-16 px-6 bg-white overflow-hidden">
+      <div className="flex flex-col md:flex-row items-center gap-10 max-w-5xl mx-auto relative">
         {/* IMAGE */}
-        <div className='relative w-96 h-[576px] overflow-hidden'>
-          <AnimatePresence mode='wait'>
+        <div className="relative w-96 h-144 overflow-hidden">
+          <AnimatePresence mode="wait">
             <motion.div
               key={activeStep.image}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1, ease: "easeInOut" }}
-              className='absolute w-full h-full'
+              className="absolute w-full h-full"
             >
               <Image
                 src={activeStep.image}
                 alt={activeStep.title}
                 width={400}
                 height={576}
-                className='object-cover rounded-[20px] md:rounded-[39px] w-auto h-full'
+                className="object-cover rounded-[20px] md:rounded-[39px] w-auto h-full"
               />
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* TEXT */}
-        <div className='flex flex-col gap-6 md:w-2/3'>
-          <h2 className='text-2xl md:text-4xl font-extrabold'>How It Works</h2>
+        <div className="flex flex-col gap-6 md:w-2/3">
+          <h2 className="text-2xl md:text-4xl font-extrabold">How It Works</h2>
 
-          <div className='relativ'>
-            <AnimatePresence mode='wait'>
+          <div className="relativ">
+            <AnimatePresence mode="wait">
               <motion.div
                 key={activeStep.title}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1, ease: "easeInOut" }}
-                className='w-full flex flex-col gap-1 font-heebo font-light text-lg md:w-2/3 transition-opacity duration-700 ease-in-out'
+                className="w-full flex flex-col gap-1 font-heebo font-light text-lg md:w-2/3 transition-opacity duration-700 ease-in-out"
               >
-                <p className='font-bold'>{activeStep.title}</p>
-                <p className='font-heebo font-light text-lg'>
+                <p className="font-bold">{activeStep.title}</p>
+                <p className="font-heebo font-light text-lg">
                   {activeStep.description}
                 </p>
               </motion.div>
@@ -87,11 +87,11 @@ export const HowItWorks = () => {
           </div>
 
           <Button
-            className='bg-primary px-6 py-2 text-white rounded-lg'
+            className="bg-primary px-6 py-2 text-white rounded-lg"
             asChild
             // onClick={() => router.push("/onboarding")}
           >
-            <Link href='/onboarding'> Book Now</Link>
+            <Link href="/onboarding"> Book Now</Link>
           </Button>
         </div>
 

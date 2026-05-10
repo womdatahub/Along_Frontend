@@ -14,9 +14,9 @@ import {
 
 const DriversChart = () => {
   return (
-    <Card className='bg-[#1F364B] rounded-2xl border-0 shadow-none'>
-      <CardContent className='px-0 overflow-x-auto'>
-        <div className='min-w-[730px]'>
+    <Card className="bg-[#1F364B] rounded-2xl border-0 shadow-none">
+      <CardContent className="px-0 overflow-x-auto">
+        <div className="min-w-182.5">
           <AreaChart
             width={730}
             height={250}
@@ -24,20 +24,20 @@ const DriversChart = () => {
             margin={{ top: 0, right: 20, left: -50, bottom: 0 }}
           >
             <defs>
-              <linearGradient id='colorUv' x1='0' y1='0' x2='0' y2='1'>
-                <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
-                <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis
-              dataKey='name'
+              dataKey="name"
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 10, fill: "#fff" }}
             />
             <YAxis axisLine={false} tickLine={false} tick={false} />
             <Tooltip
-              cursor={<CustomCursor stroke='#fff' />}
+              cursor={<CustomCursor stroke="#fff" />}
               content={({ payload }) => {
                 if (!payload || !payload.length) return null;
                 return (
@@ -70,18 +70,18 @@ const DriversChart = () => {
               }}
             />
             <Area
-              type='monotone'
-              dataKey='uv'
-              stroke='#8884d8'
+              type="monotone"
+              dataKey="uv"
+              stroke="#8884d8"
               fillOpacity={1}
-              fill='url(#colorUv)'
+              fill="url(#colorUv)"
             />
             <Area
-              type='monotone'
-              dataKey='pv'
-              stroke='#82ca9d'
+              type="monotone"
+              dataKey="pv"
+              stroke="#82ca9d"
               fillOpacity={1}
-              fill='url(#colorPv)'
+              fill="url(#colorPv)"
             />
           </AreaChart>
         </div>

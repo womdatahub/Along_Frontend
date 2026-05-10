@@ -1,7 +1,7 @@
 "use client";
 
 import { AddInput, ButtonWithLoader } from "@/components";
-import { signInSchema, TSignInValidator } from "@/lib";
+import { ROLE_DASHBOARD_MAP, signInSchema, TSignInValidator } from "@/lib";
 import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +33,12 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TSignInValidator) => {
-    const val = await login(values);
+    const val = await login({
+      password: values.password,
+      ...(values.email.includes("@")
+        ? { email: values.email }
+        : { mobileNumber: values.email }),
+    });
     if (!val) return;
     // console.log(
     //   val,
@@ -52,14 +57,14 @@ const Page = () => {
       setRouteBeforeRedirect("");
       return;
     }
-    // router.push(`${userRole.toLowerCase()}-db`);
+    router.replace(ROLE_DASHBOARD_MAP[val] ?? "/");
   };
 
   return (
     <div className='flex justify-center items-center h-full px-4 md:px-0'>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col gap-6 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black text-4xl'
+        className='flex flex-col gap-6 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black text-4xl'
       >
         <p className='font-semibold text-2xl text-center'>
           Sign in to your account

@@ -16,7 +16,7 @@ const Page = () => {
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   return (
-    <div className='flex flex-col gap-10 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
+    <div className='flex flex-col gap-10 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
       <HeadingHeebo>Register a User</HeadingHeebo>
       <div className='flex flex-col gap-4'>
         <p className='text-center text-sm'>
@@ -27,8 +27,8 @@ const Page = () => {
             setSelected("rider");
           }}
           className={cn(
-            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-[#87C4C4] transition-colors duration-500 items-center",
-            selected === "rider" && "bg-[#87C4C4]",
+            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-lightgreen transition-colors duration-500 items-center",
+            selected === "rider" && "bg-lightgreen",
           )}
         >
           <Image
@@ -44,7 +44,7 @@ const Page = () => {
             setSelected("driver");
           }}
           className={cn(
-            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-[#87C4C4] transition-colors duration-500 items-center",
+            "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-lightgreen transition-colors duration-500 items-center",
             selected === "driver" && "bg-[#87C4C4]",
           )}
         >

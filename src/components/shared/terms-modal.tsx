@@ -25,15 +25,14 @@ const TermsModal = ({
     <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
-        dialogTitle='Terms and Conditions'
-        className='sm:max-w-[700px] max-h-[75%] overflow-y-scroll px-5 md:px-10 py-8 rounded-[20px] bg-background-1'
+        dialogTitle="Terms and Conditions"
+        className="sm:max-w-175 max-h-[75%] overflow-y-scroll px-5 md:px-10 py-8 rounded-[20px] bg-background-1"
         showCloseButton={false}
       >
-        
-        <DialogTitle className='font-semibold text-2xl'>
+        <DialogTitle className="font-semibold text-2xl">
           Terms and Conditions
         </DialogTitle>
-        <div className='flex flex-col gap-5 text-semibold text-sm'>
+        <div className="flex flex-col gap-5 text-semibold text-sm">
           <p>
             Welcome to Along Ride Sharing Services LLC (“Along,” “we,” “us,” or
             “our”). These Rider Terms and Conditions (“Terms”) govern your use
@@ -41,20 +40,20 @@ const TermsModal = ({
             By registering and booking rides through Along, you agree to comply
             with these Terms.{" "}
           </p>
-          <div className='flex flex-col gap-1'>
+          <div className="flex flex-col gap-1">
             {terms.map((term, id) => {
               return (
-                <div key={id} className='flex gap-2'>
+                <div key={id} className="flex gap-2">
                   <p>{id + 1}.</p>
                   <p>{term}</p>
                 </div>
               );
             })}
           </div>
-          <DialogFooter className='flex flex-row gap-4 flex-wrap'>
+          <DialogFooter className="flex flex-row gap-4 flex-wrap">
             <Button onClick={acceptFunction}>Accept</Button>
             <Button
-              variant='destructive'
+              variant="destructive"
               onClick={() => setIsTermsModalOpen(false)}
             >
               Decline

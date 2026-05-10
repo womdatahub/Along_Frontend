@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadImageIcon } from "@public/svgs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
@@ -27,6 +27,10 @@ const Page = () => {
   const [previews, setPreviews] = useState<
     ({ image: ImageType; uri: string } | null)[]
   >([null, null, null, null]);
+  const [vehicleClass, setVehicleClass] = useState("economy");
+  const [rentalModes, setRentalModes] = useState<
+    Array<"SELF_DRIVE" | "WITH_DRIVER">
+  >(["WITH_DRIVER"]);
 
   const {
     isLoading,
@@ -45,7 +49,7 @@ const Page = () => {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<TVehicleRegistrationSchemaValidator>({
     defaultValues: {
@@ -57,8 +61,8 @@ const Page = () => {
     },
     resolver: zodResolver(vehicleRegistrationSchema),
   });
-  const vehicleMake = watch("vehicleMake");
-  const vehicleModel = watch("vehicleModel");
+  const vehicleMake = useWatch({ control, name: "vehicleMake" });
+  const vehicleModel = useWatch({ control, name: "vehicleModel" });
 
   const onSubmit = async (v: TVehicleRegistrationSchemaValidator) => {
     if (previews.some((p) => p == null)) {
@@ -83,6 +87,8 @@ const Page = () => {
 
       const isSuccess = await registerVehicle({
         ...v,
+        vehicleClass,
+        rentalModes,
         vehicleFrontViewImageUri: uris[0],
         vehicleBackViewImageUri: uris[1],
         vehicleSideViewImageUri: uris[2],
@@ -90,15 +96,14 @@ const Page = () => {
       });
 
       if (!isSuccess) return;
-      toast.success(
-        "Vehicle information saved successfully! \n Redirecting you to set up your account details on Stripe. Cheers!",
-        { duration: 4000, position: "top-center" },
-      );
+      toast.success("Vehicle information saved successfully!", {
+        duration: 4000,
+        position: "top-center",
+      });
       setTimeout(() => {
         const url =
           registeredDriverResponseWithStripeDetails?.stripeAccount
             .accountLink ?? "";
-        console.log(url, "stripe url link");
 
         if (!url) {
           router.replace(ROLE_DASHBOARD_MAP.driver);
@@ -115,16 +120,16 @@ const Page = () => {
   };
 
   return (
-    <div className='flex justify-center items-center h-full px-4 md:px-0'>
-      <div className='flex flex-col gap-10 mx-4 rounded-[20px] max-w-[500px] px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black'>
-        <div className='flex flex-col gap-2'>
+    <div className="flex justify-center items-center h-full px-4 md:px-0">
+      <div className="flex flex-col gap-10 mx-4 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black">
+        <div className="flex flex-col gap-2">
           <HeadingHeebo>Vehicle Registration</HeadingHeebo>
-          <p className='text-center text-sm'>
+          <p className="text-center text-sm">
             Enter your car details to complete your registration and access
             related services{" "}
           </p>
         </div>
-        <div className='flex flex-col gap-8'>
+        <div className="flex flex-col gap-8">
           <SelectDropdown
             options={Object.keys(CAR_MAKES)}
             selected={vehicleMake}
@@ -132,8 +137,8 @@ const Page = () => {
               setValue("vehicleMake", value);
               setValue("vehicleModel", "");
             }}
-            triggerLabel='Tesla'
-            label='Car Make'
+            triggerLabel="Tesla"
+            label="Car Make"
             errorMessage={errors.vehicleMake?.message ?? ""}
           />
 
@@ -141,71 +146,106 @@ const Page = () => {
             options={CAR_MAKES[vehicleMake] ?? []}
             selected={vehicleModel}
             setSelected={(value: string) => setValue("vehicleModel", value)}
-            triggerLabel='Model Y'
-            label='Car Model'
+            triggerLabel="Model Y"
+            label="Car Model"
             disabled={!vehicleMake}
             errorMessage={errors.vehicleModel?.message ?? ""}
           />
 
           <AddInput
-            label='Car ID number'
-            placeholder='1HGCM82633A004352'
-            id='vehicleIdentificationNumber'
+            label="Car ID number"
+            placeholder="1HGCM82633A004352"
+            id="vehicleIdentificationNumber"
             errors={errors}
             register={register}
             disabled={false}
             required
-            type='text'
-            iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-            inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
+            type="text"
+            iconAndInputWrapperClassName="bg-white rounded-2xl h-16"
+            inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
           />
-          <div className='flex gap-4'>
+          <SelectDropdown
+            options={["economy", "standard", "premium"]}
+            selected={vehicleClass}
+            setSelected={setVehicleClass}
+            triggerLabel="economy"
+            label="Vehicle class"
+          />
+          <div className="flex flex-col gap-2">
+            <p className="font-semibold text-sm ml-5">Rental modes</p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "With driver", value: "WITH_DRIVER" as const },
+                { label: "Self-drive", value: "SELF_DRIVE" as const },
+              ].map((mode) => (
+                <button
+                  key={mode.value}
+                  type="button"
+                  onClick={() => {
+                    setRentalModes((current) =>
+                      current.includes(mode.value)
+                        ? current.filter((item) => item !== mode.value)
+                        : [...current, mode.value],
+                    );
+                  }}
+                  className={`rounded-2xl bg-white px-4 py-4 text-sm font-semibold ${
+                    rentalModes.includes(mode.value)
+                      ? "border-2 border-primary"
+                      : "border-2 border-transparent"
+                  }`}
+                >
+                  {mode.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-4">
             <AddInput
-              label='Car color'
-              placeholder='Beige white'
-              id='vehicleColor'
+              label="Car color"
+              placeholder="Beige white"
+              id="vehicleColor"
               errors={errors}
               register={register}
               disabled={false}
               required
-              type='text'
-              iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-              inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
+              type="text"
+              iconAndInputWrapperClassName="bg-white rounded-2xl h-16"
+              inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
             />
             <AddInput
-              label='Year'
-              placeholder='2025'
-              id='vehicleYear'
+              label="Year"
+              placeholder="2025"
+              id="vehicleYear"
               errors={errors}
               register={register}
               disabled={false}
               required
-              type='tel'
-              iconAndInputWrapperClassName='bg-white rounded-2xl h-16'
-              inputClassName='placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none'
+              type="tel"
+              iconAndInputWrapperClassName="bg-white rounded-2xl h-16"
+              inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0  shadow-none"
             />
           </div>
         </div>
-        <div className='flex flex-col gap-8 mt-5 text-center'>
-          <div className='flex flex-col gap-1'>
-            <p className='font-bold text-base'>Car pictures</p>
-            <p className='text-sm font-medium text-gray-3'>
+        <div className="flex flex-col gap-8 mt-5 text-center">
+          <div className="flex flex-col gap-1">
+            <p className="font-bold text-base">Car pictures</p>
+            <p className="text-sm font-medium text-gray-3">
               Take and upload clear photos of your car’s front, side and back,
               registration and insurance. This helps verify your vehicle.
             </p>
           </div>
-          <div className='flex gap-5'>
+          <div className="flex gap-5">
             <UploadingImagesReusableComponent
               key={0}
               index={0}
               previews={previews}
               setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
-              imageToastDescription='Front of the driver license'
+              className="justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20"
+              imageToastDescription="Front of the driver license"
             >
-              <div className='flex gap-2 justify-center items-center'>
+              <div className="flex gap-2 justify-center items-center">
                 <UploadImageIcon />
-                <p className='text-sm font-medium'>Side front</p>
+                <p className="text-sm font-medium">Side front</p>
               </div>
             </UploadingImagesReusableComponent>
             <UploadingImagesReusableComponent
@@ -213,12 +253,12 @@ const Page = () => {
               index={1}
               previews={previews}
               setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
-              imageToastDescription='Back of the driver license'
+              className="justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20"
+              imageToastDescription="Back of the driver license"
             >
-              <div className='flex gap-2 justify-center items-center'>
+              <div className="flex gap-2 justify-center items-center">
                 <UploadImageIcon />
-                <p className='text-sm font-medium'>Interior</p>
+                <p className="text-sm font-medium">Interior</p>
               </div>
             </UploadingImagesReusableComponent>
             <UploadingImagesReusableComponent
@@ -226,17 +266,17 @@ const Page = () => {
               index={2}
               previews={previews}
               setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
-              imageToastDescription='Back of the driver license'
+              className="justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20"
+              imageToastDescription="Back of the driver license"
             >
-              <div className='flex gap-2 justify-center items-center'>
+              <div className="flex gap-2 justify-center items-center">
                 <UploadImageIcon />
-                <p className='text-sm font-medium'>Side rear</p>
+                <p className="text-sm font-medium">Side rear</p>
               </div>
             </UploadingImagesReusableComponent>
           </div>
-          <div className='flex flex-col gap-1'>
-            <label className='font-semibold text-sm ml-5'>
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold text-sm ml-5">
               Car registration
             </label>
             <UploadingImagesReusableComponent
@@ -244,19 +284,19 @@ const Page = () => {
               index={3}
               previews={previews}
               setPreviews={setPreviews}
-              className='justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20'
-              imageToastDescription='Front of the driver license'
+              className="justify-center items-center rounded-[10px] bg-white text-placeholder self-end w-full h-20"
+              imageToastDescription="Front of the driver license"
             >
-              <div className='flex flex-col gap-2 justify-center items-center'>
+              <div className="flex flex-col gap-2 justify-center items-center">
                 <UploadImageIcon />
-                <p className='text-sm font-medium'>Upload Photo</p>
+                <p className="text-sm font-medium">Upload Photo</p>
               </div>
             </UploadingImagesReusableComponent>
           </div>
         </div>
         <AuthBackAndContinueButton
           backActive={!isLoading}
-          continueActive={!isLoading}
+          continueActive={!isLoading && rentalModes.length > 0}
           continueFnc={handleSubmit(onSubmit)}
           continueIsLoading={isLoading}
         />

@@ -61,9 +61,9 @@ const SMenuButton = ({ path, Icon, text }: SMenuButtonProps) => {
       <Link href={path}>
         <Icon
           fill={isActive ? "#0E696A" : "white"}
-          className='group-hover:fill-[#0E696A]'
+          className="group-hover:fill-primary"
         />
-        <span className='text-[15px]'>{text}</span>
+        <span className="text-[15px]">{text}</span>
       </Link>
     </SidebarMenuButton>
   );

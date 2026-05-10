@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib";
 import { useSession } from "@/store";
 import {  AshForwardIcon } from "@public/svgs";
+import Link from "next/link";
 import { useState } from "react";
 import { useShallow } from "zustand/shallow";
 
@@ -50,7 +51,7 @@ const Page = () => {
             Security
           </Button>
         </div>
-        <Card className='w-full md:w-[446px] rounded-2xl shadow-none'>
+        <Card className='w-full md:w-111.5 rounded-2xl shadow-none'>
           {active === "personal-info" ? (
             <CardContent className='flex flex-col gap-8'>
               <div className='flex gap-6 items-center'>
@@ -80,6 +81,9 @@ const Page = () => {
                   {riderProfile?.firstName} {riderProfile?.lastName}
                 </p>
               </div>
+              <Button asChild className='rounded-full w-fit'>
+                <Link href='/rider-db/edit'>Edit profile</Link>
+              </Button>
               <div className='flex gap-4 flex-col'>
                 <ContainerWithArrow>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
@@ -98,8 +102,10 @@ const Page = () => {
 
                 <ContainerWithArrow withoutBottomBorder>
                   <div className='flex gap-1 flex-col font-heebo text-black  text-sm pb-4'>
-                    <p className=' font-light text-gray-5'>Address</p>
-                    <p className='font-semibold'>Cabbagetown, Candeler Park</p>
+                    <p className=' font-light text-gray-5'>License status</p>
+                    <Link href='/rider-db/license' className='font-semibold capitalize'>
+                      {riderProfile?.licenseStatus ?? "Submit license"}
+                    </Link>
                   </div>
                 </ContainerWithArrow>
               </div>

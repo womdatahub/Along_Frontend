@@ -16,10 +16,11 @@ import {
   PopoverTrigger,
   RadarAutocomplete,
 } from "@/components";
-import { useRadarMap, useSession } from "@/store";
+import { useEffect } from "react";
+import { usePayment, useRadarMap, useRental, useSession } from "@/store";
 import {
   AccuracyIcon,
-  // LocationPointerSvg,
+  LocationPointerSvg,
   RemoveCardIcon,
   WhiteForwardIcon,
 } from "@public/svgs";
@@ -49,6 +50,29 @@ const Page = () => {
       actions: state.actions,
     })),
   );
+  const {
+    rentalHistory,
+    actions: { fetchRentals },
+  } = useRental(
+    useShallow((state) => ({
+      rentalHistory: state.rentalHistory,
+      actions: state.actions,
+    })),
+  );
+  const {
+    walletDetails,
+    actions: { fetchWalletDetails },
+  } = usePayment(
+    useShallow((state) => ({
+      walletDetails: state.walletDetails,
+      actions: state.actions,
+    })),
+  );
+
+  useEffect(() => {
+    fetchRentals();
+    fetchWalletDetails();
+  }, [fetchRentals, fetchWalletDetails]);
 
   return (
     <div className='px-4 md:px-0 max-w-7xl mx-auto w-full md:py-14 md:h-[calc(100vh-80px)] md:overflow-hidden'>
@@ -128,20 +152,25 @@ const Page = () => {
         <div className='flex flex-col md:flex-row gap-10 md:items-stretch md:h-[calc(100vh-200px)]'>
           <div className='flex flex-row md:flex-col gap-3 md:gap-10 md:border-r md:border-r-gray-5 pr-10 md:mb-32 w-fit whitespace-nowrap'>
             <Link href={"/rent-ride"}>Rent a car</Link>
-            <Link href={"#"}>Schedule a ride</Link>
+            <Link href={"/rider-db/rentals"}>My rentals</Link>
+            <Link href={"/rider-db/license"}>License</Link>
+            <Link href={"/rider-db/messages"}>Messages</Link>
+            <span className='text-gray-5 cursor-not-allowed'>
+              Schedule a ride - coming soon
+            </span>
             {/* <Link href={"/onboarding"}>Drive</Link> */}
           </div>
           <div className='flex flex-col gap-10 md:gap-20 overflow-y-auto md:mb-32'>
             <div className='flex flex-col gap-4 w-full md:max-w-1/3 '>
               <HeadingHeebo className='text-3xl text-left'>
-                Start your day the right way
+                Rental ready when you are
               </HeadingHeebo>
               <p className=''>
-                Lets make the right match. Fill out the form to explore talent
-                or opportunities that align perfectly with your goals
+                Browse available vehicles, choose self-drive or with-driver,
+                and complete payment securely through Stripe.
               </p>
-              <Button className='w-fit rounded-full cursor-pointer'>
-                Learn more
+              <Button asChild className='w-fit rounded-full cursor-pointer'>
+                <Link href='/rent-ride'>Book rental</Link>
               </Button>
             </div>
             <div className='flex gap-3 flex-col'>
@@ -153,14 +182,14 @@ const Page = () => {
                       <div className='flex justify-between items-center'>
                         <div className='flex flex-col'>
                           <HeadingHeebo className='text-xl w-fit text-left font-bold text-white'>
-                            Mastercard
+                            Stripe
                           </HeadingHeebo>
                           <p className='text-white text-lg font-medium'>
-                            ***** ***** 3762
+                            Secure checkout
                           </p>
                           <Link href='/rider-db/cards'>
                             <p className='text-lightgreen text-xs'>
-                              Card details
+                              Payment details
                             </p>
                           </Link>
                         </div>
@@ -195,7 +224,10 @@ const Page = () => {
                       <div className='flex flex-col'>
                         <p>Balance</p>
                         <HeadingHeebo className='text-2xl text-left'>
-                          $0.00
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(walletDetails?.mainBalance ?? 0)}
                         </HeadingHeebo>
                       </div>
                       <Image
@@ -210,7 +242,7 @@ const Page = () => {
                       asChild
                       className='cursor-pointer rounded-full w-fit'
                     >
-                      <Link href='/rider-db/wallets'>Add fund</Link>
+                      <Link href='/rider-db/wallets'>View wallet</Link>
                     </Button>
                   </div>
                 </Card>
@@ -221,39 +253,57 @@ const Page = () => {
             <HeadingHeebo className='text-left md:sticky md:top-0 bg-background-1 pb-2'>
               Activities
             </HeadingHeebo>
-            {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-              <div
-                key={item}
-                className='flex gap-3 pb-5 border-b border-b-[#D3D3D3] hover:cursor-pointer'
-                onClick={() => router.push("/rider-db/ride-details")}
-              >
-                <div className='mt-5'>
-                  <LocationPointerSvg />
-                </div>
-                <div className='flex flex-col font-heebo'>
-                  <p className='text-[8px] font-medium'>Ride rental</p>
-                  <HeadingHeebo className='text-left text-sm'>
-                    Monte Calo Crescent, New Jersey
-                  </HeadingHeebo>
-                  <p className='text-[9px] text-icons flex gap-3'>
-                    Mon 23, August 2025 <span>12 : 35</span>
-                  </p>
-                  <p className='text-green-600 text-[9px]'>Completed</p>
-                  <HeadingHeebo className='text-left text-sm'>
-                    $45.99
-                  </HeadingHeebo>
-                </div>
+            {rentalHistory.length > 0 ? (
+              rentalHistory.slice(0, 10).map((rental) => {
+                const rentalId = rental._id ?? rental.id ?? "";
+                return (
+                  <div
+                    key={rentalId}
+                    className='flex gap-3 pb-5 border-b border-b-[#D3D3D3] hover:cursor-pointer'
+                    onClick={() =>
+                      router.push(`/rider-db/ride-details?rentalId=${rentalId}`)
+                    }
+                  >
+                    <div className='mt-5'>
+                      <LocationPointerSvg />
+                    </div>
+                    <div className='flex flex-col font-heebo'>
+                      <p className='text-[8px] font-medium'>
+                        {rental.bookingType === "SELF_DRIVE"
+                          ? "Self-drive rental"
+                          : "With-driver rental"}
+                      </p>
+                      <HeadingHeebo className='text-left text-sm'>
+                        {rental.pickUpAddress ?? "Pickup pending"}
+                      </HeadingHeebo>
+                      <p className='text-[9px] text-icons flex gap-3'>
+                        {rental.pickUpTime
+                          ? new Date(rental.pickUpTime).toLocaleDateString()
+                          : rental.createdAt
+                            ? new Date(rental.createdAt).toLocaleDateString()
+                            : "Pending"}
+                      </p>
+                      <p className='text-green-600 text-[9px] capitalize'>
+                        {rental.status ?? "pending"}
+                      </p>
+                      <HeadingHeebo className='text-left text-sm'>
+                        ${rental.cost?.total ?? "0.00"}
+                      </HeadingHeebo>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className='flex py-10 items-center justify-center'>
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyTitle className='font-bold text-xl'>
+                      No recent activities
+                    </EmptyTitle>
+                  </EmptyHeader>
+                </Empty>
               </div>
-            ))} */}
-            <div className='flex py-10 items-center justify-center'>
-              <Empty>
-                <EmptyHeader>
-                  <EmptyTitle className='font-bold text-xl'>
-                    No recent activities
-                  </EmptyTitle>
-                </EmptyHeader>
-              </Empty>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -2,7 +2,10 @@ import * as z from "zod";
 
 // signIn schema
 export const signInSchema = z.object({
-  email: z.email({ message: "Invalid email address" }),
+  email: z.string().min(1, "Email or phone number is required").refine(
+    (value) => z.email().safeParse(value).success || value.length >= 10,
+    "Enter a valid email address or phone number",
+  ),
   password: z
     .string()
     .min(8, "Password must have at least 8 characters!")
@@ -159,9 +162,13 @@ export const createAccountSchema = z
   });
 
 export const updateMobileNumberSchema = z.object({
+  firstName: z.string().min(1, "First name is required").optional(),
+  lastName: z.string().min(1, "Last name is required").optional(),
   mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
     message: "Mobile number is required",
   }),
+  dateOfBirth: z.string().optional(),
+  gender: z.enum(["male", "female", "other"]).optional(),
 });
 
 export type TSignInValidator = z.infer<typeof signInSchema>;

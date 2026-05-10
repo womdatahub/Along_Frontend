@@ -71,7 +71,7 @@ export const Navbar = () => {
           {userRole && userRole !== "driver" && userRole !== "rider" && (
             <Link href='/onboarding'>Drive</Link>
           )}
-          <Link href='#'>Help</Link>
+          <Link href='mailto:support@alongcities.com'>Help</Link>
           <Link
             href={{
               pathname:
@@ -123,7 +123,7 @@ export const Navbar = () => {
                 </li>
               )}
             <li onClick={() => setMenuOpen(false)}>
-              <Link href='#'>Help</Link>
+              <Link href='mailto:support@alongcities.com'>Help</Link>
             </li>
             <li onClick={() => setMenuOpen(false)}>
               <Link

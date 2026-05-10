@@ -9,7 +9,7 @@ import type {
   SelectorFn,
   UserProfile,
 } from "@/types";
-import { callApi, userApiStr } from "@/lib";
+import { callApi, clearStoredAuthToken, uploadMediaDirectly, userApiStr } from "@/lib";
 import { toast } from "sonner";
 import { useRadarMap } from "./use-radar-map";
 import { useRental } from "./use-rental";
@@ -18,6 +18,7 @@ import { useRental } from "./use-rental";
 
 type RegisterDriverResponse = {
   userRole: string;
+  accessToken?: string;
   stripeAccount: {
     driverId: string;
     accountId: string;
@@ -55,12 +56,12 @@ type Session = {
       email: string;
       password: string;
       mobileNumber: string;
-      type: "email" | "phone";
+      type: "email" | "mobile";
     }) => Promise<boolean>;
     verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
-    login: (data: { email: string; password: string }) => Promise<string>;
+    login: (data: { email?: string; mobileNumber?: string; password: string }) => Promise<string>;
     logOut: () => Promise<void>;
-    verifyOtp: () => Promise<void>;
+    verifyOtp: (data?: { email?: string; mobileNumber?: string; otp: string }) => Promise<void>;
     resendVerificationOTP: (data: { email: string }) => Promise<void>;
     registerDriver: (data: {
       firstName: string;
@@ -76,6 +77,7 @@ type Session = {
       driverLincenseFrontViewUri: string;
       driverLincenseBackViewUri: string;
       advancedVerificationUri: string;
+      services?: string[];
     }) => Promise<boolean>;
     registerVehicle: (data: {
       vehicleMake: string;
@@ -83,10 +85,12 @@ type Session = {
       vehicleYear: string;
       vehicleModel: string;
       vehicleColor: string;
+      vehicleClass?: string;
+      rentalModes?: Array<"SELF_DRIVE" | "WITH_DRIVER">;
       vehicleFrontViewImageUri: string;
       vehicleBackViewImageUri: string;
       vehicleSideViewImageUri: string;
-      insuranceDocumentUri: string;
+      insuranceDocumentUri?: string;
     }) => Promise<boolean>;
     registerRider: (data: {
       firstName: string;
@@ -101,18 +105,27 @@ type Session = {
       accountNumber: string;
     }) => Promise<void>;
     updateDriverDetails: (data: {
-      firstname: string;
-      lastname: string;
+      firstName?: string;
+      lastName?: string;
       mobileNumber: string;
-      gender: "male" | "female";
-    }) => Promise<void>;
+      gender?: "male" | "female" | "other";
+      dateOfBirth?: string;
+    }) => Promise<boolean>;
     updateRiderDetails: (data: {
-      firstname: string;
-      lastname: string;
+      firstName?: string;
+      lastName?: string;
       dateOfBirth: string;
-      gender: "male" | "female";
-      profilePicture: string;
-    }) => Promise<void>;
+      mobileNumber: string;
+      gender?: "male" | "female" | "other";
+      profilePictureUri?: string;
+    }) => Promise<boolean>;
+    submitRiderLicense: (data: {
+      licenseNumber: string;
+      licenseExpiryDate: string;
+      licenseFrontImageUri: string;
+      licenseBackImageUri: string;
+      licenseSelfieImageUri?: string;
+    }) => Promise<boolean>;
     createRideProfile: (data: {
       currentLocation: string;
       longitude: number;
@@ -122,6 +135,12 @@ type Session = {
       passangerCapacity: number;
       allowPets: boolean;
     }) => Promise<void>;
+    setDriverAvailability: (data: {
+      availableForDriving: boolean;
+      latitude?: number;
+      longitude?: number;
+      address?: string;
+    }) => Promise<boolean>;
     fetchUserDetails: (
       shouldToast?: boolean,
       shouldReload?: boolean,
@@ -159,27 +178,19 @@ export const useSession = create<Session>()(
       },
       uploadImages: async (d) => {
         set({ isLoading: true });
-        if (!d.imageFile) {
-          throw new Error("Image file is required");
-        }
-        const formData = new FormData();
-        formData.append("uploadType", d.uploadType);
-        formData.append("image", d.imageFile as Blob);
-
-        const { data, error } = await callApi<{ url: string }>(
-          userApiStr("/user/upload"),
-          formData,
-        );
-
-        if (error) {
-          toast.error(error.message ?? "Failed to upload image");
+        try {
+          if (!d.imageFile) {
+            throw new Error("Image file is required");
+          }
+          return await uploadMediaDirectly(d.imageFile, d.uploadType);
+        } catch (error) {
+          toast.error(
+            error instanceof Error ? error.message : "Failed to upload image",
+          );
           return "";
+        } finally {
+          set({ isLoading: false });
         }
-        if (data) {
-          console.log(data, "userApiStr('/user/upload')");
-          return data.data.url;
-        }
-        return "";
       },
 
       setServices: (services) => {
@@ -188,7 +199,11 @@ export const useSession = create<Session>()(
       login: async (loginData) => {
         set({ isLoading: true });
         const path = userApiStr("/user/login");
-        const { data, error } = await callApi<{ userRole: string }>(
+        const { data, error } = await callApi<{
+          userRole: string;
+          accessToken?: string;
+          refreshToken?: string;
+        }>(
           path,
           loginData,
         );
@@ -199,6 +214,7 @@ export const useSession = create<Session>()(
           return "";
         }
         if (data) {
+          clearStoredAuthToken();
           await get().actions.fetchUserDetails(false);
           set({ isLoading: false, userRole: data.data.userRole });
           // toast.success(data.message);
@@ -218,6 +234,7 @@ export const useSession = create<Session>()(
         if (data) {
           await useRadarMap.persist.clearStorage();
           await useRental.persist.clearStorage();
+          clearStoredAuthToken();
           set({
             ...initialState,
             isFetchingUserSessionLoading: false,
@@ -262,10 +279,11 @@ export const useSession = create<Session>()(
         set({ isLoading: false });
         return true;
       },
-      verifyOtp: async () => {
-        const path = userApiStr("/user/verify-otp");
+      verifyOtp: async (verifyOtpData) => {
+        if (!verifyOtpData) return;
+        const path = userApiStr("/user/verify-reset-otp");
 
-        const { data, error } = await callApi(path, {});
+        const { data, error } = await callApi(path, verifyOtpData);
 
         if (error) {
           toast.error(error.message);
@@ -307,8 +325,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
-          console.log("Data from register driver: ")
-          console.log(data)
+          clearStoredAuthToken();
           set({
             isLoading: false,
             registeredDriverResponseWithStripeDetails: data.data,
@@ -328,7 +345,10 @@ export const useSession = create<Session>()(
           path,
           {
             ...addVerificationDocumentsAndServicesData,
-            services: get().services,
+            services:
+              addVerificationDocumentsAndServicesData.services ??
+              get().services ??
+              ["rental"],
           },
           "PATCH",
         );
@@ -381,7 +401,10 @@ export const useSession = create<Session>()(
         set({ isLoading: true });
         const path = userApiStr("/user/rider");
 
-        const { data, error } = await callApi(path, registerRiderData);
+        const { data, error } = await callApi<{ accessToken?: string }>(
+          path,
+          registerRiderData,
+        );
 
         if (error) {
           toast.error(error.message);
@@ -389,6 +412,7 @@ export const useSession = create<Session>()(
           return false;
         }
         if (data) {
+          clearStoredAuthToken();
           toast.success(data.message);
           await get().actions.fetchUserDetails(false, false);
         }
@@ -396,7 +420,7 @@ export const useSession = create<Session>()(
         return true;
       },
       registerBankAccount: async (registerBankAccountData) => {
-        const path = "/user/api/v1/user/bank-details";
+        const path = userApiStr("/user/driver/bank-details");
         const { data, error } = await callApi(path, registerBankAccountData);
 
         if (error) {
@@ -404,10 +428,11 @@ export const useSession = create<Session>()(
           return;
         }
         if (data) {
-          console.log(data, path);
+          toast.success(data.message ?? "Bank details saved");
         }
       },
       updateDriverDetails: async (updateDriverDetailsData) => {
+        set({ isLoading: true });
         const path = userApiStr("/user/driver");
 
         const { data, error } = await callApi(
@@ -418,13 +443,18 @@ export const useSession = create<Session>()(
 
         if (error) {
           toast.error(error.message);
-          return;
+          set({ isLoading: false });
+          return false;
         }
         if (data) {
-          console.log(data, path);
+          toast.success(data.message ?? "Driver details updated");
+          await get().actions.fetchUserDetails(false, false);
         }
+        set({ isLoading: false });
+        return true;
       },
       updateRiderDetails: async (updateRiderDetailsData) => {
+        set({ isLoading: true });
         const path = userApiStr("/user/rider");
 
         const { data, error } = await callApi(
@@ -435,11 +465,32 @@ export const useSession = create<Session>()(
 
         if (error) {
           toast.error(error.message);
-          return;
+          set({ isLoading: false });
+          return false;
         }
         if (data) {
-          console.log(data, path);
+          toast.success(data.message ?? "Rider details updated");
+          await get().actions.fetchUserDetails(false, false);
         }
+        set({ isLoading: false });
+        return true;
+      },
+      submitRiderLicense: async (licenseData) => {
+        set({ isLoading: true });
+        const path = userApiStr("/user/rider/license");
+        const { data, error } = await callApi(path, licenseData, "PATCH");
+
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+          return false;
+        }
+        if (data) {
+          toast.success(data.message ?? "License submitted for review");
+          await get().actions.fetchUserDetails(false, false);
+        }
+        set({ isLoading: false });
+        return true;
       },
       createRideProfile: async (createRideProfileData) => {
         const path = userApiStr("/user/driver/profile/create");
@@ -455,9 +506,27 @@ export const useSession = create<Session>()(
           return;
         }
         if (data) {
-          console.log(data, path);
           toast.success(data.message);
         }
+      },
+      setDriverAvailability: async (availabilityData) => {
+        set({ isLoading: true });
+        const { data, error } = await callApi(
+          userApiStr("/user/driver/availability"),
+          availabilityData,
+          "PATCH",
+        );
+
+        if (error) {
+          toast.error(error.message);
+          set({ isLoading: false });
+          return false;
+        }
+
+        toast.success(data?.message ?? "Availability updated");
+        await get().actions.fetchUserDetails(false, false);
+        set({ isLoading: false });
+        return true;
       },
       fetchUserDetails: async (shouldToast, shouldReload = true) => {
         set({ ...(shouldReload && { isFetchingUserSessionLoading: true }) });
@@ -526,9 +595,7 @@ export const useSession = create<Session>()(
           toast.error(error.message);
           return;
         }
-        if (data) {
-          console.log(data, path);
-        }
+        if (data) toast.success(data.message ?? "Vehicle class loaded");
       },
       fetchVehicleViaDriverID: async (driverID) => {
         const path = userApiStr(`/vehicle/driver/${driverID}`);
@@ -539,9 +606,7 @@ export const useSession = create<Session>()(
           toast.error(error.message);
           return;
         }
-        if (data) {
-          console.log(data, path);
-        }
+        if (data) toast.success(data.message ?? "Vehicle loaded");
       },
       fetchVehicleID: async (vehicleID) => {
         const path = userApiStr(`/vehicle/${vehicleID}`);
@@ -552,9 +617,7 @@ export const useSession = create<Session>()(
           toast.error(error.message);
           return;
         }
-        if (data) {
-          console.log(data, path);
-        }
+        if (data) toast.success(data.message ?? "Vehicle loaded");
       },
     },
   })),

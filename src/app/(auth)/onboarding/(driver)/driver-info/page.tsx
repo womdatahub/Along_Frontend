@@ -8,7 +8,7 @@ import { cn, TDriverBasicInfoSchema } from "@/lib";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { driverBasicInfoSchema } from "@/lib";
 import { useShallow } from "zustand/shallow";
@@ -33,7 +33,7 @@ const Page = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    watch,
+    control,
   } = useForm<TDriverBasicInfoSchema>({
     resolver: zodResolver(driverBasicInfoSchema),
     defaultValues: {
@@ -46,7 +46,7 @@ const Page = () => {
   });
 
   const router = useRouter();
-  const selectedGender = watch("gender");
+  const selectedGender = useWatch({ control, name: "gender" });
 
   const onSubmit = async (data: TDriverBasicInfoSchema) => {
     if (!driverProfile?.email && !userProfile?.email) {

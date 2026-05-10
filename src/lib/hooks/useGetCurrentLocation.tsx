@@ -99,6 +99,5 @@ export const useGetCurrentLocation = (): GeolocationState => {
     navigator.geolocation.getCurrentPosition(successHandler, errorHandler);
   }, []);
 
-  console.log("Ran");
   return location;
 };
