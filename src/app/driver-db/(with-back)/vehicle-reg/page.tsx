@@ -215,7 +215,7 @@ const Page = () => {
             index={3}
             previews={previews}
             setPreviews={setPreviews}
-            className="justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-[80px]"
+            className="justify-center items-center rounded-[10px] bg-background-1 text-placeholder self-end w-full h-20"
             imageToastDescription="Front of the driver license"
           >
             <div className="flex flex-col gap-2 justify-center items-center">

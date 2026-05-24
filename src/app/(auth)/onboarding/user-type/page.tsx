@@ -45,7 +45,7 @@ const Page = () => {
           }}
           className={cn(
             "flex gap-4 px-4 py-7 bg-white rounded-lg cursor-pointer hover:bg-lightgreen transition-colors duration-500 items-center",
-            selected === "driver" && "bg-[#87C4C4]",
+            selected === "driver" && "bg-lightgreen",
           )}
         >
           <Image
