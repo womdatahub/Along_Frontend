@@ -47,16 +47,16 @@ Backend source: Along Services gateway + route audit
 | `/rent-ride/vehicle-details` | Active vehicle gallery/details/pricing |
 | `/rent-ride/success` | Payment return state |
 | `/rent-ride/succss` | Backward-compatible redirect to success route |
-| `/rider-db` | Rider dashboard with rental activity |
-| `/rider-db/rentals` | Rider active/history rentals |
-| `/rider-db/ride-details` | Rental details/cancel |
-| `/rider-db/license` | Rider license upload/review state |
-| `/rider-db/messages` | Rental conversation list/detail |
-| `/driver-db` | Driver/owner dashboard with listing and rental activity |
-| `/driver-db/rentals` | Driver/owner rental bookings |
-| `/driver-db/vehicle` | Driver vehicle profile/manage delisting |
-| `/driver-db/ride-details` | Rental details/begin/finalize |
-| `/driver-db/messages` | Rental conversation list/detail |
+| `/rider` | Rider dashboard with rental activity |
+| `/rider/rentals` | Rider active/history rentals |
+| `/rider/ride-details` | Rental details/cancel |
+| `/rider/license` | Rider license upload/review state |
+| `/rider/messages` | Rental conversation list/detail |
+| `/driver` | Driver/owner dashboard with listing and rental activity |
+| `/driver/rentals` | Driver/owner rental bookings |
+| `/driver/vehicle` | Driver vehicle profile/manage delisting |
+| `/driver/ride-details` | Rental details/begin/finalize |
+| `/driver/messages` | Rental conversation list/detail |
 | `/ride` | Visible but inactive coming-soon ride-hailing |
 | `/schedule-ride` | Visible but inactive coming-soon scheduled ride-hailing |
 | `/admin/*` | Existing admin coverage preserved; selected route mismatch fixed |

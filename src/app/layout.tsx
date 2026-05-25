@@ -1,29 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Fustat, Heebo } from "next/font/google";
+import { Fustat, Heebo } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import { AuthProvider } from "@/store/auth-provider";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { QueryProvider } from "@/lib/providers/query-provider";
 
 const fustat = Fustat({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
   display: "swap",
   variable: "--font-fustat",
 });
+
 const heebo = Heebo({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
   variable: "--font-heebo",
 });
@@ -72,12 +64,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/80 selection:text-primary-foreground`}
+        className={`${fustat.variable} ${heebo.variable} antialiased font-fustat selection:bg-primary/20 selection:text-primary`}
       >
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster position='top-center' richColors />
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

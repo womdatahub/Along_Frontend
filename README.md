@@ -61,19 +61,19 @@ npm run build
 
 - Sign up: `/onboarding`
 - Sign in: `/sign-in`
-- Rider dashboard: `/rider-db`
-- Driver dashboard: `/driver-db`
+- Rider dashboard: `/rider`
+- Driver dashboard: `/driver`
 - Admin sign in: `/admin-sign-in`
 - Admin dashboard: `/admin`
 - Rental booking: `/rent-ride`
 - Vehicle details: `/rent-ride/vehicle-details`
 - Rental payment return: `/rent-ride/success`
-- Rider rental lifecycle: `/rider-db/rentals`
-- Rider license review: `/rider-db/license`
-- Rider rental messages: `/rider-db/messages`
-- Driver rental bookings: `/driver-db/rentals`
-- Driver vehicle management: `/driver-db/vehicle`
-- Driver rental messages: `/driver-db/messages`
+- Rider rental lifecycle: `/rider/rentals`
+- Rider license review: `/rider/license`
+- Rider rental messages: `/rider/messages`
+- Driver rental bookings: `/driver/rentals`
+- Driver vehicle management: `/driver/vehicle`
+- Driver rental messages: `/driver/messages`
 
 ## Backend Alignment
 
