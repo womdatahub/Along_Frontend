@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { requests } from "@/lib";
 import { toast } from "sonner";
+import { TwoFactorFlow } from "@/components";
 
 type ToggleProps = {
   enabled: boolean;
@@ -60,6 +61,9 @@ const Page = () => {
   const [changePwOpen, setChangePwOpen] = useState(false);
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
   const [pwSaving, setPwSaving] = useState(false);
+
+  // 2FA flow state
+  const [twoFaMode, setTwoFaMode] = useState<"enable" | "disable" | null>(null);
 
   const handleChangePassword = async () => {
     if (!pwForm.current || !pwForm.next) {
@@ -240,13 +244,40 @@ const Page = () => {
           <p className="font-semibold text-black">Security</p>
         </div>
 
+        {/* 2FA row */}
+        <div className="border-b border-gray-100">
+          <div className="flex items-center justify-between py-3.5">
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+                <Shield size={14} className="text-gray" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-black">Two-factor authentication</p>
+                <p className="text-xs text-gray mt-0.5">Require 2FA on every login</p>
+              </div>
+            </div>
+            <Toggle
+              enabled={security.twoFactor}
+              onChange={() => {
+                if (twoFaMode) return; // flow already open
+                setTwoFaMode(security.twoFactor ? "disable" : "enable");
+              }}
+            />
+          </div>
+          {twoFaMode && (
+            <TwoFactorFlow
+              mode={twoFaMode}
+              onSuccess={() => {
+                setSecurity((prev) => ({ ...prev, twoFactor: twoFaMode === "enable" }));
+                setTwoFaMode(null);
+              }}
+              onCancel={() => setTwoFaMode(null)}
+            />
+          )}
+        </div>
+
+        {/* Non-2FA security rows */}
         {[
-          {
-            key: "twoFactor" as const,
-            label: "Two-factor authentication",
-            description: "Require 2FA on every login",
-            icon: Shield,
-          },
           {
             key: "sessionTimeout" as const,
             label: "Auto session timeout",

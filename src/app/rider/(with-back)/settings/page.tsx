@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { requests } from "@/lib";
 import { toast } from "sonner";
+import { TwoFactorFlow } from "@/components";
 
 type ToggleProps = {
   enabled: boolean;
@@ -59,6 +60,9 @@ const Page = () => {
   const [changePwOpen, setChangePwOpen] = useState(false);
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
   const [pwSaving, setPwSaving] = useState(false);
+
+  // 2FA flow state
+  const [twoFaMode, setTwoFaMode] = useState<"enable" | "disable" | null>(null);
 
   // Hydrate dark mode from localStorage on mount
   useEffect(() => {
@@ -233,13 +237,47 @@ const Page = () => {
           <p className="font-semibold text-black">Security</p>
         </div>
 
+        {/* 2FA row */}
+        <div className="border-b border-gray-100">
+          <div className="flex items-center justify-between py-3.5">
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+                <Shield size={14} className="text-gray" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-black">
+                  Two-factor authentication
+                </p>
+                <p className="text-xs text-gray mt-0.5">
+                  Require 2FA on every login
+                </p>
+              </div>
+            </div>
+            <Toggle
+              enabled={security.twoFactor}
+              onChange={() => {
+                if (twoFaMode) return;
+                setTwoFaMode(security.twoFactor ? "disable" : "enable");
+              }}
+            />
+          </div>
+          {twoFaMode && (
+            <TwoFactorFlow
+              mode={twoFaMode}
+              onSuccess={() => {
+                setSecurity((prev) => ({
+                  ...prev,
+                  twoFactor: twoFaMode === "enable",
+                }));
+                setTwoFaMode(null);
+              }}
+              onCancel={() => setTwoFaMode(null)}
+            />
+          )}
+        </div>
+
+        {/* Non-2FA security rows */}
         {[
-          {
-            key: "twoFactor" as const,
-            label: "Two-factor authentication",
-            description: "Require 2FA on every login",
-            icon: Shield,
-          },
           {
             key: "sessionTimeout" as const,
             label: "Auto session timeout",
@@ -288,12 +326,20 @@ const Page = () => {
           >
             <div>
               <p className="text-sm font-medium text-black">Change password</p>
-              <p className="text-xs text-gray mt-0.5">Update your account password</p>
+              <p className="text-xs text-gray mt-0.5">
+                Update your account password
+              </p>
             </div>
             {changePwOpen ? (
-              <X size={16} className="text-gray-3 group-hover:text-gray transition-colors" />
+              <X
+                size={16}
+                className="text-gray-3 group-hover:text-gray transition-colors"
+              />
             ) : (
-              <ChevronRight size={16} className="text-gray-3 group-hover:text-gray transition-colors" />
+              <ChevronRight
+                size={16}
+                className="text-gray-3 group-hover:text-gray transition-colors"
+              />
             )}
           </button>
 
@@ -301,18 +347,35 @@ const Page = () => {
             <div className="pb-4 flex flex-col gap-3">
               {(
                 [
-                  { key: "current" as const, label: "Current password", placeholder: "Enter current password" },
-                  { key: "next" as const, label: "New password", placeholder: "Enter new password (min 8 chars)" },
-                  { key: "confirm" as const, label: "Confirm new password", placeholder: "Repeat new password" },
+                  {
+                    key: "current" as const,
+                    label: "Current password",
+                    placeholder: "Enter current password",
+                  },
+                  {
+                    key: "next" as const,
+                    label: "New password",
+                    placeholder: "Enter new password (min 8 chars)",
+                  },
+                  {
+                    key: "confirm" as const,
+                    label: "Confirm new password",
+                    placeholder: "Repeat new password",
+                  },
                 ] as const
               ).map(({ key, label, placeholder }) => (
-                <label key={key} className="flex flex-col gap-1 text-xs font-medium text-gray-600">
+                <label
+                  key={key}
+                  className="flex flex-col gap-1 text-xs font-medium text-gray-600"
+                >
                   {label}
                   <input
                     type="password"
                     value={pwForm[key]}
                     placeholder={placeholder}
-                    onChange={(e) => setPwForm((prev) => ({ ...prev, [key]: e.target.value }))}
+                    onChange={(e) =>
+                      setPwForm((prev) => ({ ...prev, [key]: e.target.value }))
+                    }
                     className="h-10 rounded-xl border border-gray-200 px-3 text-sm font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </label>
@@ -337,7 +400,9 @@ const Page = () => {
         >
           <div>
             <p className="text-sm font-medium text-black">Export data</p>
-            <p className="text-xs text-gray mt-0.5">Download your account data — coming soon</p>
+            <p className="text-xs text-gray mt-0.5">
+              Download your account data — coming soon
+            </p>
           </div>
           <ChevronRight size={16} className="text-gray-3" />
         </button>
@@ -350,13 +415,15 @@ const Page = () => {
         >
           <div>
             <p className="text-sm font-medium text-rose-600">Delete account</p>
-            <p className="text-xs text-gray mt-0.5">Permanently delete account — coming soon</p>
+            <p className="text-xs text-gray mt-0.5">
+              Permanently delete account — coming soon
+            </p>
           </div>
           <ChevronRight size={16} className="text-gray-3" />
         </button>
       </div>
     </div>
   );
-};
+};;
 
 export default Page;

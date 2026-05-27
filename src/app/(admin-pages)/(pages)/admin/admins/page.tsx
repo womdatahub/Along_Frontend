@@ -22,13 +22,12 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { cn } from "@/lib";
 import { useAdmin, usePermission } from "@/store";
 import { useShallow } from "zustand/shallow";
 import { AdminsType } from "@/types";
 import { RolePermission } from "@/types";
 
-/* ─── Admin Detail Modal  */
+/*  Admin Detail Modal  */
 
 const AdminDetailModal = ({
   admin,
@@ -291,7 +290,7 @@ const AdminDetailModal = ({
   );
 };
 
-/* ─── Page ────────────── */
+/*  Page  */
 
 const Page = () => {
   const [selectedAdmin, setSelectedAdmin] = useState<AdminsType | null>(null);

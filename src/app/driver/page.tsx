@@ -69,7 +69,7 @@ const Page = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* ─── Sidebar ─── */}
+          {/*  Sidebar  */}
           <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-4">
             {/* Driver profile card */}
             <div className="bg-white rounded-2xl p-5 flex items-center gap-4">
@@ -146,7 +146,7 @@ const Page = () => {
             </div>
           </aside>
 
-          {/* ─── Main content ─── */}
+          {/*  Main content  */}
           <main className="flex-1 flex flex-col gap-5">
             {/* CTA */}
             <div className="bg-white rounded-2xl p-6 flex flex-col gap-4">

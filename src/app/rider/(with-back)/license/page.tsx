@@ -24,7 +24,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
-/* ── helpers ── */
+/*  helpers  */
 const STATUS_CONFIG = {
   pending:  { icon: Clock,       color: "text-amber-600",   bg: "bg-amber-50",   border: "border-amber-200",   label: "Pending Review" },
   approved: { icon: BadgeCheck,  color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", label: "Approved" },
@@ -124,7 +124,7 @@ const Page = () => {
     }
   };
 
-  /* ──────────────────────────────────────────────────────────────── */
+  /*  */
 
   return (
     <div className="flex flex-col gap-5">
@@ -134,7 +134,7 @@ const Page = () => {
 
       <Card className="w-full max-w-7xl rounded-2xl shadow-none">
         <CardContent className="flex flex-col gap-6">
-          {/* ── Already submitted ── */}
+          {/*  Already submitted  */}
           {hasSubmitted && !isEditing ? (
             <div className="flex flex-col gap-5">
               {/* Status banner */}
@@ -208,7 +208,7 @@ const Page = () => {
               )}
             </div>
           ) : (
-            /* ── Upload / Edit form ── */
+            /*  Upload / Edit form  */
             <div className="flex flex-col gap-6">
               {!hasSubmitted && (
                 <div className="flex flex-col gap-1">

@@ -100,7 +100,7 @@ const Page = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* ─── Sidebar ─── */}
+          {/*  Sidebar  */}
           <motion.aside
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -190,7 +190,7 @@ const Page = () => {
             </div>
           </motion.aside>
 
-          {/* ─── Main content ─── */}
+          {/*  Main content  */}
           <main className="flex-1 flex flex-col gap-5">
             {/* Quick trip bar */}
             <motion.div

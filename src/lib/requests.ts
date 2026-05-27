@@ -17,11 +17,7 @@ import type {
 } from "@/types";
 import type { ApiResponse } from "@/types";
 import type { ApiError } from "./call-api";
-import type {
-  TCreateNewAdminSchema,
-  TMarketPlaceSchema,
-  TPromoAndVoucherSchema,
-} from "./schemas";
+import type { TCreateNewAdminSchema, TMarketPlaceSchema } from "./schemas";
 
 type R<T> = Promise<{ data?: ApiResponse<T>; error?: ApiError }>;
 
@@ -123,6 +119,16 @@ export const requests = {
         data as Record<string, unknown>,
         "PATCH",
       ),
+
+    // 2FA
+    enable2FA: (): R<{ qrCode: string; manualCode: string }> =>
+      callApi(`${BASE_USER}/user/2fa/enable`, {}),
+
+    verify2FA: (data: { code: string }): R<unknown> =>
+      callApi(`${BASE_USER}/user/2fa/verify`, data as Record<string, unknown>),
+
+    disable2FA: (data: { code: string }): R<unknown> =>
+      callApi(`${BASE_USER}/user/2fa/disable`, data as Record<string, unknown>),
 
     requestPasswordReset: (data: {
       email?: string;
@@ -342,7 +348,6 @@ export const requests = {
   },
 
   // ADMIN SERVICE/admin/api/v1/...
-
   admin: {
     //Operations
     getDashboard: (): R<unknown> =>
@@ -641,7 +646,6 @@ export const requests = {
   },
 
   // PERMISSIONS/admin/api/v1/permissions/...
-
   permissions: {
     getAllEndpoints: (): R<Endpoint[]> =>
       callApi(`${BASE_ADMIN}/permissions/endpoints`),
@@ -708,7 +712,6 @@ export const requests = {
   },
 
   // MARKETPLACE(admin cost-settings + vouchers — convenience grouping)
-
   marketplace: {
     getRideCostSettings: (): R<TMarketPlaceSchema[]> =>
       callApi(`${BASE_ADMIN}/cost-settings/ride`),
@@ -737,7 +740,6 @@ export const requests = {
   },
 
   // RENTAL SERVICE/rental/api/v1/...
-
   rental: {
     /** GET available vehicles for rent with optional filter queries */
     getAvailableVehicles: (queries?: Record<string, string>): R<unknown> => {
@@ -807,7 +809,6 @@ export const requests = {
   },
 
   // PAYMENT SERVICE/payment/api/v1/...
-
   payment: {
     //Wallet & Deposits
     /** GET current user's wallet balance */
@@ -936,7 +937,6 @@ export const requests = {
   },
 
   // LOCATION SERVICE/location/api/v1/...
-
   location: {
     /** POST update driver's current location (called every few seconds) */
     trackLocation: (data: {
@@ -985,7 +985,6 @@ export const requests = {
   },
 
   // NOTIFICATION SERVICE/notify/api/v1/...
-
   notification: {
     getNotifications: (): R<unknown> => callApi(`${BASE_NOTIFY}/notifications`),
 
@@ -1004,14 +1003,12 @@ export const requests = {
   },
 
   // TRIP HISTORY SERVICE/trip-history/api/v1/...
-
   tripHistory: {
     getRentalHistory: (rentalId: string): R<unknown> =>
       callApi(`${BASE_TRIP}/trip-history/rental/${rentalId}`),
   },
 
   // COMMUNICATION SERVICE/communication/api/v1/...
-
   communication: {
     getConversation: (rentalId: string): R<unknown> =>
       callApi(`${BASE_COMM}/communication/conversation/${rentalId}`),
@@ -1030,7 +1027,6 @@ export const requests = {
   },
 
   // MAP SERVICE/map/api/v1/...
-
   map: {
     getVehicleLocations: (queries: Record<string, string>): R<unknown> => {
       const params = new URLSearchParams(queries).toString();

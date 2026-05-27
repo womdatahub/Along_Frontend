@@ -10,9 +10,14 @@ import {
   Globe,
   Smartphone,
   ChevronRight,
+  Loader2,
+  X,
 } from "lucide-react";
 import { useSession } from "@/store";
 import { useShallow } from "zustand/shallow";
+import { requests } from "@/lib";
+import { toast } from "sonner";
+import { TwoFactorFlow } from "@/components";
 
 type ToggleProps = {
   enabled: boolean;
@@ -36,8 +41,11 @@ const Toggle = ({ enabled, onChange }: ToggleProps) => (
 );
 
 const Page = () => {
-  const { userRole } = useSession(useShallow((s) => ({ userRole: s.userRole })));
-  const isAdmin = !userRole || userRole === "admin" || userRole === "SUPER_ADMIN";
+  const { userRole } = useSession(
+    useShallow((s) => ({ userRole: s.userRole })),
+  );
+  const isAdmin =
+    !userRole || userRole === "admin" || userRole === "SUPER_ADMIN";
 
   const [notifications, setNotifications] = useState({
     emailAlerts: true,
@@ -71,7 +79,10 @@ const Page = () => {
   const toggle = <K extends keyof typeof notifications>(key: K) =>
     setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const toggleAppearance = <K extends keyof typeof appearance>(key: K, value?: boolean) => {
+  const toggleAppearance = <K extends keyof typeof appearance>(
+    key: K,
+    value?: boolean,
+  ) => {
     const next = value !== undefined ? value : !appearance[key];
     setAppearance((prev) => ({ ...prev, [key]: next }));
 
@@ -83,6 +94,45 @@ const Page = () => {
 
   const toggleSecurity = <K extends keyof typeof security>(key: K) =>
     setSecurity((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  // 2FA flow state
+  const [twoFaMode, setTwoFaMode] = useState<"enable" | "disable" | null>(null);
+
+  // Change-password state
+  const [changePwOpen, setChangePwOpen] = useState(false);
+  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const [pwSaving, setPwSaving] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (!pwForm.current || !pwForm.next) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
+    if (pwForm.next !== pwForm.confirm) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (pwForm.next.length < 8) {
+      toast.error("New password must be at least 8 characters");
+      return;
+    }
+    setPwSaving(true);
+    try {
+      const { error } = await requests.user.changePassword({
+        currentPassword: pwForm.current,
+        newPassword: pwForm.next,
+      });
+      if (error) {
+        toast.error("Password change failed. Check your current password.");
+        return;
+      }
+      toast.success("Password changed successfully");
+      setChangePwOpen(false);
+      setPwForm({ current: "", next: "", confirm: "" });
+    } finally {
+      setPwSaving(false);
+    }
+  };
 
   // Notification items — admin-only items are flagged
   const notificationItems = [
@@ -167,8 +217,12 @@ const Page = () => {
                 <item.icon size={14} className="text-gray-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {item.label}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {item.description}
+                </p>
               </div>
             </div>
             <Toggle
@@ -213,8 +267,12 @@ const Page = () => {
                 <item.icon size={14} className="text-gray-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {item.label}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {item.description}
+                </p>
               </div>
             </div>
             <Toggle
@@ -234,13 +292,47 @@ const Page = () => {
           <p className="font-semibold text-gray-900">Security</p>
         </div>
 
+        {/* 2FA row */}
+        <div className="border-b border-gray-50">
+          <div className="flex items-center justify-between py-3.5">
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+                <Shield size={14} className="text-gray-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">
+                  Two-factor authentication
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Require 2FA on every login
+                </p>
+              </div>
+            </div>
+            <Toggle
+              enabled={security.twoFactor}
+              onChange={() => {
+                if (twoFaMode) return;
+                setTwoFaMode(security.twoFactor ? "disable" : "enable");
+              }}
+            />
+          </div>
+          {twoFaMode && (
+            <TwoFactorFlow
+              mode={twoFaMode}
+              onSuccess={() => {
+                setSecurity((prev) => ({
+                  ...prev,
+                  twoFactor: twoFaMode === "enable",
+                }));
+                setTwoFaMode(null);
+              }}
+              onCancel={() => setTwoFaMode(null)}
+            />
+          )}
+        </div>
+
+        {/* Non-2FA security rows */}
         {[
-          {
-            key: "twoFactor" as const,
-            label: "Two-factor authentication",
-            description: "Require 2FA on every login",
-            icon: Shield,
-          },
           {
             key: "sessionTimeout" as const,
             label: "Auto session timeout",
@@ -263,8 +355,12 @@ const Page = () => {
                 <item.icon size={14} className="text-gray-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {item.label}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {item.description}
+                </p>
               </div>
             </div>
             <Toggle
@@ -280,30 +376,112 @@ const Page = () => {
         <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
           Account Actions
         </p>
-        {[
-          { label: "Change password", description: "Update your account password" },
-          { label: "Export data", description: "Download your account data" },
-          {
-            label: "Delete account",
-            description: "Permanently delete account",
-            danger: true,
-          },
-        ].map((item) => (
+
+        {/* Change password */}
+        <div className="border-b border-gray-50">
           <button
-            key={item.label}
-            className="flex items-center justify-between py-3.5 border-b border-gray-50 last:border-b-0 w-full text-left group hover:bg-gray-50 -mx-1 px-1 rounded-xl transition-colors"
+            onClick={() => setChangePwOpen((o) => !o)}
+            className="flex items-center justify-between py-3.5 w-full text-left group hover:bg-gray-50 -mx-1 px-1 rounded-xl transition-colors"
           >
             <div>
-              <p
-                className={`text-sm font-medium ${item.danger ? "text-rose-600" : "text-gray-800"}`}
-              >
-                {item.label}
+              <p className="text-sm font-medium text-gray-800">
+                Change password
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Update your account password
+              </p>
             </div>
-            <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-400" />
+            {changePwOpen ? (
+              <X
+                size={16}
+                className="text-gray-300 group-hover:text-gray-400 transition-colors"
+              />
+            ) : (
+              <ChevronRight
+                size={16}
+                className="text-gray-300 group-hover:text-gray-400 transition-colors"
+              />
+            )}
           </button>
-        ))}
+
+          {changePwOpen && (
+            <div className="pb-4 flex flex-col gap-3">
+              {(
+                [
+                  {
+                    key: "current" as const,
+                    label: "Current password",
+                    placeholder: "Enter current password",
+                  },
+                  {
+                    key: "next" as const,
+                    label: "New password",
+                    placeholder: "Enter new password (min 8 chars)",
+                  },
+                  {
+                    key: "confirm" as const,
+                    label: "Confirm new password",
+                    placeholder: "Repeat new password",
+                  },
+                ] as const
+              ).map(({ key, label, placeholder }) => (
+                <label
+                  key={key}
+                  className="flex flex-col gap-1 text-xs font-medium text-gray-600"
+                >
+                  {label}
+                  <input
+                    type="password"
+                    value={pwForm[key]}
+                    placeholder={placeholder}
+                    onChange={(e) =>
+                      setPwForm((prev) => ({ ...prev, [key]: e.target.value }))
+                    }
+                    className="h-10 rounded-xl border border-gray-200 px-3 text-sm font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  />
+                </label>
+              ))}
+              <button
+                onClick={handleChangePassword}
+                disabled={pwSaving}
+                className="self-start flex items-center gap-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 disabled:opacity-60 px-5 py-2 rounded-xl transition-colors mt-1"
+              >
+                {pwSaving && <Loader2 size={13} className="animate-spin" />}
+                {pwSaving ? "Saving…" : "Update password"}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Export data — no backend endpoint yet */}
+        <button
+          className="flex items-center justify-between py-3.5 border-b border-gray-50 w-full text-left group hover:bg-gray-50 -mx-1 px-1 rounded-xl transition-colors opacity-50 cursor-not-allowed"
+          disabled
+          title="Not yet available"
+        >
+          <div>
+            <p className="text-sm font-medium text-gray-800">Export data</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Download your account data — coming soon
+            </p>
+          </div>
+          <ChevronRight size={16} className="text-gray-300" />
+        </button>
+
+        {/* Delete account — no backend endpoint yet */}
+        <button
+          className="flex items-center justify-between py-3.5 w-full text-left group hover:bg-rose-50 -mx-1 px-1 rounded-xl transition-colors opacity-50 cursor-not-allowed"
+          disabled
+          title="Not yet available"
+        >
+          <div>
+            <p className="text-sm font-medium text-rose-600">Delete account</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Permanently delete account — coming soon
+            </p>
+          </div>
+          <ChevronRight size={16} className="text-gray-300" />
+        </button>
       </div>
     </section>
   );

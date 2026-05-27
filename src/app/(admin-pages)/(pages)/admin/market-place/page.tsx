@@ -60,7 +60,9 @@ const Page = () => {
             <div className="size-8 rounded-xl bg-violet-50 flex items-center justify-center">
               <Zap size={15} className="text-violet-600" />
             </div>
-            <p className="text-sm font-semibold text-gray-900">Fare Engine Profiles</p>
+            <p className="text-sm font-semibold text-gray-900">
+              Fare Engine Profiles
+            </p>
             <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 font-medium">
               {rideCostSettings.length}
             </span>
@@ -127,26 +129,37 @@ const Page = () => {
                       className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
                     >
                       <td className="px-4 py-4">
-                        <p className="text-sm font-semibold text-gray-900">{setting.title}</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {setting.title}
+                        </p>
                         <p className="text-xs text-gray-400 mt-0.5">
                           {setting.currency ?? "USD"}
                         </p>
                       </td>
                       <td className="px-4 py-4">
-                        <p className="text-sm text-gray-500">{formatDateToDDMMYYYY(date)}</p>
+                        <p className="text-sm text-gray-500">
+                          {formatDateToDDMMYYYY(date)}
+                        </p>
                       </td>
                       <td className="px-4 py-4">
-                        <p className="text-sm font-medium text-gray-700">{setting.baseFare}</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {setting.baseFare}
+                        </p>
                       </td>
                       <td className="px-4 py-4">
-                        <p className="text-sm font-medium text-gray-700">{setting.surgeMultiplier}×</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {setting.surgeMultiplier}×
+                        </p>
                       </td>
                       <td className="px-4 py-4">
-                        <p className="text-sm text-gray-600">{setting.driverToRiderFee}%</p>
+                        <p className="text-sm text-gray-600">
+                          {setting.driverToRiderFee}%
+                        </p>
                       </td>
                       <td className="px-4 py-4">
                         <p className="text-sm text-gray-500">
-                          {setting.baseHagglePercentage}–{setting.maxHagglePercentage}%
+                          {setting.baseHagglePercentage}–
+                          {setting.maxHagglePercentage}%
                         </p>
                       </td>
                       <td className="px-4 py-4">
@@ -171,11 +184,16 @@ const Page = () => {
                             defaultValues={{
                               ...rest,
                               baseFare: String(baseFare),
-                              baseHagglePercentage: String(baseHagglePercentage),
+                              baseHagglePercentage:
+                                String(baseHagglePercentage),
                               driverToRiderFee: String(driverToRiderFee),
                               maxHagglePercentage: String(maxHagglePercentage),
-                              platformFeePercentage: String(platformFeePercentage),
-                              waitingChargePerMinute: String(waitingChargePerMinute),
+                              platformFeePercentage: String(
+                                platformFeePercentage,
+                              ),
+                              waitingChargePerMinute: String(
+                                waitingChargePerMinute,
+                              ),
                               taxPercentage: String(taxPercentage),
                               surgeMultiplier: String(surgeMultiplier),
                             }}
@@ -221,7 +239,9 @@ const Page = () => {
             <div className="size-8 rounded-xl bg-amber-50 flex items-center justify-center">
               <Tag size={15} className="text-amber-600" />
             </div>
-            <p className="text-sm font-semibold text-gray-900">Promotions & Vouchers</p>
+            <p className="text-sm font-semibold text-gray-900">
+              Promotions & Vouchers
+            </p>
             <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 font-medium">
               {allVouchers.length}
             </span>
@@ -288,7 +308,9 @@ const Page = () => {
                       <td className="px-4 py-4">
                         <p className="text-sm font-medium text-gray-700">
                           {voucher.discountValue}
-                          {voucher.discountType === "percentage" ? "%" : " flat"}
+                          {voucher.discountType === "percentage"
+                            ? "%"
+                            : " flat"}
                         </p>
                       </td>
                       <td className="px-4 py-4">
@@ -309,7 +331,10 @@ const Page = () => {
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-1.5">
                           {isActive ? (
-                            <CheckCircle size={13} className="text-emerald-500" />
+                            <CheckCircle
+                              size={13}
+                              className="text-emerald-500"
+                            />
                           ) : (
                             <XCircle size={13} className="text-gray-400" />
                           )}
@@ -358,7 +383,7 @@ const Page = () => {
 
 export default Page;
 
-/* ─── Fare Engine Form ─────────────────────────────────────────────── */
+/*  Fare Engine Form  */
 
 type AddOrEditNewFareEngineProfileComponentType = {
   trigger: ReactNode;
@@ -508,7 +533,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
   );
 };
 
-/* ─── Promo Voucher Form ────────────────────────────────────────────── */
+/*  Promo Voucher Form ─ */
 
 type AddOrEditNewPromoVoucherType = {
   trigger: ReactNode;
@@ -541,9 +566,7 @@ const AddOrEditNewPromoVoucherComponent = ({
 
   const {
     actions: { createVoucher },
-  } = useMarketPlace(
-    useShallow((state) => ({ actions: state.actions })),
-  );
+  } = useMarketPlace(useShallow((state) => ({ actions: state.actions })));
 
   const discountType = useWatch({ control, name: "discountType" });
   const applicableFor = useWatch({ control, name: "applicableFor" });

@@ -20,7 +20,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 
-/* ── status badge ── */
+/*  status badge  */
 const STATUS = {
   approved: {
     label: "Active",
@@ -55,7 +55,7 @@ function StatusBadge({ status }: { status?: string }) {
   );
 }
 
-/* ── edit panel ── */
+/*  edit panel  */
 type EditPanelProps = {
   vehicle: VehicleInfo;
   onClose: () => void;
@@ -234,7 +234,7 @@ function EditPanel({ vehicle, onClose, onSaved }: EditPanelProps) {
   );
 }
 
-/* ── vehicle card ── */
+/*  vehicle card  */
 function VehicleCard({
   vehicle,
   onEdit,
@@ -293,7 +293,7 @@ function VehicleCard({
   );
 }
 
-/* ── page ── */
+/*  page  */
 const Page = () => {
   const { driverProfile } = useSession(
     useShallow((s) => ({ driverProfile: s.driverProfile })),

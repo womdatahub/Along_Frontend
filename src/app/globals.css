@@ -170,7 +170,7 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* ── Page & card backgrounds ── */
+/*  Page & card backgrounds  */
 .dark .bg-white {
   background-color: #1e2533;
 }
@@ -190,7 +190,7 @@ input[type="number"] {
   background-color: rgba(255, 255, 255, 0.12);
 }
 
-/* ── Hover backgrounds ── */
+/*  Hover backgrounds  */
 .dark .hover\:bg-gray-50:hover {
   background-color: #2d3748;
 }
@@ -204,7 +204,7 @@ input[type="number"] {
   background-color: rgba(37, 45, 61, 0.5);
 }
 
-/* ── Borders ── */
+/*  Borders  */
 .dark .border-gray-50 {
   border-color: rgba(255, 255, 255, 0.05);
 }
@@ -218,7 +218,7 @@ input[type="number"] {
   border-color: rgba(255, 255, 255, 0.14);
 }
 
-/* ── Divide utilities ── */
+/*  Divide utilities  */
 .dark .divide-gray-100 > * + * {
   border-color: rgba(255, 255, 255, 0.08);
 }
@@ -226,7 +226,7 @@ input[type="number"] {
   border-color: rgba(255, 255, 255, 0.05);
 }
 
-/* ── Primary text ── */
+/*  Primary text  */
 .dark .text-black {
   color: #f1f5f9;
 }
@@ -242,7 +242,7 @@ input[type="number"] {
 .dark .text-gray-600 {
   color: #94a3b8;
 }
-/* ── Hover text ── */
+/*  Hover text  */
 .dark .hover\:text-gray-900:hover {
   color: #f1f5f9;
 }
@@ -250,7 +250,7 @@ input[type="number"] {
   color: #e2e8f0;
 }
 
-/* ── Form inputs ── */
+/*  Form inputs  */
 .dark input:not([type="checkbox"]):not([type="radio"]),
 .dark textarea,
 .dark select {
@@ -266,7 +266,7 @@ input[type="number"] {
   -webkit-text-fill-color: #64748b;
 }
 
-/* ── Dark mode autofill (must override -webkit-text-fill-color from above) */
+/*  Dark mode autofill (must override -webkit-text-fill-color from above) */
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus {
@@ -276,7 +276,7 @@ input[type="number"] {
   caret-color: #f1f5f9;
 }
 
-/* ── Explicit Along color token overrides */
+/*  Explicit Along color token overrides */
 .dark .text-gray {
   color: #94a3b8;
 }
@@ -290,12 +290,12 @@ input[type="number"] {
   color: #9ca3af;
 }
 
-/* ── Table header rows that use bg-gray-50 via thead or class ── */
+/*  Table header rows that use bg-gray-50 via thead or class  */
 .dark thead tr {
   background-color: transparent;
 }
 
-/* ── Skeleton / loading pulses ── */
+/*  Skeleton / loading pulses  */
 .dark .animate-pulse {
   opacity: 0.5;
 }
