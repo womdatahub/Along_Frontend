@@ -63,7 +63,6 @@ npm run build
 - Sign in: `/sign-in`
 - Rider dashboard: `/rider`
 - Driver dashboard: `/driver`
-- Admin sign in: `/admin-sign-in`
 - Admin dashboard: `/admin`
 - Rental booking: `/rent-ride`
 - Vehicle details: `/rent-ride/vehicle-details`

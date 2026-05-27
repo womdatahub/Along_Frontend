@@ -49,7 +49,6 @@ interface Section {
 }
 
 // Content
-
 const sections: Section[] = [
   {
     id: "booking",
@@ -433,7 +432,6 @@ const sections: Section[] = [
 ];
 
 // Components
-
 function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 

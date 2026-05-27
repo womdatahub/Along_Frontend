@@ -65,7 +65,9 @@ const Page = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-2xl font-bold font-heebo text-gray-900">Active Rentals</p>
+          <p className="text-2xl font-bold font-heebo text-gray-900">
+            Active Rentals
+          </p>
           <p className="text-sm text-gray-500 mt-0.5">
             Monitor ongoing rental sessions in real time
           </p>
@@ -107,23 +109,31 @@ const Page = () => {
               <Activity size={22} className="text-gray-300" />
             </div>
             <p className="text-sm text-gray-400">No active rentals right now</p>
-            <p className="text-xs text-gray-300">Data updates automatically on refresh</p>
+            <p className="text-xs text-gray-300">
+              Data updates automatically on refresh
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-50">
-                  {["Rental ID", "Rider", "Driver", "Vehicle", "Pick-up", "Duration", "Status"].map(
-                    (h) => (
-                      <th
-                        key={h}
-                        className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4"
-                      >
-                        {h}
-                      </th>
-                    ),
-                  )}
+                  {[
+                    "Rental ID",
+                    "Rider",
+                    "Driver",
+                    "Vehicle",
+                    "Pick-up",
+                    "Duration",
+                    "Status",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4"
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -133,10 +143,14 @@ const Page = () => {
                     className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
                   >
                     <td className="px-6 py-4">
-                      <p className="text-sm font-mono text-gray-700">#{r.id.slice(-6)}</p>
+                      <p className="text-sm font-mono text-gray-700">
+                        #{r.id.slice(-6)}
+                      </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm font-medium text-gray-900">{r.riderName}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {r.riderName}
+                      </p>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -152,7 +166,7 @@ const Page = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
                         <MapPin size={12} className="text-gray-400 shrink-0" />
-                        <p className="text-sm text-gray-600 max-w-[160px] truncate">
+                        <p className="text-sm text-gray-600 max-w-40 truncate">
                           {r.pickupAddress}
                         </p>
                       </div>

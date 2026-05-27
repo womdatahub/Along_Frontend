@@ -86,7 +86,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleRouteGuards = useCallback(() => {
     if (isFetchingUserSessionLoading) return;
 
-    // Guest trying to access a protected route → redirect to sign-in
     if (!userRole && isProtected) {
       setRouteBeforeRedirect(pathname);
       toast.error("You are not logged in");

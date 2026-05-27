@@ -149,7 +149,7 @@ const Page = () => {
               type="button"
               onClick={() => setIsTermsAccepted((prev) => !prev)}
               className={cn(
-                "mt-0.5 size-4 rounded-[4px] border-2 flex-shrink-0 transition-colors duration-200",
+                "mt-0.5 size-4 rounded-lg border-2 shrink-0 transition-colors duration-200",
                 isTermsAccepted
                   ? "bg-primary border-primary"
                   : "bg-white border-gray-2",
