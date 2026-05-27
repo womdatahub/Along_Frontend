@@ -16,3 +16,4 @@ export * from "./terms-modal";
 export * from "./name-avatar";
 export * from "./payment-success-page";
 export * from "./two-factor-flow";
+export * from "./password-input";

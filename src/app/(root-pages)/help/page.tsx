@@ -809,7 +809,7 @@ const Page = () => {
 
       {/* Ratings callout */}
       <div className="bg-primary-deep text-white">
-        <div className="max-w-5xl mx-auto px-5 md:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <p className="font-extrabold text-xl font-heebo mb-1">
               Help us improve
@@ -841,7 +841,6 @@ const Page = () => {
 export default Page;
 
 // Data
-
 const contactChannels = [
   {
     icon: MessageSquare,

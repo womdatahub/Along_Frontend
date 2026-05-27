@@ -46,7 +46,8 @@ const Page = () => {
   const [selected, setSelected] = useState<Dispute | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resolutionNote, setResolutionNote] = useState("");
-  const [selectedOutcome, setSelectedOutcome] = useState<DisputeOutcome>("REFUND");
+  const [selectedOutcome, setSelectedOutcome] =
+    useState<DisputeOutcome>("REFUND");
   const [isResolving, setIsResolving] = useState(false);
 
   const loadDisputes = async () => {
@@ -79,7 +80,12 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const open = disputes.filter((d) => d.status === "open" || d.status === "under_review" || d.status === "escalated");
+  const open = disputes.filter(
+    (d) =>
+      d.status === "open" ||
+      d.status === "under_review" ||
+      d.status === "escalated",
+  );
   const resolved = disputes.filter((d) => d.status === "resolved");
   const current = activeTab === "open" ? open : resolved;
   const filtered = current.filter(
@@ -94,7 +100,9 @@ const Page = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-2xl font-bold font-heebo text-gray-900">Disputes</p>
+          <p className="text-2xl font-bold font-heebo text-gray-900">
+            Disputes
+          </p>
           <p className="text-sm text-gray-500 mt-0.5">
             Manage rental disputes and payment conflicts
           </p>
@@ -111,19 +119,38 @@ const Page = () => {
       {/* Summary */}
       <div className="grid sm:grid-cols-3 gap-4">
         {[
-          { label: "Open Disputes", value: open.length, color: "text-rose-600", bg: "bg-rose-50" },
-          { label: "Under Review", value: disputes.filter((d) => d.status === "under_review").length, color: "text-amber-600", bg: "bg-amber-50" },
-          { label: "Resolved", value: resolved.length, color: "text-emerald-600", bg: "bg-emerald-50" },
+          {
+            label: "Open Disputes",
+            value: open.length,
+            color: "text-rose-600",
+            bg: "bg-rose-50",
+          },
+          {
+            label: "Under Review",
+            value: disputes.filter((d) => d.status === "under_review").length,
+            color: "text-amber-600",
+            bg: "bg-amber-50",
+          },
+          {
+            label: "Resolved",
+            value: resolved.length,
+            color: "text-emerald-600",
+            bg: "bg-emerald-50",
+          },
         ].map((s) => (
           <div
             key={s.label}
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4"
           >
-            <div className={`size-10 rounded-xl ${s.bg} flex items-center justify-center`}>
+            <div
+              className={`size-10 rounded-xl ${s.bg} flex items-center justify-center`}
+            >
               <Scale size={18} className={s.color} />
             </div>
             <div>
-              <p className={`text-2xl font-bold font-heebo ${s.color}`}>{s.value}</p>
+              <p className={`text-2xl font-bold font-heebo ${s.color}`}>
+                {s.value}
+              </p>
               <p className="text-sm text-gray-500">{s.label}</p>
             </div>
           </div>
@@ -145,15 +172,20 @@ const Page = () => {
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
-                {t === "open" ? `Open (${open.length})` : `Resolved (${resolved.length})`}
+                {t === "open"
+                  ? `Open (${open.length})`
+                  : `Resolved (${resolved.length})`}
               </button>
             ))}
           </div>
 
           {/* Search */}
-          <div className="px-4 py-3 border-b border-gray-50">
+          <div className="px-4 py-3 border-b border-gray-50 max-w-sm">
             <div className="relative">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search
+                size={13}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
               <input
                 type="text"
                 placeholder="Search disputes…"
@@ -186,12 +218,21 @@ const Page = () => {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <p className="text-xs font-mono text-gray-400">#{d.rentalId.slice(-6)}</p>
-                        <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full capitalize", STATUS_STYLES[d.status])}>
+                        <p className="text-xs font-mono text-gray-400">
+                          #{d.rentalId.slice(-6)}
+                        </p>
+                        <span
+                          className={cn(
+                            "text-xs font-medium px-2 py-0.5 rounded-full capitalize",
+                            STATUS_STYLES[d.status],
+                          )}
+                        >
                           {d.status.replace("_", " ")}
                         </span>
                       </div>
-                      <p className="text-sm font-semibold text-gray-900 truncate">{d.reason}</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {d.reason}
+                      </p>
                       <div className="flex items-center gap-3 mt-1.5">
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <User size={11} />
@@ -204,8 +245,12 @@ const Page = () => {
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-gray-900">${d.amount.toFixed(2)}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{d.createdAt}</p>
+                      <p className="text-sm font-bold text-gray-900">
+                        ${d.amount.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {d.createdAt}
+                      </p>
                     </div>
                   </div>
                 </button>
@@ -220,10 +265,19 @@ const Page = () => {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-5 sticky top-24">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-bold text-gray-900">{selected.reason}</p>
-                  <p className="text-xs text-gray-400 mt-1">Rental #{selected.rentalId.slice(-6)}</p>
+                  <p className="text-sm font-bold text-gray-900">
+                    {selected.reason}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Rental #{selected.rentalId.slice(-6)}
+                  </p>
                 </div>
-                <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full capitalize shrink-0", STATUS_STYLES[selected.status])}>
+                <span
+                  className={cn(
+                    "text-xs font-medium px-2 py-0.5 rounded-full capitalize shrink-0",
+                    STATUS_STYLES[selected.status],
+                  )}
+                >
                   {selected.status.replace("_", " ")}
                 </span>
               </div>
@@ -232,14 +286,20 @@ const Page = () => {
                 {[
                   { label: "Rider", value: selected.riderName, icon: User },
                   { label: "Driver", value: selected.driverName, icon: Car },
-                  { label: "Amount", value: `$${selected.amount.toFixed(2)}`, icon: Scale },
+                  {
+                    label: "Amount",
+                    value: `$${selected.amount.toFixed(2)}`,
+                    icon: Scale,
+                  },
                   { label: "Filed", value: selected.createdAt, icon: Clock },
                 ].map(({ label, value, icon: Icon }) => (
                   <div key={label} className="flex items-center gap-3">
                     <div className="size-6 rounded-lg bg-gray-50 flex items-center justify-center">
                       <Icon size={12} className="text-gray-400" />
                     </div>
-                    <p className="text-xs text-gray-500 w-12 shrink-0">{label}</p>
+                    <p className="text-xs text-gray-500 w-12 shrink-0">
+                      {label}
+                    </p>
                     <p className="text-sm font-medium text-gray-800">{value}</p>
                   </div>
                 ))}
@@ -247,10 +307,18 @@ const Page = () => {
 
               {selected.status !== "resolved" && (
                 <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
-                  <p className="text-sm font-semibold text-gray-700">Resolve dispute</p>
+                  <p className="text-sm font-semibold text-gray-700">
+                    Resolve dispute
+                  </p>
 
                   <div className="grid grid-cols-3 gap-2">
-                    {(["REFUND", "PARTIAL_REFUND", "NO_REFUND"] as DisputeOutcome[]).map((o) => (
+                    {(
+                      [
+                        "REFUND",
+                        "PARTIAL_REFUND",
+                        "NO_REFUND",
+                      ] as DisputeOutcome[]
+                    ).map((o) => (
                       <button
                         key={o}
                         onClick={() => setSelectedOutcome(o)}
@@ -261,7 +329,11 @@ const Page = () => {
                             : "border-gray-200 text-gray-600 hover:border-gray-300",
                         )}
                       >
-                        {o === "NO_REFUND" ? "No refund" : o === "PARTIAL_REFUND" ? "Partial" : "Full refund"}
+                        {o === "NO_REFUND"
+                          ? "No refund"
+                          : o === "PARTIAL_REFUND"
+                            ? "Partial"
+                            : "Full refund"}
                       </button>
                     ))}
                   </div>
@@ -297,10 +369,15 @@ const Page = () => {
                 <div className="pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2 text-emerald-600">
                     <CheckCircle size={14} />
-                    <p className="text-sm font-semibold">Resolved — {selected.outcome.replace(/_/g, " ").toLowerCase()}</p>
+                    <p className="text-sm font-semibold">
+                      Resolved —{" "}
+                      {selected.outcome.replace(/_/g, " ").toLowerCase()}
+                    </p>
                   </div>
                   {selected.resolvedAt && (
-                    <p className="text-xs text-gray-400 mt-1">{selected.resolvedAt}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {selected.resolvedAt}
+                    </p>
                   )}
                 </div>
               )}
@@ -310,7 +387,9 @@ const Page = () => {
               <div className="size-12 rounded-2xl bg-gray-50 flex items-center justify-center">
                 <MessageSquare size={20} className="text-gray-300" />
               </div>
-              <p className="text-sm text-gray-400">Select a dispute to review</p>
+              <p className="text-sm text-gray-400">
+                Select a dispute to review
+              </p>
             </div>
           )}
         </div>

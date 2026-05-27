@@ -96,7 +96,7 @@ const HeroPage = () => {
             <p className="text-white/80 text-base font-semibold mb-3 font-heebo">
               Where are you going?
             </p>
-            <div className="flex items-stretch bg-white rounded-2xl overflow-hidden shadow-2xl max-w-xl">
+            <div className="flex items-stretch bg-white rounded-2xl shadow-2xl max-w-xl">
               <div className="flex items-center gap-3 flex-1 pl-4 pr-2">
                 <div className="shrink-0 text-primary">
                   <LocationIcon />

@@ -151,6 +151,15 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /*  Light-mode input border — inside @layer base so Tailwind utilities can override */
+  input:not([type="checkbox"]):not([type="radio"]):not(.radar-autocomplete-input),
+  textarea,
+  select {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d0d5dd;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -168,6 +177,11 @@ input:-webkit-autofill:focus {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/*  Sidebar  */
+.dark .bg-icons {
+  background-color: #1a2628;
 }
 
 /*  Page & card backgrounds  */

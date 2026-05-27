@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { requests } from "@/lib";
 import { toast } from "sonner";
-import { TwoFactorFlow } from "@/components";
+import { TwoFactorFlow, PasswordInput } from "@/components";
 
 type ToggleProps = {
   enabled: boolean;
@@ -369,14 +369,13 @@ const Page = () => {
                   className="flex flex-col gap-1 text-xs font-medium text-gray-600"
                 >
                   {label}
-                  <input
-                    type="password"
+                  <PasswordInput
                     value={pwForm[key]}
                     placeholder={placeholder}
                     onChange={(e) =>
                       setPwForm((prev) => ({ ...prev, [key]: e.target.value }))
                     }
-                    className="h-10 rounded-xl border border-gray-200 px-3 text-sm font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    className="h-10 w-full rounded-xl border border-gray-200 px-3 text-sm font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </label>
               ))}

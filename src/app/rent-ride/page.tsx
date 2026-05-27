@@ -576,6 +576,10 @@ const RentRide = () => {
                         </Link>
                       </Button>
                     </div>
+                    <p className="text-sm font-semibold text-black">
+                      Adjust the location by moving the pin on the map to your
+                      exact location.
+                    </p>
                   </div>
 
                   {/* Duration + time pickers */}
