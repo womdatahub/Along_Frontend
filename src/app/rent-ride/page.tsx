@@ -12,6 +12,8 @@ import {
 } from "@/components";
 import dynamic from "next/dynamic";
 
+import { radarReverseGeocode } from "@/components/shared/radar-map";
+
 // Lazy-load Radar SDK (WebGL + CSS) — hidden on mobile, deferred on desktop
 const RadarMap = dynamic(
   () =>
@@ -60,7 +62,13 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
-import { MapPin, ChevronLeft, CheckCircle2 } from "lucide-react";
+import {
+  MapPin,
+  ChevronLeft,
+  CheckCircle2,
+  Smartphone,
+  X as XIcon,
+} from "lucide-react";
 
 const Page = () => {
   return (
@@ -72,6 +80,16 @@ const Page = () => {
 
 const RentRide = () => {
   const [open, setOpen] = useState(false);
+  const [mobileBannerDismissed, setMobileBannerDismissed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile on mount (client-only)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState<"hours" | "days">("hours");
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -106,6 +124,43 @@ const RentRide = () => {
 
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
+  };
+
+  // Called when the user drags the pickup pin on the map.
+  // Optimistically moves the coordinates, then reverse-geocodes to update the address label.
+  const handlePickupDrag = async (lng: number, lat: number) => {
+    if (!autoCompleteAddress) return;
+
+    // Capture current address snapshot so the async continuation doesn't use a stale reference
+    const base = autoCompleteAddress;
+    const updatedCoords = {
+      longitude: lng,
+      latitude: lat,
+      geometry: {
+        type: "Point" as const,
+        coordinates: [lng, lat] as [number, number],
+      },
+    };
+
+    // Immediately reflect the new position so the marker stays where the user dropped it
+    setAutoCompleteAddress({ ...base, ...updatedCoords });
+
+    // Reverse-geocode in the background and replace the address label once resolved
+    const result = await radarReverseGeocode(lat, lng);
+    if (!result) return;
+
+    setAutoCompleteAddress({
+      ...base,
+      ...updatedCoords,
+      formattedAddress: result.formattedAddress,
+      addressLabel: result.placeLabel ?? result.formattedAddress,
+      city: result.city ?? base.city,
+      state: result.state ?? base.state,
+      country: result.country ?? base.country,
+      countryCode: result.countryCode ?? base.countryCode,
+      countryFlag: result.countryFlag ?? base.countryFlag,
+      county: result.county ?? base.county,
+    });
   };
 
   const {
@@ -194,12 +249,66 @@ const RentRide = () => {
 
   return (
     <>
+      {/* Mobile app recommendation banner */}
+      {isMobile && !mobileBannerDismissed && (
+        <div className="fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-100 shadow-2xl rounded-t-3xl px-5 pt-4 pb-8 flex flex-col gap-3 md:hidden">
+          {/* Drag handle */}
+          <div className="w-10 h-1 rounded-full bg-gray-200 mx-auto mb-1" />
+          <div className="flex items-start justify-between gap-3">
+            <div className="size-11 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Smartphone size={20} className="text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-900">
+                Better on the app
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                The full map and drag-to-adjust pin are only available in the
+                Along mobile app. Download it for the best experience.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileBannerDismissed(true)}
+              className="shrink-0 size-7 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-colors"
+            >
+              <XIcon size={14} />
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <a
+              href="https://apps.apple.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 h-10 rounded-xl bg-gray-900 text-white text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-gray-800 transition-colors"
+            >
+              App Store
+            </a>
+            <a
+              href="https://play.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 h-10 rounded-xl bg-primary text-white text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-primary/90 transition-colors"
+            >
+              Google Play
+            </a>
+          </div>
+          <button
+            type="button"
+            onClick={() => setMobileBannerDismissed(true)}
+            className="text-xs text-gray-400 text-center hover:text-gray-600 transition-colors"
+          >
+            Continue on web anyway
+          </button>
+        </div>
+      )}
+
       <div className="flex-1 flex justify-center overflow-hidden">
         <div className="w-full max-w-7xl flex flex-row h-[calc(100vh-80px)] overflow-hidden">
-          {/* ─── Left panel ─── */}
+          {/*  Left panel  */}
           <div className="w-full md:w-110 lg:w-104 xl:w-md shrink-0 h-full overflow-y-auto bg-background border-r border-gray-100">
             <div className="flex flex-col gap-5 p-5 pb-10">
-              {/* ── Step 1: Location display ── */}
+              {/*  Step 1: Location display  */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                 <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-3 font-heebo">
                   Pick-up Location
@@ -263,7 +372,7 @@ const RentRide = () => {
                 )}
               </div>
 
-              {/* ── Step 2: Vehicle type selection (shown when address set) ── */}
+              {/*  Step 2: Vehicle type selection (shown when address set)  */}
               {autoCompleteAddress && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                   <div className="flex items-center justify-between mb-3">
@@ -312,7 +421,7 @@ const RentRide = () => {
                 </div>
               )}
 
-              {/* ── Step 3: Booking mode (shown when vehicleType set) ── */}
+              {/*  Step 3: Booking mode (shown when vehicleType set)  */}
               {vehicleType && !selectedDriver && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                   <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-3 font-heebo">
@@ -345,7 +454,7 @@ const RentRide = () => {
                 </div>
               )}
 
-              {/* ── Step 4: Driver cards (shown when vehicleType set, no driver selected) ── */}
+              {/*  Step 4: Driver cards (shown when vehicleType set, no driver selected)  */}
               {vehicleType && !selectedDriver && (
                 <div className="flex flex-col gap-3">
                   <p className="text-xs font-semibold text-gray uppercase tracking-wider font-heebo px-1">
@@ -387,7 +496,7 @@ const RentRide = () => {
                 </div>
               )}
 
-              {/* ── Step 5: Scheduling + review (shown when driver selected) ── */}
+              {/*  Step 5: Scheduling + review (shown when driver selected)  */}
               {vehicleType && selectedDriver && (
                 <div className="flex flex-col gap-5">
                   {/* Selected vehicle summary */}
@@ -923,13 +1032,16 @@ const RentRide = () => {
             </div>
           </div>
 
-          {/* ─── Right panel: Map ─── */}
+          {/*  Right panel: Map  */}
           <div className="hidden md:flex flex-1 h-full overflow-hidden">
             <RadarMap
               pickup={[
                 autoCompleteAddress?.longitude ?? 0,
                 autoCompleteAddress?.latitude ?? 0,
               ]}
+              onPickupChange={
+                autoCompleteAddress ? handlePickupDrag : undefined
+              }
             />
           </div>
         </div>
@@ -943,11 +1055,11 @@ const RentRide = () => {
       />
     </>
   );
-};
+};;;;
 
 export default Page;
 
-// ── Driver card component ──────────────────────────────────────────────────────
+//  Driver card component
 type DriverCardProps = {
   vehicle: VehicleLocation;
   func: (v: VehicleLocation) => void;
@@ -1065,7 +1177,7 @@ const DriverCard = ({
   );
 };
 
-// ── Dialog wrapper ─────────────────────────────────────────────────────────────
+//  Dialog wrapper
 type RentRideDialogComponentProps = {
   title: string;
   subTitle: string;

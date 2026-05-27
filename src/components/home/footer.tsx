@@ -1,7 +1,6 @@
 import { LogoComponent } from "@/components";
 import {
   WhiteFacebookIcon,
-  WhiteForwardIcon,
   WhiteInstagramIcon,
   WhiteLinkedInIcon,
   WhiteXIcon,
@@ -65,7 +64,6 @@ export const Footer = () => {
                     className="w-auto"
                   />
                   {label}
-                  <WhiteForwardIcon />
                 </button>
               ))}
             </div>

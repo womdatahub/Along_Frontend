@@ -12,9 +12,17 @@ type RadarMapProps = {
   pickupName?: string;
   drop?: [number, number];
   dropName?: string;
+  /** Called when the user drags the pickup marker to a new position */
+  onPickupChange?: (lng: number, lat: number) => void;
 };
 
-const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
+const Map = ({
+  pickup,
+  drop,
+  dropName,
+  pickupName,
+  onPickupChange,
+}: RadarMapProps) => {
   const generatedId = useId().replace(/:/g, "");
   const mapContainerId = `radar-map-${generatedId}`;
   const [sdkFailed, setSdkFailed] = useState(false);
@@ -98,10 +106,33 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
       });
 
       if (pickupCoords) {
-        Radar.ui
+        const pickupMarker = Radar.ui
           .marker({ text: pickupName || "Pickup", color: "red" })
           .setLngLat(pickupCoords)
           .addTo(map);
+
+        // Enable drag if a callback is provided
+        if (onPickupChange) {
+          try {
+            const el = (pickupMarker as unknown as { _element?: HTMLElement })
+              ._element;
+            if (el) el.style.cursor = "grab";
+            // Radar markers delegate to MapLibre — use the underlying draggable API
+            (
+              pickupMarker as unknown as { setDraggable?: (d: boolean) => void }
+            ).setDraggable?.(true);
+            pickupMarker.on("dragend", () => {
+              const lngLat = (
+                pickupMarker as unknown as {
+                  getLngLat?: () => { lng: number; lat: number };
+                }
+              ).getLngLat?.();
+              if (lngLat) onPickupChange(lngLat.lng, lngLat.lat);
+            });
+          } catch {
+            /* drag not supported in this Radar SDK version — skip silently */
+          }
+        }
 
         if (dropCoords) {
           Radar.ui
@@ -124,6 +155,7 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
     dropLng,
     dropName,
     mapContainerId,
+    onPickupChange,
     pickupLat,
     pickupLng,
     pickupName,
@@ -311,3 +343,42 @@ const radarAutocompleteManual = async (
 };
 
 export { radarAutocompleteManual };
+
+//  Reverse geocode ─
+
+const REVERSE_GEOCODE_URL = "https://api.radar.io/v1/geocode/reverse";
+
+type RadarReverseGeocodeResult = {
+  formattedAddress: string;
+  placeLabel?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  countryCode?: string;
+  countryFlag?: string;
+  county?: string;
+  latitude: number;
+  longitude: number;
+};
+
+/**
+ * Converts (lat, lng) coordinates into a human-readable address via Radar's
+ * reverse geocode API. Returns null if the key is missing or the request fails.
+ */
+export const radarReverseGeocode = async (
+  lat: number,
+  lng: number,
+): Promise<RadarReverseGeocodeResult | null> => {
+  if (!publishableKey) return null;
+  try {
+    const { data, status } = await axios(
+      `${REVERSE_GEOCODE_URL}?coordinates=${lat},${lng}`,
+      { headers: { Authorization: publishableKey } },
+    );
+    if (status !== 200) return null;
+    const addresses: RadarReverseGeocodeResult[] = data.addresses ?? [];
+    return addresses[0] ?? null;
+  } catch {
+    return null;
+  }
+};
