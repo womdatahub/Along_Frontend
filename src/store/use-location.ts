@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import type { SelectorFn } from "@/types";
 import { callApi, locationApiStr } from "@/lib";
-import { toast } from "sonner";
 
 type LocationMetric = {
   distance?: number;
@@ -41,9 +40,10 @@ export const useLocation = create<LocationStoreType>()((set) => ({
       const { data, error } = await callApi<LocationMetric>(
         locationApiStr("/distance"),
         payload,
+        "POST",
+        { skipToast: true },
       );
       if (error) {
-        toast.error(error.message);
         set({ isLoading: false });
         return;
       }
@@ -54,9 +54,10 @@ export const useLocation = create<LocationStoreType>()((set) => ({
       const { data, error } = await callApi<LocationMetric>(
         locationApiStr("/eta"),
         payload,
+        "POST",
+        { skipToast: true },
       );
       if (error) {
-        toast.error(error.message);
         set({ isLoading: false });
         return;
       }

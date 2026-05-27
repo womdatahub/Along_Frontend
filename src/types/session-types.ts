@@ -111,6 +111,8 @@ export interface RiderProfile {
   updatedAt: string;
   dateOfBirth: string;
   licenseStatus?: "pending" | "approved" | "rejected" | string;
+  riderLicenseNumber?: string;
+  riderLicenseExpiryDate?: string;
   riderLicenseFrontViewUri?: string;
   riderLicenseBackViewUri?: string;
   riderLicenseSelfieUri?: string;

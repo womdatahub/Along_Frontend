@@ -34,6 +34,8 @@ export type VehicleLocation = {
 };
 
 export type VehicleInfo = {
+  _id?: string;
+  vehicleId?: string;
   vehicleMake: string;
   vehicleModel: string;
   vehicleClass: "economy" | "standard" | "premium" | string;
@@ -43,6 +45,11 @@ export type VehicleInfo = {
   vehicleBackViewImageUri: string;
   vehicleSideViewImageUri: string;
   vehicleIdentificationNumber: string;
+  kycStatus?: "pending" | "approved" | "rejected" | string;
+  isActive?: boolean;
+  isListedForRental?: boolean;
+  driverId?: string;
+  insuranceDocumentUri?: string;
 };
 
 export type DriverInfo = {

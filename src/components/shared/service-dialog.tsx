@@ -29,7 +29,7 @@ export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
         {trigger}
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-106.25 p-0 bg-background-1"
+        className="sm:max-w-106.25 p-0 bg-background"
         showCloseButton={false}
       >
         <VisuallyHidden>
@@ -54,10 +54,6 @@ export const CompleteHeroServiceDialog = ({ trigger }: ServiceDialogType) => {
                       <button
                         key={item.state}
                         onClick={() => {
-                          // if (item.state === "scheduled") {
-                          //   router.push("/schedule-ride");
-                          //   return;
-                          // }
                           router.push(`?service=${item.state.toLowerCase()}`);
                         }}
                         className={cn(
@@ -132,7 +128,7 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
       <DialogContent
         dialogTitle="Select a vehicle type: Economy, Comfort, Comfort XL, Luxury or
             Luxury XL"
-        className="sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background-1"
+        className="sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background"
         showCloseButton={false}
       >
         <div className="flex flex-col gap-6">
@@ -182,7 +178,7 @@ export const ServiceDialog = ({ trigger }: ServiceDialogType) => {
                   <DialogContent
                     dialogTitle="Select a vehicle type: Economy, Comfort, Comfort XL,
                         Luxury or Luxury XL"
-                    className="sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background-1"
+                    className="sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background"
                     showCloseButton={false}
                   >
                     <div className="flex flex-col gap-6">

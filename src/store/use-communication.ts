@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { SelectorFn } from "@/types";
-import { callApi, communicationApiStr } from "@/lib";
+import { callApi, communicationApiStr, requests } from "@/lib";
 import { toast } from "sonner";
 
 export type ConversationSummary = {
@@ -29,12 +29,18 @@ export type ConversationMessage = {
 
 type CommunicationStoreType = {
   isLoading: boolean;
+  isSending: boolean;
   conversations: ConversationSummary[];
   selectedConversation: ConversationSummary | undefined;
   messages: ConversationMessage[];
   actions: {
     fetchUserConversations: (userId: string) => Promise<void>;
     fetchConversation: (conversationId: string) => Promise<void>;
+    sendMessage: (params: {
+      conversationId: string;
+      body: string;
+      senderId?: string;
+    }) => Promise<boolean>;
     startConversation: (data: {
       driverId: string;
       riderId: string;
@@ -53,8 +59,9 @@ const asArray = <T>(value: unknown): T[] => {
   return [];
 };
 
-export const useCommunication = create<CommunicationStoreType>()((set) => ({
+export const useCommunication = create<CommunicationStoreType>()((set, get) => ({
   isLoading: false,
+  isSending: false,
   conversations: [],
   selectedConversation: undefined,
   messages: [],
@@ -82,7 +89,6 @@ export const useCommunication = create<CommunicationStoreType>()((set) => ({
         messages?: ConversationMessage[];
       }>(communicationApiStr(`/conversation/${conversationId}`));
       if (error) {
-        toast.error(error.message);
         set({ isLoading: false });
         return;
       }
@@ -93,6 +99,31 @@ export const useCommunication = create<CommunicationStoreType>()((set) => ({
         messages: asArray<ConversationMessage>(data?.data),
       });
     },
+    sendMessage: async ({ conversationId, body, senderId }) => {
+      if (!conversationId || !body.trim()) return false;
+      set({ isSending: true });
+      const { error } = await requests.communication.sendMessage({
+        conversationId,
+        body: body.trim(),
+        senderId,
+      });
+      set({ isSending: false });
+      if (error) {
+        toast.error("Failed to send message");
+        return false;
+      }
+      // Optimistically append the message, then refresh
+      const optimistic: ConversationMessage = {
+        _id: `optimistic-${Date.now()}`,
+        senderId,
+        body: body.trim(),
+        createdAt: new Date().toISOString(),
+      };
+      set((state) => ({ messages: [...state.messages, optimistic] }));
+      // Refresh conversation to get server-authoritative messages
+      await get().actions.fetchConversation(conversationId);
+      return true;
+    },
     startConversation: async (payload) => {
       set({ isLoading: true });
       const { data, error } = await callApi<ConversationSummary>(
@@ -100,7 +131,6 @@ export const useCommunication = create<CommunicationStoreType>()((set) => ({
         payload,
       );
       if (error) {
-        toast.error(error.message);
         set({ isLoading: false });
         return undefined;
       }

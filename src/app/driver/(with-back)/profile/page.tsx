@@ -1,0 +1,238 @@
+"use client";
+
+import { useSession } from "@/store";
+import { useShallow } from "zustand/shallow";
+import {
+  Phone,
+  Shield,
+  Calendar,
+  User,
+  BadgeCheck,
+  Pencil,
+  Check,
+  X,
+  Loader2,
+  Star,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import Image from "next/image";
+
+const Page = () => {
+  const {
+    driverProfile,
+    actions: { updateDriverDetails },
+  } = useSession(
+    useShallow((state) => ({
+      driverProfile: state.driverProfile,
+      actions: state.actions,
+    })),
+  );
+
+  const activeProfile = driverProfile
+    ? {
+        firstName: driverProfile.firstName ?? "",
+        lastName: driverProfile.lastName ?? "",
+        mobileNumber: "",
+        role: "Driver",
+        createdAt: driverProfile.createdAt,
+        profilePictureUri: driverProfile.driverProfilePictureUri ?? null,
+        rating: driverProfile.rating?.numberOfRatings ?? 0,
+      }
+    : null;
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [form, setForm] = useState({
+    firstName: activeProfile?.firstName ?? "",
+    lastName: activeProfile?.lastName ?? "",
+    mobileNumber: activeProfile?.mobileNumber ?? "",
+  });
+
+  if (!activeProfile) {
+    return (
+      <div className="flex flex-col gap-6">
+        <p className="text-2xl font-bold font-heebo text-black">Profile</p>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center gap-3 text-center">
+          <User size={40} className="text-gray-300" />
+          <p className="text-gray-500">Profile information unavailable</p>
+        </div>
+      </div>
+    );
+  }
+
+  const initials =
+    `${activeProfile.firstName[0] ?? ""}${activeProfile.lastName[0] ?? ""}`.toUpperCase();
+
+  const handleEdit = () => {
+    setForm({
+      firstName: activeProfile.firstName,
+      lastName: activeProfile.lastName,
+      mobileNumber: activeProfile.mobileNumber,
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => setIsEditing(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const success = await updateDriverDetails({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        mobileNumber: form.mobileNumber,
+      });
+      if (success) {
+        toast.success("Profile saved successfully");
+        setIsEditing(false);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const displayedFields = [
+    {
+      label: "First name",
+      value: isEditing ? undefined : activeProfile.firstName,
+      editKey: "firstName" as const,
+      icon: User,
+    },
+    {
+      label: "Last name",
+      value: isEditing ? undefined : activeProfile.lastName,
+      editKey: "lastName" as const,
+      icon: User,
+    },
+    {
+      label: "Role",
+      value: activeProfile.role,
+      editKey: null,
+      icon: Shield,
+    },
+    {
+      label: "Account created",
+      value: activeProfile.createdAt
+        ? new Date(activeProfile.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        : "Unknown",
+      editKey: null,
+      icon: Calendar,
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-6 max-w-8xl">
+      <div className="flex items-center justify-between">
+        <p className="text-2xl font-bold font-heebo text-black">Profile</p>
+        {!isEditing ? (
+          <button
+            onClick={handleEdit}
+            className="flex items-center gap-1.5 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 px-4 py-2 rounded-xl transition-colors"
+          >
+            <Pencil size={14} />
+            Edit profile
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCancel}
+              disabled={isSaving}
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+            >
+              <X size={14} />
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center gap-1.5 text-sm font-semibold text-white bg-primary hover:bg-primary/90 px-4 py-2 rounded-xl transition-colors disabled:opacity-60"
+            >
+              {isSaving ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Check size={14} />
+              )}
+              {isSaving ? "Saving…" : "Save changes"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Avatar card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-5">
+        {activeProfile.profilePictureUri ? (
+          <Image
+            src={activeProfile.profilePictureUri}
+            alt={`${activeProfile.firstName} ${activeProfile.lastName}`}
+            width={64}
+            height={64}
+            className="size-16 rounded-2xl object-cover shrink-0"
+          />
+        ) : (
+          <div className="size-16 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-xl font-heebo shrink-0">
+            {initials || <User size={28} />}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="text-xl font-bold text-black font-heebo">
+            {activeProfile.firstName} {activeProfile.lastName}
+          </p>
+          <div className="flex items-center gap-1.5 mt-1">
+            <Star size={13} className="text-yellow-400 fill-yellow-400" />
+            <p className="text-sm text-gray">{activeProfile.rating}% rating</p>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full capitalize">
+              <BadgeCheck size={12} />
+              {activeProfile.role}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Info fields */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-1">
+        <p className="text-sm font-semibold text-gray-3 uppercase tracking-wide mb-3">
+          Account Information
+        </p>
+        {displayedFields.map((field) => (
+          <div
+            key={field.label}
+            className="flex items-center gap-4 py-3.5 border-b border-gray-100 last:border-b-0"
+          >
+            <div className="size-8 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+              <field.icon size={15} className="text-gray" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray">{field.label}</p>
+              {isEditing && field.editKey ? (
+                <input
+                  type="text"
+                  value={form[field.editKey]}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      [field.editKey!]: e.target.value,
+                    }))
+                  }
+                  className="mt-1 w-full max-w-xs text-sm font-medium text-black border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              ) : (
+                <p className="text-sm font-medium text-black mt-0.5 capitalize">
+                  {field.value}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Page;

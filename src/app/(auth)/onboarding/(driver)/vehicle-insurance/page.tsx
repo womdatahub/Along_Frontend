@@ -5,7 +5,7 @@ import Link from "next/link";
 const Page = () => {
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-80px)] px-4">
-      <div className="w-full max-w-125 rounded-[20px] bg-background-1 p-8 flex flex-col gap-5">
+      <div className="w-full max-w-125 rounded-[20px] bg-background p-8 flex flex-col gap-5">
         <h1 className="font-heebo text-3xl font-bold text-center">
           Vehicle insurance
         </h1>
@@ -22,7 +22,7 @@ const Page = () => {
             Update vehicle info
           </Link>
           <Link
-            href="/driver-db"
+            href="/driver"
             className="rounded-full bg-white px-4 py-2 text-sm font-bold text-black"
           >
             Go to dashboard

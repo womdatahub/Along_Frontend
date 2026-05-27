@@ -101,9 +101,7 @@ export const useRental = create<RentalStoreType>()(
               idempotencyKey: createIdempotencyKey("list-vehicle"),
             });
             if (error) {
-              toast.error(error.message);
               set({ isLoading: false });
-
               return error.accountLink ?? "";
             }
             if (data) {
@@ -121,11 +119,6 @@ export const useRental = create<RentalStoreType>()(
               vehicles: VehicleLocation[];
             }>(path);
             if (error) {
-              toast.error(
-                error.message ??
-                  (error.error as string) ??
-                  "There was an error retrieving available vehicles",
-              );
               set({ isLoading: false });
               return;
             }
@@ -141,7 +134,6 @@ export const useRental = create<RentalStoreType>()(
                 idempotencyKey: createIdempotencyKey("rental"),
               });
             if (error) {
-              toast.error(error.message);
               set({ isCreatingIntent: false });
               return undefined;
             }
@@ -162,7 +154,6 @@ export const useRental = create<RentalStoreType>()(
               "DELETE",
             );
             if (error) {
-              toast.error(error.message);
               set({ isCreatingIntent: false });
               return;
             }
@@ -177,7 +168,6 @@ export const useRental = create<RentalStoreType>()(
               rentalApiStr("/rentals"),
             );
             if (error) {
-              toast.error(error.message);
               set({ isLoading: false });
               return;
             }
@@ -203,7 +193,6 @@ export const useRental = create<RentalStoreType>()(
               rentalApiStr(`/${rentalId}`),
             );
             if (error) {
-              toast.error(error.message);
               set({ isLoading: false });
               return;
             }
@@ -215,7 +204,6 @@ export const useRental = create<RentalStoreType>()(
               tripHistoryApiStr(`/history/${rentalId}`),
             );
             if (error) {
-              toast.error(error.message);
               set({ isLoading: false });
               return;
             }
@@ -228,10 +216,7 @@ export const useRental = create<RentalStoreType>()(
               "POST",
               { idempotencyKey: createIdempotencyKey("begin-rental") },
             );
-            if (error) {
-              toast.error(error.message);
-              return false;
-            }
+            if (error) return false;
             toast.success(data?.message ?? "Rental started");
             await useRental.getState().actions.fetchRentalDetails(rentalId);
             return true;
@@ -243,10 +228,7 @@ export const useRental = create<RentalStoreType>()(
               "POST",
               { idempotencyKey: createIdempotencyKey("finalize-rental") },
             );
-            if (error) {
-              toast.error(error.message);
-              return false;
-            }
+            if (error) return false;
             toast.success(data?.message ?? "Rental finalized");
             await useRental.getState().actions.fetchRentalDetails(rentalId);
             return true;
@@ -262,7 +244,6 @@ export const useRental = create<RentalStoreType>()(
               { idempotencyKey: createIdempotencyKey("delist-vehicle") },
             );
             if (error) {
-              toast.error(error.message);
               set({ isLoading: false });
               return false;
             }

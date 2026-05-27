@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
@@ -14,49 +14,75 @@ type RadarMapProps = {
   dropName?: string;
 };
 
-const supportsWebGL = () => {
-  if (typeof window === "undefined") return false;
-  const canvas = document.createElement("canvas");
-  try {
-    const context =
-      canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-    return Boolean(context);
-  } catch {
-    return false;
-  }
-};
-
-const formatCoords = (coords?: [number, number]) =>
-  coords ? `${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}` : "Not selected";
-
 const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
   const generatedId = useId().replace(/:/g, "");
   const mapContainerId = `radar-map-${generatedId}`;
-  const [mapError, setMapError] = useState(() =>
-    publishableKey ? "" : "Map key is not configured",
-  );
+  const [sdkFailed, setSdkFailed] = useState(false);
   const pickupLng = pickup?.[0];
   const pickupLat = pickup?.[1];
   const dropLng = drop?.[0];
   const dropLat = drop?.[1];
 
+  const addRoute = useCallback(
+    async (
+      map: ReturnType<typeof Radar.ui.map>,
+      pickupCoords: [number, number],
+      dropCoords: [number, number],
+    ) => {
+      try {
+        const resp = await axios.get(
+          "https://api.radar.io/v1/route/directions",
+          {
+            params: {
+              locations: `${pickupCoords[1]},${pickupCoords[0]}|${dropCoords[1]},${dropCoords[0]}`,
+              mode: "car",
+              units: "metric",
+            },
+            headers: { Authorization: publishableKey },
+          },
+        );
+        const route = resp.data?.routes?.[0];
+        if (!route) return;
+        if (route.geometry.polyline) {
+          map.addPolyline(route.geometry.polyline as string, {
+            id: "route-polyline",
+            precision: 6,
+            properties: {},
+            paint: { "line-color": "#007AFF", "line-width": 4 },
+          });
+        } else if (route.geometry.coordinates) {
+          map.addLine(
+            {
+              type: "Feature",
+              id: "route-line-feature",
+              properties: {},
+              geometry: {
+                type: "LineString",
+                coordinates: route.geometry.coordinates as [number, number][],
+              },
+            },
+            { paint: { "line-color": "#007AFF", "line-width": 4 } },
+          );
+        }
+      } catch {
+        /* route overlay optional — map still usable */
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (!publishableKey) {
-      return;
-    }
-    if (!supportsWebGL()) {
-      queueMicrotask(() =>
-        setMapError("Map preview is unavailable on this device"),
-      );
-      return;
-    }
+    if (!publishableKey) return;
 
     let map: ReturnType<typeof Radar.ui.map> | undefined;
+    setSdkFailed(false);
 
     try {
       Radar.initialize(publishableKey);
       const pickupCoords =
-        pickupLng !== undefined && pickupLat !== undefined
+        pickupLng !== undefined &&
+        pickupLat !== undefined &&
+        (pickupLng !== 0 || pickupLat !== 0)
           ? ([pickupLng, pickupLat] as [number, number])
           : undefined;
       const dropCoords =
@@ -67,16 +93,13 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
       map = Radar.ui.map({
         container: mapContainerId,
         style: "radar-default-v1",
-        center: pickupCoords || [37.7749, -90],
-        zoom: 6,
+        center: pickupCoords ?? [-90, 37.7749],
+        zoom: pickupCoords ? 13 : 4,
       });
 
       if (pickupCoords) {
         Radar.ui
-          .marker({
-            text: pickupName || "Pickup",
-            color: "red",
-          })
+          .marker({ text: pickupName || "Pickup", color: "red" })
           .setLngLat(pickupCoords)
           .addTo(map);
 
@@ -85,80 +108,18 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
             .marker({ text: dropName || "Drop", color: "green" })
             .setLngLat(dropCoords)
             .addTo(map);
-          map.on("load", async () => {
-            try {
-              const resp = await axios.get(
-                "https://api.radar.io/v1/route/directions",
-                {
-                  params: {
-                    locations: `${pickupCoords[1]},${pickupCoords[0]}|${dropCoords[1]},${dropCoords[0]}`,
-                    mode: "car",
-                    units: "metric",
-                  },
-                  headers: {
-                    Authorization: publishableKey,
-                  },
-                },
-              );
-
-              const directionsData = resp.data;
-
-              if (!directionsData.routes || directionsData.routes.length === 0) {
-                return;
-              }
-
-              const route = directionsData.routes[0];
-
-              if (route.geometry.polyline) {
-                const polyline = route.geometry.polyline as string;
-
-                map?.addPolyline(polyline, {
-                  id: "route-polyline",
-                  precision: 6,
-                  properties: {},
-                  paint: {
-                    "line-color": "#007AFF",
-                    "line-width": 4,
-                  },
-                });
-              } else if (route.geometry.coordinates) {
-                const coords: [number, number][] = route.geometry.coordinates;
-
-                map?.addLine(
-                  {
-                    type: "Feature",
-                    id: "route-line-feature",
-                    properties: {},
-                    geometry: {
-                      type: "LineString",
-                      coordinates: coords,
-                    },
-                  },
-                  {
-                    paint: {
-                      "line-color": "#007AFF",
-                      "line-width": 4,
-                    },
-                  },
-                );
-              }
-            } catch {
-              setMapError("Route preview is unavailable right now");
-            }
-          });
+          map.on("load", () => addRoute(map!, pickupCoords, dropCoords));
         }
       }
-      queueMicrotask(() => setMapError(""));
     } catch {
-      queueMicrotask(() =>
-        setMapError("Map preview is unavailable on this device"),
-      );
+      setSdkFailed(true);
     }
 
     return () => {
       map?.remove?.();
     };
   }, [
+    addRoute,
     dropLat,
     dropLng,
     dropName,
@@ -168,26 +129,24 @@ const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
     pickupName,
   ]);
 
+  if (!publishableKey) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-gray-50">
+        <p className="text-sm text-gray-400">Map not configured</p>
+      </div>
+    );
+  }
+
   return (
-    <div className='relative h-80 md:h-125 w-full overflow-hidden rounded-2xl bg-white'>
-      {mapError ? (
-        <div className='flex h-full flex-col justify-center gap-4 p-6 text-sm'>
-          <p className='font-bold text-primary'>{mapError}</p>
-          <div className='grid gap-3'>
-            <div className='rounded-2xl bg-background-1 p-4'>
-              <p className='text-gray-5'>Pickup</p>
-              <p className='font-bold'>{pickupName ?? formatCoords(pickup)}</p>
-            </div>
-            {drop && (
-              <div className='rounded-2xl bg-background-1 p-4'>
-                <p className='text-gray-5'>Drop off</p>
-                <p className='font-bold'>{dropName ?? formatCoords(drop)}</p>
-              </div>
-            )}
-          </div>
+    <div className="relative h-full w-full">
+      <div id={mapContainerId} className="h-full w-full" />
+      {sdkFailed && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 gap-2">
+          <p className="text-sm font-medium text-gray-500">Map unavailable</p>
+          <p className="text-xs text-gray-400">
+            Enable hardware acceleration to view the map
+          </p>
         </div>
-      ) : (
-        <div id={mapContainerId} className='h-full w-full' />
       )}
     </div>
   );
@@ -201,11 +160,6 @@ type RadarAutoCompleteProps = {
   containerID?: string;
   setAutoCompleteAddress: (address: AddressResult) => void;
 };
-// type RadarAutoCompleteProps = {
-//   placeholder?: string;
-//   defaultValue?: string;
-//   setAutoCompleteAddress: (addr: AddressResult) => void;
-// };
 
 const RadarAutocomplete = ({
   placeholder,
@@ -270,22 +224,22 @@ const RadarAutocomplete = ({
 
   if (useManualSearch) {
     return (
-      <div className='relative flex-1'>
+      <div className="relative flex-1">
         <input
           value={query}
           onChange={(event) => {
             setQuery(event.target.value);
             if (event.target.value.length < 3) setResults([]);
           }}
-          className='w-full bg-transparent text-sm outline-none'
+          className="w-full bg-transparent text-sm outline-none"
           placeholder={placeholder ?? "Enter your address here"}
         />
         {results.length > 0 && (
-          <div className='absolute left-0 right-0 top-8 z-50 rounded-2xl bg-white p-2 shadow-lg'>
+          <div className="absolute left-0 right-0 top-8 z-50 rounded-2xl bg-white p-2 shadow-lg">
             {results.map((result) => (
               <button
                 key={`${result.address.formattedAddress}-${result.geometry.coordinates.join(",")}`}
-                type='button'
+                type="button"
                 onClick={() => {
                   setQuery(result.address.formattedAddress);
                   setResults([]);
@@ -308,7 +262,7 @@ const RadarAutocomplete = ({
                     layer: "address",
                   });
                 }}
-                className='block w-full rounded-xl px-3 py-2 text-left text-xs hover:bg-background-1'
+                className="block w-full rounded-xl px-3 py-2 text-left text-xs hover:bg-background"
               >
                 {result.address.formattedAddress}
               </button>
@@ -319,7 +273,7 @@ const RadarAutocomplete = ({
     );
   }
 
-  return <div ref={containerRef} className='flex-1' />;
+  return <div ref={containerRef} className="flex-1" />;
 };
 
 export { RadarAutocomplete };

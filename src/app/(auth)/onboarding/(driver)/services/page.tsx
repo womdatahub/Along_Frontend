@@ -1,10 +1,10 @@
 "use client";
 import { AuthBackAndContinueButton } from "@/components";
-import { HeadingHeebo } from "@/components";
 import { cn } from "@/lib";
 import { useSession } from "@/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Clock } from "lucide-react";
 
 const Page = () => {
   const {
@@ -21,82 +21,116 @@ const Page = () => {
       setServices([...services, option]);
     }
   };
+
+  const availableServices = servicesItems.filter((s) => !s.isComingSoon);
+
   return (
-    <div className="flex justify-center items-center h-full px-4 md:px-0">
-      <div className="flex flex-col gap-10 rounded-[20px] max-w-125 px-4 md:px-8 py-6 md:py-10 bg-background-1 text-black">
-        <div className="flex flex-col gap-2">
-          <HeadingHeebo>Offered services</HeadingHeebo>
-          <p className="text-center text-sm">
-            Please select a service (s) you are interested in
+    <div className="flex justify-center items-center min-h-full w-full px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-extrabold text-black font-heebo mb-2 tracking-tight">
+            Offered services
+          </h1>
+          <p className="text-gray text-sm font-light">
+            Select the services you want to offer
           </p>
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            {servicesItems.map((service) => {
-              return (
-                <button
-                  disabled={service.isComingSoon}
-                  key={service.state}
-                  onClick={() => {
-                    if (service.isComingSoon) return;
-                    toggleOption(service.state);
-                  }}
-                  className={cn(
-                    "flex gap-4 justify-between items-center px-4 py-7 bg-white cursor-pointer transition-colors duration-500 last:rounded-b-2xl first:rounded-t-2xl",
-                    service.isComingSoon && "cursor-not-allowed",
-                  )}
-                >
-                  <div className="flex flex-1 items-center justify-between gap-5">
-                    <div className="flex gap-4 items-center">
-                      <Image
-                        src={service.img}
-                        alt={service.state}
-                        width={40}
-                        height={40}
-                      />
-                      <p className="font-medium text-xs">{service.title}</p>
-                    </div>
-                    {service.isComingSoon && (
-                      <p className="font-bold text-xs text-red-600 animate-pulse">
-                        Coming Soon
-                      </p>
-                    )}
-                  </div>
 
+        <div className="bg-background rounded-3xl px-6 md:px-8 py-8 shadow-sm flex flex-col gap-6">
+          {/* Step badge */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-gray-2 w-fit">
+            <div className="size-2 rounded-full bg-primary" />
+            <span className="text-xs font-medium text-gray-4">Step 2 of 4</span>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {servicesItems.map((service) => (
+              <button
+                disabled={service.isComingSoon}
+                key={service.state}
+                onClick={() => {
+                  if (service.isComingSoon) return;
+                  toggleOption(service.state);
+                }}
+                className={cn(
+                  "flex gap-4 items-center px-4 py-4 rounded-2xl bg-white transition-all duration-200 cursor-pointer border-2 text-left",
+                  service.isComingSoon && "cursor-not-allowed opacity-60",
+                  !service.isComingSoon && services.includes(service.state)
+                    ? "border-primary bg-primary/5"
+                    : "border-transparent hover:border-gray-2",
+                )}
+              >
+                <div className="w-12 h-12 rounded-xl bg-background flex items-center justify-center shrink-0">
+                  <Image
+                    src={service.img}
+                    alt={service.state}
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-sm text-black font-heebo">
+                    {service.title}
+                  </p>
+                  {service.isComingSoon && (
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Clock size={10} className="text-gray" />
+                      <p className="text-xs text-gray font-light">
+                        Coming soon
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {!service.isComingSoon && (
                   <div
                     className={cn(
-                      "size-4 bg-primaryLight",
-                      services.includes(service.state) && "bg-primary",
+                      "size-5 rounded-full border-2 shrink-0 transition-all duration-200 flex items-center justify-center",
+                      services.includes(service.state)
+                        ? "border-primary bg-primary"
+                        : "border-gray-2",
                     )}
-                  />
-                </button>
-              );
-            })}
-            <div className="flex justify-between items-center gap-3 px-4 mt-3">
-              <p>Select all</p>
-              <div
-                onClick={() =>
-                  setServices(
-                    servicesItems
-                      .filter((service) => !service.isComingSoon)
-                      .map((service) => service.state),
-                  )
-                }
-                className={cn(
-                  "size-4 bg-primaryLight cursor-pointer",
-                  services.length === 3 && "bg-primary",
+                  >
+                    {services.includes(service.state) && (
+                      <div className="size-2 rounded-full bg-white" />
+                    )}
+                  </div>
                 )}
-              />
-            </div>
+              </button>
+            ))}
+
+            {/* Select all */}
+            <button
+              onClick={() => setServices(availableServices.map((s) => s.state))}
+              className="flex justify-between items-center gap-3 px-4 py-3 mt-1 rounded-xl hover:bg-white transition-colors duration-200"
+            >
+              <p className="text-sm font-medium text-gray-4">
+                Select all available
+              </p>
+              <div
+                className={cn(
+                  "size-5 rounded-full border-2 flex items-center justify-center transition-all duration-200",
+                  services.length === availableServices.length
+                    ? "border-primary bg-primary"
+                    : "border-gray-2",
+                )}
+              >
+                {services.length === availableServices.length && (
+                  <div className="size-2 rounded-full bg-white" />
+                )}
+              </div>
+            </button>
           </div>
+
+          <AuthBackAndContinueButton
+            backActive
+            continueActive={services.length > 0}
+            continueFnc={async () => {
+              router.push("/onboarding/documents");
+            }}
+          />
         </div>
-        <AuthBackAndContinueButton
-          backActive
-          continueActive={services.length > 0}
-          continueFnc={async () => {
-            router.push("/onboarding/documents");
-          }}
-        />
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ const TermsModal = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         dialogTitle="Terms and Conditions"
-        className="sm:max-w-175 max-h-[75%] overflow-y-scroll px-5 md:px-10 py-8 rounded-[20px] bg-background-1"
+        className="sm:max-w-175 max-h-[75%] overflow-y-scroll px-5 md:px-10 py-8 rounded-[20px] bg-background"
         showCloseButton={false}
       >
         <DialogTitle className="font-semibold text-2xl">

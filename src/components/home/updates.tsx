@@ -1,41 +1,50 @@
-import { HeadingHeebo } from "@/components";
-import { cn } from "@/lib";
-export const Updates = () => {
-  const updates = [
-    {
-      title: "Update Alert",
-      img: "/images/horizon-1.png",
-      textColor: "text-white",
-    },
-    {
-      title: "Update Alert",
-      img: "/images/horizon-2.png",
-      textColor: "text-white",
-    },
-    {
-      title: "Update Alert",
-      img: "/images/horizon-3.png",
-      textColor: "text-black",
-    },
-  ];
+import { ArrowRight } from "lucide-react";
 
+const updates = [
+  {
+    title: "Update Alert",
+    subtitle: "Coming Soon",
+    img: "/images/horizon-1.png",
+    textColor: "text-white",
+  },
+  {
+    title: "Update Alert",
+    subtitle: "Coming Soon",
+    img: "/images/horizon-2.png",
+    textColor: "text-white",
+  },
+  {
+    title: "Update Alert",
+    subtitle: "Coming Soon",
+    img: "/images/horizon-3.png",
+    textColor: "text-black",
+  },
+];
+
+export const Updates = () => {
   return (
-    <section className="px-6 pb-24 bg-white text-black">
-      <div className="flex flex-col gap-4 max-w-6xl mx-auto">
-        <div className="flex gap-2 flex-col font-heebo font-light text-lg">
-          <HeadingHeebo className="text-left">On the Horizon</HeadingHeebo>
-          <p className="md:w-2/3">
-            Stay in the know with what’s next. From new features and service
-            updates to fresh insights, our “Upcoming” section keeps you ahead of
-            the curve. Discover what we’re building, improvements on the way,
-            and ideas shaping the future of your ride experience.
+    <section className="px-5 md:px-8 pb-20 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+          <div>
+            <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-3 font-heebo">
+              What&apos;s Next
+            </p>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-black font-heebo leading-tight">
+              On the Horizon
+            </h2>
+          </div>
+          <p className="text-gray text-sm font-light max-w-sm leading-relaxed">
+            Stay in the know with what&apos;s next — from new features to fresh
+            insights shaping your ride experience.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+
+        <div className="grid md:grid-cols-3 gap-5">
           {updates.map((u, i) => (
             <div
               key={i}
-              className="shadow hover:shadow-lg transition h-57.25 w-full flex flex-col justify-between p-6"
+              className="relative group rounded-2xl overflow-hidden h-64 flex flex-col justify-end p-6 shadow hover:shadow-xl transition-shadow duration-300"
               style={{
                 backgroundImage: `url('${u.img}')`,
                 backgroundRepeat: "no-repeat",
@@ -43,18 +52,20 @@ export const Updates = () => {
                 backgroundPosition: "center",
               }}
             >
-              <div className="w-full h-full" />
-              <div className={cn("h-full", u.textColor)}>
-                <HeadingHeebo className="font-semibold text-left">
-                  {u.title}
-                </HeadingHeebo>
-                <p className="font-light text-[9px]">
-                  Perfect for daily use, events, or business trips.
-                  <br /> Flexible hourly, daily, rates.
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
+              <div className={`relative z-10 ${u.textColor}`}>
+                <p className="text-xs font-semibold uppercase tracking-wider opacity-70 mb-1 font-heebo">
+                  {u.subtitle}
                 </p>
-                <p className="font-bold text-sm mt-2 hover:underline hover:cursor-pointer w-fit">
+                <h3 className="font-bold text-lg font-heebo mb-2">{u.title}</h3>
+                <p className="text-xs opacity-70 font-light leading-relaxed mb-3">
+                  Perfect for daily use, events, or business trips. Flexible
+                  hourly and daily rates.
+                </p>
+                <button className="inline-flex items-center gap-1.5 text-sm font-semibold opacity-80 hover:opacity-100 transition-opacity">
                   Details
-                </p>
+                  <ArrowRight size={12} />
+                </button>
               </div>
             </div>
           ))}

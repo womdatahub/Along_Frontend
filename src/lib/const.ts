@@ -76,7 +76,7 @@ export const AUTH_ONLY_ROUTES = [
 
 // Dashboard landing pages per role
 export const ROLE_DASHBOARD_MAP: Record<string, string> = {
-  driver: "/driver-db",
-  rider: "/rider-db",
+  driver: "/driver",
+  rider: "/rider",
   admin: "/admin",
 };

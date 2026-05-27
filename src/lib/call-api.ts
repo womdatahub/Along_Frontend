@@ -29,6 +29,8 @@ type CallApiOptions = {
   headers?: Record<string, string>;
   skipToast?: boolean;
   retries?: number;
+  /** Internal — set automatically by callApi to suppress non-auth toasts on GET requests */
+  _isGet?: boolean;
 };
 
 export const isObject = (value: unknown): value is Record<string, unknown> => {
@@ -166,6 +168,7 @@ export const callApi = async <T>(
     } catch (error) {
       const apiError = handleApiError(error, {
         ...options,
+        _isGet: method === "GET",
         skipToast: options?.skipToast || attempt < maxAttempts,
       });
       if (attempt === maxAttempts) {
@@ -184,6 +187,12 @@ const handleApiError = (error: unknown, options?: CallApiOptions): ApiError => {
     return { message: "Request canceled", status: "Canceled" };
   }
 
+  // GET requests are always silent for non-auth errors — they're background fetches.
+  // Auth errors (401/403) always surface regardless of method.
+  const isGet = options?._isGet === true;
+  const shouldToast = (forceShow: boolean) =>
+    !options?.skipToast && (forceShow || !isGet);
+
   if (axios.isAxiosError(error) && error.response) {
     const { status, data } = error.response;
     const apiError = normalizeApiError(status, data);
@@ -191,21 +200,22 @@ const handleApiError = (error: unknown, options?: CallApiOptions): ApiError => {
     switch (status) {
       case 403: {
         if (apiError.message === "Admin account is suspended") {
+          // Always show — account suspension is critical regardless of method
           toast.error(
             "Your account has been suspended and logged out. \n Please contact support.",
           );
           useSession.getState().actions.logOut();
-        } else if (!options?.skipToast) {
+        } else if (shouldToast(true)) {
           toast.error(apiError.message);
         }
         break;
       }
       case 401:
         clearStoredAuthToken();
-        if (!options?.skipToast) toast.error(apiError.message);
+        if (shouldToast(true)) toast.error(apiError.message);
         break;
       default:
-        if (!options?.skipToast) toast.error(apiError.message);
+        if (shouldToast(false)) toast.error(apiError.message);
         break;
     }
 
@@ -215,15 +225,15 @@ const handleApiError = (error: unknown, options?: CallApiOptions): ApiError => {
   if (axios.isAxiosError(error) && error.request) {
     const apiError = {
       message:
-        "Unable to reach the backend gateway. Check that the gateway is running and CORS allows this frontend origin.",
+        "Unable to reach the server. Please check your internet connection and try again.",
       status: "Network Error",
     };
-    if (!options?.skipToast) toast.error(apiError.message);
+    if (shouldToast(false)) toast.error(apiError.message);
     return apiError;
   }
 
   const message = error instanceof Error ? error.message : "Request failed";
   const apiError = { message, status: "Error" };
-  if (!options?.skipToast) toast.error(message);
+  if (shouldToast(false)) toast.error(message);
   return apiError;
 };

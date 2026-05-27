@@ -42,7 +42,7 @@ const Page = () => {
     <div className="flex justify-center items-center h-full">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 rounded-[20px] w-125 px-4 md:px-8 py-10 bg-background-1 text-black text-4xl"
+        className="flex flex-col gap-6 rounded-[20px] w-125 px-4 md:px-8 py-10 bg-background text-black text-4xl"
       >
         <p className="font-semibold text-2xl text-center">
           Welcome to admin console
@@ -106,7 +106,7 @@ const Page = () => {
           text="Sign in"
           type="submit"
           variant="default"
-          className="mt-8 bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-teal-700 hover:cursor-pointer transition-colors duration-500"
+          className="mt-8 bg-primary rounded-2xl h-16 items-center w-full text-white text-lg hover:bg-primary-deep hover:cursor-pointer transition-colors duration-500"
         />
       </form>
     </div>

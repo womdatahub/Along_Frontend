@@ -9,7 +9,7 @@ import type {
   SelectorFn,
   UserProfile,
 } from "@/types";
-import { callApi, clearStoredAuthToken, uploadMediaDirectly, userApiStr } from "@/lib";
+import { clearStoredAuthToken, uploadMediaDirectly, requests } from "@/lib";
 import { toast } from "sonner";
 import { useRadarMap } from "./use-radar-map";
 import { useRental } from "./use-rental";
@@ -59,9 +59,17 @@ type Session = {
       type: "email" | "mobile";
     }) => Promise<boolean>;
     verifyEmail: (data: { email: string; otp: string }) => Promise<boolean>;
-    login: (data: { email?: string; mobileNumber?: string; password: string }) => Promise<string>;
+    login: (data: {
+      email?: string;
+      mobileNumber?: string;
+      password: string;
+    }) => Promise<string>;
     logOut: () => Promise<void>;
-    verifyOtp: (data?: { email?: string; mobileNumber?: string; otp: string }) => Promise<void>;
+    verifyOtp: (data?: {
+      email?: string;
+      mobileNumber?: string;
+      otp: string;
+    }) => Promise<void>;
     resendVerificationOTP: (data: { email: string }) => Promise<void>;
     registerDriver: (data: {
       firstName: string;
@@ -198,18 +206,9 @@ export const useSession = create<Session>()(
       },
       login: async (loginData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/login");
-        const { data, error } = await callApi<{
-          userRole: string;
-          accessToken?: string;
-          refreshToken?: string;
-        }>(
-          path,
-          loginData,
-        );
+        const { data, error } = await requests.user.login(loginData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false, userRole: "" });
           return "";
         }
@@ -217,18 +216,15 @@ export const useSession = create<Session>()(
           clearStoredAuthToken();
           await get().actions.fetchUserDetails(false);
           set({ isLoading: false, userRole: data.data.userRole });
-          // toast.success(data.message);
         }
         return data?.data.userRole as string;
       },
       logOut: async () => {
         set({ isLoading: true });
-        const path = userApiStr("/user/logout");
-
-        const { data, error } = await callApi(path, {});
+        const { data, error } = await requests.user.logout();
 
         if (error) {
-          toast.error(error.message);
+          // Clear local state even if server-side logout fails
           set({ isLoading: false });
         }
         if (data) {
@@ -242,14 +238,10 @@ export const useSession = create<Session>()(
         }
       },
       registerUser: async (registerUserData) => {
-        // console.log("this ran reisteruser");
         set({ isLoading: true });
-        const path = userApiStr("/user/register");
-
-        const { data, error } = await callApi(path, registerUserData);
+        const { data, error } = await requests.user.register(registerUserData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -262,46 +254,37 @@ export const useSession = create<Session>()(
       },
       verifyEmail: async (verifyEmailData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/verify-email");
-
-        const { data, error } = await callApi(path, verifyEmailData, "PATCH");
+        const { data, error } =
+          await requests.user.verifyEmail(verifyEmailData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
         if (data) {
           await get().actions.fetchUserDetails();
           toast.success(data.message ?? "OTP verified successfully");
-          // console.log(data, path);
         }
         set({ isLoading: false });
         return true;
       },
       verifyOtp: async (verifyOtpData) => {
         if (!verifyOtpData) return;
-        const path = userApiStr("/user/verify-reset-otp");
+        const { data, error } =
+          await requests.user.verifyResetOtp(verifyOtpData);
 
-        const { data, error } = await callApi(path, verifyOtpData);
-
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        if (error) return;
         if (data) {
           await get().actions.fetchUserDetails();
-          // console.log(data, path);
         }
       },
       resendVerificationOTP: async (resendVerificationOTPData) => {
         set({ isResendingVerificationOTP: true });
-        const path = userApiStr("/user/resend-verification-otp");
-
-        const { data, error } = await callApi(path, resendVerificationOTPData);
+        const { data, error } = await requests.user.resendVerificationOtp(
+          resendVerificationOTPData,
+        );
 
         if (error) {
-          toast.error(error.message);
           set({ isResendingVerificationOTP: false });
           return;
         }
@@ -312,15 +295,10 @@ export const useSession = create<Session>()(
       },
       registerDriver: async (registerDriverData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/driver");
-
-        const { data, error } = await callApi<RegisterDriverResponse>(
-          path,
-          registerDriverData,
-        );
+        const { data, error } =
+          await requests.user.registerDriver(registerDriverData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -331,30 +309,21 @@ export const useSession = create<Session>()(
             registeredDriverResponseWithStripeDetails: data.data,
           });
           await get().actions.fetchUserDetails(false, false);
-
           return true;
         }
         return true;
-      }, //POST
+      },
       addVerificationDocumentsAndServices: async (
         addVerificationDocumentsAndServicesData,
       ) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/documents-services");
-        const { data, error } = await callApi(
-          path,
-          {
-            ...addVerificationDocumentsAndServicesData,
-            services:
-              addVerificationDocumentsAndServicesData.services ??
-              get().services ??
-              ["rental"],
-          },
-          "PATCH",
-        );
+        const { data, error } = await requests.user.addDocumentsAndServices({
+          ...addVerificationDocumentsAndServicesData,
+          services: addVerificationDocumentsAndServicesData.services ??
+            get().services ?? ["rental"],
+        });
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -362,36 +331,21 @@ export const useSession = create<Session>()(
           await get().actions.fetchUserDetails(false, false);
           toast.success("Documents and services added successfully");
           set({ isLoading: false });
-          // console.log(data, path);
         }
 
         return true;
-      }, // PATCH
+      },
       registerVehicle: async (registerVehicleData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/vehicle");
-
-        const { data, error } = await callApi(
-          path,
-          registerVehicleData,
-          "PATCH",
-        );
+        const { data, error } =
+          await requests.user.registerVehicle(registerVehicleData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
         if (data) {
           await get().actions.fetchUserDetails(false, false);
-          // const autoCompleteAddress =
-          //   useRadarMap.getState().toAutoCompleteAddress;
-          // await useRental.getState().actions.listVehicleForRental({
-          //   address: autoCompleteAddress?.formattedAddress ?? "",
-          //   latitude: autoCompleteAddress?.latitude ?? 0,
-          //   longitude: autoCompleteAddress?.longitude ?? 0,
-          //   vehicleId: get().driverProfile?._id ?? "",
-          // });
           toast.success("Vehicle information added successfully");
           set({ isLoading: false });
         }
@@ -399,15 +353,10 @@ export const useSession = create<Session>()(
       },
       registerRider: async (registerRiderData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/rider");
-
-        const { data, error } = await callApi<{ accessToken?: string }>(
-          path,
-          registerRiderData,
-        );
+        const { data, error } =
+          await requests.user.registerRider(registerRiderData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -420,29 +369,22 @@ export const useSession = create<Session>()(
         return true;
       },
       registerBankAccount: async (registerBankAccountData) => {
-        const path = userApiStr("/user/driver/bank-details");
-        const { data, error } = await callApi(path, registerBankAccountData);
+        const { data, error } = await requests.user.registerBankAccount(
+          registerBankAccountData,
+        );
 
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        if (error) return;
         if (data) {
           toast.success(data.message ?? "Bank details saved");
         }
       },
       updateDriverDetails: async (updateDriverDetailsData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/driver");
-
-        const { data, error } = await callApi(
-          path,
+        const { data, error } = await requests.user.updateDriver(
           updateDriverDetailsData,
-          "PATCH",
         );
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -455,16 +397,11 @@ export const useSession = create<Session>()(
       },
       updateRiderDetails: async (updateRiderDetailsData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/rider");
-
-        const { data, error } = await callApi(
-          path,
+        const { data, error } = await requests.user.updateRider(
           updateRiderDetailsData,
-          "PATCH",
         );
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -477,11 +414,10 @@ export const useSession = create<Session>()(
       },
       submitRiderLicense: async (licenseData) => {
         set({ isLoading: true });
-        const path = userApiStr("/user/rider/license");
-        const { data, error } = await callApi(path, licenseData, "PATCH");
+        const { data, error } =
+          await requests.user.submitRiderLicense(licenseData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -493,32 +429,21 @@ export const useSession = create<Session>()(
         return true;
       },
       createRideProfile: async (createRideProfileData) => {
-        const path = userApiStr("/user/driver/profile/create");
-
-        const { data, error } = await callApi(
-          path,
+        const { data, error } = await requests.user.createRideProfile(
           createRideProfileData,
-          "PATCH",
         );
 
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        if (error) return;
         if (data) {
           toast.success(data.message);
         }
       },
       setDriverAvailability: async (availabilityData) => {
         set({ isLoading: true });
-        const { data, error } = await callApi(
-          userApiStr("/user/driver/availability"),
-          availabilityData,
-          "PATCH",
-        );
+        const { data, error } =
+          await requests.user.setDriverAvailability(availabilityData);
 
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return false;
         }
@@ -530,11 +455,7 @@ export const useSession = create<Session>()(
       },
       fetchUserDetails: async (shouldToast, shouldReload = true) => {
         set({ ...(shouldReload && { isFetchingUserSessionLoading: true }) });
-        const path = userApiStr("/user/profile");
-
-        const { data, error } = await callApi<
-          RiderProfile | DriverProfile | AdminProfile | UserProfile
-        >(path);
+        const { data, error } = await requests.user.getProfile();
 
         if (error) {
           set({ userRole: "", isFetchingUserSessionLoading: false });
@@ -587,37 +508,21 @@ export const useSession = create<Session>()(
         }
       },
       fetchVehicleViaClass: async (vehicleClass) => {
-        const path = userApiStr(`/vehicle/class?vehicleClass=${vehicleClass}`);
-
-        const { data, error } = await callApi(path);
-
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
-        if (data) toast.success(data.message ?? "Vehicle class loaded");
+        const { data, error } =
+          await requests.user.getDriverByClass(vehicleClass);
+        if (error) return;
+        void data;
       },
       fetchVehicleViaDriverID: async (driverID) => {
-        const path = userApiStr(`/vehicle/driver/${driverID}`);
-
-        const { data, error } = await callApi(path);
-
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
-        if (data) toast.success(data.message ?? "Vehicle loaded");
+        const { data, error } =
+          await requests.user.getVehicleByDriverId(driverID);
+        if (error) return;
+        void data;
       },
       fetchVehicleID: async (vehicleID) => {
-        const path = userApiStr(`/vehicle/${vehicleID}`);
-
-        const { data, error } = await callApi(path);
-
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
-        if (data) toast.success(data.message ?? "Vehicle loaded");
+        const { data, error } = await requests.user.getVehicleById(vehicleID);
+        if (error) return;
+        void data;
       },
     },
   })),

@@ -6,7 +6,7 @@ import type {
   SelectorFn,
 } from "@/types";
 import { devtools } from "zustand/middleware";
-import { adminApiStr, callApi } from "@/lib";
+import { requests } from "@/lib";
 import { toast } from "sonner";
 
 type PermissionType = {
@@ -65,170 +65,118 @@ export const usePermission = create<PermissionType>()(
     actions: {
       getAllAdminPermissions: async (adminID) => {
         set({ isLoading: true });
-        const path = adminApiStr(
-          `/permissions/users/permissions?adminId=${adminID}`,
-        );
-        const { data, error } = await callApi<{ rolePermissions: Endpoint[] }>(
-          path,
-        );
+        const { data, error } = await requests.permissions.getAdminPermissions(adminID);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          set({
-            isLoading: false,
-            allAdminPermissions: data.data.rolePermissions,
-          });
-          // toast.success(
-          //   data.message ?? "All admin permissions fetched successfully",
-          // );
+          set({ isLoading: false, allAdminPermissions: data.data.rolePermissions });
         }
       },
       getSingleAdminPermissions: async (adminID) => {
         set({ isFetching: true });
-        const path = adminApiStr(
-          `/permissions/users/direct-permissions?adminId=${adminID}`,
-        );
-        const { data, error } = await callApi<{ endpoints: Endpoint[] }>(path);
+        const { data, error } = await requests.permissions.getAdminDirectPermissions(adminID);
         if (error) {
           set({ isFetching: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          set({
-            isFetching: false,
-            singleAdminPermission: data.data.endpoints,
-          });
-          // toast.success(
-          //   data.message ?? "Single permission fetched successfully",
-          // );
+          set({ isFetching: false, singleAdminPermission: data.data.endpoints });
         }
       },
       getSingleRolePermissions: async (role) => {
         set({ isFetching: true });
-        const path = adminApiStr(`/permissions/roles/permissions?role=${role}`);
-        const { data, error } = await callApi<{ endpoints: Endpoint[] }>(path);
+        const { data, error } = await requests.permissions.getRolePermissions(role);
         if (error) {
           set({ isFetching: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          set({
-            isFetching: false,
-            singleRolePermission: data.data.endpoints,
-          });
-          // toast.success(data.message ?? "Role permission fetched successfully");
+          set({ isFetching: false, singleRolePermission: data.data.endpoints });
         }
         set({ isFetching: false });
       },
       getAllRolePermissions: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/permissions/roles");
-        const { data, error } = await callApi<RolePermission>(path);
+        const { data, error } = await requests.permissions.getAllRolePermissions();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false, allRolePermissions: data.data });
-          // toast.success(
-          //   data.message ?? "All role permissions fetched successfully",
-          // );
         }
       },
       getAllEndpoints: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/permissions/endpoints");
-        const { data, error } = await callApi<Endpoint[]>(path);
+        const { data, error } = await requests.permissions.getAllEndpoints();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false, allEndpoints: data.data });
-          // toast.success(data.message ?? "All endpoints fetched successfully");
         }
       },
       getEndpointPermissions: async (endpointId) => {
         set({ isLoading: true });
-        const path = adminApiStr(
-          `permissions/endpoints/permissions?endpointId=${endpointId}`,
-        );
-        const { data, error } = await callApi<EndpointPermission>(path);
+        const { data, error } = await requests.permissions.getEndpointPermissions(endpointId);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false, allEndpointsPermissions: data.data });
-          // toast.success(
-          //   data.message ?? "All endpoint permissions fetched successfully",
-          // );
         }
       },
       grantRolePermission: async (rolePermissionData) => {
         set({ isLoading: true });
-        const path = adminApiStr("/permissions/roles/grant");
-        const { data, error } = await callApi(path, rolePermissionData);
+        const { data, error } = await requests.permissions.grantRolePermission(rolePermissionData);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false });
-          toast.success(data.message ?? "Role granted");
+          toast.success(data.message ?? "Permissions granted");
         }
       },
       revokeRolePermission: async (revokePermissionData) => {
         if (revokePermissionData.endpointIds.length === 0) return;
         set({ isLoading: true });
-        const path = adminApiStr("/permissions/roles/revoke");
-        const { data, error } = await callApi(path, revokePermissionData);
+        const { data, error } = await requests.permissions.revokeRolePermission(revokePermissionData);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false });
-          toast.success(data.message ?? "Role revoked");
+          toast.success(data.message ?? "Permissions revoked");
         }
       },
       grantAdminPermission: async (adminPermissionData) => {
         set({ isLoading: true });
-        const path = adminApiStr("/permissions/users/grant");
-        const { data, error } = await callApi(path, adminPermissionData);
+        const { data, error } = await requests.permissions.grantAdminPermission(adminPermissionData);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false });
-          // toast.success(data.message ?? "Role granted");
         }
       },
       revokeAdminPermission: async (revokeAdminPermissionData) => {
         if (revokeAdminPermissionData.endpointIds.length === 0) return;
         set({ isLoading: true });
-        const path = adminApiStr("/permissions/users/revoke");
-        const { data, error } = await callApi(path, revokeAdminPermissionData);
+        const { data, error } = await requests.permissions.revokeAdminPermission(revokeAdminPermissionData);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
           set({ isLoading: false });
-          toast.success(data.message ?? "Role revoked");
+          toast.success(data.message ?? "Permissions saved");
         }
       },
     },

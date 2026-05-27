@@ -145,57 +145,57 @@ function SsnTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
 function VehicleTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
   const [page, setPage] = useState(1);
   return (
-    <div className='flex flex-col min-h-full'>
-      <div className='flex-1'>
+    <div className="flex flex-col min-h-full py-5">
+      <div className="flex-1">
         {page === 1 ? (
           <>
-            <div className='px-5 py-4'>
+            <div className="px-5 py-4">
               <Field
-                label='Vehicle Make'
+                label="Vehicle Make"
                 value={driverInfo?.vehicleMake ?? ""}
-                className='capitalize'
+                className="capitalize"
               />
             </div>
             <Separator />
-            <div className='px-5 py-4'>
+            <div className="px-5 py-4">
               <Field
-                label='Vehicle Model'
+                label="Vehicle Model"
                 value={driverInfo?.vehicleModel ?? ""}
-                className='capitalize'
+                className="capitalize"
               />
             </div>
             <Separator />
-            <div className='px-5 py-4'>
+            <div className="px-5 py-4">
               <Field
-                label='Vehicle Vin Number'
+                label="Vehicle Vin Number"
                 value={driverInfo?.vehicleIdentificationNumber ?? ""}
-                className='capitalize'
+                className="capitalize"
               />
             </div>
             <Separator />
-            <div className='px-5 py-4'>
+            <div className="px-5 py-4">
               <Field
-                label='Vehicle Color'
+                label="Vehicle Color"
                 value={driverInfo?.vehicleColor ?? ""}
-                className='capitalize'
+                className="capitalize"
               />
             </div>
             <Separator />
           </>
         ) : (
-          <div className='px-5 py-4'>
-            <p className='text-sm text-gray-3 mb-3'>Uploads</p>
-            <div className='flex gap-3 flex-wrap mb-5'>
+          <div className="px-5 py-4">
+            <p className="text-sm text-gray-3 mb-3">Uploads</p>
+            <div className="flex gap-3 flex-wrap mb-5">
               <ImgBox
-                label='Side front'
+                label="Side front"
                 img={driverInfo?.vehicleFrontViewImageUri ?? ""}
               />
               <ImgBox
-                label='Interior'
+                label="Interior"
                 img={driverInfo?.vehicleBackViewImageUri ?? ""}
               />
               <ImgBox
-                label='Side rear'
+                label="Side rear"
                 img={driverInfo?.vehicleSideViewImageUri ?? ""}
               />
             </div>
@@ -206,17 +206,17 @@ function VehicleTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
           </div>
         )}
       </div>
-      <div className='flex items-center justify-end gap-1 px-4 py-3 text-sm text-primary'>
+      <div className="flex items-center justify-end gap-1 px-4 py-3 text-sm text-primary">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className='hover:text-gray-800 p-1'
+          className="hover:text-gray-800 p-1"
         >
           <ChevronLeft size={17} />
         </button>
-        <span className='tabular-nums'>{page}/2</span>
+        <span className="tabular-nums">{page}/2</span>
         <button
           onClick={() => setPage((p) => Math.min(2, p + 1))}
-          className='hover:text-gray-800 p-1'
+          className="hover:text-gray-800 p-1"
         >
           <ChevronRight size={17} />
         </button>

@@ -6,7 +6,6 @@ import {
   Button,
   Empty,
   EmptyContent,
-  // EmptyHeader,
   EmptyTitle,
   HeadingHeebo,
 } from "@/components";
@@ -139,7 +138,7 @@ export const DriverInfoAccordion = ({
                   return (
                     <div
                       key={i}
-                      className="flex flex-col bg-background-1 rounded-xl flex-1 px-2 py-3"
+                      className="flex flex-col bg-background rounded-xl flex-1 px-2 py-3"
                     >
                       <p className="font-medium text-[10px] text-gray-4">
                         {condition.title}

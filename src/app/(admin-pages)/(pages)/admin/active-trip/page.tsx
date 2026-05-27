@@ -27,7 +27,7 @@ const Page = () => {
             </div>
             <div className="grid sm:grid-cols-3 gap-3 text-sm">
               {["Dispatch", "Route playback", "Live tracking"].map((item) => (
-                <div key={item} className="rounded-2xl bg-background-1 p-4">
+                <div key={item} className="rounded-2xl bg-background p-4">
                   <p className="font-bold">{item}</p>
                   <p className="text-gray-5">Unavailable</p>
                 </div>
@@ -42,7 +42,7 @@ const Page = () => {
               </Link>
               <Link
                 href="/admin/market-place"
-                className="rounded-full bg-background-1 px-4 py-2 text-sm font-bold text-black"
+                className="rounded-full bg-background px-4 py-2 text-sm font-bold text-black"
               >
                 Marketplace settings
               </Link>

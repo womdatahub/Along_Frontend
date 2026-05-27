@@ -5,27 +5,54 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
-  DriverInfoAccordion,
   HeadingHeebo,
-  RadarAutocomplete,
-  RadarMap,
   SelectDropdown,
   Switch,
   LoadingComponent,
 } from "@/components";
-import { StripeCheckOutComponent } from "@/components/shared/StripeChechoutComponent";
+import dynamic from "next/dynamic";
+
+// Lazy-load Radar SDK (WebGL + CSS) — hidden on mobile, deferred on desktop
+const RadarMap = dynamic(
+  () =>
+    import("@/components/shared/radar-map").then((m) => ({
+      default: m.RadarMap,
+    })),
+  {
+    ssr: false,
+    loading: () => <div className="w-full h-full bg-gray-100 animate-pulse" />,
+  },
+);
+// Radar autocomplete — used in the pick-up location form
+const RadarAutocomplete = dynamic(
+  () =>
+    import("@/components/shared/radar-map").then((m) => ({
+      default: m.RadarAutocomplete,
+    })),
+  {
+    ssr: false,
+    loading: () => <span className="text-gray-400 text-sm">Loading…</span>,
+  },
+);
+// Stripe checkout — only shown when user triggers payment
+const StripeCheckOutComponent = dynamic(
+  () =>
+    import("@/components/shared/StripeChechoutComponent").then((m) => ({
+      default: m.StripeCheckOutComponent,
+    })),
+  { ssr: false },
+);
 import { Skeleton } from "@/components/ui/skeleton";
 import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap, useRental, useSession } from "@/store";
 import { VehicleLocation } from "@/types";
 import {
-  AccuracyIcon,
-  EditIcon,
-  LocationFlagIcon,
-  MoreInfoIcon,
+  FilledGreenStarIcon,
+  PassengerCapacityIcon,
+  PetIcons,
   Return24Icon,
   TimerIcon,
-  WhiteForwardIcon,
+  MoreInfoIcon,
 } from "@public/svgs";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,6 +60,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
+import { MapPin, ChevronLeft, CheckCircle2 } from "lucide-react";
 
 const Page = () => {
   return (
@@ -41,6 +69,7 @@ const Page = () => {
     </Suspense>
   );
 };
+
 const RentRide = () => {
   const [open, setOpen] = useState(false);
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
@@ -72,7 +101,8 @@ const RentRide = () => {
       : "WITH_DRIVER";
   const licenseApproved =
     String(riderProfile?.licenseStatus ?? "").toLowerCase() === "approved";
-  const requiresLicenseReview = bookingType === "SELF_DRIVE" && !licenseApproved;
+  const requiresLicenseReview =
+    bookingType === "SELF_DRIVE" && !licenseApproved;
 
   const func = (selectedDriver: VehicleLocation) => {
     setSelectedDriverDetails(selectedDriver);
@@ -89,9 +119,10 @@ const RentRide = () => {
   );
   const {
     selectedDriverDetails,
-    // isLoading,
     isCreatingIntent,
     intent,
+    availableVehicles,
+    isLoading: isLoadingRental,
     actions: {
       retrieveAvailableVehicles,
       rentAndCreateIntent,
@@ -104,6 +135,7 @@ const RentRide = () => {
       isLoading: state.isLoading,
       isCreatingIntent: state.isCreatingIntent,
       intent: state.intent,
+      availableVehicles: state.availableVehicles,
     })),
   );
 
@@ -115,7 +147,6 @@ const RentRide = () => {
       longitude: `${autoCompleteAddress.longitude}`,
       latitude: `${autoCompleteAddress.latitude}`,
     });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     vehicleType,
@@ -136,7 +167,6 @@ const RentRide = () => {
         `?vehicleType=${vehicleType}&isLater=${isLater}${selectedDriver ? `&selectedDriver=${selectedDriver}` : ""}`,
       );
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHours, selectedHoursLength, selectedMins, selectAmOrPm, isLater]);
 
@@ -162,274 +192,329 @@ const RentRide = () => {
     };
   };
 
-  // console.log("isLater from rent ride component: ", isLater);
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full flex- py-8 md:py-14 min-h-[calc(100vh-80px)] overflow-y-auto'>
-      <div className='flex flex-col md:flex-row gap-8 md:gap-4 h-full'>
-        <div className='flex flex-col gap-10 min-w-[40%] h-full'>
-          <div className='flex flex-col'>
-            <HeadingHeebo className='text-left font-extrabold text-4xl'>
-              Rent a ride
-            </HeadingHeebo>
-            {!selectedDriver && (
-              <p className='text-sm'>
-                To proceed, enter your pick up location to see <br /> available
-                cars
-              </p>
-            )}
-          </div>
-          {!selectedDriver && (
-            <div
-              className={cn(
-                "flex items-center gap-8 rounded-2xl px-2",
-                vehicleType && "bg-primaryLight",
-              )}
-            >
-              <div
-                className={cn(
-                  "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl w-full",
-                  vehicleType && "bg-transparent",
-                )}
-              >
-                <AccuracyIcon />
-
-                <RadarAutocomplete
-                  setAutoCompleteAddress={setAutoCompleteAddress}
-                  defaultValue={
-                    autoCompleteAddress &&
-                    `${autoCompleteAddress?.formattedAddress}`
-                  }
-                />
-              </div>
-
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  {vehicleType ? (
-                    <Button
-                      variant={"default"}
-                      className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer'
-                    >
-                      <EditIcon />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant={"default"}
-                      disabled={!autoCompleteAddress}
-                      className='bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0'
-                    >
-                      <div className='bg-primary rounded-full size-10 flex items-center justify-center'>
-                        <WhiteForwardIcon />
+    <>
+      <div className="flex-1 flex justify-center overflow-hidden">
+        <div className="w-full max-w-7xl flex flex-row h-[calc(100vh-80px)] overflow-hidden">
+          {/* ─── Left panel ─── */}
+          <div className="w-full md:w-110 lg:w-104 xl:w-md shrink-0 h-full overflow-y-auto bg-background border-r border-gray-100">
+            <div className="flex flex-col gap-5 p-5 pb-10">
+              {/* ── Step 1: Location display ── */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-3 font-heebo">
+                  Pick-up Location
+                </p>
+                {autoCompleteAddress ? (
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="mt-0.5 shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                       </div>
-                    </Button>
-                  )}
-                </DialogTrigger>
-                <DialogContent
-                  className='sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background-1'
-                  showCloseButton={false}
-                  dialogTitle='Select a vehicle type: Economy, Comfort, Comfort XL,
-                      Luxury or Luxury XL'
-                >
-                  <div className='flex flex-col gap-6'>
-                    <div className='flex flex-col pl-7'>
-                      <HeadingHeebo className='text-primary font-semibold text-xl text-left'>
-                        Vehicle type
-                      </HeadingHeebo>
-                      <p className='text-sm'>
-                        Please select a vehicle option to continue <br /> your
-                        booking
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-black truncate">
+                          {autoCompleteAddress.formattedAddress}
+                        </p>
+                        {autoCompleteAddress.county && (
+                          <p className="text-xs text-gray font-light mt-0.5">
+                            {autoCompleteAddress.county}
+                            {autoCompleteAddress.country
+                              ? `, ${autoCompleteAddress.country}`
+                              : ""}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div className='flex flex-col gap-1'>
-                      {carTypes.map((car) => {
-                        const title = car.name
-                          .toLowerCase()
-                          .replace(/\s+/g, "-");
-                        return (
-                          <Button
-                            onClick={() => {
-                              router.push(
-                                `/rent-ride?vehicleType=${title}&bookingType=${bookingType}`,
-                              );
-
-                              setOpen(false);
-                            }}
-                            key={car.name}
-                            className={cn(
-                              "flex gap-4 items-center rounded-lg bg-white px-4 h-17.75 hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                              vehicleType === title && "bg-primary text-white",
-                            )}
-                          >
-                            <Image
-                              src={"/images/small-car.png"}
-                              alt={"car"}
-                              width={40}
-                              height={40}
-                            />
-                            <div className='flex flex-col group-hover:text-white duration-150'>
-                              <p className='font-semibold text-sm'>
-                                {car.name}
-                              </p>
-                              <p className='text-xs'>{car.seat} Persons</p>
-                            </div>
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          )}
-          {vehicleType && !selectedDriver && (
-            <div className='flex flex-col gap-8'>
-              <div className='grid grid-cols-2 gap-3 rounded-2xl bg-white p-2'>
-                {[
-                  { label: "With driver", value: "WITH_DRIVER" as const },
-                  { label: "Self-drive", value: "SELF_DRIVE" as const },
-                ].map((item) => (
-                  <Button
-                    key={item.value}
-                    type='button'
-                    onClick={() => {
-                      router.push(
-                        `/rent-ride?vehicleType=${vehicleType}&bookingType=${item.value}`,
-                      );
-                    }}
-                    className={cn(
-                      "rounded-xl bg-transparent text-black shadow-none hover:bg-primaryLight2",
-                      bookingType === item.value && "bg-primary text-white",
-                    )}
-                  >
-                    {item.label}
-                  </Button>
-                ))}
-              </div>
-              <DriverInfoAccordion
-                func={func}
-                vehicleType={vehicleType ?? ""}
-                isLater={isLater}
-                bookingType={bookingType}
-              />
-            </div>
-          )}
-          {vehicleType && selectedDriver && (
-            <section className='min-w-[40%] h-full flex flex-col justify-between'>
-              <section className='flex flex-col gap-11'>
-                <div className='flex rounded-2xl p-3 gap-4 items-center justify-between bg-primaryLight2 w-full'>
-                  <div className='flex gap-7 items-center'>
-                    <Image
-                      src={
-                        selectedDriverDetails?.vehicleInfo
-                          .vehicleSideViewImageUri ?? ""
-                      }
-                      alt={"car"}
-                      width={40}
-                      height={40}
-                      className='w-25 aspect-square object-cover rounded-2xl'
-                    />
-                    <div className='flex flex-col'>
-                      <p className=' text-xs font-semibold capitalize'>
-                        {selectedDriverDetails?.vehicleInfo?.vehicleMake}{" "}
-                        {selectedDriverDetails?.vehicleInfo?.vehicleModel} -{" "}
-                        {selectedDriverDetails?.vehicleInfo?.vehicleYear}
-                      </p>
-                    </div>
-                  </div>
-                  <div className='flex flex-col items-center'>
-                    <div className='p-0.5 rounded-full bg-white'>
-                      <Image
-                        src={
-                          selectedDriverDetails?.driverInfo
-                            .driverProfilePictureUri ?? ""
+                    {vehicleType ? (
+                      <Link
+                        href="/rent-ride"
+                        onClick={() =>
+                          useRadarMap.setState({
+                            autoCompleteAddress: undefined,
+                          })
                         }
-                        alt='profile-image'
-                        className='rounded-full w-16.5 object-cover aspect-square'
-                        width={40}
-                        height={40}
-                      />
+                        className="shrink-0 text-xs font-semibold text-primary hover:text-primary-deep transition-colors"
+                      >
+                        Change
+                      </Link>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3 bg-background rounded-xl px-4 py-3">
+                      <MapPin size={16} className="text-primary shrink-0" />
+                      <div className="flex-1 text-sm text-gray-700">
+                        <RadarAutocomplete
+                          setAutoCompleteAddress={setAutoCompleteAddress}
+                          defaultValue={undefined}
+                          placeholder="Enter your pickup location"
+                        />
+                      </div>
                     </div>
-                    <p className=' text-xs font-semibold capitalize'>
-                      {selectedDriverDetails?.driverInfo.firstName}{" "}
-                      {selectedDriverDetails?.driverInfo.lastName}
+                    <p className="text-xs text-gray font-light">
+                      Enter a location to see available vehicles near you.{" "}
+                      <Link
+                        href="/"
+                        className="text-primary font-medium hover:underline"
+                      >
+                        Go back home
+                      </Link>
                     </p>
                   </div>
+                )}
+              </div>
+
+              {/* ── Step 2: Vehicle type selection (shown when address set) ── */}
+              {autoCompleteAddress && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold text-gray uppercase tracking-wider font-heebo">
+                      Vehicle Class
+                    </p>
+                    {vehicleType && (
+                      <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                        <CheckCircle2 size={12} />
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {carTypes.map((car) => {
+                      const slug = car.name.toLowerCase().replace(/\s+/g, "-");
+                      const isActive = vehicleType === slug;
+                      return (
+                        <button
+                          key={car.name}
+                          onClick={() => {
+                            router.push(
+                              `/rent-ride?vehicleType=${slug}&bookingType=${bookingType}`,
+                            );
+                            setOpen(false);
+                          }}
+                          className={cn(
+                            "flex items-center gap-2 px-3.5 py-2 rounded-xl border text-sm font-medium transition-all duration-150 cursor-pointer",
+                            isActive
+                              ? "bg-primary text-white border-primary shadow-sm"
+                              : "bg-background text-gray-700 border-gray-200 hover:border-primary hover:text-primary",
+                          )}
+                        >
+                          <Image
+                            src="/images/small-car.png"
+                            alt={car.name}
+                            width={20}
+                            height={20}
+                            className="w-5 h-5 object-contain"
+                          />
+                          <span>{car.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className='flex flex-col gap-8'>
-                  <div className='flex flex-col gap-4'>
-                    <p className='text-sm font-bold'>Pick up location</p>
-                    <div className='flex justify-between w-full gap-4'>
-                      <div className='flex gap-4'>
-                        <LocationFlagIcon />
-                        <div className='flex flex-col text-sm font-bold'>
-                          <p>{autoCompleteAddress?.formattedAddress}</p>
-                          <p className='font-normal'>
-                            {autoCompleteAddress?.county}
+              )}
+
+              {/* ── Step 3: Booking mode (shown when vehicleType set) ── */}
+              {vehicleType && !selectedDriver && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                  <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-3 font-heebo">
+                    Booking Mode
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 bg-background p-1.5 rounded-xl">
+                    {[
+                      { label: "With driver", value: "WITH_DRIVER" as const },
+                      { label: "Self-drive", value: "SELF_DRIVE" as const },
+                    ].map((item) => (
+                      <button
+                        key={item.value}
+                        type="button"
+                        onClick={() => {
+                          router.push(
+                            `/rent-ride?vehicleType=${vehicleType}&bookingType=${item.value}`,
+                          );
+                        }}
+                        className={cn(
+                          "rounded-lg py-2.5 text-sm font-semibold transition-all duration-150 cursor-pointer",
+                          bookingType === item.value
+                            ? "bg-white text-primary shadow-sm"
+                            : "text-gray hover:text-gray-700",
+                        )}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Step 4: Driver cards (shown when vehicleType set, no driver selected) ── */}
+              {vehicleType && !selectedDriver && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-xs font-semibold text-gray uppercase tracking-wider font-heebo px-1">
+                    Available Vehicles
+                  </p>
+                  {isLoadingRental ? (
+                    <div className="flex flex-col gap-3">
+                      <Skeleton className="h-28 rounded-2xl" />
+                      <Skeleton className="h-28 rounded-2xl" />
+                      <Skeleton className="h-28 rounded-2xl" />
+                    </div>
+                  ) : (availableVehicles ?? []).length === 0 ? (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center gap-3 text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center">
+                        <MapPin size={20} className="text-gray" />
+                      </div>
+                      <p className="text-sm font-medium text-gray-700">
+                        No vehicles available
+                      </p>
+                      <p className="text-xs text-gray font-light max-w-xs">
+                        There are no {vehicleType} vehicles near your location
+                        right now. Try a different vehicle class.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {(availableVehicles ?? []).map((vehicle, i) => (
+                        <DriverCard
+                          key={i}
+                          vehicle={vehicle}
+                          func={func}
+                          vehicleType={vehicleType}
+                          isLater={isLater}
+                          bookingType={bookingType}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── Step 5: Scheduling + review (shown when driver selected) ── */}
+              {vehicleType && selectedDriver && (
+                <div className="flex flex-col gap-5">
+                  {/* Selected vehicle summary */}
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4">
+                    {selectedDriverDetails?.vehicleInfo
+                      .vehicleSideViewImageUri && (
+                      <Image
+                        src={
+                          selectedDriverDetails.vehicleInfo
+                            .vehicleSideViewImageUri
+                        }
+                        alt="car"
+                        width={80}
+                        height={80}
+                        className="w-20 aspect-square object-cover rounded-xl shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-black capitalize truncate">
+                        {selectedDriverDetails?.vehicleInfo?.vehicleMake}{" "}
+                        {selectedDriverDetails?.vehicleInfo?.vehicleModel}{" "}
+                        <span className="text-gray font-normal">
+                          · {selectedDriverDetails?.vehicleInfo?.vehicleYear}
+                        </span>
+                      </p>
+                      <p className="text-xs text-gray mt-0.5 capitalize">
+                        {selectedDriverDetails?.driverInfo?.firstName}{" "}
+                        {selectedDriverDetails?.driverInfo?.lastName}
+                      </p>
+                    </div>
+                    <Link
+                      href={{
+                        pathname: "/rent-ride",
+                        query: { vehicleType, isLater, bookingType },
+                      }}
+                      className="text-xs font-semibold text-primary hover:text-primary-deep transition-colors shrink-0"
+                    >
+                      <ChevronLeft size={14} className="inline" /> Change
+                    </Link>
+                  </div>
+
+                  {/* Pick-up location */}
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                    <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-3 font-heebo">
+                      Pick-up Location
+                    </p>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="mt-1 shrink-0">
+                          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-black">
+                            {autoCompleteAddress?.formattedAddress}
                           </p>
-                          <p className='text-xs'>
-                            {autoCompleteAddress?.country}
+                          <p className="text-xs text-gray font-light mt-0.5">
+                            {autoCompleteAddress?.county}
                           </p>
                         </div>
                       </div>
                       <Button
-                        className='bg-primaryLight2 text-black hover:bg-primaryLight2 rounded-full px-8'
+                        className="bg-background text-black hover:bg-primaryLight2 rounded-full px-4 h-8 text-xs font-semibold shrink-0"
                         asChild
                       >
                         <Link
                           href={{
                             pathname: "/rent-ride",
-                            query: {
-                              vehicleType,
-                              isLater,
-                              bookingType,
-                            },
+                            query: { vehicleType, isLater, bookingType },
                           }}
+                          onClick={() =>
+                            useRadarMap.setState({
+                              autoCompleteAddress: undefined,
+                            })
+                          }
                         >
                           Change
                         </Link>
                       </Button>
                     </div>
                   </div>
+
+                  {/* Duration + time pickers */}
                   {!isReview && (
-                    <div className='flex flex-col gap-3'>
-                      <div className='flex gap-4 w-full items-center'>
-                        <div className='flex flex-col gap-1 w-full'>
-                          <p className='pl-4 font-bold text-sm'>Duration</p>
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-4">
+                      <p className="text-xs font-semibold text-gray uppercase tracking-wider font-heebo">
+                        Schedule
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Duration */}
+                        <div className="flex flex-col gap-1.5">
+                          <p className="text-xs font-semibold text-gray-700 pl-1">
+                            Duration
+                          </p>
                           <Dialog>
                             <DialogTrigger asChild>
-                              <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
+                              <button className="rounded-xl bg-background border border-gray-200 items-center justify-between px-4 py-3 w-full flex gap-2 hover:border-primary transition-colors text-left">
                                 <p
                                   className={cn(
-                                    "text-icons font-medium text-xs",
-                                    selectedHoursLength && "text-black",
+                                    "text-xs font-medium truncate",
+                                    selectedHoursLength
+                                      ? "text-black"
+                                      : "text-gray",
                                   )}
                                 >
-                                  {selectedHoursLength
-                                    ? selectedHoursLength
-                                    : "Choose rent duration"}
+                                  {selectedHoursLength || "Choose duration"}
                                 </p>
                                 <Return24Icon />
-                              </div>
+                              </button>
                             </DialogTrigger>
                             <DialogContent
-                              dialogTitle='Choose rent duration'
-                              className='sm:max-w-106.25 p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              dialogTitle="Choose rent duration"
+                              className="sm:max-w-106.25 p-0 rounded-[20px] overflow-hidden bg-background"
                               showCloseButton={false}
                             >
                               <RentRideDialogComponent
-                                title='Rent duration'
-                                subTitle='Choose how long to ride'
+                                title="Rent duration"
+                                subTitle="Choose how long to ride"
                               >
-                                <div className='flex flex-col gap-2 py-9 px-4'>
-                                  <div className='flex gap-3'>
+                                <div className="flex flex-col gap-2 py-9 px-4">
+                                  <div className="flex gap-3">
                                     <Button
                                       className={cn(
                                         "text-primary-deep text-sm font-bold bg-transparent hover:bg-transparent w-fit h-fit p-0 underline",
                                         selectedTab !== "hours" &&
                                           "text-placeholder no-underline",
                                       )}
-                                      onClick={() => {
-                                        setSelectedTab("hours");
-                                      }}
+                                      onClick={() => setSelectedTab("hours")}
                                     >
                                       Hours
                                     </Button>
@@ -439,9 +524,7 @@ const RentRide = () => {
                                         selectedTab !== "days" &&
                                           "text-placeholder no-underline",
                                       )}
-                                      onClick={() => {
-                                        setSelectedTab("days");
-                                      }}
+                                      onClick={() => setSelectedTab("days")}
                                     >
                                       Day
                                     </Button>
@@ -463,58 +546,63 @@ const RentRide = () => {
                             </DialogContent>
                           </Dialog>
                         </div>
-                        <div className='flex flex-col gap-1 w-full'>
-                          <p className='pl-4 font-bold text-sm'>Pick up time</p>
+
+                        {/* Pick-up time */}
+                        <div className="flex flex-col gap-1.5">
+                          <p className="text-xs font-semibold text-gray-700 pl-1">
+                            Pick-up time
+                          </p>
                           <Dialog
                             open={pickupModalOpen}
                             onOpenChange={setPickupModalOpen}
                           >
                             <DialogTrigger asChild>
-                              <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
+                              <button className="rounded-xl bg-background border border-gray-200 items-center justify-between px-4 py-3 w-full flex gap-2 hover:border-primary transition-colors text-left">
                                 <p
                                   className={cn(
-                                    "text-icons font-medium text-xs",
+                                    "text-xs font-medium truncate",
                                     selectedHours &&
                                       selectedMins &&
-                                      selectAmOrPm &&
-                                      "text-black",
+                                      selectAmOrPm
+                                      ? "text-black"
+                                      : "text-gray",
                                   )}
                                 >
                                   {selectedHours && selectedMins && selectAmOrPm
-                                    ? `${selectedHours} : ${selectedMins} ${selectAmOrPm}`
-                                    : "Choose a pick up time"}
+                                    ? `${selectedHours}:${selectedMins} ${selectAmOrPm}`
+                                    : "Choose time"}
                                 </p>
                                 <TimerIcon />
-                              </div>
+                              </button>
                             </DialogTrigger>
                             <DialogContent
-                              dialogTitle='Choose a pick up time'
-                              className='sm:max-w-106.25p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              dialogTitle="Choose a pick up time"
+                              className="sm:max-w-106.25 p-0 rounded-[20px] overflow-hidden bg-background"
                               showCloseButton={false}
                             >
                               <RentRideDialogComponent
-                                title='Pick up time'
-                                subTitle='Choose the time you’d like to be picked up'
+                                title="Pick up time"
+                                subTitle="Choose the time you'd like to be picked up"
                               >
-                                <div className='flex flex-col gap-2 py-9 px-4'>
-                                  <div className='flex p-4 gap-4'>
-                                    <div className='flex bg-white rounded-[10px] h-12'>
-                                      <div className='flex p-4 gap-2 items-center'>
-                                        <p className='text-sm'>Hour</p>
+                                <div className="flex flex-col gap-2 py-9 px-4">
+                                  <div className="flex p-4 gap-4">
+                                    <div className="flex bg-white rounded-[10px] h-12">
+                                      <div className="flex p-4 gap-2 items-center">
+                                        <p className="text-sm">Hour</p>
                                         <SelectDropdown
                                           options={Array(12)
                                             .fill(0)
                                             .map((_, i) => `${i + 1}`)}
-                                          triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
-                                          triggerLabel='1'
+                                          triggerClassName="bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg"
+                                          triggerLabel="1"
                                           withoutIcon
                                           selected={selectedHours}
                                           setSelected={setSelectedHours}
                                         />
                                       </div>
-                                      <div className='w-px h-4 bg-primaryLight2 self-center' />
-                                      <div className='flex p-4 gap-2 items-center'>
-                                        <p className='text-sm'>Min</p>
+                                      <div className="w-px h-4 bg-primaryLight2 self-center" />
+                                      <div className="flex p-4 gap-2 items-center">
+                                        <p className="text-sm">Min</p>
                                         <SelectDropdown
                                           options={Array(60)
                                             .fill(0)
@@ -522,19 +610,19 @@ const RentRide = () => {
                                               (_, i) =>
                                                 `${i <= 10 ? "0" : ""}${i + 1}`,
                                             )}
-                                          triggerClassName='bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg'
-                                          triggerLabel='1'
+                                          triggerClassName="bg-[#F8F8F8] hover:cursor-pointer w-fit min-h-4 rounded-lg"
+                                          triggerLabel="1"
                                           withoutIcon
                                           selected={selectedMins}
                                           setSelected={setSelectedMins}
                                         />
                                       </div>
                                     </div>
-                                    <div className='bg-white rounded-[10px] h-12 flex items-center justify-center'>
+                                    <div className="bg-white rounded-[10px] h-12 flex items-center justify-center">
                                       <SelectDropdown
                                         options={["AM", "PM"]}
-                                        triggerClassName='hover:cursor-pointer w-fit min-h-4'
-                                        triggerLabel='AM'
+                                        triggerClassName="hover:cursor-pointer w-fit min-h-4"
+                                        triggerLabel="AM"
                                         withoutIcon
                                         selected={selectAmOrPm}
                                         setSelected={setSelectAmOrPm}
@@ -543,7 +631,7 @@ const RentRide = () => {
                                   </div>
                                   <Button
                                     onClick={() => setPickupModalOpen(false)}
-                                    className='rounded-full self-center'
+                                    className="rounded-full self-center"
                                   >
                                     OK
                                   </Button>
@@ -553,19 +641,23 @@ const RentRide = () => {
                           </Dialog>
                         </div>
                       </div>
+
+                      {/* Date (if later) */}
                       {isLater && (
-                        <div className='flex flex-col gap-1 w-full'>
-                          <p className='pl-4 font-bold text-sm'>Select date</p>
+                        <div className="flex flex-col gap-1.5">
+                          <p className="text-xs font-semibold text-gray-700 pl-1">
+                            Select date
+                          </p>
                           <Dialog
                             open={isDateDialogOpen}
                             onOpenChange={setIsDateDialogOpen}
                           >
                             <DialogTrigger asChild>
-                              <div className='rounded-2xl bg-white items-center justify-between px-4 py-3 w-full flex gap-4 hover:cursor-pointer'>
+                              <button className="rounded-xl bg-background border border-gray-200 items-center justify-between px-4 py-3 w-full flex gap-2 hover:border-primary transition-colors text-left">
                                 <p
                                   className={cn(
-                                    "font-medium text-xs",
-                                    date ? "text-black" : "text-placeholder",
+                                    "text-xs font-medium",
+                                    date ? "text-black" : "text-gray",
                                   )}
                                 >
                                   {date
@@ -573,41 +665,39 @@ const RentRide = () => {
                                     : "Choose a date"}
                                 </p>
                                 <Return24Icon />
-                              </div>
+                              </button>
                             </DialogTrigger>
                             <DialogContent
-                              dialogTitle='Choose rent date'
-                              className='sm:max-w-106.25 w-fit p-0  rounded-[20px] overflow-hidden bg-background-1'
+                              dialogTitle="Choose rent date"
+                              className="sm:max-w-106.25 w-fit p-0 rounded-[20px] overflow-hidden bg-background"
                               showCloseButton={false}
                             >
                               <RentRideDialogComponent
                                 title={
                                   date ? formatDateToDDMMYYYY(date as Date) : ""
                                 }
-                                subTitle=''
+                                subTitle=""
                                 isTitleCentered
                               >
-                                <div className='flex flex-col gap-5 justify-center items-center bg-white w-fit pb-6 px-4'>
+                                <div className="flex flex-col gap-5 justify-center items-center bg-white w-fit pb-6 px-4">
                                   <Calendar
-                                    mode='single'
+                                    mode="single"
                                     defaultMonth={date}
                                     selected={date}
                                     onSelect={setDate}
-                                    disabled={{
-                                      before: new Date(),
-                                    }}
-                                    className='bg-transparent'
+                                    disabled={{ before: new Date() }}
+                                    className="bg-transparent"
                                   />
-                                  <div className='flex gap-10 items-center font-bold'>
+                                  <div className="flex gap-10 items-center font-bold">
                                     <Button
                                       onClick={() => setDate(new Date())}
-                                      className='bg-transparent hover:bg-transparent w-fit h-fit p-0 text-black'
+                                      className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-black"
                                     >
                                       CANCEL
                                     </Button>
                                     <Button
                                       onClick={() => setIsDateDialogOpen(false)}
-                                      className='bg-transparent hover:bg-transparent w-fit h-fit p-0 text-primary'
+                                      className="bg-transparent hover:bg-transparent w-fit h-fit p-0 text-primary"
                                     >
                                       SELECT
                                     </Button>
@@ -618,222 +708,364 @@ const RentRide = () => {
                           </Dialog>
                         </div>
                       )}
-                      <div className='flex items-center justify-between gap-4 w-full'>
-                        <div className='flex items-center gap-3'>
-                          <p className='text-sm font-semibold'>
+
+                      {/* Time flexibility */}
+                      <div className="flex items-center justify-between gap-4 pt-1 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold">
                             Time Flexibility
                           </p>
                           <MoreInfoIcon />
                         </div>
                         <Switch
-                          color='primary'
+                          color="primary"
                           checked={flexibility}
                           onCheckedChange={() =>
                             setFlexibility((prev) => !prev)
                           }
-                          className='my-5 cursor-pointer'
+                          className="cursor-pointer"
                         />
                       </div>
                     </div>
                   )}
+
+                  {/* Review summary */}
                   {isReview && (
-                    <div className='flex flex-col gap-5 border-t border-primaryLight2 pt-8'>
-                      {[
-                        {
-                          title: "Rental mode",
-                          value:
-                            bookingType === "SELF_DRIVE"
-                              ? "Self-drive"
-                              : "With driver",
-                        },
-                        {
-                          title: "Rent Duration",
-                          value: selectedHoursLength,
-                        },
-                        {
-                          title: "Pick up time",
-                          value: `${selectedHours} : ${selectedMins} ${selectAmOrPm}`,
-                        },
-                        {
-                          title: "Time Flexibility",
-                          value: flexibility ? "Yes" : "No",
-                        },
-                        {
-                          ...(date && {
-                            title: "Rent Date",
-                            value: date
-                              ? formatDateToDDMMYYYY(date as Date)
-                              : "",
-                          }),
-                        },
-                      ].map((review) => {
-                        return (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-4">
+                      <p className="text-xs font-semibold text-gray uppercase tracking-wider font-heebo">
+                        Booking Summary
+                      </p>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          {
+                            title: "Rental mode",
+                            value:
+                              bookingType === "SELF_DRIVE"
+                                ? "Self-drive"
+                                : "With driver",
+                          },
+                          {
+                            title: "Rent Duration",
+                            value: selectedHoursLength,
+                          },
+                          {
+                            title: "Pick up time",
+                            value: `${selectedHours} : ${selectedMins} ${selectAmOrPm}`,
+                          },
+                          {
+                            title: "Time Flexibility",
+                            value: flexibility ? "Yes" : "No",
+                          },
+                          ...(date
+                            ? [
+                                {
+                                  title: "Rent Date",
+                                  value: date
+                                    ? formatDateToDDMMYYYY(date as Date)
+                                    : "",
+                                },
+                              ]
+                            : []),
+                        ].map((review) => (
                           <div
                             key={review.title}
-                            className='flex justify-between gap-4 font-semibold text-sm'
+                            className="flex justify-between gap-4 text-sm border-b border-gray-50 pb-3 last:border-0 last:pb-0"
                           >
-                            <div className='flex items-center gap-3'>
-                              <p>{review.title}</p>
-                            </div>
-                            <p>{review.value}</p>
+                            <p className="text-gray font-medium">
+                              {review.title}
+                            </p>
+                            <p className="font-semibold text-black text-right">
+                              {review.value}
+                            </p>
                           </div>
-                        );
-                      })}
+                        ))}
+                      </div>
                     </div>
                   )}
+
+                  {/* License warning */}
                   {requiresLicenseReview && (
-                    <div className='rounded-2xl bg-white border border-primaryLight2 p-4 flex flex-col gap-3 text-sm'>
-                      <p className='font-bold'>License review required</p>
-                      <p className='text-gray-5'>
+                    <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 flex flex-col gap-3 text-sm">
+                      <p className="font-bold text-amber-800">
+                        License review required
+                      </p>
+                      <p className="text-amber-700 font-light leading-relaxed">
                         Self-drive rentals require an approved license before
                         payment. You can continue with a driver, or submit your
                         license for review.
                       </p>
-                      <Button asChild className='rounded-full w-fit'>
-                        <Link href='/rider-db/license'>Submit license</Link>
+                      <Button
+                        asChild
+                        className="rounded-full w-fit bg-amber-600 hover:bg-amber-700 text-white"
+                      >
+                        <Link href="/rider/license">Submit license</Link>
                       </Button>
                     </div>
                   )}
-                </div>
-              </section>
-              <div className='flex gap-6 items-center'>
-                <Button
-                  className='items-end'
-                  disabled={
-                    !autoCompleteAddress ||
-                    !selectedHours ||
-                    !selectedMins ||
-                    !selectAmOrPm ||
-                    !selectedHoursLength ||
-                    isCreatingIntent ||
-                    requiresLicenseReview
-                  }
-                  onClick={async () => {
-                    if (requiresLicenseReview) {
-                      toast.error(
-                        "An approved license is required for self-drive rentals",
-                      );
-                      return;
-                    }
-                    if (isLater && !date) {
-                      toast.error("Please select a date");
-                      return;
-                    }
-                    if (!autoCompleteAddress || !selectedDriverDetails) return;
-                    const { durationHours, pickUpTime, requestedEndAt } =
-                      getPickupWindow();
-                    // await cancelRental(intent?.id ?? "");
-                    if (!intent?.cost) {
-                      const createdIntent = await rentAndCreateIntent({
-                        bookingType,
-                        flexibility,
-                        days: [],
-                        duration: durationHours,
-                        vehicleId: selectedDriverDetails.vehicleId,
-                        pickUpLat: autoCompleteAddress.latitude,
-                        pickUpLong: autoCompleteAddress.longitude,
-                        pickUpAddress: autoCompleteAddress.formattedAddress,
-                        pickUpTime,
-                        requestedEndAt,
-                      });
-                      if (createdIntent?.paymentIntent.paymentIntent) {
-                        setProceedToCheckout(true);
+
+                  {/* CTA + Cost breakdown */}
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-4">
+                    {isReview && (
+                      <div className="flex flex-col gap-2 border-b border-gray-100 pb-4">
+                        {[
+                          { title: "Base Cost", value: intent?.cost.baseCost },
+                          {
+                            title: "Pickup Charge",
+                            value: intent?.cost.pickUpCharge,
+                          },
+                          { title: "Tax", value: intent?.cost.tax },
+                          { title: "Total", value: intent?.cost.total },
+                        ].map((item, i) => (
+                          <div
+                            key={i}
+                            className={cn(
+                              "flex justify-between gap-4 text-sm",
+                              item.title === "Total"
+                                ? "font-bold text-base text-black pt-1 border-t border-gray-100"
+                                : "font-medium text-gray",
+                            )}
+                          >
+                            <p>{item.title}</p>
+                            {isCreatingIntent ? (
+                              <Skeleton className="w-12 h-4 rounded-sm" />
+                            ) : (
+                              <p
+                                className={cn(
+                                  !intent &&
+                                    !isCreatingIntent &&
+                                    "text-red-500 text-xs animate-pulse",
+                                )}
+                              >
+                                {item.value ? `$${item.value}` : "Failed"}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <Button
+                      className="bg-primary hover:bg-primary-deep text-white rounded-xl h-12 text-sm font-semibold w-full transition-colors duration-200"
+                      disabled={
+                        !autoCompleteAddress ||
+                        !selectedHours ||
+                        !selectedMins ||
+                        !selectAmOrPm ||
+                        !selectedHoursLength ||
+                        isCreatingIntent ||
+                        requiresLicenseReview
                       }
-                      return;
-                    }
-                    if (intent?.paymentIntent.paymentIntent) {
-                      setProceedToCheckout(true);
-                    }
-                  }}
-                >
-                  {isReview ? (
-                    intent ? (
-                      "Proceed to payment"
-                    ) : isCreatingIntent ? (
-                      "Loading"
-                    ) : (
-                      "Retry"
-                    )
-                  ) : (
-                    <Link
-                      href={{
-                        query: {
-                          vehicleType,
-                          selectedDriver,
-                          isReview: true,
-                          isLater,
-                          bookingType,
-                        },
+                      onClick={async () => {
+                        if (requiresLicenseReview) {
+                          toast.error(
+                            "An approved license is required for self-drive rentals",
+                          );
+                          return;
+                        }
+                        if (isLater && !date) {
+                          toast.error("Please select a date");
+                          return;
+                        }
+                        if (!autoCompleteAddress || !selectedDriverDetails)
+                          return;
+                        const { durationHours, pickUpTime, requestedEndAt } =
+                          getPickupWindow();
+                        if (!intent?.cost) {
+                          const createdIntent = await rentAndCreateIntent({
+                            bookingType,
+                            flexibility,
+                            days: [],
+                            duration: durationHours,
+                            vehicleId: selectedDriverDetails.vehicleId,
+                            pickUpLat: autoCompleteAddress.latitude,
+                            pickUpLong: autoCompleteAddress.longitude,
+                            pickUpAddress: autoCompleteAddress.formattedAddress,
+                            pickUpTime,
+                            requestedEndAt,
+                          });
+                          if (createdIntent?.paymentIntent.paymentIntent) {
+                            setProceedToCheckout(true);
+                          }
+                          return;
+                        }
+                        if (intent?.paymentIntent.paymentIntent) {
+                          setProceedToCheckout(true);
+                        }
                       }}
                     >
-                      Review request
-                    </Link>
-                  )}
-                </Button>
-                {isReview && (
-                  <div className='flex flex-col w-1/2'>
-                    {[
-                      { title: "Base Cost", value: intent?.cost.baseCost },
-                      {
-                        title: "Pickup Charge",
-                        value: intent?.cost.pickUpCharge,
-                      },
-                      { title: "Tax", value: intent?.cost.tax },
-                      { title: "Total", value: intent?.cost.total },
-                    ].map((item, i) => {
-                      return (
-                        <div
-                          key={i}
-                          className={cn(
-                            "flex justify-between gap-4 font-semibold text-sm text-icons",
-                            item.title === "Total" &&
-                              "font-bold text-base text-black",
-                          )}
+                      {isReview ? (
+                        intent ? (
+                          "Proceed to payment"
+                        ) : isCreatingIntent ? (
+                          "Loading…"
+                        ) : (
+                          "Retry"
+                        )
+                      ) : (
+                        <Link
+                          href={{
+                            query: {
+                              vehicleType,
+                              selectedDriver,
+                              isReview: true,
+                              isLater,
+                              bookingType,
+                            },
+                          }}
                         >
-                          <p>{item.title}</p>
-                          {isCreatingIntent ? (
-                            <Skeleton className='w-10 h-4 rounded-sm' />
-                          ) : (
-                            <p
-                              className={cn(
-                                !intent &&
-                                  !isCreatingIntent &&
-                                  "text-red-500 text-xs animate-pulse",
-                              )}
-                            >
-                              {item.value ? `$${item.value}` : "Failed"}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
+                          Review request
+                        </Link>
+                      )}
+                    </Button>
                   </div>
-                )}
-              </div>
-            </section>
-          )}
-        </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-        <RadarMap
-          pickup={[
-            autoCompleteAddress?.longitude ?? 0,
-            autoCompleteAddress?.latitude ?? 0,
-          ]}
+          {/* ─── Right panel: Map ─── */}
+          <div className="hidden md:flex flex-1 h-full overflow-hidden">
+            <RadarMap
+              pickup={[
+                autoCompleteAddress?.longitude ?? 0,
+                autoCompleteAddress?.latitude ?? 0,
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+      <StripeCheckOutComponent
+        open={proceedToCheckout}
+        onClose={() => {
+          useRental.persist.clearStorage();
+          setProceedToCheckout(false);
+        }}
+      />
+    </>
+  );
+};
+
+export default Page;
+
+// ── Driver card component ──────────────────────────────────────────────────────
+type DriverCardProps = {
+  vehicle: VehicleLocation;
+  func: (v: VehicleLocation) => void;
+  vehicleType: string;
+  isLater: boolean;
+  bookingType: "SELF_DRIVE" | "WITH_DRIVER";
+};
+
+const DriverCard = ({
+  vehicle,
+  func,
+  vehicleType,
+  isLater,
+  bookingType,
+}: DriverCardProps) => {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col gap-4 hover:border-primary/30 transition-colors duration-200">
+      <div className="flex items-center gap-3">
+        {/* Vehicle image */}
+        <Image
+          src={vehicle.vehicleInfo.vehicleSideViewImageUri}
+          alt="car"
+          width={72}
+          height={72}
+          className="w-18 aspect-square object-cover rounded-xl shrink-0"
         />
-        {/* {proceedToCheckout && <StripeCheckOutComponent />} */}
-        <StripeCheckOutComponent
-          open={proceedToCheckout}
-          onClose={() => {
-            useRental.persist.clearStorage();
-            setProceedToCheckout(false);
-          }}
-        />
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-black capitalize truncate">
+            {vehicle.vehicleInfo?.vehicleMake}{" "}
+            {vehicle.vehicleInfo?.vehicleModel}
+            <span className="text-gray font-normal">
+              {" "}
+              · {vehicle.vehicleInfo?.vehicleYear}
+            </span>
+          </p>
+          <p className="text-xs text-gray mt-0.5 capitalize">
+            {vehicle.driverInfo?.firstName} {vehicle.driverInfo?.lastName}
+          </p>
+          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+            <span className="inline-flex items-center gap-1 text-xs text-gray-700 font-medium">
+              <FilledGreenStarIcon />
+              <span>
+                {vehicle.driverInfo?.rating?.numberOfRatings ?? 0} rating
+              </span>
+            </span>
+            <span className="text-xs text-gray">·</span>
+            <span className="inline-flex items-center gap-1 text-xs text-gray-700">
+              <PassengerCapacityIcon />
+              <span>{vehicle.capacity} seats</span>
+            </span>
+            <span className="text-xs text-gray">·</span>
+            <span className="inline-flex items-center gap-1 text-xs text-gray-700">
+              <PetIcons />
+              <span>
+                {vehicle.driverInfo.rideProfile.allowPets
+                  ? "Pets OK"
+                  : "No pets"}
+              </span>
+            </span>
+          </div>
+        </div>
+        {/* Rate */}
+        <div className="text-right shrink-0">
+          <p className="text-base font-extrabold text-black">
+            ${vehicle.driverInfo.rideProfile?.ratePerHour ?? 0}
+          </p>
+          <p className="text-xs text-gray font-light">/hr</p>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-2 pt-1 border-t border-gray-50">
+        <Button
+          onClick={() => func(vehicle)}
+          variant="default"
+          className="flex-1 bg-primary hover:bg-primary-deep text-white rounded-xl h-9 text-xs font-semibold transition-colors cursor-pointer"
+          asChild
+        >
+          <Link
+            href={{
+              query: {
+                selectedDriver: vehicle.vehicleId,
+                vehicleType,
+                isLater,
+                bookingType,
+              },
+            }}
+          >
+            Book
+          </Link>
+        </Button>
+        <Button
+          onClick={() => func(vehicle)}
+          variant="secondary"
+          className="flex-1 rounded-xl h-9 text-xs font-semibold bg-background hover:bg-primaryLight2 text-gray-700 border-0 cursor-pointer"
+          asChild
+        >
+          <Link
+            href={{
+              pathname: "/rent-ride/vehicle-details",
+              query: {
+                selectedDriver: vehicle.vehicleId,
+                vehicleType,
+                isLater,
+                bookingType,
+              },
+            }}
+          >
+            View details
+          </Link>
+        </Button>
       </div>
     </div>
   );
 };
-export default Page;
 
+// ── Dialog wrapper ─────────────────────────────────────────────────────────────
 type RentRideDialogComponentProps = {
   title: string;
   subTitle: string;
@@ -847,8 +1079,8 @@ export const RentRideDialogComponent = ({
   isTitleCentered,
 }: RentRideDialogComponentProps) => {
   return (
-    <div className='flex flex-col bg-background-1'>
-      <div className='flex flex-col bg-primaryLight2 p-4'>
+    <div className="flex flex-col bg-background">
+      <div className="flex flex-col bg-primaryLight2 p-4">
         <HeadingHeebo
           className={cn(
             "text-left font-semibold text-xl text-primary-deep",
@@ -857,7 +1089,7 @@ export const RentRideDialogComponent = ({
         >
           {title}
         </HeadingHeebo>
-        <p className='text-[10px]'>{subTitle}</p>
+        <p className="text-[10px]">{subTitle}</p>
       </div>
       {children}
     </div>

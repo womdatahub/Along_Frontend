@@ -1,205 +1,202 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Image from "next/image";
-import clsx from "clsx";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Shield,
+  HeadphonesIcon,
+} from "lucide-react";
 
 const slides = [
   {
-    title: "Fast",
+    title: "Lightning Fast",
+    subtitle: "Speed",
     description:
-      "Instant booking, rapid confirmations, and on-the-dot pickups keep you moving without delay.",
+      "Instant booking, rapid confirmations, and on-the-dot pickups keep you moving without delay. No waiting, no guessing.",
     img: "/images/young-man.png",
+    icon: Zap,
+    accent: "#0E696A",
   },
   {
-    title: "Safety",
+    title: "Safety First",
+    subtitle: "Safety",
     description:
-      "Your safety is our priority. All our drivers are verified, vehicles are maintained to high standards, and rides are tracked for extra peace of mind.",
+      "Your safety is our priority. All drivers are verified, vehicles are maintained to high standards, and every ride is tracked for peace of mind.",
     img: "/images/protected.png",
+    icon: Shield,
+    accent: "#084B4C",
   },
   {
-    title: "24/7 Support",
+    title: "Always Here",
+    subtitle: "24/7 Support",
     description:
-      "Day or night, rain or shine—you can always count on us. Consistency and trust are at the heart of every service we provide.",
+      "Day or night, rain or shine — you can always count on us. Consistency and trust are at the heart of every service we provide.",
     img: "/images/seated-man.png",
+    icon: HeadphonesIcon,
+    accent: "#0E696A",
   },
 ];
 
+const variants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 80 : -80,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 80 : -80,
+    opacity: 0,
+  }),
+};
+
 export const Features = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState<"left" | "right">("right");
+  const [[index, direction], setPage] = useState([0, 0]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleSlide = (nextIndex: number, dir: "left" | "right") => {
-    if (animating) return;
-    setDirection(dir);
-    setAnimating(true);
+  const paginate = useCallback((newDirection: number) => {
+    setPage(([prev]) => {
+      const next = (prev + newDirection + slides.length) % slides.length;
+      return [next, newDirection];
+    });
+  }, []);
 
-    setTimeout(() => {
-      setCurrentIndex(nextIndex);
-      setAnimating(false);
-    }, 400); // Match animation duration
-  };
+  const resetTimer = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => paginate(1), 5000);
+  }, [paginate]);
 
-  const handlePrev = () => {
-    const nextIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
-    handleSlide(nextIndex, "left");
-  };
+  useEffect(() => {
+    resetTimer();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [resetTimer]);
 
-  const handleNext = () => {
-    const nextIndex = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
-    handleSlide(nextIndex, "right");
-  };
-
-  const currentSlide = slides[currentIndex];
+  const slide = slides[index];
+  const Icon = slide.icon;
 
   return (
-    <section className="pt-14 md:pt-36 pb-16 px-6 bg-white relative overflow-hidden">
-      <div className="relative h-100 max-w-6xl mx-auto flex items-center justify-center">
-        <button
-          onClick={handlePrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rotate-180 transition cursor-pointer"
-        >
-          <svg
-            width={14}
-            height={18}
-            viewBox="0 0 14 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1.38061 0.153104C1.04369 -0.068301 0.522992 -0.0461605 0.216701 0.197385C-0.0895907 0.440931 -0.0589624 0.817319 0.277958 1.03872L12.1315 8.7879C12.4377 8.98716 12.4377 9.27499 12.1315 9.47425L0.27796 16.9577C-0.058961 17.1791 -0.0895882 17.5555 0.186074 17.7991C0.492366 18.0426 1.01306 18.0648 1.34998 17.8655L13.2035 10.3599C14.2449 9.69565 14.2755 8.58863 13.2341 7.90228L1.38061 0.153104Z"
-              fill="black"
-              fillOpacity={0.5}
-            />
-          </svg>
-        </button>
+    <section className="py-20 md:py-28 px-5 md:px-8 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
+          {/* Text side */}
+          <div className="w-full md:w-1/2 flex flex-col gap-6">
+            {/* Pill tabs */}
+            <div className="flex gap-2 flex-wrap">
+              {slides.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setPage(([prev]) => [i, i > prev ? 1 : -1]);
+                    resetTimer();
+                  }}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 font-heebo ${
+                    i === index
+                      ? "bg-primary text-white"
+                      : "bg-background text-gray hover:text-primary hover:bg-primaryLight2"
+                  }`}
+                >
+                  {s.subtitle}
+                </button>
+              ))}
+            </div>
 
-        <button
-          onClick={handleNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10  transition cursor-pointer"
-        >
-          <svg
-            width={14}
-            height={18}
-            viewBox="0 0 14 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1.38061 0.153104C1.04369 -0.068301 0.522992 -0.0461605 0.216701 0.197385C-0.0895907 0.440931 -0.0589624 0.817319 0.277958 1.03872L12.1315 8.7879C12.4377 8.98716 12.4377 9.27499 12.1315 9.47425L0.27796 16.9577C-0.058961 17.1791 -0.0895882 17.5555 0.186074 17.7991C0.492366 18.0426 1.01306 18.0648 1.34998 17.8655L13.2035 10.3599C14.2449 9.69565 14.2755 8.58863 13.2341 7.90228L1.38061 0.153104Z"
-              fill="black"
-              fillOpacity={0.5}
-            />
-          </svg>
-        </button>
-        <div
-          key={currentIndex}
-          className={clsx(
-            "flex flex-col md:flex-row gap-10 md:gap-20 items-center justify-between w-full max-w-5xl px-4 absolute transition-all duration-400",
-            direction === "right" && animating && "animate-slide-out-left",
-            direction === "left" && animating && "animate-slide-out-right",
-            !animating &&
-              (direction === "right"
-                ? "animate-slide-in-from-right"
-                : "animate-slide-in-from-left"),
-          )}
-        >
-          <div className="flex flex-col gap-4 text-left w-full md:w-1/2">
-            <h2 className="text-2xl md:text-4xl font-extrabold text-black">
-              {currentSlide.title}
-            </h2>
-            <p className="text-black font-light text-lg md:text-xl">
-              {currentSlide.description}
-            </p>
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={index}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col gap-4"
+              >
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primaryLight2">
+                  <Icon size={20} className="text-primary" />
+                </div>
+                <h2 className="text-3xl md:text-5xl font-extrabold text-black font-heebo leading-tight">
+                  {slide.title}
+                </h2>
+                <p className="text-gray text-base md:text-lg font-light leading-relaxed max-w-md">
+                  {slide.description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation controls */}
+            <div className="flex items-center gap-4 mt-2">
+              <button
+                onClick={() => {
+                  paginate(-1);
+                  resetTimer();
+                }}
+                className="p-2.5 rounded-xl border border-gray-2 hover:border-primary hover:text-primary transition-all duration-200"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                onClick={() => {
+                  paginate(1);
+                  resetTimer();
+                }}
+                className="p-2.5 rounded-xl border border-gray-2 hover:border-primary hover:text-primary transition-all duration-200"
+              >
+                <ChevronRight size={18} />
+              </button>
+              <div className="flex gap-1.5 ml-2">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setPage(([prev]) => [i, i > prev ? 1 : -1]);
+                      resetTimer();
+                    }}
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      i === index ? "w-8 bg-primary" : "w-2 bg-gray-2"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <Image
-            src={currentSlide.img}
-            alt={currentSlide.description}
-            width={237}
-            height={337}
-            className="w-auto"
-          />
+
+          {/* Image side */}
+          <div className="relative w-full md:w-1/2 flex justify-center">
+            <div className="relative w-72 md:w-80 h-96 md:h-120">
+              {/* Decorative backdrop */}
+              <div className="absolute inset-4 rounded-3xl translate-x-4 translate-y-4" />
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={index}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 rounded-3xl overflow-hidden"
+                >
+                  <Image
+                    src={slide.img}
+                    alt={slide.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 288px, 320px"
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(100%);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0%);
-          }
-        }
-
-        @keyframes slideOutLeft {
-          from {
-            opacity: 1;
-            transform: translateX(0%);
-          }
-          to {
-            opacity: 0;
-            transform: translateX(-100%);
-          }
-        }
-
-        @keyframes slideOutRight {
-          from {
-            opacity: 1;
-            transform: translateX(0%);
-          }
-          to {
-            opacity: 0;
-            transform: translateX(100%);
-          }
-        }
-
-        .animate-slide-in {
-          animation: slideIn 0.4s ease forwards;
-        }
-
-        .animate-slide-out-left {
-          animation: slideOutLeft 0.4s ease forwards;
-        }
-
-        .animate-slide-out-right {
-          animation: slideOutRight 0.4s ease forwards;
-        }
-
-        @keyframes slideInFromRight {
-          from {
-            opacity: 0;
-            transform: translateX(100%);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0%);
-          }
-        }
-
-        @keyframes slideInFromLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-100%);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0%);
-          }
-        }
-
-        .animate-slide-in-from-right {
-          animation: slideInFromRight 0.4s ease forwards;
-        }
-
-        .animate-slide-in-from-left {
-          animation: slideInFromLeft 0.4s ease forwards;
-        }
-      `}</style>
     </section>
   );
 };

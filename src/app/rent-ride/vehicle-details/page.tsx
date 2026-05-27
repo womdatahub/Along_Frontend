@@ -66,13 +66,9 @@ const Page = () => {
   const rate = Number(driver?.rideProfile?.ratePerHour ?? 0);
 
   return (
-    <div className='px-4 md:px-0 max-w-7xl mx-auto w-full py-8 md:py-14'>
-      <div className='flex flex-col gap-6'>
-        <Button
-          asChild
-          variant='secondary'
-          className='rounded-full w-fit'
-        >
+    <div className="px-4 md:px-0 max-w-7xl mx-auto w-full py-8 md:py-14">
+      <div className="flex flex-col gap-6">
+        <Button asChild variant="secondary" className="rounded-full w-fit">
           <Link
             href={{
               pathname: "/rent-ride",
@@ -83,19 +79,19 @@ const Page = () => {
           </Link>
         </Button>
 
-        <section className='grid lg:grid-cols-[1.1fr_0.9fr] gap-6 items-start'>
-          <div className='flex flex-col gap-4'>
-            <div className='rounded-2xl overflow-hidden bg-white'>
+        <section className="grid lg:grid-cols-[1.1fr_0.9fr] gap-6 items-start">
+          <div className="flex flex-col gap-4">
+            <div className="rounded-2xl overflow-hidden bg-white">
               <Image
                 src={gallery[0] ?? "/images/camry.png"}
                 alt={`${vehicle?.vehicleMake ?? "Vehicle"} ${vehicle?.vehicleModel ?? ""}`}
                 width={900}
                 height={560}
-                className='w-full aspect-16/10 object-cover'
+                className="w-full aspect-16/10 object-cover"
                 priority
               />
             </div>
-            <div className='grid grid-cols-3 gap-3'>
+            <div className="grid grid-cols-3 gap-3">
               {gallery.map((image, index) => (
                 <Image
                   key={image}
@@ -103,68 +99,78 @@ const Page = () => {
                   alt={`Vehicle view ${index + 1}`}
                   width={260}
                   height={180}
-                  className='w-full aspect-4/3 rounded-2xl object-cover bg-white'
+                  className="w-full aspect-4/3 rounded-2xl object-cover bg-white"
                 />
               ))}
             </div>
           </div>
 
-          <div className='flex flex-col gap-4'>
+          <div className="flex flex-col gap-4">
             <div>
-              <HeadingHeebo className='text-left text-4xl capitalize'>
+              <HeadingHeebo className="text-left text-4xl capitalize">
                 {vehicle?.vehicleMake} {vehicle?.vehicleModel}
               </HeadingHeebo>
-              <p className='text-sm text-gray-5 capitalize'>
+              <p className="text-sm text-gray-5 capitalize">
                 {vehicle?.vehicleYear} {vehicle?.vehicleColor}{" "}
                 {vehicle?.vehicleClass}
               </p>
             </div>
 
-            <Card className='rounded-2xl shadow-none'>
-              <CardContent className='flex flex-col gap-4'>
-                <div className='flex items-center justify-between gap-4'>
+            <Card className="rounded-2xl shadow-none">
+              <CardContent className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className='font-bold'>
+                    <p className="font-bold">
                       {driver?.firstName} {driver?.lastName}
                     </p>
-                    <p className='text-sm text-gray-5'>Approved owner/driver</p>
+                    <p className="text-sm text-gray-5">Approved owner/driver</p>
                   </div>
-                  <div className='flex items-center gap-2 font-bold'>
+                  <div className="flex items-center gap-2 font-bold">
                     <FilledGreenStarIcon />
                     <span>{driver?.rating?.numberOfRatings ?? 0}</span>
                   </div>
                 </div>
-                <div className='grid grid-cols-2 gap-3 text-sm'>
+                <div className="grid grid-cols-2 gap-3 text-sm">
                   {[
-                    ["Rental mode", bookingType === "SELF_DRIVE" ? "Self-drive" : "With driver"],
+                    [
+                      "Rental mode",
+                      bookingType === "SELF_DRIVE"
+                        ? "Self-drive"
+                        : "With driver",
+                    ],
                     ["Seats", `${selectedDriverDetails.capacity ?? 0}`],
-                    ["Pets", driver?.rideProfile?.allowPets ? "Allowed" : "Not allowed"],
+                    [
+                      "Pets",
+                      driver?.rideProfile?.allowPets
+                        ? "Allowed"
+                        : "Not allowed",
+                    ],
                     ["Location", selectedDriverDetails.address],
                   ].map(([label, value]) => (
                     <div
                       key={label}
-                      className='rounded-2xl bg-background-1 px-4 py-3'
+                      className="rounded-2xl bg-background px-4 py-3"
                     >
-                      <p className='text-gray-5 text-xs'>{label}</p>
-                      <p className='font-bold capitalize'>{value}</p>
+                      <p className="text-gray-5 text-xs">{label}</p>
+                      <p className="font-bold capitalize">{value}</p>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className='rounded-2xl shadow-none'>
-              <CardContent className='flex flex-col gap-3'>
-                <div className='flex items-center justify-between'>
-                  <p className='text-gray-5'>Hourly rate</p>
-                  <p className='font-bold'>${rate.toFixed(2)}</p>
+            <Card className="rounded-2xl shadow-none">
+              <CardContent className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-5">Hourly rate</p>
+                  <p className="font-bold">${rate.toFixed(2)}</p>
                 </div>
-                <div className='flex items-center justify-between'>
-                  <p className='text-gray-5'>Payment</p>
-                  <p className='font-bold'>Stripe checkout</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-5">Payment</p>
+                  <p className="font-bold">Stripe checkout</p>
                 </div>
-                <div className='flex items-center justify-between'>
-                  <p className='text-gray-5'>Status</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-5">Status</p>
                   <p
                     className={cn(
                       "font-bold capitalize",
@@ -178,7 +184,7 @@ const Page = () => {
                 </div>
                 <Button
                   asChild
-                  className='rounded-full mt-2'
+                  className="rounded-full mt-2"
                   disabled={selectedDriverDetails.status !== "available"}
                 >
                   <Link

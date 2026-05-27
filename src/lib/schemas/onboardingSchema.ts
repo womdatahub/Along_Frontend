@@ -1,11 +1,26 @@
 import * as z from "zod";
 
+const usPhoneRegex = /^(\+1[\s.\-]?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$/;
+
+export const usPhoneSchema = z
+  .string()
+  .min(1, "Phone number is required")
+  .refine(
+    (v) => usPhoneRegex.test(v.trim()),
+    "Enter a valid US phone number (e.g. 555-123-4567)",
+  );
+
 // signIn schema
 export const signInSchema = z.object({
-  email: z.string().min(1, "Email or phone number is required").refine(
-    (value) => z.email().safeParse(value).success || value.length >= 10,
-    "Enter a valid email address or phone number",
-  ),
+  email: z
+    .string()
+    .min(1, "Email or phone number is required")
+    .refine(
+      (value) =>
+        z.string().email().safeParse(value).success ||
+        usPhoneRegex.test(value.trim()),
+      "Enter a valid email address or US phone number",
+    ),
   password: z
     .string()
     .min(8, "Password must have at least 8 characters!")
@@ -26,26 +41,8 @@ export const onboardingSchema = z.object({
       message:
         "Password must include letters, numbers, and special characters (!@#$%^&*)",
     }),
-  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
-    message: "Mobile number is required",
-  }),
+  mobileNumber: usPhoneSchema,
 });
-// export const driverBasicInfoSchema = z.object({
-//   firstName: z.string().min(2, "First name must be at least 2 characters"),
-//   lastName: z.string().min(2, "Last name must be at least 2 characters"),
-//   dateOfBirth: z.string().min(1, "Date of birth is required"),
-//   gender: z.enum(["male", "female", "other"], {
-//     message: "Please select a valid gender",
-//   }),
-//   firstEmergencyContact: z
-//     .string()
-//     .min(10, "Please enter a valid phone number")
-//     .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
-//   secondEmergencyContact: z
-//     .string()
-//     .min(10, "Please enter a valid phone number")
-//     .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
-// });
 
 export const driverBasicInfoSchema = z
   .object({
@@ -65,7 +62,6 @@ export const driverBasicInfoSchema = z
       .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
   })
   .superRefine((data, ctx) => {
-    // Normalize to avoid false negatives (e.g., "+234 800..." vs "+234800...")
     const normalize = (v: string) => v.replace(/[\s\-()]/g, "");
 
     if (
@@ -120,9 +116,7 @@ export const vehicleInsuranceSchema = z.object({
 export const hearFromYouSchema = z.object({
   fullName: z.string(),
   email: z.email({ message: "Invalid email address" }),
-  mobileNumber: z.string({ message: "Invalid mobile number" }).min(10, {
-    message: "Mobile number is required",
-  }),
+  mobileNumber: usPhoneSchema,
   yourMessage: z.string().min(1, { message: "Message cannot be empty" }),
 });
 
@@ -133,9 +127,7 @@ export const registerRiderSchema = z.object({
   lastName: z.string({ message: "Invalid last Name" }).min(1, {
     message: "Last name is required",
   }),
-  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
-    message: "Mobile number is required",
-  }),
+  mobileNumber: usPhoneSchema,
 });
 
 // create account
@@ -164,9 +156,7 @@ export const createAccountSchema = z
 export const updateMobileNumberSchema = z.object({
   firstName: z.string().min(1, "First name is required").optional(),
   lastName: z.string().min(1, "Last name is required").optional(),
-  mobileNumber: z.string({ message: "Invalid mobile number" }).min(1, {
-    message: "Mobile number is required",
-  }),
+  mobileNumber: usPhoneSchema,
   dateOfBirth: z.string().optional(),
   gender: z.enum(["male", "female", "other"]).optional(),
 });
