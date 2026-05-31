@@ -31,7 +31,9 @@ const Page = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [actionNotes, setActionNotes] = useState("");
   const [expandedRiderId, setExpandedRiderId] = useState<string | null>(null);
-  const [riderKycProcessing, setRiderKycProcessing] = useState<string | null>(null);
+  const [riderKycProcessing, setRiderKycProcessing] = useState<string | null>(
+    null,
+  );
 
   const {
     pendingKyc,
@@ -53,7 +55,12 @@ const Page = () => {
   const drivers = pendingKyc?.drivers ?? [];
   const riders = pendingKyc?.riders ?? [];
 
-  const tabs: { key: Tab; label: string; count: number; icon: React.ElementType }[] = [
+  const tabs: {
+    key: Tab;
+    label: string;
+    count: number;
+    icon: React.ElementType;
+  }[] = [
     { key: "drivers", label: "Driver KYC", count: drivers.length, icon: Car },
     { key: "riders", label: "Rider KYC", count: riders.length, icon: User },
   ];
@@ -63,7 +70,9 @@ const Page = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-2xl font-bold font-heebo text-gray-900">KYC Management</p>
+          <p className="text-2xl font-bold font-heebo text-gray-900">
+            KYC Management
+          </p>
           <p className="text-sm text-gray-500 mt-0.5">
             Review and approve identity verification documents
           </p>
@@ -88,7 +97,9 @@ const Page = () => {
               <t.icon size={18} className="text-amber-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900 font-heebo">{t.count}</p>
+              <p className="text-2xl font-bold text-gray-900 font-heebo">
+                {t.count}
+              </p>
               <p className="text-sm text-gray-500">{t.label} pending</p>
             </div>
           </div>
@@ -112,7 +123,9 @@ const Page = () => {
               {t.label}
               <span
                 className={`ml-1 text-xs px-1.5 py-0.5 rounded-full font-medium ${
-                  activeTab === t.key ? "bg-primary/10 text-primary" : "bg-gray-100 text-gray-500"
+                  activeTab === t.key
+                    ? "bg-primary/10 text-primary"
+                    : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {t.key === "drivers" ? drivers.length : riders.length}
@@ -130,7 +143,8 @@ const Page = () => {
               drivers.map((driver: DriverInfo) => {
                 const id = driver._id ?? driver.userId ?? "";
                 const isExpanded = expandedId === id;
-                const name = `${driver.firstName ?? ""} ${driver.lastName ?? ""}`.trim();
+                const name =
+                  `${driver.firstName ?? ""} ${driver.lastName ?? ""}`.trim();
                 return (
                   <div key={id} className="p-5">
                     <div className="flex items-start justify-between gap-4">
@@ -142,7 +156,9 @@ const Page = () => {
                           <User size={16} className="text-blue-600" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{name || "Unknown"}</p>
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {name || "Unknown"}
+                          </p>
                           <p className="text-xs text-gray-400 mt-0.5 truncate">
                             {driver.driverSocialSecurityNumber
                               ? `SSN ending ···${driver.driverSocialSecurityNumber.slice(-4)}`
@@ -150,7 +166,11 @@ const Page = () => {
                           </p>
                         </div>
                         <span className="text-gray-300 shrink-0 ml-1">
-                          {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                          {isExpanded ? (
+                            <ChevronUp size={13} />
+                          ) : (
+                            <ChevronDown size={13} />
+                          )}
                         </span>
                       </button>
 
@@ -168,7 +188,8 @@ const Page = () => {
                             await processDriverKYC({
                               driverId: id,
                               action: "REJECT",
-                              reason: actionNotes || "Does not meet requirements",
+                              reason:
+                                actionNotes || "Does not meet requirements",
                             });
                           }}
                           type="suspend"
@@ -199,12 +220,24 @@ const Page = () => {
                       <div className="mt-4 grid sm:grid-cols-3 gap-3">
                         {(
                           [
-                            { label: "Front ID", url: driver.driverLincenseFrontViewUri },
-                            { label: "Back ID", url: driver.driverLincenseBackViewUri },
-                            { label: "Selfie", url: driver.driverProfilePictureUri },
+                            {
+                              label: "Front ID",
+                              url: driver.driverLincenseFrontViewUri,
+                            },
+                            {
+                              label: "Back ID",
+                              url: driver.driverLincenseBackViewUri,
+                            },
+                            {
+                              label: "Selfie",
+                              url: driver.driverProfilePictureUri,
+                            },
                           ] as { label: string; url?: string }[]
                         ).map(({ label, url }) => (
-                          <div key={label} className="rounded-xl border border-gray-100 overflow-hidden bg-gray-50">
+                          <div
+                            key={label}
+                            className="rounded-xl border border-gray-100 overflow-hidden bg-gray-50"
+                          >
                             <p className="text-xs font-medium text-gray-500 px-3 py-2 border-b border-gray-100">
                               {label}
                             </p>
@@ -249,16 +282,26 @@ const Page = () => {
             ) : (
               riders.map((rider) => {
                 const id = rider._id ?? rider.userId ?? "";
-                const name = `${rider.firstName ?? ""} ${rider.lastName ?? ""}`.trim();
+                const name =
+                  `${rider.firstName ?? ""} ${rider.lastName ?? ""}`.trim();
                 const isExpanded = expandedRiderId === id;
                 const isLoading = riderKycProcessing === id;
 
-                const handleRiderKycAction = async (action: "APPROVE" | "REJECT") => {
+                const handleRiderKycAction = async (
+                  action: "APPROVE" | "REJECT",
+                ) => {
                   setRiderKycProcessing(id);
                   try {
-                    const { error } = await requests.admin.processRiderKyc({ riderId: id, action });
+                    const { error } = await requests.admin.processRiderKyc({
+                      riderId: id,
+                      action,
+                    });
                     if (!error) {
-                      toast.success(action === "APPROVE" ? "Rider KYC approved" : "Rider KYC rejected");
+                      toast.success(
+                        action === "APPROVE"
+                          ? "Rider KYC approved"
+                          : "Rider KYC rejected",
+                      );
                       setExpandedRiderId(null);
                       await getpendingKyc();
                     } else {
@@ -274,7 +317,9 @@ const Page = () => {
                     {/* Row header */}
                     <div className="flex items-start justify-between gap-4">
                       <button
-                        onClick={() => setExpandedRiderId(isExpanded ? null : id)}
+                        onClick={() =>
+                          setExpandedRiderId(isExpanded ? null : id)
+                        }
                         className="flex items-center gap-3 min-w-0 flex-1 text-left"
                       >
                         {rider.profilePictureUri ? (
@@ -291,11 +336,19 @@ const Page = () => {
                           </div>
                         )}
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{name || "Unknown"}</p>
-                          <p className="text-xs text-gray-400 mt-0.5 truncate">{rider.email ?? ""}</p>
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {name || "Unknown"}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5 truncate">
+                            {rider.email ?? ""}
+                          </p>
                         </div>
                         <span className="text-gray-300 shrink-0 ml-1">
-                          {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                          {isExpanded ? (
+                            <ChevronUp size={13} />
+                          ) : (
+                            <ChevronDown size={13} />
+                          )}
                         </span>
                       </button>
 
@@ -305,7 +358,11 @@ const Page = () => {
                           onClick={() => handleRiderKycAction("REJECT")}
                           className="flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
                         >
-                          {isLoading ? <Loader2 size={12} className="animate-spin" /> : <XCircle size={13} />}
+                          {isLoading ? (
+                            <Loader2 size={12} className="animate-spin" />
+                          ) : (
+                            <XCircle size={13} />
+                          )}
                           Reject
                         </button>
                         <button
@@ -313,7 +370,11 @@ const Page = () => {
                           onClick={() => handleRiderKycAction("APPROVE")}
                           className="flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
                         >
-                          {isLoading ? <Loader2 size={12} className="animate-spin" /> : <BadgeCheck size={13} />}
+                          {isLoading ? (
+                            <Loader2 size={12} className="animate-spin" />
+                          ) : (
+                            <BadgeCheck size={13} />
+                          )}
                           Approve
                         </button>
                       </div>
@@ -325,13 +386,23 @@ const Page = () => {
                         {/* Info grid */}
                         <div className="grid sm:grid-cols-2 gap-3">
                           {[
-                            { icon: Mail, label: "Email", value: rider.email || "—" },
-                            { icon: Phone, label: "Mobile", value: rider.mobileNumber || "—" },
+                            {
+                              icon: Mail,
+                              label: "Email",
+                              value: rider.email || "—",
+                            },
+                            {
+                              icon: Phone,
+                              label: "Mobile",
+                              value: rider.mobileNumber || "—",
+                            },
                             {
                               icon: Calendar,
                               label: "Date of birth",
                               value: rider.dateOfBirth
-                                ? new Date(rider.dateOfBirth).toLocaleDateString("en-US", {
+                                ? new Date(
+                                    rider.dateOfBirth,
+                                  ).toLocaleDateString("en-US", {
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
@@ -342,17 +413,23 @@ const Page = () => {
                               icon: User,
                               label: "Gender",
                               value: rider.gender
-                                ? rider.gender.charAt(0).toUpperCase() + rider.gender.slice(1)
+                                ? rider.gender.charAt(0).toUpperCase() +
+                                  rider.gender.slice(1)
                                 : "—",
                             },
                           ].map(({ icon: Icon, label, value }) => (
-                            <div key={label} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                            <div
+                              key={label}
+                              className="flex items-center gap-3 p-3 rounded-xl bg-gray-50"
+                            >
                               <div className="size-8 rounded-lg bg-white flex items-center justify-center shrink-0">
                                 <Icon size={14} className="text-gray-400" />
                               </div>
                               <div>
                                 <p className="text-xs text-gray-400">{label}</p>
-                                <p className="text-sm font-medium text-gray-900 mt-0.5">{value}</p>
+                                <p className="text-sm font-medium text-gray-900 mt-0.5">
+                                  {value}
+                                </p>
                               </div>
                             </div>
                           ))}
@@ -368,13 +445,15 @@ const Page = () => {
                               {
                                 icon: CreditCard,
                                 label: "License number",
-                                value: rider.riderLicenseNumber || "—",
+                                value: rider.licenseNumber || "—",
                               },
                               {
                                 icon: Calendar,
                                 label: "Expiry date",
-                                value: rider.riderLicenseExpiryDate
-                                  ? new Date(rider.riderLicenseExpiryDate).toLocaleDateString("en-US", {
+                                value: rider.licenseExpiryDate
+                                  ? new Date(
+                                      rider.licenseExpiryDate,
+                                    ).toLocaleDateString("en-US", {
                                       year: "numeric",
                                       month: "long",
                                       day: "numeric",
@@ -382,13 +461,20 @@ const Page = () => {
                                   : "—",
                               },
                             ].map(({ icon: Icon, label, value }) => (
-                              <div key={label} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                              <div
+                                key={label}
+                                className="flex items-center gap-3 p-3 rounded-xl bg-gray-50"
+                              >
                                 <div className="size-8 rounded-lg bg-white flex items-center justify-center shrink-0">
                                   <Icon size={14} className="text-gray-400" />
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="text-xs text-gray-400">{label}</p>
-                                  <p className="text-sm font-medium text-gray-900 mt-0.5 break-all">{value}</p>
+                                  <p className="text-xs text-gray-400">
+                                    {label}
+                                  </p>
+                                  <p className="text-sm font-medium text-gray-900 mt-0.5 break-all">
+                                    {value}
+                                  </p>
                                 </div>
                               </div>
                             ))}
@@ -403,9 +489,18 @@ const Page = () => {
                           <div className="grid sm:grid-cols-3 gap-3">
                             {(
                               [
-                                { label: "Front", url: rider.riderLicenseFrontViewUri },
-                                { label: "Back", url: rider.riderLicenseBackViewUri },
-                                { label: "Selfie", url: rider.riderLicenseSelfieUri },
+                                {
+                                  label: "Front",
+                                  url: rider.licenseFrontImageUri,
+                                },
+                                {
+                                  label: "Back",
+                                  url: rider.licenseBackImageUri,
+                                },
+                                {
+                                  label: "Selfie",
+                                  url: rider.licenseSelfieImageUri,
+                                },
                               ] as { label: string; url?: string }[]
                             ).map(({ label, url }) => (
                               <div
@@ -417,11 +512,17 @@ const Page = () => {
                                 </p>
                                 {url ? (
                                   // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={url} alt={label} className="w-full h-32 object-cover" />
+                                  <img
+                                    src={url}
+                                    alt={label}
+                                    className="w-full h-32 object-cover"
+                                  />
                                 ) : (
                                   <div className="h-32 flex flex-col items-center justify-center gap-1.5 text-gray-300">
                                     <FileText size={18} />
-                                    <span className="text-xs">Not provided</span>
+                                    <span className="text-xs">
+                                      Not provided
+                                    </span>
                                   </div>
                                 )}
                               </div>

@@ -403,15 +403,15 @@ const Page = () => {
                               [
                                 {
                                   label: "Front",
-                                  url: rider.riderLicenseFrontViewUri,
+                                  url: rider.licenseFrontImageUri,
                                 },
                                 {
                                   label: "Back",
-                                  url: rider.riderLicenseBackViewUri,
+                                  url: rider.licenseBackImageUri,
                                 },
                                 {
                                   label: "Selfie",
-                                  url: rider.riderLicenseSelfieUri,
+                                  url: rider.licenseSelfieImageUri,
                                 },
                               ] as { label: string; url?: string }[]
                             ).map(({ label, url }) => (

@@ -13,7 +13,9 @@ import { Car, Search, Star, UserX } from "lucide-react";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"active" | "pending" | "suspended">("active");
+  const [activeTab, setActiveTab] = useState<
+    "active" | "pending" | "suspended"
+  >("active");
 
   const {
     actions: {
@@ -53,17 +55,34 @@ const Page = () => {
   });
 
   const tabs = [
-    { key: "active" as const, label: "Active drivers", count: allDrivers.length },
-    { key: "pending" as const, label: "Pending KYC", count: pendingKyc?.drivers.length ?? 0 },
-    { key: "suspended" as const, label: "Suspended", count: suspendedDrivers.length },
+    {
+      key: "active" as const,
+      label: "Active drivers",
+      count: allDrivers.length,
+    },
+    {
+      key: "pending" as const,
+      label: "Pending KYC",
+      count: pendingKyc?.drivers.length ?? 0,
+    },
+    {
+      key: "suspended" as const,
+      label: "Suspended",
+      count: suspendedDrivers.length,
+    },
   ];
 
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <p className="text-2xl font-bold font-heebo text-gray-900">Drivers & Fleets</p>
+        <p className="text-2xl font-bold font-heebo text-gray-900">
+          Drivers & Fleets
+        </p>
         <div className="relative">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
           <input
             type="text"
             placeholder="Search drivers..."
@@ -120,7 +139,7 @@ const Page = () => {
                       Rating
                     </th>
                     <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
-                      SSN
+                      Date Joined
                     </th>
                     <th className="text-right text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
                       Actions
@@ -136,7 +155,10 @@ const Page = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <Image
-                            src={driver.driver.driverProfilePictureUri || "/images/placeholder.jpg"}
+                            src={
+                              driver.driver.driverProfilePictureUri ||
+                              "/images/placeholder.jpg"
+                            }
                             alt={driver.driver.firstName}
                             width={36}
                             height={36}
@@ -146,16 +168,23 @@ const Page = () => {
                             <p className="text-sm font-semibold text-gray-900">
                               {driver.driver.firstName} {driver.driver.lastName}
                             </p>
-                            <p className="text-xs text-gray-400 mt-0.5">{driver.email}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {driver.email}
+                            </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-gray-600">{driver.mobileNumber}</p>
+                        <p className="text-sm text-gray-600">
+                          {driver.mobileNumber}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1">
-                          <Star size={13} className="text-amber-400 fill-amber-400" />
+                          <Star
+                            size={13}
+                            className="text-amber-400 fill-amber-400"
+                          />
                           <span className="text-sm font-medium text-gray-700">
                             {driver.driver.rating.totalRating.toFixed(1)}
                           </span>
@@ -163,7 +192,9 @@ const Page = () => {
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm text-gray-500 font-mono">
-                          {driver.driver.driverSocialSecurityNumber || "—"}
+                          {driver.createdAt
+                            ? new Date(driver.createdAt).toLocaleDateString()
+                            : "—"}
                         </p>
                       </td>
                       <td className="px-6 py-4">
@@ -182,8 +213,13 @@ const Page = () => {
                                 {
                                   userId: driver.driver.userId,
                                   reason: values.reason!,
-                                  suspensionType: values.suspensionType!.toUpperCase() as "TEMPORARY" | "PERMANENT",
-                                  suspensionDuration: Number(values.suspensionDuration),
+                                  suspensionType:
+                                    values.suspensionType!.toUpperCase() as
+                                      | "TEMPORARY"
+                                      | "PERMANENT",
+                                  suspensionDuration: Number(
+                                    values.suspensionDuration,
+                                  ),
                                 },
                                 "driver",
                               );
@@ -194,7 +230,9 @@ const Page = () => {
                             phoneNumber={driver?.mobileNumber ?? ""}
                             trigger={
                               <button
-                                onClick={() => getSingleDriverDetails(driver.driver.userId)}
+                                onClick={() =>
+                                  getSingleDriverDetails(driver.driver.userId)
+                                }
                                 className="text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors"
                               >
                                 View profile
@@ -220,10 +258,16 @@ const Page = () => {
           ) : (
             <div className="divide-y divide-gray-50">
               {pendingKyc.drivers.map((driver, i) => (
-                <div key={i} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50">
+                <div
+                  key={i}
+                  className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
+                >
                   <div className="flex items-center gap-3">
                     <Image
-                      src={driver.driverProfilePictureUri || "/images/placeholder.jpg"}
+                      src={
+                        driver.driverProfilePictureUri ||
+                        "/images/placeholder.jpg"
+                      }
                       alt={`${driver.firstName} ${driver.lastName}`}
                       width={36}
                       height={36}
@@ -269,7 +313,10 @@ const Page = () => {
                 >
                   <div className="flex items-center gap-3">
                     <Image
-                      src={driver.driver.driverProfilePictureUri || "/images/placeholder.jpg"}
+                      src={
+                        driver.driver.driverProfilePictureUri ||
+                        "/images/placeholder.jpg"
+                      }
                       alt="Driver"
                       width={36}
                       height={36}
@@ -294,7 +341,10 @@ const Page = () => {
                       title="Reactivate driver"
                       description="Are you sure you want to reactivate this driver?"
                       confirmActionFunction={async () => {
-                        await reactivateDriverOrRider({ userId: driver._id }, "driver");
+                        await reactivateDriverOrRider(
+                          { userId: driver._id },
+                          "driver",
+                        );
                       }}
                       type="reactivate"
                     />

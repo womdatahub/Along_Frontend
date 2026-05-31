@@ -73,14 +73,19 @@ const Page = () => {
   );
 
   const totalVolume = records.reduce((sum, r) => sum + (r.amount ?? 0), 0);
-  const totalRevenue = records.reduce((sum, r) => sum + (r.platformFee ?? 0), 0);
+  const totalRevenue = records.reduce(
+    (sum, r) => sum + (r.platformFee ?? 0),
+    0,
+  );
 
   return (
     <section className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-2xl font-bold font-heebo text-gray-900">Payments</p>
+          <p className="text-2xl font-bold font-heebo text-gray-900">
+            Payments
+          </p>
           <p className="text-sm text-gray-500 mt-0.5">
             View all platform transactions and payment records
           </p>
@@ -124,11 +129,15 @@ const Page = () => {
             key={s.label}
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4"
           >
-            <div className={`size-10 rounded-xl ${s.bg} flex items-center justify-center`}>
+            <div
+              className={`size-10 rounded-xl ${s.bg} flex items-center justify-center`}
+            >
               <s.icon size={18} className={s.color} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900 font-heebo">{s.value}</p>
+              <p className="text-2xl font-bold text-gray-900 font-heebo">
+                {s.value}
+              </p>
               <p className="text-sm text-gray-500">{s.label}</p>
             </div>
           </div>
@@ -140,7 +149,10 @@ const Page = () => {
         {/* Search bar */}
         <div className="px-6 py-4 border-b border-gray-50">
           <div className="relative max-w-xs">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search
+              size={13}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
             <input
               type="text"
               placeholder="Search by rider or driver…"
@@ -165,16 +177,23 @@ const Page = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-50">
-                  {["ID", "Rider", "Driver", "Type", "Amount", "Platform Fee", "Status", "Date"].map(
-                    (h) => (
-                      <th
-                        key={h}
-                        className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4 whitespace-nowrap"
-                      >
-                        {h}
-                      </th>
-                    ),
-                  )}
+                  {[
+                    "ID",
+                    "Rider",
+                    "Driver",
+                    "Type",
+                    "Amount",
+                    "Platform Fee",
+                    "Status",
+                    "Date",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4 whitespace-nowrap"
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -188,16 +207,22 @@ const Page = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        <ArrowUpRight size={12} className="text-blue-400 shrink-0" />
-                        <span className="text-sm font-medium text-gray-900 truncate max-w-[100px]">
+                        <ArrowUpRight
+                          size={12}
+                          className="text-blue-400 shrink-0"
+                        />
+                        <span className="text-sm font-medium text-gray-900 truncate max-w-25">
                           {r.rider ?? "—"}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        <ArrowDownLeft size={12} className="text-emerald-400 shrink-0" />
-                        <span className="text-sm text-gray-700 truncate max-w-[100px]">
+                        <ArrowDownLeft
+                          size={12}
+                          className="text-emerald-400 shrink-0"
+                        />
+                        <span className="text-sm text-gray-700 truncate max-w-25">
                           {r.driver ?? "—"}
                         </span>
                       </div>
@@ -214,7 +239,9 @@ const Page = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm text-gray-600">
-                        {r.platformFee != null ? `$${r.platformFee.toFixed(2)}` : "—"}
+                        {r.platformFee != null
+                          ? `$${r.platformFee.toFixed(2)}`
+                          : "—"}
                       </p>
                     </td>
                     <td className="px-6 py-4">
@@ -222,7 +249,8 @@ const Page = () => {
                         className={cn(
                           "text-xs font-medium px-2.5 py-1 rounded-full capitalize",
                           r.status
-                            ? (STATUS_STYLES[r.status] ?? "bg-gray-100 text-gray-600")
+                            ? (STATUS_STYLES[r.status] ??
+                                "bg-gray-100 text-gray-600")
                             : "bg-gray-100 text-gray-400",
                         )}
                       >

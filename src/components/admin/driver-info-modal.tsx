@@ -49,14 +49,16 @@ const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
                 <h2 className="text-2xl font-bold truncate">
                   {driver?.firstName} {driver?.lastName}
                 </h2>
-                <p className="text-sm font-semibold mt-0.5">
-                  {driver?.rideProfile.currentLocation.location}
-                </p>
+                {driver?.address ? (
+                  <p className="text-sm font-semibold mt-0.5 truncate">
+                    {driver.address}
+                  </p>
+                ) : null}
               </div>
 
               <div className="flex gap-3 mt-1">
                 <div className="text-xl flex gap-3 items-center justify-center font-bold bg-primary text-white p-3 rounded-[5px]">
-                  {driver?.rating.totalRating}
+                  {driver?.rating?.totalRating ?? 0}
                   <Star size={18} className="fill-white text-white" />
                 </div>
 
@@ -64,9 +66,11 @@ const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
                   <span className="text-xs ">Rating</span>
                   <div>
                     <div className="flex gap-1 md:gap-3 items-center">
-                      <span className="text-xs truncate">0 Reviews</span>
+                      <span className="text-xs truncate">
+                        {driver?.rating?.numberOfRatings ?? 0} Reviews
+                      </span>
                       <div className="flex gap-0.5 items-center">
-                        {Array(driver?.rating.totalRating ?? 5)
+                        {Array(driver?.rating?.totalRating ?? 0)
                           .fill(0)
                           .map((_, i) => (
                             <Star
@@ -75,7 +79,9 @@ const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
                               className="fill-icons text-icons"
                             />
                           ))}
-                        {Array(5 - (driver?.rating.totalRating ?? 0))
+                        {Array(
+                          Math.max(0, 5 - (driver?.rating?.totalRating ?? 0)),
+                        )
                           .fill(0)
                           .map((_, i) => (
                             <Star
@@ -119,69 +125,96 @@ const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
           </div>
 
           <Separator className="mb-4" />
-
-          <p className="text-base font-bold mb-">Registered Vehicle</p>
-          <div className="flex gap-8">
-            <Image
-              src={
-                driver?.vehicleFrontViewImageUri ?? "/images/placeholder.jpg"
-              }
-              alt={"Vehicle front view image"}
-              className="size-32 bg-gray-200 rounded-lg object-cover"
-              width={120}
-              height={120}
-            />
-            <div className="flex flex-col gap-2">
-              <div>
-                <p className="text-xs text-icon">Car model</p>
-                <p className="text-sm font-bold capitalize">
-                  {driver?.vehicleMake} {driver?.vehicleModel} -{" "}
-                  {driver?.vehicleYear}
+          {(() => {
+            const activeVehicle =
+              driver?.vehicles?.find((v) => v.isActive) ??
+              driver?.vehicles?.[0];
+            if (!activeVehicle) {
+              return (
+                <p className="text-sm text-gray-500 italic">
+                  No vehicle registered yet.
                 </p>
-              </div>
-              <div>
-                <p className="text-xs text-icon">Licence</p>
-                <p className="text-sm font-bold">
-                  {driver?.vehicleIdentificationNumber}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {driver?.rideProfile.allowPets && (
-                  <div className="flex gap-1 items-center">
-                    <div className="size-3 bg-primary">
-                      <Check size={10} className="text-white fill-white" />
+              );
+            }
+            return (
+              <>
+                <p className="text-base font-bold mb-">Registered Vehicle</p>
+                <div className="flex gap-8">
+                  <Image
+                    src={
+                      activeVehicle.vehicleFrontViewImageUri ??
+                      "/images/placeholder.jpg"
+                    }
+                    alt={"Vehicle front view image"}
+                    className="size-32 bg-gray-200 rounded-lg object-cover"
+                    width={120}
+                    height={120}
+                  />
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <p className="text-xs text-icon">Car model</p>
+                      <p className="text-sm font-bold capitalize">
+                        {activeVehicle.vehicleMake} {activeVehicle.vehicleModel}
+                        {activeVehicle.vehicleYear
+                          ? ` - ${activeVehicle.vehicleYear}`
+                          : ""}
+                      </p>
                     </div>
-                    <span className="text-xs font-semibold">Allow pets</span>
+                    <div>
+                      <p className="text-xs text-icon">VIN</p>
+                      <p className="text-sm font-bold">
+                        {activeVehicle.vehicleIdentificationNumber ?? "—"}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {driver?.rideProfile?.allowPets && (
+                        <div className="flex gap-1 items-center">
+                          <div className="size-3 bg-primary">
+                            <Check
+                              size={10}
+                              className="text-white fill-white"
+                            />
+                          </div>
+                          <span className="text-xs font-semibold">
+                            Allow pets
+                          </span>
+                        </div>
+                      )}
+                      {driver?.rideProfile?.luggageCapacity ? (
+                        <div className="flex gap-1 items-center">
+                          <div className="size-3 bg-primary">
+                            <Check
+                              size={10}
+                              className="text-white fill-white"
+                            />
+                          </div>{" "}
+                          <span className="text-xs font-semibold">
+                            {driver.rideProfile.luggageCapacity}Kg load
+                          </span>
+                        </div>
+                      ) : null}
+                      <div className="flex gap-1 items-center">
+                        <div className="size-3 bg-primary">
+                          <Check size={10} className="text-white fill-white" />
+                        </div>
+                        <span className="text-xs font-semibold">
+                          Air condition
+                        </span>
+                      </div>
+                      <div className="flex gap-1 items-center">
+                        <div className="size-3 bg-primary">
+                          <Check size={10} className="text-white fill-white" />
+                        </div>{" "}
+                        <span className="text-xs font-semibold">
+                          Passenger/rear bag
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                )}
-                {driver?.rideProfile.luggageCapacity && (
-                  <div className="flex gap-1 items-center">
-                    <div className="size-3 bg-primary">
-                      <Check size={10} className="text-white fill-white" />
-                    </div>{" "}
-                    <span className="text-xs font-semibold">
-                      {driver?.rideProfile.luggageCapacity}Kg load
-                    </span>
-                  </div>
-                )}
-                {}
-                <div className="flex gap-1 items-center">
-                  <div className="size-3 bg-primary">
-                    <Check size={10} className="text-white fill-white" />
-                  </div>
-                  <span className="text-xs font-semibold">Air condition</span>
                 </div>
-                <div className="flex gap-1 items-center">
-                  <div className="size-3 bg-primary">
-                    <Check size={10} className="text-white fill-white" />
-                  </div>{" "}
-                  <span className="text-xs font-semibold">
-                    Passenger/rear bag
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+              </>
+            );
+          })()}
         </DialogContent>
       )}
     </Dialog>

@@ -107,7 +107,10 @@ const Page = () => {
   const stats = [
     {
       label: "Total Revenue",
-      value: summary?.totalRevenue != null ? `$${summary.totalRevenue.toLocaleString()}` : "—",
+      value:
+        summary?.totalRevenue != null
+          ? `$${summary.totalRevenue.toLocaleString()}`
+          : "—",
       icon: DollarSign,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
@@ -144,7 +147,9 @@ const Page = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-2xl font-bold font-heebo text-gray-900">Analytics</p>
+          <p className="text-2xl font-bold font-heebo text-gray-900">
+            Analytics
+          </p>
           <p className="text-sm text-gray-500 mt-0.5">
             Platform performance metrics and growth trends
           </p>
@@ -183,7 +188,9 @@ const Page = () => {
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3"
           >
             <div className="flex items-start justify-between">
-              <div className={`size-10 rounded-xl ${s.bg} flex items-center justify-center`}>
+              <div
+                className={`size-10 rounded-xl ${s.bg} flex items-center justify-center`}
+              >
                 <s.icon size={18} className={s.color} />
               </div>
               {s.growth != null && (
@@ -202,7 +209,9 @@ const Page = () => {
               )}
             </div>
             <div>
-              <p className="text-2xl font-bold font-heebo text-gray-900">{s.value}</p>
+              <p className="text-2xl font-bold font-heebo text-gray-900">
+                {s.value}
+              </p>
               <p className="text-sm text-gray-500">{s.label}</p>
             </div>
           </div>
@@ -219,12 +228,17 @@ const Page = () => {
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-900">Revenue</p>
-              <p className="text-xs text-gray-400">Platform earnings over time</p>
+              <p className="text-xs text-gray-400">
+                Platform earnings over time
+              </p>
             </div>
           </div>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+              <AreaChart
+                data={revenueData}
+                margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
+              >
                 <defs>
                   <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
@@ -242,7 +256,9 @@ const Page = () => {
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 11, fill: "#9ca3af" }}
-                  tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
+                  tickFormatter={(v: number) =>
+                    `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`
+                  }
                 />
                 <Tooltip
                   contentStyle={{
@@ -251,7 +267,11 @@ const Page = () => {
                     fontSize: 12,
                     boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                   }}
-                  formatter={(value) => value != null ? [`$${Number(value).toLocaleString()}`, "Revenue"] : ["—", "Revenue"]}
+                  formatter={(value) =>
+                    value != null
+                      ? [`$${Number(value).toLocaleString()}`, "Revenue"]
+                      : ["—", "Revenue"]
+                  }
                 />
                 <Area
                   type="monotone"
@@ -274,14 +294,25 @@ const Page = () => {
               <Activity size={15} className="text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Rental Volume</p>
-              <p className="text-xs text-gray-400">Number of completed rentals</p>
+              <p className="text-sm font-semibold text-gray-900">
+                Rental Volume
+              </p>
+              <p className="text-xs text-gray-400">
+                Number of completed rentals
+              </p>
             </div>
           </div>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={rentalData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
+              <BarChart
+                data={rentalData}
+                margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f3f4f6"
+                  vertical={false}
+                />
                 <XAxis
                   dataKey="name"
                   axisLine={false}
@@ -324,7 +355,9 @@ const Page = () => {
               <Users size={15} className="text-violet-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Rider Growth</p>
+              <p className="text-sm font-semibold text-gray-900">
+                Rider Growth
+              </p>
               <p className="text-xs text-gray-400">New rider registrations</p>
             </div>
           </div>
@@ -351,7 +384,12 @@ const Page = () => {
                   tickLine={false}
                   tick={{ fontSize: 10, fill: "#9ca3af" }}
                 />
-                <YAxis axisLine={false} tickLine={false} tick={false} width={0} />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={false}
+                  width={0}
+                />
                 <Tooltip
                   contentStyle={{
                     borderRadius: 12,
@@ -382,7 +420,9 @@ const Page = () => {
               <Car size={15} className="text-amber-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Driver Growth</p>
+              <p className="text-sm font-semibold text-gray-900">
+                Driver Growth
+              </p>
               <p className="text-xs text-gray-400">New driver registrations</p>
             </div>
           </div>
@@ -409,7 +449,12 @@ const Page = () => {
                   tickLine={false}
                   tick={{ fontSize: 10, fill: "#9ca3af" }}
                 />
-                <YAxis axisLine={false} tickLine={false} tick={false} width={0} />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={false}
+                  width={0}
+                />
                 <Tooltip
                   contentStyle={{
                     borderRadius: 12,

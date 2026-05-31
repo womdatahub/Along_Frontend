@@ -24,8 +24,11 @@ const toRow = (r: ActiveRental): ActiveRentalRow => {
   const startTime = str(r.startTime);
   let duration = "—";
   if (startTime !== "—") {
-    const mins = Math.round((Date.now() - new Date(startTime).getTime()) / 60_000);
-    duration = mins < 60 ? `${mins}m` : `${Math.floor(mins / 60)}h ${mins % 60}m`;
+    const mins = Math.round(
+      (Date.now() - new Date(startTime).getTime()) / 60_000,
+    );
+    duration =
+      mins < 60 ? `${mins}m` : `${Math.floor(mins / 60)}h ${mins % 60}m`;
   }
   return {
     id,
@@ -55,9 +58,24 @@ const Page = () => {
   const rentals: ActiveRentalRow[] = activeRentals.map(toRow);
 
   const stats = [
-    { label: "Active Now", value: rentals.length, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Scheduled Today", value: 0, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Ending Soon", value: 0, color: "text-amber-600", bg: "bg-amber-50" },
+    {
+      label: "Active Now",
+      value: rentals.length,
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+    },
+    {
+      label: "Scheduled Today",
+      value: 0,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+    },
+    {
+      label: "Ending Soon",
+      value: 0,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+    },
   ];
 
   return (

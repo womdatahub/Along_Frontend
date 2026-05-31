@@ -261,7 +261,9 @@ const Page = () => {
             {activeProfile.firstName} {activeProfile.lastName}
           </p>
           {activeProfile.email && (
-            <p className="text-sm text-gray-500 mt-0.5">{activeProfile.email}</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {activeProfile.email}
+            </p>
           )}
           <div className="flex items-center gap-2 mt-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full capitalize">
@@ -297,7 +299,10 @@ const Page = () => {
                   type={field.editKey === "mobileNumber" ? "tel" : "text"}
                   value={form[field.editKey]}
                   onChange={(e) =>
-                    setForm((prev) => ({ ...prev, [field.editKey!]: e.target.value }))
+                    setForm((prev) => ({
+                      ...prev,
+                      [field.editKey!]: e.target.value,
+                    }))
                   }
                   className="mt-1 w-full max-w-xs text-sm font-medium text-gray-900 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />

@@ -267,7 +267,7 @@ export const useRental = create<RentalStoreType>()(
       }),
       {
         name: "rental-store",
-        storage: createJSONStorage(() => sessionStorage),
+        storage: createJSONStorage(() => localStorage),
         partialize: (state) => ({
           selectedDriverDetails: state.selectedDriverDetails,
           intent: state.intent,

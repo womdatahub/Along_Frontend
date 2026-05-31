@@ -109,7 +109,9 @@ const Page = () => {
               <div className="size-12 rounded-2xl bg-emerald-50 flex items-center justify-center">
                 <BadgeCheck size={22} className="text-emerald-400" />
               </div>
-              <p className="text-sm text-gray-400">No licence submissions pending</p>
+              <p className="text-sm text-gray-400">
+                No licence submissions pending
+              </p>
             </div>
           ) : (
             licenses.map((rider) => {
@@ -137,9 +139,7 @@ const Page = () => {
 
                     <div className="flex items-center gap-2 shrink-0">
                       <button
-                        onClick={() =>
-                          setExpandedId(isExpanded ? null : id)
-                        }
+                        onClick={() => setExpandedId(isExpanded ? null : id)}
                         className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors"
                       >
                         View docs
@@ -186,13 +186,13 @@ const Page = () => {
                         [
                           {
                             label: "Front",
-                            url: rider.riderLicenseFrontViewUri,
+                            url: rider.licenseFrontImageUri,
                           },
                           {
                             label: "Back",
-                            url: rider.riderLicenseBackViewUri,
+                            url: rider.licenseBackImageUri,
                           },
-                          { label: "Selfie", url: rider.riderLicenseSelfieUri },
+                          { label: "Selfie", url: rider.licenseSelfieImageUri },
                         ] as { label: string; url?: string }[]
                       ).map(({ label, url }) => (
                         <div
