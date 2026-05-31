@@ -132,11 +132,12 @@ const Page = () => {
             label="Social Security Number"
             id="socialSecurityNumber"
             errors={errors}
-            placeholder="AAA-GG-SSSS"
+            placeholder="123-45-6789"
             register={register}
             disabled={false}
             required
             type="text"
+            maxLength={11}
             icon={<FileText size={16} className="text-placeholder" />}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"

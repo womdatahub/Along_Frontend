@@ -176,6 +176,7 @@ function EditPanel({ vehicle, onClose, onSaved }: EditPanelProps) {
               value={color}
               onChange={(e) => setColor(e.target.value)}
               placeholder="e.g. Pearl White"
+              maxLength={30}
               className="h-11 rounded-xl bg-background px-4 text-sm outline-none border border-gray-200 focus:border-primary transition-colors"
             />
           </label>

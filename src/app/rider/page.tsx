@@ -282,6 +282,7 @@ const Page = () => {
                     alt="credit-cards"
                     width={48}
                     height={60}
+                    style={{ height: "auto" }}
                   />
                 </div>
                 <Link

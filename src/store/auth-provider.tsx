@@ -87,9 +87,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (isFetchingUserSessionLoading) return;
 
     if (!userRole && isProtected) {
+      // Persist intended destination in the URL so it survives page refreshes.
+      // Zustand state is kept as a belt-and-suspenders fallback for the rare
+      // case where the query param is stripped by an intermediate redirect.
       setRouteBeforeRedirect(pathname);
       toast.error("You are not logged in");
-      router.replace("/sign-in");
+      router.replace(`/sign-in?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 

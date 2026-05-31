@@ -61,7 +61,7 @@ const terms = [
   },
   {
     title: "Dispute Resolution",
-    text: "In the event of disputes, users agree to first attempt informal resolution through customer support. We may require arbitration or mediation depending on local laws. Users waive the right to participate in class-action lawsuits where permitted.",
+    text: "In the event of disputes, users agree to first attempt informal resolution through customer support. If unresolved, disputes will be submitted to binding arbitration under the rules of the American Arbitration Association (AAA), unless prohibited by applicable federal or state law. Users waive the right to participate in class-action lawsuits to the extent permitted by law.",
   },
   {
     title: "Account Suspension or Termination",
@@ -77,7 +77,7 @@ const terms = [
   },
   {
     title: "Governing Law",
-    text: "These Terms are governed by the laws of the jurisdiction in which the service operates. Any legal claims must be brought in the appropriate local courts unless arbitration is required.",
+    text: "These Terms are governed by the laws of the United States and the state of Delaware, without regard to conflict-of-law principles. Any legal claims not subject to arbitration must be brought exclusively in the federal or state courts located in the United States.",
   },
 ];
 

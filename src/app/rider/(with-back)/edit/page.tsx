@@ -66,6 +66,7 @@ const Page = () => {
             register={register}
             type="text"
             label="First name"
+            maxLength={50}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-[45px]"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
           />
@@ -76,17 +77,19 @@ const Page = () => {
             register={register}
             type="text"
             label="Last name"
+            maxLength={50}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-[45px]"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
           />
           <AddInput
             id="mobileNumber"
             errors={errors}
-            placeholder="+1 67 988 90098"
+            placeholder="+1 (000) 000-0000"
             register={register}
             required
-            type="text"
+            type="tel"
             label="Phone number"
+            maxLength={17}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-[45px]"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
           />

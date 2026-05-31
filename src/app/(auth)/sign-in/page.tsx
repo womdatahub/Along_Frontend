@@ -1,18 +1,69 @@
 "use client";
 
+import { Suspense } from "react";
 import { AddInput, ButtonWithLoader } from "@/components";
-import { ROLE_DASHBOARD_MAP, signInSchema, TSignInValidator } from "@/lib";
+import {
+  AUTH_ONLY_ROUTES,
+  ROLE_DASHBOARD_MAP,
+  signInSchema,
+  TSignInValidator,
+} from "@/lib";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "@/store";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { DarkIosIcon, DarkGoogleIcon, DarkFacebookIcon } from "@public/svgs";
 
-const Page = () => {
+// Redirect helpers
+const ROLE_PREFIXES: Record<string, string> = {
+  driver: "/driver",
+  rider: "/rider",
+  admin: "/admin",
+};
+
+/**
+ * Returns the redirect URL if it is safe for the given role, otherwise null.
+ *
+ * Rules:
+ *  1. Must be a relative path (starts with "/").
+ *  2. Must not be an auth-only route (sign-in, otp, etc.).
+ *  3. Must not belong to a *different* role's space.
+ */
+const resolveRedirect = (
+  redirect: string | null,
+  role: string,
+): string | null => {
+  if (!redirect) return null;
+
+  // Must be relative
+  if (!redirect.startsWith("/")) return null;
+
+  // Must not loop back to an auth-only route
+  if (
+    AUTH_ONLY_ROUTES.some(
+      (r) => redirect === r || redirect.startsWith(`${r}/`),
+    )
+  )
+    return null;
+
+  // Reject redirects that belong to a different role's portal
+  const myPrefix = ROLE_PREFIXES[role];
+  const otherPrefixes = Object.values(ROLE_PREFIXES).filter(
+    (p) => p !== myPrefix,
+  );
+  if (otherPrefixes.some((p) => redirect.startsWith(p))) return null;
+
+  return redirect;
+};
+
+// Inner component — uses useSearchParams (must be inside <Suspense>)
+const SignInContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const {
     isLoading,
     routeBeforeRedirect,
@@ -35,16 +86,30 @@ const Page = () => {
         ? { email: values.email }
         : { mobileNumber: values.email }),
     });
+
     if (!val) return;
+
+    // Incomplete onboarding — always send to user-type picker
     if (val === "user") {
       router.replace("/onboarding/user-type");
       toast.error("Please complete your onboarding to continue.");
       return;
-    } else if (routeBeforeRedirect) {
-      router.replace(routeBeforeRedirect);
-      setRouteBeforeRedirect("");
+    }
+
+    // Resolve the intended destination (URL param takes priority over Zustand)
+    const rawRedirect =
+      searchParams.get("redirect") ?? routeBeforeRedirect ?? null;
+    const destination = resolveRedirect(rawRedirect, val);
+
+    // Clear the Zustand fallback regardless of whether we used it
+    if (routeBeforeRedirect) setRouteBeforeRedirect("");
+
+    if (destination) {
+      router.replace(destination);
       return;
     }
+
+    // Default: go to the role's dashboard
     router.replace(ROLE_DASHBOARD_MAP[val] ?? "/");
   };
 
@@ -73,6 +138,7 @@ const Page = () => {
             disabled={false}
             required
             type="text"
+            maxLength={254}
             icon={<Mail size={18} className="text-placeholder" />}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
@@ -85,6 +151,7 @@ const Page = () => {
             disabled={false}
             required
             type="password"
+            maxLength={128}
             icon={<Lock size={18} className="text-placeholder" />}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
@@ -158,5 +225,15 @@ const Page = () => {
     </div>
   );
 };
+
+//
+// Page export — wraps inner component in Suspense (required by useSearchParams)
+//
+
+const Page = () => (
+  <Suspense fallback={null}>
+    <SignInContent />
+  </Suspense>
+);
 
 export default Page;

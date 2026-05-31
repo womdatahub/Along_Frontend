@@ -38,6 +38,9 @@ type RentalStoreType = {
       latitude: number;
       longitude: number;
       address: string;
+      ratePerHour: number;
+      luggageCapacity: number;
+      allowPets: boolean;
     }) => Promise<string>;
     delistVehicleForRental: (vehicleId: string) => Promise<boolean>;
     setSelectedDriverDetails: (data: VehicleLocation) => void;
@@ -77,29 +80,37 @@ export const useRental = create<RentalStoreType>()(
           },
           listVehicleForRental: async (vehicleInfo) => {
             set({ isLoading: true });
-            await useSession.getState().actions.createRideProfile({
-              allowPets: true,
-              luggageCapacity: 20,
-              passangerCapacity: 4,
-              ratePerHour: 30,
-              currentLocation: vehicleInfo.address,
-              latitude: vehicleInfo.latitude,
-              longitude: vehicleInfo.longitude,
-            });
-            const d = {
-              accuracy: 20,
-              capacity: 3,
-              deviceId: "EAB",
-              deviceType: "Android" as const,
-              deviceOS: "Android",
-              deviceMake: "Xiaomi",
-              deviceModel: "Note 13 Pro",
-              ...vehicleInfo,
-            };
+
+            // Save rental profile settings first. If this fails the listing
+            // should not proceed — the backend needs the profile to exist.
+            const profileSaved = await useSession
+              .getState()
+              .actions.createRideProfile({
+                allowPets: vehicleInfo.allowPets,
+                luggageCapacity: vehicleInfo.luggageCapacity,
+                ratePerHour: vehicleInfo.ratePerHour,
+                currentLocation: vehicleInfo.address,
+                latitude: vehicleInfo.latitude,
+                longitude: vehicleInfo.longitude,
+              });
+
+            if (!profileSaved) {
+              set({ isLoading: false });
+              return "";
+            }
+
             const path = rentalApiStr(`/driver/rent`);
-            const { data, error } = await callApi(path, d, undefined, {
-              idempotencyKey: createIdempotencyKey("list-vehicle"),
-            });
+            const { data, error } = await callApi(
+              path,
+              {
+                vehicleId: vehicleInfo.vehicleId,
+                latitude: vehicleInfo.latitude,
+                longitude: vehicleInfo.longitude,
+                address: vehicleInfo.address,
+              },
+              undefined,
+              { idempotencyKey: createIdempotencyKey("list-vehicle") },
+            );
             if (error) {
               set({ isLoading: false });
               return error.accountLink ?? "";

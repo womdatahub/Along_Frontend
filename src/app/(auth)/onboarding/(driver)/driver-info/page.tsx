@@ -111,6 +111,7 @@ const Page = () => {
                 disabled={isSubmitting || isLoading}
                 required
                 type="text"
+                maxLength={50}
                 iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                 inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
               />
@@ -123,6 +124,7 @@ const Page = () => {
                 disabled={isSubmitting || isLoading}
                 required
                 type="text"
+                maxLength={50}
                 iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                 inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
               />
@@ -178,11 +180,12 @@ const Page = () => {
                   label="Primary Contact"
                   id="firstEmergencyContact"
                   errors={errors}
-                  placeholder="+1 000 000 0000"
+                  placeholder="+1 (000) 000 0000"
                   register={register}
                   disabled={isSubmitting || isLoading}
                   required
                   type="tel"
+                  maxLength={17}
                   iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                   inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
                 />
@@ -190,11 +193,12 @@ const Page = () => {
                   label="Secondary Contact"
                   id="secondEmergencyContact"
                   errors={errors}
-                  placeholder="+1 000 000 0000"
+                  placeholder="+1 (000) 000 0000"
                   register={register}
                   disabled={isSubmitting || isLoading}
                   required
                   type="tel"
+                  maxLength={17}
                   iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                   inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
                 />

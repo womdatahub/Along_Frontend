@@ -5,6 +5,7 @@ import {
   HeadingHeebo,
   AddInput,
   TermsModal,
+  PhoneInput,
 } from "@/components";
 import { cn, onboardingSchema, TOnboardingValidator } from "@/lib";
 import { useSession } from "@/store";
@@ -13,9 +14,9 @@ import { DarkFacebookIcon, DarkGoogleIcon, DarkIosIcon } from "@public/svgs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
-import { Mail, Phone, Lock, Tag } from "lucide-react";
+import { Mail, Lock, Tag } from "lucide-react";
 
 const Page = () => {
   const router = useRouter();
@@ -27,6 +28,7 @@ const Page = () => {
   } = useSession((state) => state);
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<TOnboardingValidator>({
@@ -70,21 +72,24 @@ const Page = () => {
             disabled={false}
             required
             type="text"
+            maxLength={254}
             icon={<Mail size={18} className="text-placeholder" />}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
           />
-          <AddInput
-            id="mobileNumber"
-            errors={errors}
-            placeholder="Phone number"
-            register={register}
-            disabled={false}
-            required
-            type="text"
-            icon={<Phone size={18} className="text-placeholder" />}
-            iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
-            inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+          <Controller
+            name="mobileNumber"
+            control={control}
+            render={({ field, fieldState }) => (
+              <PhoneInput
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={fieldState.error?.message}
+                iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
+                inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+              />
+            )}
           />
           <AddInput
             id="password"
@@ -94,6 +99,7 @@ const Page = () => {
             disabled={false}
             required
             type="password"
+            maxLength={128}
             icon={<Lock size={18} className="text-placeholder" />}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
@@ -106,6 +112,7 @@ const Page = () => {
             disabled={false}
             required
             type="text"
+            maxLength={20}
             icon={<Tag size={18} className="text-placeholder" />}
             iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
             inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"

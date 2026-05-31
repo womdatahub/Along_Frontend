@@ -111,6 +111,13 @@ export interface RiderProfile {
   updatedAt: string;
   dateOfBirth: string;
   licenseStatus?: "pending" | "approved" | "rejected" | string;
+  licenseApproved?: boolean;
+  licenseNumber?: string;
+  licenseExpiryDate?: string;
+  licenseFrontImageUri?: string;
+  licenseBackImageUri?: string;
+  licenseSelfieImageUri?: string;
+  // Legacy aliases used by some admin endpoints (kept for backward compatibility)
   riderLicenseNumber?: string;
   riderLicenseExpiryDate?: string;
   riderLicenseFrontViewUri?: string;

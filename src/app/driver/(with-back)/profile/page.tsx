@@ -214,6 +214,7 @@ const Page = () => {
                 <input
                   type="text"
                   value={form[field.editKey]}
+                  maxLength={50}
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,

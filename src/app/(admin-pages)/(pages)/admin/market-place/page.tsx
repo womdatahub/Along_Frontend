@@ -456,7 +456,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
             inputClassName="h-14 placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
           />
           <SelectDropdown
-            options={["USD", "NGN"]}
+            options={["USD"]}
             selected={currency}
             setSelected={(value: string) => setValue("currency", value)}
             triggerLabel="USD"
@@ -533,7 +533,7 @@ const AddOrEditNewFareEngineProfileComponent = ({
   );
 };
 
-/*  Promo Voucher Form ─ */
+/*  Promo Voucher Form  */
 
 type AddOrEditNewPromoVoucherType = {
   trigger: ReactNode;

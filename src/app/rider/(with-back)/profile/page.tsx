@@ -13,7 +13,12 @@ import {
   Check,
   X,
   Loader2,
+  CreditCard,
+  ChevronRight,
+  Clock,
+  XCircle,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -225,6 +230,7 @@ const Page = () => {
                 <input
                   type={field.editKey === "mobileNumber" ? "tel" : "text"}
                   value={form[field.editKey]}
+                  maxLength={field.editKey === "mobileNumber" ? 17 : 50}
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,
@@ -242,8 +248,71 @@ const Page = () => {
           </div>
         ))}
       </div>
+
+      {/* License verification */}
+      <LicenseRow riderProfile={riderProfile} />
     </div>
   );
 };
 
 export default Page;
+
+/*  License row  */
+
+type RiderProfileShape = ReturnType<typeof useSession.getState>["riderProfile"];
+
+function LicenseRow({ riderProfile }: { riderProfile: RiderProfileShape }) {
+  const hasLicense = !!(
+    riderProfile?.licenseFrontImageUri || riderProfile?.licenseNumber
+  );
+  const status = hasLicense ? (riderProfile?.licenseStatus ?? "pending") : null;
+
+  const badge =
+    status === "approved" ? (
+      <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+        <BadgeCheck size={11} />
+        Verified
+      </span>
+    ) : status === "rejected" ? (
+      <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full">
+        <XCircle size={11} />
+        Rejected
+      </span>
+    ) : status === "pending" ? (
+      <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
+        <Clock size={11} />
+        Pending
+      </span>
+    ) : null;
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <p className="text-sm font-semibold text-gray-3 uppercase tracking-wide mb-3">
+        Verification
+      </p>
+      <Link
+        href="/rider/license"
+        className="flex items-center gap-4 py-2 group"
+      >
+        <div className="size-8 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+          <CreditCard size={15} className="text-gray" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-gray">Driver&apos;s license</p>
+          <p className="text-sm font-medium text-black mt-0.5">
+            {hasLicense
+              ? (riderProfile?.licenseNumber ?? "On file")
+              : "Not submitted"}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {badge}
+          <ChevronRight
+            size={16}
+            className="text-gray-300 group-hover:text-gray transition-colors"
+          />
+        </div>
+      </Link>
+    </div>
+  );
+}

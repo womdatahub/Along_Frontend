@@ -203,7 +203,8 @@ const RequestStep = ({
           type="text"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
-          placeholder="Email or Phone Number"
+          placeholder="Email Address"
+          maxLength={254}
           autoComplete="email"
           className="flex-1 bg-transparent text-sm font-medium font-fustat placeholder:text-placeholder focus:outline-none border-none"
         />

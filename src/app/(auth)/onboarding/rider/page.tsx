@@ -4,14 +4,16 @@ import {
   AddInput,
   AuthBackAndContinueButton,
   DatePicker,
+  PhoneInput,
   SelectDropdown,
 } from "@/components";
 import { TRegisterRiderValidator, registerRiderSchema } from "@/lib";
+import { normalizePhoneForForm } from "@/components/shared/phone-input";
 import { useSession } from "@/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { User } from "lucide-react";
 
 const Page = () => {
@@ -28,13 +30,15 @@ const Page = () => {
   } = useSession((state) => state);
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<TRegisterRiderValidator>({
     defaultValues: {
       firstName: "",
       lastName: "",
-      mobileNumber: userProfile?.mobileNumber ?? "",
+      // Pre-format any stored value (E.164, raw digits, etc.) into the display mask
+      mobileNumber: normalizePhoneForForm(userProfile?.mobileNumber ?? ""),
     },
     resolver: zodResolver(registerRiderSchema),
   });
@@ -85,6 +89,7 @@ const Page = () => {
                 disabled={false}
                 required
                 type="text"
+                maxLength={50}
                 iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                 inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
                 label="First Name"
@@ -97,22 +102,26 @@ const Page = () => {
                 disabled={false}
                 required
                 type="text"
+                maxLength={50}
                 iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                 inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
                 label="Last Name"
               />
             </div>
-            <AddInput
-              id="mobileNumber"
-              errors={errors}
-              placeholder="+1 000 000 0000"
-              register={register}
-              disabled={false}
-              required
-              type="text"
-              iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
-              label="Mobile Number"
-              inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+            <Controller
+              name="mobileNumber"
+              control={control}
+              render={({ field, fieldState }) => (
+                <PhoneInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  error={fieldState.error?.message}
+                  label="Mobile Number"
+                  iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
+                  inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+                />
+              )}
             />
 
             <DatePicker

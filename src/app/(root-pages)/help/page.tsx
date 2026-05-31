@@ -325,7 +325,7 @@ const sections: Section[] = [
         title: "Verifying your identity",
         steps: [
           "Go to Profile > Identity Verification.",
-          "Upload a government-issued photo ID (passport, driver's license, or national ID).",
+          "Upload a government-issued photo ID (U.S. passport, driver's license, or state-issued ID card).",
           "Take a selfie holding the ID as prompted.",
           "Verification typically completes within 24 hours.",
         ],

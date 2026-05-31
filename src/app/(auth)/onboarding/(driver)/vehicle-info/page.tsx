@@ -180,6 +180,7 @@ const Page = () => {
                 disabled={false}
                 required
                 type="text"
+                maxLength={30}
                 iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                 inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
               />
@@ -192,6 +193,7 @@ const Page = () => {
                 disabled={false}
                 required
                 type="tel"
+                maxLength={4}
                 iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
                 inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
               />
@@ -206,6 +208,7 @@ const Page = () => {
               disabled={false}
               required
               type="text"
+              maxLength={17}
               iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
               inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
             />

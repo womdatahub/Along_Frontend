@@ -120,16 +120,6 @@ export const requests = {
         "PATCH",
       ),
 
-    // 2FA
-    enable2FA: (): R<{ qrCode: string; manualCode: string }> =>
-      callApi(`${BASE_USER}/user/2fa/enable`, {}),
-
-    verify2FA: (data: { code: string }): R<unknown> =>
-      callApi(`${BASE_USER}/user/2fa/verify`, data as Record<string, unknown>),
-
-    disable2FA: (data: { code: string }): R<unknown> =>
-      callApi(`${BASE_USER}/user/2fa/disable`, data as Record<string, unknown>),
-
     requestPasswordReset: (data: {
       email?: string;
       mobileNumber?: string;
@@ -258,7 +248,6 @@ export const requests = {
       latitude: number;
       ratePerHour: number;
       luggageCapacity: number;
-      passangerCapacity: number;
       allowPets: boolean;
     }): R<unknown> =>
       callApi(
@@ -339,12 +328,12 @@ export const requests = {
     ): R<unknown> =>
       callApi(`${BASE_USER}/vehicle/${vehicleId}`, data, "PATCH"),
 
-    // Admin-side user management (called via admin store)
+    // User-service driver/rider list endpoints (verifyToken — not admin-only)
     getAllDrivers: (): R<AllDriversAccount[]> =>
-      callApi(`${BASE_ADMIN}/users/drivers`),
+      callApi(`${BASE_USER}/user/drivers`),
 
     getAllRiders: (): R<AllRiderAccount[]> =>
-      callApi(`${BASE_ADMIN}/users/riders`),
+      callApi(`${BASE_USER}/user/riders`),
   },
 
   // ADMIN SERVICE/admin/api/v1/...
@@ -1009,21 +998,71 @@ export const requests = {
   },
 
   // COMMUNICATION SERVICE/communication/api/v1/...
+  // Source: POST /conversation/start, GET /conversation/:id,
+  //         GET /conversation/message/:messageId,
+  //         GET /conversations/user/:userId,
+  //         POST /call/initiate, GET /call/:callId,
+  //         GET /calls, DELETE /call/:callId
   communication: {
-    getConversation: (rentalId: string): R<unknown> =>
-      callApi(`${BASE_COMM}/communication/conversation/${rentalId}`),
-    // Send a message to an existing conversation
-    // Backend endpoint: POST /communication/api/v1/communication/conversation/{conversationId}/message
+    /**
+     * POST /communication/api/v1/conversation/start
+     * Start or retrieve an existing conversation between a rider and driver.
+     */
+    startConversation: (data: {
+      driverId: string;
+      riderId: string;
+    }): R<unknown> =>
+      callApi(
+        `${BASE_COMM}/conversation/start`,
+        data as Record<string, unknown>,
+      ),
+
+    /** GET /communication/api/v1/conversation/:conversationId */
+    getConversationById: (conversationId: string): R<unknown> =>
+      callApi(`${BASE_COMM}/conversation/${conversationId}`),
+
+    /** GET /communication/api/v1/conversation/message/:messageId */
+    getMessage: (messageId: string): R<unknown> =>
+      callApi(`${BASE_COMM}/conversation/message/${messageId}`),
+
+    /** GET /communication/api/v1/conversations/user/:userId */
+    getUserConversations: (userId: string): R<unknown> =>
+      callApi(`${BASE_COMM}/conversations/user/${userId}`),
+
+    /**
+     * POST /communication/api/v1/conversation/:conversationId/message
+     * Send a message to an existing conversation.
+     * Note: real-time delivery may be handled via WebSocket; this REST endpoint
+     * persists the message and returns the updated conversation.
+     */
     sendMessage: (data: {
       conversationId: string;
       body: string;
       senderId?: string;
     }): R<unknown> =>
       callApi(
-        `${BASE_COMM}/communication/conversation/${data.conversationId}/message`,
+        `${BASE_COMM}/conversation/${data.conversationId}/message`,
         { body: data.body, senderId: data.senderId } as Record<string, unknown>,
         "POST",
       ),
+
+    /** POST /communication/api/v1/call/initiate */
+    startCall: (data: {
+      conversationId: string;
+      [key: string]: unknown;
+    }): R<unknown> =>
+      callApi(`${BASE_COMM}/call/initiate`, data as Record<string, unknown>),
+
+    /** GET /communication/api/v1/call/:callId */
+    getCallById: (callId: string): R<unknown> =>
+      callApi(`${BASE_COMM}/call/${callId}`),
+
+    /** GET /communication/api/v1/calls */
+    getCalls: (): R<unknown> => callApi(`${BASE_COMM}/calls`),
+
+    /** DELETE /communication/api/v1/call/:callId */
+    deleteCall: (callId: string): R<unknown> =>
+      callApi(`${BASE_COMM}/call/${callId}`, undefined, "DELETE"),
   },
 
   // MAP SERVICE/map/api/v1/...

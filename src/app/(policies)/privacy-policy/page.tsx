@@ -45,7 +45,7 @@ const policies = [
   },
   {
     title: "Your Rights",
-    text: "Depending on your jurisdiction, you may have rights to access, update, delete, or restrict the processing of your personal data. Requests can be submitted through customer support. Some information may be retained for safety and compliance reasons.",
+    text: "Under applicable U.S. law — including the California Consumer Privacy Act (CCPA) for California residents — you may have the right to know what personal data we collect, request deletion of your data, opt out of certain data sharing, and not be discriminated against for exercising these rights. All users may access, correct, or delete their information by contacting our support team. Some data may be retained as required by law or for safety and fraud-prevention purposes.",
   },
   {
     title: "Cookies and Tracking Technologies",
@@ -60,8 +60,8 @@ const policies = [
     text: "Our service is not intended for minors under 18. We do not knowingly collect information from children. Accounts suspected of being created by minors may be suspended.",
   },
   {
-    title: "International Data Transfers",
-    text: "Where applicable, your data may be stored or processed in regions outside your country. We ensure appropriate safeguards are in place to protect your information during international transfers.",
+    title: "Data Storage and Transfers",
+    text: "Your data is primarily stored and processed within the United States. Where necessary for operations, data may be transferred to and stored in other countries. We ensure appropriate contractual and technical safeguards are in place to protect your information in compliance with applicable U.S. law.",
   },
   {
     title: "Automated Decision Making",

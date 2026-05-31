@@ -140,9 +140,8 @@ type Session = {
       latitude: number;
       ratePerHour: number;
       luggageCapacity: number;
-      passangerCapacity: number;
       allowPets: boolean;
-    }) => Promise<void>;
+    }) => Promise<boolean>;
     setDriverAvailability: (data: {
       availableForDriving: boolean;
       latitude?: number;
@@ -433,10 +432,11 @@ export const useSession = create<Session>()(
           createRideProfileData,
         );
 
-        if (error) return;
+        if (error) return false;
         if (data) {
-          toast.success(data.message);
+          toast.success(data.message ?? "Rental profile saved");
         }
+        return true;
       },
       setDriverAvailability: async (availabilityData) => {
         set({ isLoading: true });

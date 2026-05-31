@@ -344,7 +344,7 @@ const radarAutocompleteManual = async (
 
 export { radarAutocompleteManual };
 
-//  Reverse geocode ─
+//  Reverse geocode
 
 const REVERSE_GEOCODE_URL = "https://api.radar.io/v1/geocode/reverse";
 

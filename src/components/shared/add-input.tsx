@@ -32,6 +32,7 @@ export interface AddInputProps<T extends FieldValues> {
   iconAndInputWrapperClassName?: string;
   isReverse?: boolean;
   withFocusRing?: boolean;
+  maxLength?: number;
 }
 
 const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
@@ -55,6 +56,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
     isReverse,
     pattern,
     withFocusRing,
+    maxLength,
   } = props;
 
   const [realType, setRealType] = useState(type);
@@ -72,9 +74,9 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
       <div className="flex flex-col gap-1">
         <div
           className={cn(
-            "relative flex gap-2 items-center px-6",
+            "relative flex gap-2 items-center px-6 border border-gray-200",
             iconAndInputWrapperClassName,
-            errors[id] && "border border-red-400",
+            errors[id] && "border-red-400",
             isReverse && "flex-row-reverse",
           )}
         >
@@ -85,6 +87,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
             disabled={disabled}
             inputMode={inputMode}
             pattern={pattern}
+            maxLength={maxLength}
             {...register(id, { required })}
             onBlur={onblur}
             placeholder={placeholder}

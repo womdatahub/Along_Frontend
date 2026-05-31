@@ -212,10 +212,14 @@ const handleApiError = (error: unknown, options?: CallApiOptions): ApiError => {
       }
       case 401:
         clearStoredAuthToken();
-        if (shouldToast(true)) toast.error(apiError.message);
+        if (shouldToast(false)) {
+          toast.error(apiError.message);
+        }
         break;
       default:
-        if (shouldToast(false)) toast.error(apiError.message);
+        if (shouldToast(false)) {
+          toast.error(apiError.message);
+        }
         break;
     }
 

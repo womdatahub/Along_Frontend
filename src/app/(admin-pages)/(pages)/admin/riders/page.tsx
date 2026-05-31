@@ -25,7 +25,9 @@ import { toast } from "sonner";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"active" | "pending" | "suspended">("active");
+  const [activeTab, setActiveTab] = useState<
+    "active" | "pending" | "suspended"
+  >("active");
   const [expandedKycId, setExpandedKycId] = useState<string | null>(null);
   const [kycProcessing, setKycProcessing] = useState<string | null>(null);
 
@@ -59,16 +61,24 @@ const Page = () => {
   const filteredRiders = allRiders.filter((r) => {
     const q = searchQuery.toLowerCase();
     return (
-      r.rider.firstName?.toLowerCase().includes(q) ||
-      r.rider.lastName?.toLowerCase().includes(q) ||
+      r.rider?.firstName?.toLowerCase().includes(q) ||
+      r.rider?.lastName?.toLowerCase().includes(q) ||
       r.email?.toLowerCase().includes(q)
     );
   });
 
   const tabs = [
     { key: "active" as const, label: "Active riders", count: allRiders.length },
-    { key: "pending" as const, label: "Pending KYC", count: pendingKyc?.riders.length ?? 0 },
-    { key: "suspended" as const, label: "Suspended", count: suspendedRiders.length },
+    {
+      key: "pending" as const,
+      label: "Pending KYC",
+      count: pendingKyc?.riders.length ?? 0,
+    },
+    {
+      key: "suspended" as const,
+      label: "Suspended",
+      count: suspendedRiders.length,
+    },
   ];
 
   return (
@@ -76,7 +86,10 @@ const Page = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <p className="text-2xl font-bold font-heebo text-gray-900">Riders</p>
         <div className="relative">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
           <input
             type="text"
             placeholder="Search riders..."
@@ -150,22 +163,29 @@ const Page = () => {
                         <div className="flex items-center gap-3">
                           <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                             <span className="text-xs font-bold text-primary uppercase">
-                              {(rider.rider.firstName?.[0] ?? "") + (rider.rider.lastName?.[0] ?? "")}
+                              {(rider.rider.firstName?.[0] ?? "") +
+                                (rider.rider.lastName?.[0] ?? "")}
                             </span>
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-gray-900">
                               {rider.rider.firstName} {rider.rider.lastName}
                             </p>
-                            <p className="text-xs text-gray-400 mt-0.5">{rider.email}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {rider.email}
+                            </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-gray-600">{rider.mobileNumber}</p>
+                        <p className="text-sm text-gray-600">
+                          {rider.mobileNumber}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-gray-600 capitalize">{rider.gender || "—"}</p>
+                        <p className="text-sm text-gray-600 capitalize">
+                          {rider.gender || "—"}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
@@ -188,8 +208,13 @@ const Page = () => {
                                 {
                                   userId: rider.rider.userId,
                                   reason: values.reason!,
-                                  suspensionType: values.suspensionType!.toUpperCase() as "TEMPORARY" | "PERMANENT",
-                                  suspensionDuration: Number(values.suspensionDuration),
+                                  suspensionType:
+                                    values.suspensionType!.toUpperCase() as
+                                      | "TEMPORARY"
+                                      | "PERMANENT",
+                                  suspensionDuration: Number(
+                                    values.suspensionDuration,
+                                  ),
                                 },
                                 "rider",
                               );
@@ -219,7 +244,9 @@ const Page = () => {
                 const isExpanded = expandedKycId === riderId;
                 const isLoading = kycProcessing === riderId;
 
-                const handleKycAction = async (action: "APPROVE" | "REJECT") => {
+                const handleKycAction = async (
+                  action: "APPROVE" | "REJECT",
+                ) => {
                   setKycProcessing(riderId);
                   try {
                     const { error } = await requests.admin.processRiderKyc({
@@ -247,7 +274,9 @@ const Page = () => {
                     {/* Row header */}
                     <div className="flex items-center justify-between gap-4">
                       <button
-                        onClick={() => setExpandedKycId(isExpanded ? null : riderId)}
+                        onClick={() =>
+                          setExpandedKycId(isExpanded ? null : riderId)
+                        }
                         className="flex items-center gap-3 min-w-0 flex-1 text-left"
                       >
                         {rider.profilePictureUri ? (
@@ -272,7 +301,11 @@ const Page = () => {
                           </span>
                         </div>
                         <span className="text-gray-300 shrink-0 ml-2">
-                          {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                          {isExpanded ? (
+                            <ChevronUp size={15} />
+                          ) : (
+                            <ChevronDown size={15} />
+                          )}
                         </span>
                       </button>
 
@@ -283,7 +316,11 @@ const Page = () => {
                           onClick={() => handleKycAction("REJECT")}
                           className="flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
                         >
-                          {isLoading ? <Loader2 size={12} className="animate-spin" /> : <XCircle size={12} />}
+                          {isLoading ? (
+                            <Loader2 size={12} className="animate-spin" />
+                          ) : (
+                            <XCircle size={12} />
+                          )}
                           Reject
                         </button>
                         <button
@@ -291,7 +328,11 @@ const Page = () => {
                           onClick={() => handleKycAction("APPROVE")}
                           className="flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
                         >
-                          {isLoading ? <Loader2 size={12} className="animate-spin" /> : <BadgeCheck size={12} />}
+                          {isLoading ? (
+                            <Loader2 size={12} className="animate-spin" />
+                          ) : (
+                            <BadgeCheck size={12} />
+                          )}
                           Approve
                         </button>
                       </div>
@@ -317,7 +358,9 @@ const Page = () => {
                               icon: Calendar,
                               label: "Date of birth",
                               value: rider.dateOfBirth
-                                ? new Date(rider.dateOfBirth).toLocaleDateString("en-US", {
+                                ? new Date(
+                                    rider.dateOfBirth,
+                                  ).toLocaleDateString("en-US", {
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
@@ -328,17 +371,23 @@ const Page = () => {
                               icon: User,
                               label: "Gender",
                               value: rider.gender
-                                ? rider.gender.charAt(0).toUpperCase() + rider.gender.slice(1)
+                                ? rider.gender.charAt(0).toUpperCase() +
+                                  rider.gender.slice(1)
                                 : "—",
                             },
                           ].map(({ icon: Icon, label, value }) => (
-                            <div key={label} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                            <div
+                              key={label}
+                              className="flex items-center gap-3 p-3 rounded-xl bg-gray-50"
+                            >
                               <div className="size-8 rounded-lg bg-white flex items-center justify-center shrink-0">
                                 <Icon size={14} className="text-gray-400" />
                               </div>
                               <div>
                                 <p className="text-xs text-gray-400">{label}</p>
-                                <p className="text-sm font-medium text-gray-900 mt-0.5">{value}</p>
+                                <p className="text-sm font-medium text-gray-900 mt-0.5">
+                                  {value}
+                                </p>
                               </div>
                             </div>
                           ))}
@@ -352,9 +401,18 @@ const Page = () => {
                           <div className="grid sm:grid-cols-3 gap-3">
                             {(
                               [
-                                { label: "Front", url: rider.riderLicenseFrontViewUri },
-                                { label: "Back", url: rider.riderLicenseBackViewUri },
-                                { label: "Selfie", url: rider.riderLicenseSelfieUri },
+                                {
+                                  label: "Front",
+                                  url: rider.riderLicenseFrontViewUri,
+                                },
+                                {
+                                  label: "Back",
+                                  url: rider.riderLicenseBackViewUri,
+                                },
+                                {
+                                  label: "Selfie",
+                                  url: rider.riderLicenseSelfieUri,
+                                },
                               ] as { label: string; url?: string }[]
                             ).map(({ label, url }) => (
                               <div
@@ -366,11 +424,17 @@ const Page = () => {
                                 </p>
                                 {url ? (
                                   // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={url} alt={label} className="w-full h-32 object-cover" />
+                                  <img
+                                    src={url}
+                                    alt={label}
+                                    className="w-full h-32 object-cover"
+                                  />
                                 ) : (
                                   <div className="h-32 flex flex-col items-center justify-center gap-1.5 text-gray-300">
                                     <FileText size={18} />
-                                    <span className="text-xs">Not provided</span>
+                                    <span className="text-xs">
+                                      Not provided
+                                    </span>
                                   </div>
                                 )}
                               </div>
@@ -402,7 +466,8 @@ const Page = () => {
                   <div className="flex items-center gap-3">
                     <div className="size-9 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
                       <span className="text-xs font-bold text-rose-500 uppercase">
-                        {(rider.rider.firstName?.[0] ?? "") + (rider.rider.lastName?.[0] ?? "")}
+                        {(rider.rider.firstName?.[0] ?? "") +
+                          (rider.rider.lastName?.[0] ?? "")}
                       </span>
                     </div>
                     <div>
@@ -423,7 +488,10 @@ const Page = () => {
                     title="Reactivate rider"
                     description="Are you sure you want to reactivate this rider?"
                     confirmActionFunction={async () => {
-                      await reactivateDriverOrRider({ userId: rider.rider.userId }, "rider");
+                      await reactivateDriverOrRider(
+                        { userId: rider.rider.userId },
+                        "rider",
+                      );
                     }}
                     type="reactivate"
                   />
