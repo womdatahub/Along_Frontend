@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { useSession } from "@/store";
 
 const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-// const cookie = process.env.NEXT_PUBLIC_FRONTEND_COOKIE ?? "";
 
 if (!BASEURL) {
   throw new Error("add BASEURL to your env file");

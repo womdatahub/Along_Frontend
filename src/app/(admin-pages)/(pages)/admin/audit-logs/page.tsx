@@ -49,49 +49,60 @@ const ACTION_FILTER_OPTIONS = [
   "LOGIN",
 ];
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20;
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
 const Page = () => {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [actionFilter, setActionFilter] = useState<ActionFilter>("all");
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
+  const [meta, setMeta] = useState<{
+    page: number;
+    pageSize: number;
+    total: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  } | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const loadLogs = useCallback(
-    async (pageIndex: number) => {
+    async (nextPage: number, size: number) => {
       setIsLoading(true);
       const { data } = await requests.admin.getAuditLogs({
-        limit: PAGE_SIZE,
-        offset: pageIndex * PAGE_SIZE,
+        page: nextPage,
+        pageSize: size,
+        limit: size,
+        offset: (nextPage - 1) * size,
         action: actionFilter !== "all" ? actionFilter : undefined,
       });
       setIsLoading(false);
       if (data?.data) {
-        const incoming = data.data as AuditLog[];
-        setLogs(incoming);
-        setHasMore(incoming.length === PAGE_SIZE);
+        setLogs(data.data as AuditLog[]);
+        setMeta(data.meta ?? null);
       }
     },
     [actionFilter],
   );
 
+  // Reload from page 1 whenever the action filter or page size changes
   useEffect(() => {
-    setPage(0);
-    loadLogs(0);
+    setPage(1);
+    loadLogs(1, pageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionFilter]);
+  }, [actionFilter, pageSize]);
 
+  // Page changes (only fires after the initial render — first render handled above)
   useEffect(() => {
-    loadLogs(page);
+    if (page === 1) return;
+    loadLogs(page, pageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const handleRefresh = () => {
-    setPage(0);
-    loadLogs(0);
+    loadLogs(page, pageSize);
   };
 
   const filtered = logs.filter(
@@ -302,14 +313,31 @@ const Page = () => {
 
         {/* Pagination */}
         {filtered.length > 0 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-gray-50">
-            <p className="text-xs text-gray-400">
-              Page {page + 1} · {filtered.length} records
-            </p>
+          <div className="flex items-center justify-between px-5 py-3 border-t border-gray-50 flex-wrap gap-3">
+            <div className="flex items-center gap-3 text-xs text-gray-500">
+              <span>
+                Page {meta?.page ?? page}
+                {meta?.total != null ? ` · ${meta.total} total` : ""}
+              </span>
+              <label className="flex items-center gap-1.5">
+                <span className="text-gray-400">Per page</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                  className="text-xs border border-gray-200 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  {PAGE_SIZE_OPTIONS.map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
             <div className="flex items-center gap-1">
               <button
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0 || isLoading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={!(meta?.hasPrevPage ?? page > 1) || isLoading}
                 className="flex items-center gap-1 text-xs font-medium text-gray-600 disabled:text-gray-300 hover:text-gray-900 disabled:cursor-not-allowed px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <ChevronLeft size={14} />
@@ -317,7 +345,7 @@ const Page = () => {
               </button>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                disabled={!hasMore || isLoading}
+                disabled={!(meta?.hasNextPage ?? false) || isLoading}
                 className="flex items-center gap-1 text-xs font-medium text-gray-600 disabled:text-gray-300 hover:text-gray-900 disabled:cursor-not-allowed px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Next

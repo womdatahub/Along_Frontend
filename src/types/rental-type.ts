@@ -12,7 +12,6 @@ export type RentAndCreateIntentType = {
   recurring?: boolean; // Optional
   flexibility: boolean;
   days: string[];
-  // This will save the rental information and create payment intent
 };
 
 export type VehicleLocation = {

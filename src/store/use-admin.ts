@@ -7,6 +7,7 @@ import type {
   AllRiderAccount,
   AllDriversAccount,
   PendingKycType,
+  RiderProfile,
 } from "@/types";
 import { devtools } from "zustand/middleware";
 import { requests, TCreateNewAdminSchema } from "@/lib";
@@ -23,6 +24,7 @@ type AdminType = {
   allRiders: AllRiderAccount[];
   allDrivers: AllDriversAccount[];
   singleDriverDetails: DriverProfile | null;
+  singleRiderDetails: RiderProfile | null;
   sosAlerts: SosAlert[];
   activeRentals: ActiveRental[];
   actions: {
@@ -62,6 +64,7 @@ type AdminType = {
       action: "APPROVE" | "REJECT";
       notes?: string;
       reason?: string;
+      licenseExpiryDate?: string;
     }) => Promise<void>;
     getAllRiders: () => Promise<void>;
     getSuspendedRiders: () => Promise<void>;
@@ -74,6 +77,7 @@ type AdminType = {
     }) => Promise<void>;
     restoreAdmin: (restoreData: { adminId: string }) => Promise<void>;
     getSingleDriverDetails: (driverID: string) => Promise<void>;
+    getSingleRiderDetails: (riderId: string) => Promise<void>;
   };
 };
 
@@ -115,6 +119,7 @@ const initialState = {
   allRiders: [],
   allDrivers: [],
   singleDriverDetails: null,
+  singleRiderDetails: null,
   sosAlerts: [] as SosAlert[],
   activeRentals: [] as ActiveRental[],
 };
@@ -124,7 +129,7 @@ export const useAdmin = create<AdminType>()(
     ...initialState,
     actions: {
       getAdminDashboardDetails: async () => {
-        await requests.admin.getDashboard();
+        await requests.admin.getMetrics();
       },
       getActiveRides: async () => {
         await requests.admin.getActiveRides();
@@ -363,6 +368,17 @@ export const useAdmin = create<AdminType>()(
         }
         if (data) {
           set({ isLoading: false, singleDriverDetails: data.data });
+        }
+      },
+      getSingleRiderDetails: async (riderId) => {
+        set({ isLoading: true, singleRiderDetails: null });
+        const { data, error } = await requests.user.getRiderDetails(riderId);
+        if (error) {
+          set({ isLoading: false });
+          return;
+        }
+        if (data) {
+          set({ isLoading: false, singleRiderDetails: data.data });
         }
       },
     },

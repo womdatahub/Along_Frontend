@@ -86,22 +86,19 @@ const Page = () => {
     })),
   );
 
-  const status = riderProfile?.licenseStatus;
-
-  // A license is only "submitted" if the API has returned actual license data.
-  // licenseStatus defaults to "pending" for all riders even before submission,
-  // so we check the presence of real document fields instead.
   const hasSubmitted = !!(
     riderProfile?.licenseFrontImageUri || riderProfile?.licenseNumber
   );
-
-  const isPending = hasSubmitted && status === "pending";
-  const isRejected = hasSubmitted && status === "rejected";
-
-  const cfg = status
-    ? (STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ??
-      STATUS_CONFIG.pending)
+  const isLicenseApproved = Boolean(riderProfile?.isLicenseApproved);
+  const status: "approved" | "pending" | null = hasSubmitted
+    ? isLicenseApproved
+      ? "approved"
+      : "pending"
     : null;
+  const isPending = hasSubmitted && !isLicenseApproved;
+  const isRejected = false;
+
+  const cfg = status ? STATUS_CONFIG[status] : null;
 
   // Existing image URIs (used as fallback for slots left unchanged during edit)
   const existingUris = [
@@ -114,7 +111,7 @@ const Page = () => {
     // Pre-populate form fields with currently submitted data
     setLicenseNumber(riderProfile?.licenseNumber ?? "");
     setLicenseExpiryDate(toDateInputValue(riderProfile?.licenseExpiryDate));
-    setPreviews([null, null, null]); // reset image slots (existing URIs used as fallback)
+    setPreviews([null, null, null]);
     setIsEditing(true);
   };
 

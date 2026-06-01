@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import type {
   AdminProfile,
@@ -13,8 +13,6 @@ import { clearStoredAuthToken, uploadMediaDirectly, requests } from "@/lib";
 import { toast } from "sonner";
 import { useRadarMap } from "./use-radar-map";
 import { useRental } from "./use-rental";
-// import { useRental } from "./use-rental";
-// import { useRadarMap } from "./use-radar-map";
 
 type RegisterDriverResponse = {
   userRole: string;
@@ -173,359 +171,381 @@ const initialState = {
 };
 
 export const useSession = create<Session>()(
-  devtools((set, get) => ({
-    ...initialState,
+  devtools(
+    persist(
+      (set, get) => ({
+        ...initialState,
 
-    actions: {
-      setIsFetchingUserSessionLoading: (val) => {
-        set({ isFetchingUserSessionLoading: val });
-      },
-      setRouteBeforeRedirect: (route) => {
-        set({ routeBeforeRedirect: route });
-      },
-      uploadImages: async (d) => {
-        set({ isLoading: true });
-        try {
-          if (!d.imageFile) {
-            throw new Error("Image file is required");
-          }
-          return await uploadMediaDirectly(d.imageFile, d.uploadType);
-        } catch (error) {
-          toast.error(
-            error instanceof Error ? error.message : "Failed to upload image",
-          );
-          return "";
-        } finally {
-          set({ isLoading: false });
-        }
-      },
-
-      setServices: (services) => {
-        set({ services });
-      },
-      login: async (loginData) => {
-        set({ isLoading: true });
-        const { data, error } = await requests.user.login(loginData);
-
-        if (error) {
-          set({ isLoading: false, userRole: "" });
-          return "";
-        }
-        if (data) {
-          clearStoredAuthToken();
-          await get().actions.fetchUserDetails(false);
-          set({ isLoading: false, userRole: data.data.userRole });
-        }
-        return data?.data.userRole as string;
-      },
-      logOut: async () => {
-        set({ isLoading: true });
-        const { data, error } = await requests.user.logout();
-
-        if (error) {
-          // Clear local state even if server-side logout fails
-          set({ isLoading: false });
-        }
-        if (data) {
-          await useRadarMap.persist.clearStorage();
-          await useRental.persist.clearStorage();
-          clearStoredAuthToken();
-          set({
-            ...initialState,
-            isFetchingUserSessionLoading: false,
-          });
-        }
-      },
-      registerUser: async (registerUserData) => {
-        set({ isLoading: true });
-        const { data, error } = await requests.user.register(registerUserData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          toast.success(data.message);
-        }
-
-        set({ isLoading: false });
-        return true;
-      },
-      verifyEmail: async (verifyEmailData) => {
-        set({ isLoading: true });
-        const { data, error } =
-          await requests.user.verifyEmail(verifyEmailData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          await get().actions.fetchUserDetails();
-          toast.success(data.message ?? "OTP verified successfully");
-        }
-        set({ isLoading: false });
-        return true;
-      },
-      verifyOtp: async (verifyOtpData) => {
-        if (!verifyOtpData) return;
-        const { data, error } =
-          await requests.user.verifyResetOtp(verifyOtpData);
-
-        if (error) return;
-        if (data) {
-          await get().actions.fetchUserDetails();
-        }
-      },
-      resendVerificationOTP: async (resendVerificationOTPData) => {
-        set({ isResendingVerificationOTP: true });
-        const { data, error } = await requests.user.resendVerificationOtp(
-          resendVerificationOTPData,
-        );
-
-        if (error) {
-          set({ isResendingVerificationOTP: false });
-          return;
-        }
-        if (data) {
-          toast.success(data.message);
-          set({ isResendingVerificationOTP: false });
-        }
-      },
-      registerDriver: async (registerDriverData) => {
-        set({ isLoading: true });
-        const { data, error } =
-          await requests.user.registerDriver(registerDriverData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          clearStoredAuthToken();
-          set({
-            isLoading: false,
-            registeredDriverResponseWithStripeDetails: data.data,
-          });
-          await get().actions.fetchUserDetails(false, false);
-          return true;
-        }
-        return true;
-      },
-      addVerificationDocumentsAndServices: async (
-        addVerificationDocumentsAndServicesData,
-      ) => {
-        set({ isLoading: true });
-        const { data, error } = await requests.user.addDocumentsAndServices({
-          ...addVerificationDocumentsAndServicesData,
-          services: addVerificationDocumentsAndServicesData.services ??
-            get().services ?? ["rental"],
-        });
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          await get().actions.fetchUserDetails(false, false);
-          toast.success("Documents and services added successfully");
-          set({ isLoading: false });
-        }
-
-        return true;
-      },
-      registerVehicle: async (registerVehicleData) => {
-        set({ isLoading: true });
-        const { data, error } =
-          await requests.user.registerVehicle(registerVehicleData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          await get().actions.fetchUserDetails(false, false);
-          toast.success("Vehicle information added successfully");
-          set({ isLoading: false });
-        }
-        return true;
-      },
-      registerRider: async (registerRiderData) => {
-        set({ isLoading: true });
-        const { data, error } =
-          await requests.user.registerRider(registerRiderData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          clearStoredAuthToken();
-          toast.success(data.message);
-          await get().actions.fetchUserDetails(false, false);
-        }
-        set({ isLoading: false, userRole: "rider" });
-        return true;
-      },
-      registerBankAccount: async (registerBankAccountData) => {
-        const { data, error } = await requests.user.registerBankAccount(
-          registerBankAccountData,
-        );
-
-        if (error) return;
-        if (data) {
-          toast.success(data.message ?? "Bank details saved");
-        }
-      },
-      updateDriverDetails: async (updateDriverDetailsData) => {
-        set({ isLoading: true });
-        const { data, error } = await requests.user.updateDriver(
-          updateDriverDetailsData,
-        );
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          toast.success(data.message ?? "Driver details updated");
-          await get().actions.fetchUserDetails(false, false);
-        }
-        set({ isLoading: false });
-        return true;
-      },
-      updateRiderDetails: async (updateRiderDetailsData) => {
-        set({ isLoading: true });
-        const { data, error } = await requests.user.updateRider(
-          updateRiderDetailsData,
-        );
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          toast.success(data.message ?? "Rider details updated");
-          await get().actions.fetchUserDetails(false, false);
-        }
-        set({ isLoading: false });
-        return true;
-      },
-      submitRiderLicense: async (licenseData) => {
-        set({ isLoading: true });
-        const { data, error } =
-          await requests.user.submitRiderLicense(licenseData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-        if (data) {
-          toast.success(data.message ?? "License submitted for review");
-          await get().actions.fetchUserDetails(false, false);
-        }
-        set({ isLoading: false });
-        return true;
-      },
-      createRideProfile: async (createRideProfileData) => {
-        const { data, error } = await requests.user.createRideProfile(
-          createRideProfileData,
-        );
-
-        if (error) return false;
-        if (data) {
-          toast.success(data.message ?? "Rental profile saved");
-        }
-        return true;
-      },
-      setDriverAvailability: async (availabilityData) => {
-        set({ isLoading: true });
-        const { data, error } =
-          await requests.user.setDriverAvailability(availabilityData);
-
-        if (error) {
-          set({ isLoading: false });
-          return false;
-        }
-
-        toast.success(data?.message ?? "Availability updated");
-        await get().actions.fetchUserDetails(false, false);
-        set({ isLoading: false });
-        return true;
-      },
-      fetchUserDetails: async (shouldToast, shouldReload = true) => {
-        set({ ...(shouldReload && { isFetchingUserSessionLoading: true }) });
-        const { data, error } = await requests.user.getProfile();
-
-        if (error) {
-          set({ userRole: "", isFetchingUserSessionLoading: false });
-          if (shouldToast) toast.error(error.message);
-          return;
-        }
-
-        if (data) {
-          if (shouldToast) toast.success(data.message);
-          switch (data.data.role) {
-            case "admin":
-              {
-                set({
-                  adminProfile: data.data as AdminProfile,
-                  userRole: "admin",
-                  isFetchingUserSessionLoading: false,
-                });
+        actions: {
+          setIsFetchingUserSessionLoading: (val) => {
+            set({ isFetchingUserSessionLoading: val });
+          },
+          setRouteBeforeRedirect: (route) => {
+            set({ routeBeforeRedirect: route });
+          },
+          uploadImages: async (d) => {
+            set({ isLoading: true });
+            try {
+              if (!d.imageFile) {
+                throw new Error("Image file is required");
               }
-              break;
-            case "rider":
+              return await uploadMediaDirectly(d.imageFile, d.uploadType);
+            } catch (error) {
+              toast.error(
+                error instanceof Error
+                  ? error.message
+                  : "Failed to upload image",
+              );
+              return "";
+            } finally {
+              set({ isLoading: false });
+            }
+          },
+
+          setServices: (services) => {
+            set({ services });
+          },
+          login: async (loginData) => {
+            set({ isLoading: true });
+            const { data, error } = await requests.user.login(loginData);
+
+            if (error) {
+              set({ isLoading: false, userRole: "" });
+              return "";
+            }
+            if (data) {
+              clearStoredAuthToken();
+              await get().actions.fetchUserDetails(false);
+              set({ isLoading: false, userRole: data.data.userRole });
+            }
+            return data?.data.userRole as string;
+          },
+          logOut: async () => {
+            set({ isLoading: true });
+            const { data, error } = await requests.user.logout();
+
+            if (error) {
+              // Clear local state even if server-side logout fails
+              set({ isLoading: false });
+            }
+            if (data) {
+              await useRadarMap.persist.clearStorage();
+              await useRental.persist.clearStorage();
+              clearStoredAuthToken();
               set({
-                riderProfile: data.data as RiderProfile,
-                userRole: "rider",
+                ...initialState,
                 isFetchingUserSessionLoading: false,
               });
-              break;
-            case "driver":
+            }
+          },
+          registerUser: async (registerUserData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.register(registerUserData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              toast.success(data.message);
+            }
+
+            set({ isLoading: false });
+            return true;
+          },
+          verifyEmail: async (verifyEmailData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.verifyEmail(verifyEmailData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              await get().actions.fetchUserDetails();
+              toast.success(data.message ?? "OTP verified successfully");
+            }
+            set({ isLoading: false });
+            return true;
+          },
+          verifyOtp: async (verifyOtpData) => {
+            if (!verifyOtpData) return;
+            const { data, error } =
+              await requests.user.verifyResetOtp(verifyOtpData);
+
+            if (error) return;
+            if (data) {
+              await get().actions.fetchUserDetails();
+            }
+          },
+          resendVerificationOTP: async (resendVerificationOTPData) => {
+            set({ isResendingVerificationOTP: true });
+            const { data, error } = await requests.user.resendVerificationOtp(
+              resendVerificationOTPData,
+            );
+
+            if (error) {
+              set({ isResendingVerificationOTP: false });
+              return;
+            }
+            if (data) {
+              toast.success(data.message);
+              set({ isResendingVerificationOTP: false });
+            }
+          },
+          registerDriver: async (registerDriverData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.registerDriver(registerDriverData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              clearStoredAuthToken();
               set({
-                driverProfile: data.data as DriverProfile,
-                userRole: "driver",
-                isFetchingUserSessionLoading: false,
+                isLoading: false,
+                registeredDriverResponseWithStripeDetails: data.data,
               });
-              break;
-            case "user":
-              set({
-                userProfile: data.data as UserProfile,
-                userRole: "user",
-                isFetchingUserSessionLoading: false,
-              });
-              break;
-            default:
-              set({
-                userProfile: undefined,
-                driverProfile: undefined,
-                adminProfile: undefined,
-                riderProfile: undefined,
-                isFetchingUserSessionLoading: false,
-              });
-          }
-        }
+              await get().actions.fetchUserDetails(false, false);
+              return true;
+            }
+            return true;
+          },
+          addVerificationDocumentsAndServices: async (
+            addVerificationDocumentsAndServicesData,
+          ) => {
+            set({ isLoading: true });
+            const { data, error } = await requests.user.addDocumentsAndServices(
+              {
+                ...addVerificationDocumentsAndServicesData,
+                services: addVerificationDocumentsAndServicesData.services ??
+                  get().services ?? ["rental"],
+              },
+            );
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              await get().actions.fetchUserDetails(false, false);
+              toast.success("Documents and services added successfully");
+              set({ isLoading: false });
+            }
+
+            return true;
+          },
+          registerVehicle: async (registerVehicleData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.registerVehicle(registerVehicleData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              await get().actions.fetchUserDetails(false, false);
+              toast.success("Vehicle information added successfully");
+              set({ isLoading: false });
+            }
+            return true;
+          },
+          registerRider: async (registerRiderData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.registerRider(registerRiderData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              clearStoredAuthToken();
+              toast.success(data.message);
+              await get().actions.fetchUserDetails(false, false);
+            }
+            set({ isLoading: false, userRole: "rider" });
+            return true;
+          },
+          registerBankAccount: async (registerBankAccountData) => {
+            const { data, error } = await requests.user.registerBankAccount(
+              registerBankAccountData,
+            );
+
+            if (error) return;
+            if (data) {
+              toast.success(data.message ?? "Bank details saved");
+            }
+          },
+          updateDriverDetails: async (updateDriverDetailsData) => {
+            set({ isLoading: true });
+            const { data, error } = await requests.user.updateDriver(
+              updateDriverDetailsData,
+            );
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              toast.success(data.message ?? "Driver details updated");
+              await get().actions.fetchUserDetails(false, false);
+            }
+            set({ isLoading: false });
+            return true;
+          },
+          updateRiderDetails: async (updateRiderDetailsData) => {
+            set({ isLoading: true });
+            const { data, error } = await requests.user.updateRider(
+              updateRiderDetailsData,
+            );
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              toast.success(data.message ?? "Rider details updated");
+              await get().actions.fetchUserDetails(false, false);
+            }
+            set({ isLoading: false });
+            return true;
+          },
+          submitRiderLicense: async (licenseData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.submitRiderLicense(licenseData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+            if (data) {
+              toast.success(data.message ?? "License submitted for review");
+              await get().actions.fetchUserDetails(false, false);
+            }
+            set({ isLoading: false });
+            return true;
+          },
+          createRideProfile: async (createRideProfileData) => {
+            const { data, error } = await requests.user.createRideProfile(
+              createRideProfileData,
+            );
+
+            if (error) return false;
+            if (data) {
+              toast.success(data.message ?? "Rental profile saved");
+            }
+            return true;
+          },
+          setDriverAvailability: async (availabilityData) => {
+            set({ isLoading: true });
+            const { data, error } =
+              await requests.user.setDriverAvailability(availabilityData);
+
+            if (error) {
+              set({ isLoading: false });
+              return false;
+            }
+
+            toast.success(data?.message ?? "Availability updated");
+            await get().actions.fetchUserDetails(false, false);
+            set({ isLoading: false });
+            return true;
+          },
+          fetchUserDetails: async (shouldToast, shouldReload = true) => {
+            set({
+              ...(shouldReload && { isFetchingUserSessionLoading: true }),
+            });
+            const { data, error } = await requests.user.getProfile();
+
+            if (error) {
+              set({ userRole: "", isFetchingUserSessionLoading: false });
+              if (shouldToast) toast.error(error.message);
+              return;
+            }
+
+            if (data) {
+              if (shouldToast) toast.success(data.message);
+              switch (data.data.role) {
+                case "admin":
+                  {
+                    set({
+                      adminProfile: data.data as AdminProfile,
+                      userRole: "admin",
+                      isFetchingUserSessionLoading: false,
+                    });
+                  }
+                  break;
+                case "rider":
+                  set({
+                    riderProfile: data.data as RiderProfile,
+                    userRole: "rider",
+                    isFetchingUserSessionLoading: false,
+                  });
+                  break;
+                case "driver":
+                  set({
+                    driverProfile: data.data as DriverProfile,
+                    userRole: "driver",
+                    isFetchingUserSessionLoading: false,
+                  });
+                  break;
+                case "user":
+                  set({
+                    userProfile: data.data as UserProfile,
+                    userRole: "user",
+                    isFetchingUserSessionLoading: false,
+                  });
+                  break;
+                default:
+                  set({
+                    userProfile: undefined,
+                    driverProfile: undefined,
+                    adminProfile: undefined,
+                    riderProfile: undefined,
+                    isFetchingUserSessionLoading: false,
+                  });
+              }
+            }
+          },
+          fetchVehicleViaClass: async (vehicleClass) => {
+            const { data, error } =
+              await requests.user.getVehiclesByClass(vehicleClass);
+            if (error) return;
+            void data;
+          },
+          fetchVehicleViaDriverID: async (driverID) => {
+            const { data, error } =
+              await requests.user.getVehicleByDriverId(driverID);
+            if (error) return;
+            void data;
+          },
+          fetchVehicleID: async (vehicleID) => {
+            const { data, error } =
+              await requests.user.getVehicleById(vehicleID);
+            if (error) return;
+            void data;
+          },
+        },
+      }),
+      {
+        name: "along-session-store",
+        storage: createJSONStorage(() => localStorage),
+        partialize: (state) => ({
+          adminProfile: state.adminProfile,
+          userProfile: state.userProfile,
+          driverProfile: state.driverProfile,
+          riderProfile: state.riderProfile,
+        }),
       },
-      fetchVehicleViaClass: async (vehicleClass) => {
-        const { data, error } =
-          await requests.user.getDriverByClass(vehicleClass);
-        if (error) return;
-        void data;
-      },
-      fetchVehicleViaDriverID: async (driverID) => {
-        const { data, error } =
-          await requests.user.getVehicleByDriverId(driverID);
-        if (error) return;
-        void data;
-      },
-      fetchVehicleID: async (vehicleID) => {
-        const { data, error } = await requests.user.getVehicleById(vehicleID);
-        if (error) return;
-        void data;
-      },
-    },
-  })),
+    ),
+  ),
 );
 
 export const useSessions = <TResult>(

@@ -7,6 +7,7 @@ import type {
   DriverProfile,
   Endpoint,
   EndpointPermission,
+  PaymentRecord,
   PendingKycType,
   PromoVoucherType,
   RiderProfile,
@@ -312,10 +313,6 @@ export const requests = {
     getVehiclesByClass: (vehicleClass: string): R<unknown> =>
       callApi(`${BASE_USER}/vehicle/class?vehicleClass=${vehicleClass}`),
 
-    /** @deprecated use getVehiclesByClass */
-    getDriverByClass: (vehicleClass: string): R<unknown> =>
-      callApi(`${BASE_USER}/vehicle/class?vehicleClass=${vehicleClass}`),
-
     getVehicleById: (vehicleId: string): R<unknown> =>
       callApi(`${BASE_USER}/vehicle/${vehicleId}`),
 
@@ -339,8 +336,7 @@ export const requests = {
   // ADMIN SERVICE/admin/api/v1/...
   admin: {
     //Operations
-    getDashboard: (): R<unknown> =>
-      callApi(`${BASE_ADMIN}/operations/dashboard`),
+    getMetrics: (): R<unknown> => callApi(`${BASE_ADMIN}/operations/metrics`),
 
     getActiveRides: (): R<unknown> =>
       callApi(`${BASE_ADMIN}/operations/rides/active`),
@@ -402,13 +398,19 @@ export const requests = {
     }): R<unknown> =>
       callApi(`${BASE_ADMIN}/compliance/kyc`, data as Record<string, unknown>),
 
-    /** Process driver KYC/onboarding approval */
+    /**
+     * Process driver KYC/onboarding approval.
+     * On APPROVE, admin confirms/corrects the licence expiry date originally
+     * entered by the driver during onboarding if not correct.
+     */
     processDriverKyc: (data: {
       driverId: string;
       action: "APPROVE" | "REJECT" | "REQUEST_RESUBMISSION";
       notes?: string;
       reason?: string;
       documentsRequired?: string[];
+      /** Required when action === "APPROVE" — sets the canonical licence expiry. */
+      licenseExpiryDate?: string;
     }): R<unknown> =>
       callApi(
         `${BASE_ADMIN}/compliance/drivers/approval`,
@@ -427,12 +429,18 @@ export const requests = {
         data as Record<string, unknown>,
       ),
 
-    /** Process rider driving licence */
+    /**
+     * Process rider driving licence.
+     * On APPROVE, admin must confirm/correct the expiry date originally entered
+     * by the rider so the licence's validity window is authoritative.
+     */
     processRiderLicense: (data: {
       riderId: string;
       action: "APPROVE" | "REJECT";
       notes?: string;
       reason?: string;
+      /** Required when action === "APPROVE" — sets the canonical licence expiry. */
+      licenseExpiryDate?: string;
     }): R<unknown> =>
       callApi(
         `${BASE_ADMIN}/compliance/riders/license`,
@@ -441,18 +449,6 @@ export const requests = {
 
     /** Approve / reject / suspend a vehicle */
     processVehicleVerification: (data: {
-      vehicleId: string;
-      action: "APPROVE" | "REJECT" | "SUSPEND";
-      notes?: string;
-      reason?: string;
-    }): R<unknown> =>
-      callApi(
-        `${BASE_ADMIN}/compliance/vehicles/verification`,
-        data as Record<string, unknown>,
-      ),
-
-    /** @deprecated use processVehicleVerification */
-    processVehicleApproval: (data: {
       vehicleId: string;
       action: "APPROVE" | "REJECT" | "SUSPEND";
       notes?: string;
@@ -586,11 +582,9 @@ export const requests = {
     },
 
     //Analytics
-    // NOTE: The admin service exposes /operations/dashboard for summary metrics.
-    // A dedicated /analytics route does not yet exist — dashboard data is used instead.
     getAnalytics: (period?: string): R<unknown> =>
       callApi(
-        `${BASE_ADMIN}/operations/dashboard${period ? `?period=${period}` : ""}`,
+        `${BASE_ADMIN}/operations/analytics${period ? `?period=${period}` : ""}`,
       ),
 
     //Audit Logs
@@ -599,6 +593,8 @@ export const requests = {
     getAuditLogs: (params?: {
       limit?: number;
       offset?: number;
+      pageSize?: number;
+      page?: number;
       action?: string;
       adminId?: string;
     }): R<unknown> =>
@@ -609,7 +605,14 @@ export const requests = {
     //Disputes
     // NOTE: No dispute route exists in the current admin service.
     // Placeholder until backend adds dispute management.
-    getDisputes: (): R<unknown> => callApi(`${BASE_ADMIN}/disputes`),
+    getDisputes: (params?: {
+      limit?: number;
+      offset?: number;
+      pageSize?: number;
+      page?: number;
+      status?: string;
+    }): R<unknown> =>
+      callApi(`${BASE_ADMIN}/disputes${qs(params as Record<string, string>)}`),
 
     resolveDispute: (data: {
       disputeId: string;
@@ -623,11 +626,19 @@ export const requests = {
 
     //Payment Records (admin view via payment service)
     // Accessed via payment service admin token route — /payment/api/v1/deposit
+    // Default returns ALL payments regardless of status; pass filters to narrow.
     getPaymentRecords: (params?: {
       limit?: number;
       offset?: number;
+      pageSize?: number;
+      page?: number;
+      /** PaymentStatusEnum: pending | success | failed | refunded */
       status?: string;
-    }): R<unknown> =>
+      /** PaymentForEnum: instant | scheduled | rental | ride | logistics | service */
+      paymentFor?: string;
+      /** PaymentTypeEnum: withdraw | deposit | charge | refund | transfer | fee | dispute | reward */
+      paymentType?: string;
+    }): R<PaymentRecord[]> =>
       callApi(`${BASE_PAY}/deposit${qs(params as Record<string, string>)}`),
 
     getPaymentStatus: (rideId: string): R<unknown> =>
@@ -738,12 +749,6 @@ export const requests = {
 
     /** POST rider books/rents a vehicle */
     rentVehicle: (data: Record<string, unknown>): R<unknown> =>
-      callApi(`${BASE_RENTAL}/rider/rent`, data, undefined, {
-        idempotencyKey: `rental-${Date.now()}`,
-      }),
-
-    /** @deprecated alias — use rentVehicle */
-    rentAndCreateIntent: (data: Record<string, unknown>): R<unknown> =>
       callApi(`${BASE_RENTAL}/rider/rent`, data, undefined, {
         idempotencyKey: `rental-${Date.now()}`,
       }),

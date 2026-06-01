@@ -117,8 +117,7 @@ const RentRide = () => {
     queryBookingType === "SELF_DRIVE" || queryBookingType === "WITH_DRIVER"
       ? queryBookingType
       : "WITH_DRIVER";
-  const licenseApproved =
-    String(riderProfile?.licenseStatus ?? "").toLowerCase() === "approved";
+  const licenseApproved = Boolean(riderProfile?.isLicenseApproved);
   const requiresLicenseReview =
     bookingType === "SELF_DRIVE" && !licenseApproved;
 

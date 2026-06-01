@@ -44,7 +44,7 @@ const Page = () => {
     reason?: string,
   ) => {
     setIsProcessing(true);
-    const { error } = await requests.admin.processVehicleApproval({
+    const { error } = await requests.admin.processVehicleVerification({
       vehicleId,
       action,
       reason,

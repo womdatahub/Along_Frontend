@@ -65,29 +65,38 @@ export const usePermission = create<PermissionType>()(
     actions: {
       getAllAdminPermissions: async (adminID) => {
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.getAdminPermissions(adminID);
+        const { data, error } =
+          await requests.permissions.getAdminPermissions(adminID);
         if (error) {
           set({ isLoading: false });
           return;
         }
         if (data) {
-          set({ isLoading: false, allAdminPermissions: data.data.rolePermissions });
+          set({
+            isLoading: false,
+            allAdminPermissions: data.data.rolePermissions,
+          });
         }
       },
       getSingleAdminPermissions: async (adminID) => {
         set({ isFetching: true });
-        const { data, error } = await requests.permissions.getAdminDirectPermissions(adminID);
+        const { data, error } =
+          await requests.permissions.getAdminDirectPermissions(adminID);
         if (error) {
           set({ isFetching: false });
           return;
         }
         if (data) {
-          set({ isFetching: false, singleAdminPermission: data.data.endpoints });
+          set({
+            isFetching: false,
+            singleAdminPermission: data.data.endpoints,
+          });
         }
       },
       getSingleRolePermissions: async (role) => {
         set({ isFetching: true });
-        const { data, error } = await requests.permissions.getRolePermissions(role);
+        const { data, error } =
+          await requests.permissions.getRolePermissions(role);
         if (error) {
           set({ isFetching: false });
           return;
@@ -99,7 +108,8 @@ export const usePermission = create<PermissionType>()(
       },
       getAllRolePermissions: async () => {
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.getAllRolePermissions();
+        const { data, error } =
+          await requests.permissions.getAllRolePermissions();
         if (error) {
           set({ isLoading: false });
           return;
@@ -121,7 +131,8 @@ export const usePermission = create<PermissionType>()(
       },
       getEndpointPermissions: async (endpointId) => {
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.getEndpointPermissions(endpointId);
+        const { data, error } =
+          await requests.permissions.getEndpointPermissions(endpointId);
         if (error) {
           set({ isLoading: false });
           return;
@@ -132,7 +143,8 @@ export const usePermission = create<PermissionType>()(
       },
       grantRolePermission: async (rolePermissionData) => {
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.grantRolePermission(rolePermissionData);
+        const { data, error } =
+          await requests.permissions.grantRolePermission(rolePermissionData);
         if (error) {
           set({ isLoading: false });
           return;
@@ -145,7 +157,8 @@ export const usePermission = create<PermissionType>()(
       revokeRolePermission: async (revokePermissionData) => {
         if (revokePermissionData.endpointIds.length === 0) return;
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.revokeRolePermission(revokePermissionData);
+        const { data, error } =
+          await requests.permissions.revokeRolePermission(revokePermissionData);
         if (error) {
           set({ isLoading: false });
           return;
@@ -157,7 +170,8 @@ export const usePermission = create<PermissionType>()(
       },
       grantAdminPermission: async (adminPermissionData) => {
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.grantAdminPermission(adminPermissionData);
+        const { data, error } =
+          await requests.permissions.grantAdminPermission(adminPermissionData);
         if (error) {
           set({ isLoading: false });
           return;
@@ -169,7 +183,10 @@ export const usePermission = create<PermissionType>()(
       revokeAdminPermission: async (revokeAdminPermissionData) => {
         if (revokeAdminPermissionData.endpointIds.length === 0) return;
         set({ isLoading: true });
-        const { data, error } = await requests.permissions.revokeAdminPermission(revokeAdminPermissionData);
+        const { data, error } =
+          await requests.permissions.revokeAdminPermission(
+            revokeAdminPermissionData,
+          );
         if (error) {
           set({ isLoading: false });
           return;

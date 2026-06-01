@@ -108,7 +108,11 @@ const Page = () => {
                       href="/rider/license"
                       className="font-semibold capitalize"
                     >
-                      {riderProfile?.licenseStatus ?? "Submit license"}
+                      {riderProfile?.licenseFrontImageUri
+                        ? riderProfile?.isLicenseApproved
+                          ? "Approved"
+                          : "Under review"
+                        : "Submit license"}
                     </Link>
                   </div>
                 </ContainerWithArrow>

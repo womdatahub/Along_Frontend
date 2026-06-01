@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmActionModal } from "@/components/";
+import { ConfirmActionModal, RiderInformationModal } from "@/components/";
 import { useAdmin } from "@/store";
 import Image from "next/image";
 import { useShallow } from "zustand/shallow";
@@ -36,6 +36,7 @@ const Page = () => {
       getAllRiders,
       getSuspendedRiders,
       getpendingKyc,
+      getSingleRiderDetails,
       suspendDriverOrRider,
       reactivateDriverOrRider,
     },
@@ -160,22 +161,32 @@ const Page = () => {
                       className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <span className="text-xs font-bold text-primary uppercase">
-                              {(rider.rider.firstName?.[0] ?? "") +
-                                (rider.rider.lastName?.[0] ?? "")}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {rider.rider.firstName} {rider.rider.lastName}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {rider.email}
-                            </p>
-                          </div>
-                        </div>
+                        <RiderInformationModal
+                          trigger={
+                            <button
+                              type="button"
+                              onClick={() =>
+                                getSingleRiderDetails(rider.rider.userId)
+                              }
+                              className="flex items-center gap-3 text-left hover:opacity-80 transition-opacity"
+                            >
+                              <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                <span className="text-xs font-bold text-primary uppercase">
+                                  {(rider.rider.firstName?.[0] ?? "") +
+                                    (rider.rider.lastName?.[0] ?? "")}
+                                </span>
+                              </div>
+                              <div>
+                                <p className="text-sm font-semibold text-gray-900 hover:text-primary transition-colors">
+                                  {rider.rider.firstName} {rider.rider.lastName}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-0.5">
+                                  {rider.email}
+                                </p>
+                              </div>
+                            </button>
+                          }
+                        />
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm text-gray-600">

@@ -16,7 +16,6 @@ import {
   CreditCard,
   ChevronRight,
   Clock,
-  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -265,25 +264,18 @@ function LicenseRow({ riderProfile }: { riderProfile: RiderProfileShape }) {
   const hasLicense = !!(
     riderProfile?.licenseFrontImageUri || riderProfile?.licenseNumber
   );
-  const status = hasLicense ? (riderProfile?.licenseStatus ?? "pending") : null;
-
-  const badge =
-    status === "approved" ? (
-      <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
-        <BadgeCheck size={11} />
-        Verified
-      </span>
-    ) : status === "rejected" ? (
-      <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full">
-        <XCircle size={11} />
-        Rejected
-      </span>
-    ) : status === "pending" ? (
-      <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
-        <Clock size={11} />
-        Pending
-      </span>
-    ) : null;
+  const isLicenseApproved = Boolean(riderProfile?.isLicenseApproved);
+  const badge = !hasLicense ? null : isLicenseApproved ? (
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+      <BadgeCheck size={11} />
+      Verified
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full">
+      <Clock size={11} />
+      Pending
+    </span>
+  );
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">

@@ -43,6 +43,7 @@ export type SuspendedDriver = {
 
 export type DriverProfile = {
   //  Identifiers
+  _id?: string;
   userId: string;
   driverId?: string;
   firstName: string;
@@ -64,6 +65,7 @@ export type DriverProfile = {
   driverLincenseFrontViewUri?: string;
   driverLincenseBackViewUri?: string;
   advancedVerificationUri?: string;
+  licenseNumber?: string;
   licenseExpiryDate?: string;
   kycStatus?: "PENDING" | "APPROVED" | "REJECTED" | string;
   kycRejectionReason?: string;

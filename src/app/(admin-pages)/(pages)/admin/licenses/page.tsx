@@ -13,7 +13,7 @@ import {
   ChevronUp,
   FileText,
 } from "lucide-react";
-import { ConfirmActionModal } from "@/components";
+import { ApproveLicenseModal, ConfirmActionModal } from "@/components";
 import { requests } from "@/lib";
 import { toast } from "sonner";
 import { RiderProfile } from "@/types";
@@ -43,21 +43,23 @@ const Page = () => {
   const processLicense = async (
     riderId: string,
     action: "APPROVE" | "REJECT",
-    reason?: string,
+    options?: { reason?: string; licenseExpiryDate?: string },
   ) => {
     setIsProcessing(true);
     const { error } = await requests.admin.processRiderLicense({
       riderId,
       action,
-      reason,
+      reason: options?.reason,
+      ...(action === "APPROVE" && options?.licenseExpiryDate
+        ? { licenseExpiryDate: options.licenseExpiryDate }
+        : {}),
     });
     setIsProcessing(false);
-    if (!error) {
-      toast.success(
-        action === "APPROVE" ? "License approved" : "License rejected",
-      );
-      getpendingKyc();
-    }
+    if (error) throw new Error("Approval failed");
+    toast.success(
+      action === "APPROVE" ? "License approved" : "License rejected",
+    );
+    getpendingKyc();
   };
 
   return (
@@ -163,19 +165,20 @@ const Page = () => {
                         }}
                         type="suspend"
                       />
-                      <ConfirmActionModal
+                      <ApproveLicenseModal
                         trigger={
                           <button className="flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
                             <BadgeCheck size={13} />
                             Approve
                           </button>
                         }
-                        title="Approve Licence"
-                        description="Approve this rider's driving licence?"
-                        confirmActionFunction={async () => {
-                          await processLicense(id, "APPROVE");
+                        submittedExpiryDate={rider.licenseExpiryDate}
+                        subjectName={name || undefined}
+                        onConfirm={async (licenseExpiryDate) => {
+                          await processLicense(id, "APPROVE", {
+                            licenseExpiryDate,
+                          });
                         }}
-                        type="reactivate"
                       />
                     </div>
                   </div>
