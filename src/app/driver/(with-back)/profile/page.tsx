@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "@/store";
+import type { DriverProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
 import {
   Phone,
@@ -20,14 +21,15 @@ import Image from "next/image";
 
 const Page = () => {
   const {
-    driverProfile,
+    currentUser,
     actions: { updateDriverDetails },
   } = useSession(
     useShallow((state) => ({
-      driverProfile: state.driverProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
 
   const activeProfile = driverProfile
     ? {

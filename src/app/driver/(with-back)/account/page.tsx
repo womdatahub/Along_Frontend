@@ -1,9 +1,16 @@
 "use client";
-import { Button, Card, CardContent, HeadingHeebo, Switch } from "@/components";
+import {
+  Button,
+  Card,
+  CardContent,
+  HeadingHeebo,
+  Switch,
+  ProfileAvatar,
+} from "@/components";
 import { cn } from "@/lib";
 import { useSession } from "@/store";
+import type { DriverProfile } from "@/types";
 import { AshForwardIcon } from "@public/svgs";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useShallow } from "zustand/shallow";
@@ -12,9 +19,10 @@ const Page = () => {
   const [active, setActive] = useState<"personal-info" | "security">(
     "personal-info",
   );
-  const { driverProfile } = useSession(
-    useShallow((state) => ({ driverProfile: state.driverProfile })),
+  const { currentUser } = useSession(
+    useShallow((state) => ({ currentUser: state.currentUser })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
   return (
     <div className="flex flex-col gap-5">
       <HeadingHeebo className="text-start pl-4">Profile</HeadingHeebo>
@@ -43,15 +51,12 @@ const Page = () => {
           {active === "personal-info" ? (
             <CardContent className="flex flex-col gap-8">
               <div className="flex gap-6 items-center">
-                <Image
-                  alt={`${driverProfile?.firstName}-${driverProfile?.lastName}`}
-                  src={
-                    driverProfile?.driverProfilePictureUri ??
-                    "/images/camry.png"
-                  }
-                  width={96}
-                  height={96}
-                  className="size-24 rounded-full object-cover bg-gray-200"
+                <ProfileAvatar
+                  src={driverProfile?.driverProfilePictureUri}
+                  firstName={driverProfile?.firstName}
+                  lastName={driverProfile?.lastName}
+                  size={96}
+                  className="size-24 rounded-full"
                 />
                 <p className="text-lg font-heebo">
                   {driverProfile?.firstName} {driverProfile?.lastName}

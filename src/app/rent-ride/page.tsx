@@ -47,7 +47,7 @@ const StripeCheckOutComponent = dynamic(
 import { Skeleton } from "@/components/ui/skeleton";
 import { carTypes, cn, formatDateToDDMMYYYY } from "@/lib";
 import { useRadarMap, useRental, useSession } from "@/store";
-import { VehicleLocation } from "@/types";
+import { RiderProfile, VehicleLocation } from "@/types";
 import {
   FilledGreenStarIcon,
   PassengerCapacityIcon,
@@ -102,9 +102,10 @@ const RentRide = () => {
   const [proceedToCheckout, setProceedToCheckout] = useState<boolean>(false);
 
   const router = useRouter();
-  const { riderProfile } = useSession(
-    useShallow((state) => ({ riderProfile: state.riderProfile })),
+  const { currentUser } = useSession(
+    useShallow((state) => ({ currentUser: state.currentUser })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const searchParams = useSearchParams();
   const vehicleType = searchParams.get("vehicleType");

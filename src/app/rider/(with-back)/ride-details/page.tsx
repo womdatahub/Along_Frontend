@@ -4,6 +4,7 @@ import { Button, HeadingHeebo } from "@/components";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib";
 import { useCommunication, useRental, useSession } from "@/store";
+import type { RiderProfile } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
@@ -34,9 +35,10 @@ const Page = () => {
   const startConversation = useCommunication(
     (state) => state.actions.startConversation,
   );
-  const { riderProfile } = useSession(
-    useShallow((state) => ({ riderProfile: state.riderProfile })),
+  const { currentUser } = useSession(
+    useShallow((state) => ({ currentUser: state.currentUser })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   useEffect(() => {
     if (rentalId) fetchRentalDetails(rentalId);

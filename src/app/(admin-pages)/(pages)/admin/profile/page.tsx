@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "@/store";
+import type { AdminProfile, DriverProfile, RiderProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
 import {
   Mail,
@@ -20,19 +21,18 @@ import { toast } from "sonner";
 const Page = () => {
   const {
     userRole,
-    adminProfile,
-    driverProfile,
-    riderProfile,
+    currentUser,
     actions: { updateDriverDetails, updateRiderDetails },
   } = useSession(
     useShallow((state) => ({
       userRole: state.userRole,
-      adminProfile: state.adminProfile,
-      driverProfile: state.driverProfile,
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
+  const adminProfile = currentUser as AdminProfile | undefined;
+  const driverProfile = currentUser as DriverProfile | undefined;
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   // Resolve the active profile and derived fields based on role
   const activeProfile = (() => {

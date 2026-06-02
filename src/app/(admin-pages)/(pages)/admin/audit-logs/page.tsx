@@ -12,51 +12,81 @@ import {
 import { requests } from "@/lib";
 import { cn } from "@/lib";
 
-type AuditLog = {
-  id: string;
+/** Shape returned by GET /admin/api/v1/activities/recent */
+type ActivityLog = {
+  _id: string;
+  actorId: string;
+  actorType: string;
+  actorRole: string;
   action: string;
-  adminId: string;
-  adminName: string;
-  targetEntity?: string;
-  targetId?: string;
-  details?: string;
-  ipAddress?: string;
+  category: string;
+  targetType?: string;
+  metadata?: Record<string, unknown>;
+  requestMetadata?: {
+    ip?: string;
+    userAgent?: string;
+    requestId?: string;
+    path?: string;
+    method?: string;
+  };
+  sourceService?: string;
   createdAt: string;
 };
 
-type ActionFilter = "all" | string;
+type CategoryFilter = "all" | string;
 
+/** Map the dot-notation action (e.g. "kyc.ssn.viewed") to a badge style */
 const ACTION_STYLES: Record<string, string> = {
-  CREATE: "bg-emerald-50 text-emerald-700",
-  UPDATE: "bg-blue-50 text-blue-700",
-  DELETE: "bg-rose-50 text-rose-700",
-  APPROVE: "bg-emerald-50 text-emerald-700",
-  REJECT: "bg-rose-50 text-rose-700",
-  SUSPEND: "bg-amber-50 text-amber-700",
-  REACTIVATE: "bg-teal-50 text-teal-700",
-  LOGIN: "bg-gray-50 text-gray-600",
-  EXPORT: "bg-violet-50 text-violet-700",
+  approved: "bg-emerald-50 text-emerald-700",
+  created: "bg-emerald-50 text-emerald-700",
+  rejected: "bg-rose-50 text-rose-700",
+  deleted: "bg-rose-50 text-rose-700",
+  suspended: "bg-amber-50 text-amber-700",
+  updated: "bg-blue-50 text-blue-700",
+  viewed: "bg-gray-50 text-gray-600",
+  login: "bg-gray-50 text-gray-600",
+  exported: "bg-violet-50 text-violet-700",
+  reactivated: "bg-teal-50 text-teal-700",
 };
 
-const ACTION_FILTER_OPTIONS = [
-  "CREATE",
-  "UPDATE",
-  "DELETE",
-  "APPROVE",
-  "REJECT",
-  "SUSPEND",
-  "REACTIVATE",
-  "LOGIN",
+const CATEGORY_FILTER_OPTIONS = [
+  "COMPLIANCE",
+  "USER_MANAGEMENT",
+  "SYSTEM",
+  "PAYMENTS",
+  "OPERATIONS",
 ];
 
 const DEFAULT_PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
+function actionStyle(action: string): string {
+  const verb = action.split(".").pop()?.toLowerCase() ?? "";
+  const key = Object.keys(ACTION_STYLES).find((k) => verb.includes(k));
+  return key ? ACTION_STYLES[key] : "bg-gray-50 text-gray-600";
+}
+
+function fmtTs(iso: string): { date: string; time: string } {
+  const d = new Date(iso);
+  return {
+    date: d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    time: d.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }),
+  };
+}
+
 const Page = () => {
-  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [actionFilter, setActionFilter] = useState<ActionFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [meta, setMeta] = useState<{
@@ -68,59 +98,51 @@ const Page = () => {
   } | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const loadLogs = useCallback(
-    async (nextPage: number, size: number) => {
-      setIsLoading(true);
-      const { data } = await requests.admin.getAuditLogs({
-        page: nextPage,
-        pageSize: size,
-        limit: size,
-        offset: (nextPage - 1) * size,
-        action: actionFilter !== "all" ? actionFilter : undefined,
-      });
-      setIsLoading(false);
-      if (data?.data) {
-        setLogs(data.data as AuditLog[]);
-        setMeta(data.meta ?? null);
-      }
-    },
-    [actionFilter],
-  );
+  const loadLogs = useCallback(async (nextPage: number, size: number) => {
+    setIsLoading(true);
+    const { data } = await requests.admin.getAuditLogs({
+      page: nextPage,
+      pageSize: size,
+      limit: size,
+      offset: (nextPage - 1) * size,
+    });
+    setIsLoading(false);
+    if (data?.data) {
+      const raw = Array.isArray(data.data)
+        ? data.data
+        : (((data.data as Record<string, unknown>)
+            .activities as ActivityLog[]) ?? []);
+      setLogs(raw as ActivityLog[]);
+      setMeta(data.meta ?? null);
+    }
+  }, []);
 
-  // Reload from page 1 whenever the action filter or page size changes
   useEffect(() => {
     setPage(1);
     loadLogs(1, pageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionFilter, pageSize]);
+  }, [categoryFilter, pageSize]);
 
-  // Page changes (only fires after the initial render — first render handled above)
   useEffect(() => {
     if (page === 1) return;
     loadLogs(page, pageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  const handleRefresh = () => {
-    loadLogs(page, pageSize);
-  };
+  const handleRefresh = () => loadLogs(page, pageSize);
 
-  const filtered = logs.filter(
-    (l) =>
-      l.adminName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      l.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (l.targetEntity ?? "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      (l.targetId ?? "").toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const actionStyle = (action: string) => {
-    const key = Object.keys(ACTION_STYLES).find((k) =>
-      action.toUpperCase().includes(k),
-    );
-    return key ? ACTION_STYLES[key] : "bg-gray-50 text-gray-600";
-  };
+  const filtered = logs.filter((l) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      l.actorRole.toLowerCase().includes(q) ||
+      l.actorId.toLowerCase().includes(q) ||
+      l.action.toLowerCase().includes(q) ||
+      (l.category ?? "").toLowerCase().includes(q) ||
+      (l.targetType ?? "").toLowerCase().includes(q);
+    const matchesCategory =
+      categoryFilter === "all" || l.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <section className="flex flex-col gap-6">
@@ -154,7 +176,7 @@ const Page = () => {
             />
             <input
               type="text"
-              placeholder="Search by admin, action, entity…"
+              placeholder="Search by actor, action, category…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full text-sm pl-8 pr-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -173,7 +195,7 @@ const Page = () => {
           >
             <Filter size={13} />
             Filter
-            {actionFilter !== "all" && (
+            {categoryFilter !== "all" && (
               <span className="size-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center">
                 1
               </span>
@@ -185,42 +207,45 @@ const Page = () => {
         {showFilters && (
           <div className="px-5 py-3 flex flex-wrap gap-2 border-b border-gray-50 bg-gray-50/40">
             <button
-              onClick={() => setActionFilter("all")}
+              onClick={() => setCategoryFilter("all")}
               className={cn(
                 "text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all",
-                actionFilter === "all"
+                categoryFilter === "all"
                   ? "border-primary bg-primary text-white"
                   : "border-gray-200 text-gray-600 hover:border-gray-300 bg-white",
               )}
             >
-              All actions
+              All categories
             </button>
-            {ACTION_FILTER_OPTIONS.map((a) => (
+            {CATEGORY_FILTER_OPTIONS.map((c) => (
               <button
-                key={a}
-                onClick={() => setActionFilter(a)}
+                key={c}
+                onClick={() => setCategoryFilter(c)}
                 className={cn(
-                  "text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all capitalize",
-                  actionFilter === a
+                  "text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all",
+                  categoryFilter === c
                     ? "border-primary bg-primary text-white"
                     : "border-gray-200 text-gray-600 hover:border-gray-300 bg-white",
                 )}
               >
-                {a.toLowerCase()}
+                {c.replace(/_/g, " ")}
               </button>
             ))}
           </div>
         )}
 
         {/* Table */}
-        {filtered.length === 0 ? (
+        {isLoading && logs.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <RefreshCw size={22} className="text-gray-300 animate-spin" />
+            <p className="text-sm text-gray-400">Loading activity logs…</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="size-12 rounded-2xl bg-gray-50 flex items-center justify-center">
               <ScrollText size={22} className="text-gray-300" />
             </div>
-            <p className="text-sm text-gray-400">
-              {isLoading ? "Loading logs…" : "No audit logs found"}
-            </p>
+            <p className="text-sm text-gray-400">No activity logs found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -229,15 +254,15 @@ const Page = () => {
                 <tr className="border-b border-gray-50">
                   {[
                     "Timestamp",
-                    "Admin",
+                    "Actor",
                     "Action",
+                    "Category",
                     "Target",
-                    "Details",
                     "IP",
                   ].map((h) => (
                     <th
                       key={h}
-                      className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-5 py-3.5"
+                      className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-5 py-3.5 whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -245,67 +270,73 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((log) => (
-                  <tr
-                    key={log.id}
-                    className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
-                  >
-                    <td className="px-5 py-3.5 whitespace-nowrap">
-                      <p className="text-xs text-gray-400 font-mono">
-                        {log.createdAt}
-                      </p>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-30">
-                          {log.adminName}
+                {filtered.map((log) => {
+                  const { date, time } = fmtTs(log.createdAt);
+                  return (
+                    <tr
+                      key={log._id}
+                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
+                    >
+                      {/* Timestamp */}
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <p className="text-xs font-medium text-gray-700">
+                          {date}
                         </p>
-                        <p className="text-xs text-gray-400 font-mono">
-                          #{log.adminId.slice(-6)}
+                        <p className="text-xs text-gray-400 font-mono mt-0.5">
+                          {time}
                         </p>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span
-                        className={cn(
-                          "text-xs font-semibold px-2.5 py-1 rounded-full",
-                          actionStyle(log.action),
-                        )}
-                      >
-                        {log.action}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      {log.targetEntity ? (
-                        <div>
-                          <p className="text-sm text-gray-700 capitalize">
-                            {log.targetEntity}
-                          </p>
-                          {log.targetId && (
-                            <p className="text-xs text-gray-400 font-mono">
-                              #{log.targetId.slice(-6)}
-                            </p>
+                      </td>
+
+                      {/* Actor */}
+                      <td className="px-5 py-3.5">
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-32">
+                          {log.actorRole}
+                        </p>
+                        <p className="text-xs text-gray-400 font-mono mt-0.5">
+                          #{log.actorId.slice(-8)}
+                        </p>
+                      </td>
+
+                      {/* Action */}
+                      <td className="px-5 py-3.5">
+                        <span
+                          className={cn(
+                            "text-xs font-semibold px-2.5 py-1 rounded-full font-mono",
+                            actionStyle(log.action),
                           )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-300">—</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 max-w-50">
-                      <p
-                        className="text-sm text-gray-500 truncate"
-                        title={log.details}
-                      >
-                        {log.details ?? "—"}
-                      </p>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <p className="text-xs text-gray-400 font-mono">
-                        {log.ipAddress ?? "—"}
-                      </p>
-                    </td>
-                  </tr>
-                ))}
+                        >
+                          {log.action}
+                        </span>
+                      </td>
+
+                      {/* Category */}
+                      <td className="px-5 py-3.5">
+                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md">
+                          {log.category?.replace(/_/g, " ") ?? "—"}
+                        </span>
+                      </td>
+
+                      {/* Target */}
+                      <td className="px-5 py-3.5">
+                        {log.targetType ? (
+                          <p className="text-sm text-gray-700 capitalize">
+                            {log.targetType}
+                          </p>
+                        ) : (
+                          <span className="text-xs text-gray-300">—</span>
+                        )}
+                      </td>
+
+                      {/* IP */}
+                      <td className="px-5 py-3.5">
+                        <p className="text-xs text-gray-400 font-mono">
+                          {log.requestMetadata?.ip?.replace(/^::ffff:/, "") ??
+                            "—"}
+                        </p>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

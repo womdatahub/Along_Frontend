@@ -9,10 +9,22 @@ import type {
   SelectorFn,
   UserProfile,
 } from "@/types";
-import { clearStoredAuthToken, uploadMediaDirectly, requests } from "@/lib";
+import {
+  clearStoredAuthToken,
+  storeAuthToken,
+  uploadMediaDirectly,
+  requests,
+} from "@/lib";
 import { toast } from "sonner";
 import { useRadarMap } from "./use-radar-map";
 import { useRental } from "./use-rental";
+
+export type CurrentUser =
+  | RiderProfile
+  | DriverProfile
+  | AdminProfile
+  | UserProfile
+  | null;
 
 type RegisterDriverResponse = {
   userRole: string;
@@ -30,13 +42,11 @@ type RegisterDriverResponse = {
     id: string;
   };
 };
+
 type Session = {
-  registeredDriverResponseWithStripeDetails: RegisterDriverResponse | null;
+  currentUser: CurrentUser;
   userRole: string;
-  riderProfile: RiderProfile | undefined;
-  driverProfile: DriverProfile | undefined;
-  adminProfile: AdminProfile | undefined;
-  userProfile: UserProfile | undefined;
+  registeredDriverResponseWithStripeDetails: RegisterDriverResponse | null;
   isFetchingUserSessionLoading: boolean;
   isLoading: boolean;
   isResendingVerificationOTP: boolean;
@@ -157,16 +167,13 @@ type Session = {
 };
 
 const initialState = {
+  currentUser: null as CurrentUser,
   userRole: "",
   isFetchingUserSessionLoading: true,
   isLoading: false,
   isResendingVerificationOTP: false,
   services: [],
   routeBeforeRedirect: "",
-  riderProfile: undefined,
-  driverProfile: undefined,
-  adminProfile: undefined,
-  userProfile: undefined,
   registeredDriverResponseWithStripeDetails: null,
 };
 
@@ -186,9 +193,7 @@ export const useSession = create<Session>()(
           uploadImages: async (d) => {
             set({ isLoading: true });
             try {
-              if (!d.imageFile) {
-                throw new Error("Image file is required");
-              }
+              if (!d.imageFile) throw new Error("Image file is required");
               return await uploadMediaDirectly(d.imageFile, d.uploadType);
             } catch (error) {
               toast.error(
@@ -205,60 +210,48 @@ export const useSession = create<Session>()(
           setServices: (services) => {
             set({ services });
           },
+
           login: async (loginData) => {
             set({ isLoading: true });
             const { data, error } = await requests.user.login(loginData);
-
             if (error) {
               set({ isLoading: false, userRole: "" });
               return "";
             }
             if (data) {
-              clearStoredAuthToken();
+              if (data.data.accessToken) storeAuthToken(data.data.accessToken);
               await get().actions.fetchUserDetails(false);
               set({ isLoading: false, userRole: data.data.userRole });
             }
             return data?.data.userRole as string;
           },
+
           logOut: async () => {
             set({ isLoading: true });
-            const { data, error } = await requests.user.logout();
-
-            if (error) {
-              // Clear local state even if server-side logout fails
-              set({ isLoading: false });
-            }
-            if (data) {
-              await useRadarMap.persist.clearStorage();
-              await useRental.persist.clearStorage();
-              clearStoredAuthToken();
-              set({
-                ...initialState,
-                isFetchingUserSessionLoading: false,
-              });
-            }
+            await requests.user.logout().catch(() => null);
+            await useRadarMap.persist.clearStorage();
+            await useRental.persist.clearStorage();
+            clearStoredAuthToken();
+            set({ ...initialState, isFetchingUserSessionLoading: false });
           },
+
           registerUser: async (registerUserData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.register(registerUserData);
-
             if (error) {
               set({ isLoading: false });
               return false;
             }
-            if (data) {
-              toast.success(data.message);
-            }
-
+            if (data) toast.success(data.message);
             set({ isLoading: false });
             return true;
           },
+
           verifyEmail: async (verifyEmailData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.verifyEmail(verifyEmailData);
-
             if (error) {
               set({ isLoading: false });
               return false;
@@ -270,22 +263,20 @@ export const useSession = create<Session>()(
             set({ isLoading: false });
             return true;
           },
+
           verifyOtp: async (verifyOtpData) => {
             if (!verifyOtpData) return;
             const { data, error } =
               await requests.user.verifyResetOtp(verifyOtpData);
-
             if (error) return;
-            if (data) {
-              await get().actions.fetchUserDetails();
-            }
+            if (data) await get().actions.fetchUserDetails();
           },
+
           resendVerificationOTP: async (resendVerificationOTPData) => {
             set({ isResendingVerificationOTP: true });
             const { data, error } = await requests.user.resendVerificationOtp(
               resendVerificationOTPData,
             );
-
             if (error) {
               set({ isResendingVerificationOTP: false });
               return;
@@ -295,17 +286,17 @@ export const useSession = create<Session>()(
               set({ isResendingVerificationOTP: false });
             }
           },
+
           registerDriver: async (registerDriverData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.registerDriver(registerDriverData);
-
             if (error) {
               set({ isLoading: false });
               return false;
             }
             if (data) {
-              clearStoredAuthToken();
+              if (data.data.accessToken) storeAuthToken(data.data.accessToken);
               set({
                 isLoading: false,
                 registeredDriverResponseWithStripeDetails: data.data,
@@ -315,6 +306,7 @@ export const useSession = create<Session>()(
             }
             return true;
           },
+
           addVerificationDocumentsAndServices: async (
             addVerificationDocumentsAndServicesData,
           ) => {
@@ -326,7 +318,6 @@ export const useSession = create<Session>()(
                   get().services ?? ["rental"],
               },
             );
-
             if (error) {
               set({ isLoading: false });
               return false;
@@ -336,14 +327,13 @@ export const useSession = create<Session>()(
               toast.success("Documents and services added successfully");
               set({ isLoading: false });
             }
-
             return true;
           },
+
           registerVehicle: async (registerVehicleData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.registerVehicle(registerVehicleData);
-
             if (error) {
               set({ isLoading: false });
               return false;
@@ -355,39 +345,37 @@ export const useSession = create<Session>()(
             }
             return true;
           },
+
           registerRider: async (registerRiderData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.registerRider(registerRiderData);
-
             if (error) {
               set({ isLoading: false });
               return false;
             }
             if (data) {
-              clearStoredAuthToken();
+              if (data.data.accessToken) storeAuthToken(data.data.accessToken);
               toast.success(data.message);
               await get().actions.fetchUserDetails(false, false);
             }
             set({ isLoading: false, userRole: "rider" });
             return true;
           },
+
           registerBankAccount: async (registerBankAccountData) => {
             const { data, error } = await requests.user.registerBankAccount(
               registerBankAccountData,
             );
-
             if (error) return;
-            if (data) {
-              toast.success(data.message ?? "Bank details saved");
-            }
+            if (data) toast.success(data.message ?? "Bank details saved");
           },
+
           updateDriverDetails: async (updateDriverDetailsData) => {
             set({ isLoading: true });
             const { data, error } = await requests.user.updateDriver(
               updateDriverDetailsData,
             );
-
             if (error) {
               set({ isLoading: false });
               return false;
@@ -399,12 +387,12 @@ export const useSession = create<Session>()(
             set({ isLoading: false });
             return true;
           },
+
           updateRiderDetails: async (updateRiderDetailsData) => {
             set({ isLoading: true });
             const { data, error } = await requests.user.updateRider(
               updateRiderDetailsData,
             );
-
             if (error) {
               set({ isLoading: false });
               return false;
@@ -416,11 +404,11 @@ export const useSession = create<Session>()(
             set({ isLoading: false });
             return true;
           },
+
           submitRiderLicense: async (licenseData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.submitRiderLicense(licenseData);
-
             if (error) {
               set({ isLoading: false });
               return false;
@@ -432,88 +420,63 @@ export const useSession = create<Session>()(
             set({ isLoading: false });
             return true;
           },
+
           createRideProfile: async (createRideProfileData) => {
             const { data, error } = await requests.user.createRideProfile(
               createRideProfileData,
             );
-
             if (error) return false;
-            if (data) {
-              toast.success(data.message ?? "Rental profile saved");
-            }
+            if (data) toast.success(data.message ?? "Rental profile saved");
             return true;
           },
+
           setDriverAvailability: async (availabilityData) => {
             set({ isLoading: true });
             const { data, error } =
               await requests.user.setDriverAvailability(availabilityData);
-
             if (error) {
               set({ isLoading: false });
               return false;
             }
-
             toast.success(data?.message ?? "Availability updated");
             await get().actions.fetchUserDetails(false, false);
             set({ isLoading: false });
             return true;
           },
+
           fetchUserDetails: async (shouldToast, shouldReload = true) => {
-            set({
-              ...(shouldReload && { isFetchingUserSessionLoading: true }),
-            });
+            if (shouldReload) set({ isFetchingUserSessionLoading: true });
             const { data, error } = await requests.user.getProfile();
 
             if (error) {
-              set({ userRole: "", isFetchingUserSessionLoading: false });
+              // Only clear the session on auth errors; ignore transient network failures
+              if (
+                typeof error.status === "number" &&
+                (error.status === 401 || error.status === 403)
+              ) {
+                set({
+                  currentUser: null,
+                  userRole: "",
+                  isFetchingUserSessionLoading: false,
+                });
+              } else {
+                set({ isFetchingUserSessionLoading: false });
+              }
               if (shouldToast) toast.error(error.message);
               return;
             }
 
             if (data) {
               if (shouldToast) toast.success(data.message);
-              switch (data.data.role) {
-                case "admin":
-                  {
-                    set({
-                      adminProfile: data.data as AdminProfile,
-                      userRole: "admin",
-                      isFetchingUserSessionLoading: false,
-                    });
-                  }
-                  break;
-                case "rider":
-                  set({
-                    riderProfile: data.data as RiderProfile,
-                    userRole: "rider",
-                    isFetchingUserSessionLoading: false,
-                  });
-                  break;
-                case "driver":
-                  set({
-                    driverProfile: data.data as DriverProfile,
-                    userRole: "driver",
-                    isFetchingUserSessionLoading: false,
-                  });
-                  break;
-                case "user":
-                  set({
-                    userProfile: data.data as UserProfile,
-                    userRole: "user",
-                    isFetchingUserSessionLoading: false,
-                  });
-                  break;
-                default:
-                  set({
-                    userProfile: undefined,
-                    driverProfile: undefined,
-                    adminProfile: undefined,
-                    riderProfile: undefined,
-                    isFetchingUserSessionLoading: false,
-                  });
-              }
+              const role = (data.data as { role?: string }).role ?? "";
+              set({
+                currentUser: data.data as CurrentUser,
+                userRole: role,
+                isFetchingUserSessionLoading: false,
+              });
             }
           },
+
           fetchVehicleViaClass: async (vehicleClass) => {
             const { data, error } =
               await requests.user.getVehiclesByClass(vehicleClass);
@@ -538,20 +501,13 @@ export const useSession = create<Session>()(
         name: "along-session-store",
         storage: createJSONStorage(() => localStorage),
         partialize: (state) => ({
-          adminProfile: state.adminProfile,
-          userProfile: state.userProfile,
-          driverProfile: state.driverProfile,
-          riderProfile: state.riderProfile,
+          currentUser: state.currentUser,
+          userRole: state.userRole,
         }),
       },
     ),
   ),
 );
 
-export const useSessions = <TResult>(
-  selector: SelectorFn<Session, TResult>,
-) => {
-  const state = useSession(selector);
-
-  return state;
-};
+export const useSessions = <TResult>(selector: SelectorFn<Session, TResult>) =>
+  useSession(selector);

@@ -9,7 +9,8 @@ import {
 } from "@/components";
 import { cn } from "@/lib";
 import { useSession } from "@/store";
-import {  AshForwardIcon } from "@public/svgs";
+import type { RiderProfile } from "@/types";
+import { AshForwardIcon } from "@public/svgs";
 import Link from "next/link";
 import { useState } from "react";
 import { useShallow } from "zustand/shallow";
@@ -20,13 +21,13 @@ const Page = () => {
   );
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
-  const { riderProfile } = useSession(
+  const { currentUser } = useSession(
     useShallow((state) => ({
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
-
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   return (
     <div className="flex flex-col gap-5">

@@ -2,7 +2,7 @@
 
 import { ConfirmActionModal, RiderInformationModal } from "@/components/";
 import { useAdmin } from "@/store";
-import Image from "next/image";
+import { ProfileAvatar } from "@/components";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useState } from "react";
 import {
@@ -32,6 +32,7 @@ const Page = () => {
   const [kycProcessing, setKycProcessing] = useState<string | null>(null);
 
   const {
+    isLoading,
     actions: {
       getAllRiders,
       getSuspendedRiders,
@@ -45,6 +46,7 @@ const Page = () => {
     pendingKyc,
   } = useAdmin(
     useShallow((state) => ({
+      isLoading: state.isLoading,
       actions: state.actions,
       allRiders: state.allRiders,
       suspendedRiders: state.suspendedRiders,
@@ -130,7 +132,12 @@ const Page = () => {
       {/* Active riders */}
       {activeTab === "active" && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {filteredRiders.length === 0 ? (
+          {isLoading && allRiders.length === 0 ? (
+            <div className="flex items-center justify-center py-20 gap-3">
+              <Loader2 size={22} className="animate-spin text-primary" />
+              <p className="text-sm text-gray-400">Loading riders…</p>
+            </div>
+          ) : filteredRiders.length === 0 ? (
             <EmptyState icon={Users} message="No active riders found" />
           ) : (
             <div className="overflow-x-auto">
@@ -290,19 +297,13 @@ const Page = () => {
                         }
                         className="flex items-center gap-3 min-w-0 flex-1 text-left"
                       >
-                        {rider.profilePictureUri ? (
-                          <Image
-                            src={rider.profilePictureUri}
-                            alt={`${rider.firstName} ${rider.lastName}`}
-                            width={36}
-                            height={36}
-                            className="size-9 rounded-xl object-cover shrink-0"
-                          />
-                        ) : (
-                          <div className="size-9 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
-                            <User size={16} className="text-violet-500" />
-                          </div>
-                        )}
+                        <ProfileAvatar
+                          src={rider.profilePictureUri}
+                          firstName={rider.firstName}
+                          lastName={rider.lastName}
+                          size={36}
+                          className="size-9 rounded-xl"
+                        />
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900 truncate">
                             {rider.firstName} {rider.lastName}

@@ -18,3 +18,4 @@ export * from "./payment-success-page";
 export * from "./two-factor-flow";
 export * from "./password-input";
 export * from "./phone-input";
+export * from "./profile-avatar";

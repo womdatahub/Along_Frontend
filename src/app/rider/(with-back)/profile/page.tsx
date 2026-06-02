@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "@/store";
+import type { RiderProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
 import {
   Mail,
@@ -23,14 +24,15 @@ import { toast } from "sonner";
 
 const Page = () => {
   const {
-    riderProfile,
+    currentUser,
     actions: { updateRiderDetails },
   } = useSession(
     useShallow((state) => ({
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const activeProfile = riderProfile
     ? {
@@ -258,7 +260,7 @@ export default Page;
 
 /*  License row  */
 
-type RiderProfileShape = ReturnType<typeof useSession.getState>["riderProfile"];
+type RiderProfileShape = RiderProfile | undefined;
 
 function LicenseRow({ riderProfile }: { riderProfile: RiderProfileShape }) {
   const hasLicense = !!(

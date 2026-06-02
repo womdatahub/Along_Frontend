@@ -5,6 +5,7 @@ import {
 } from "@/components";
 import { cn, TDriverBasicInfoSchema } from "@/lib";
 import { useSession } from "@/store";
+import type { DriverProfile, UserProfile } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
@@ -15,18 +16,18 @@ import { Car } from "lucide-react";
 
 const Page = () => {
   const {
-    userProfile,
-    driverProfile,
+    currentUser,
     isLoading,
     actions: { registerDriver },
   } = useSession(
     useShallow((state) => ({
       actions: state.actions,
-      userProfile: state.userProfile,
-      driverProfile: state.driverProfile,
+      currentUser: state.currentUser,
       isLoading: state.isLoading,
     })),
   );
+  const userProfile = currentUser as UserProfile | undefined;
+  const driverProfile = currentUser as DriverProfile | undefined;
 
   const {
     register,

@@ -6,6 +6,7 @@ import {
   updateMobileNumberSchema,
 } from "@/lib";
 import { useSession } from "@/store";
+import type { RiderProfile } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -14,16 +15,17 @@ import { useShallow } from "zustand/shallow";
 const Page = () => {
   const router = useRouter();
   const {
-    riderProfile,
+    currentUser,
     isLoading,
     actions: { updateRiderDetails },
   } = useSession(
     useShallow((state) => ({
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       isLoading: state.isLoading,
       actions: state.actions,
     })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const {
     register,

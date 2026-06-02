@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components";
+import { Button, ProfileAvatar } from "@/components";
 import { FilledGreenStarIcon } from "@public/svgs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useSession, useRental } from "@/store";
+import type { DriverProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
-import Image from "next/image";
 import { useEffect } from "react";
 import {
   Car,
@@ -40,14 +40,15 @@ const Page = () => {
   const router = useRouter();
 
   const {
-    driverProfile,
+    currentUser,
     actions: { logOut },
   } = useSession(
     useShallow((state) => ({
-      driverProfile: state.driverProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
 
   const {
     rentalHistory,
@@ -73,14 +74,12 @@ const Page = () => {
           <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-4">
             {/* Driver profile card */}
             <div className="bg-white rounded-2xl p-5 flex items-center gap-4">
-              <Image
-                alt={`${driverProfile?.firstName} ${driverProfile?.lastName}`}
-                src={
-                  driverProfile?.driverProfilePictureUri ?? "/images/camry.png"
-                }
-                width={48}
-                height={48}
-                className="size-12 rounded-full object-cover bg-gray-200 shrink-0"
+              <ProfileAvatar
+                src={driverProfile?.driverProfilePictureUri}
+                firstName={driverProfile?.firstName}
+                lastName={driverProfile?.lastName}
+                size={48}
+                className="size-12 rounded-full"
               />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-black truncate font-heebo">

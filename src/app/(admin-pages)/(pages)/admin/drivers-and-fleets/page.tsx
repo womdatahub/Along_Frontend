@@ -4,12 +4,12 @@ import {
   ConfirmActionModal,
   DriverInformationModal,
   DriverPendingInfoModal,
+  ProfileAvatar,
 } from "@/components/";
 import { useAdmin } from "@/store";
-import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useState } from "react";
-import { Car, Search, Star, UserX } from "lucide-react";
+import { Car, Search, Star, UserX, Loader2 } from "lucide-react";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,6 +18,7 @@ const Page = () => {
   >("active");
 
   const {
+    isLoading,
     actions: {
       getAllDrivers,
       getpendingKyc,
@@ -31,6 +32,7 @@ const Page = () => {
     suspendedDrivers,
   } = useAdmin(
     useShallow((state) => ({
+      isLoading: state.isLoading,
       actions: state.actions,
       pendingKyc: state.pendingKyc,
       allDrivers: state.allDrivers,
@@ -122,7 +124,12 @@ const Page = () => {
       {/* Active drivers */}
       {activeTab === "active" && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {filteredDrivers.length === 0 ? (
+          {isLoading && allDrivers.length === 0 ? (
+            <div className="flex items-center justify-center py-20 gap-3">
+              <Loader2 size={22} className="animate-spin text-primary" />
+              <p className="text-sm text-gray-400">Loading drivers…</p>
+            </div>
+          ) : filteredDrivers.length === 0 ? (
             <EmptyState icon={Car} message="No active drivers found" />
           ) : (
             <div className="overflow-x-auto">
@@ -154,15 +161,12 @@ const Page = () => {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <Image
-                            src={
-                              driver.driver.driverProfilePictureUri ||
-                              "/images/placeholder.jpg"
-                            }
-                            alt={driver.driver.firstName}
-                            width={36}
-                            height={36}
-                            className="size-9 rounded-xl object-cover shrink-0"
+                          <ProfileAvatar
+                            src={driver.driver.driverProfilePictureUri}
+                            firstName={driver.driver.firstName}
+                            lastName={driver.driver.lastName}
+                            size={36}
+                            className="size-9 rounded-xl"
                           />
                           <div>
                             <p className="text-sm font-semibold text-gray-900">
@@ -263,15 +267,12 @@ const Page = () => {
                   className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
                 >
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={
-                        driver.driverProfilePictureUri ||
-                        "/images/placeholder.jpg"
-                      }
-                      alt={`${driver.firstName} ${driver.lastName}`}
-                      width={36}
-                      height={36}
-                      className="size-9 rounded-xl object-cover"
+                    <ProfileAvatar
+                      src={driver.driverProfilePictureUri}
+                      firstName={driver.firstName}
+                      lastName={driver.lastName}
+                      size={36}
+                      className="size-9 rounded-xl"
                     />
                     <div>
                       <p className="text-sm font-semibold text-gray-900">
@@ -312,15 +313,12 @@ const Page = () => {
                   className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
                 >
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={
-                        driver.driver.driverProfilePictureUri ||
-                        "/images/placeholder.jpg"
-                      }
-                      alt="Driver"
-                      width={36}
-                      height={36}
-                      className="size-9 rounded-xl object-cover"
+                    <ProfileAvatar
+                      src={driver.driver.driverProfilePictureUri}
+                      firstName={driver.driver.firstName}
+                      lastName={driver.driver.lastName}
+                      size={36}
+                      className="size-9 rounded-xl"
                     />
                     <div>
                       <p className="text-sm font-semibold text-gray-900">

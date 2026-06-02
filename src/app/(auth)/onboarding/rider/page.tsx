@@ -10,6 +10,7 @@ import {
 import { TRegisterRiderValidator, registerRiderSchema } from "@/lib";
 import { normalizePhoneForForm } from "@/components/shared/phone-input";
 import { useSession } from "@/store";
+import type { UserProfile } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,9 +26,10 @@ const Page = () => {
 
   const {
     isLoading,
-    userProfile,
+    currentUser,
     actions: { registerRider },
   } = useSession((state) => state);
+  const userProfile = currentUser as UserProfile | undefined;
   const {
     register,
     control,
@@ -37,7 +39,6 @@ const Page = () => {
     defaultValues: {
       firstName: "",
       lastName: "",
-      // Pre-format any stored value (E.164, raw digits, etc.) into the display mask
       mobileNumber: normalizePhoneForForm(userProfile?.mobileNumber ?? ""),
     },
     resolver: zodResolver(registerRiderSchema),

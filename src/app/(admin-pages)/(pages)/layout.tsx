@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/store";
+import type { AdminProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
 import { ROLE_DASHBOARD_MAP } from "@/lib";
 import { requests } from "@/lib";
@@ -101,14 +102,15 @@ export default function AdminDashboardLayout({
   const notifPanelRef = useRef<HTMLDivElement>(null);
 
   const {
-    adminProfile,
+    currentUser,
     actions: { logOut },
   } = useSession(
     useShallow((state) => ({
       actions: state.actions,
-      adminProfile: state.adminProfile,
+      currentUser: state.currentUser,
     })),
   );
+  const adminProfile = currentUser as AdminProfile | undefined;
 
   const { userRole } = useSession(
     useShallow((state) => ({ userRole: state.userRole })),

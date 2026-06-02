@@ -4,6 +4,7 @@ import {
   DialogTrigger,
   LoadingSpinner,
   Separator,
+  ProfileAvatar,
 } from "@/components/";
 import { useAdmin } from "@/store";
 import { Car, Check, MapPin, Phone, Star } from "lucide-react";
@@ -37,12 +38,12 @@ const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
           className="max-w-sm md:max-w-lg px-4 py-8"
         >
           <div className="flex items-start gap-3 mb-4">
-            <Image
-              src={driver?.driverProfilePictureUri ?? "/images/placeholder.jpg"}
-              alt={driver?.firstName ?? "Driver profile picture"}
-              className="rounded-full size-28 max-size-28 object-cover"
-              width={120}
-              height={120}
+            <ProfileAvatar
+              src={driver?.driverProfilePictureUri}
+              firstName={driver?.firstName}
+              lastName={driver?.lastName}
+              size={112}
+              className="size-28"
             />
             <div className="flex w-full flex-col gap-5">
               <div className="flex flex-col">
@@ -140,16 +141,19 @@ const DriverInformationModal = ({ trigger, phoneNumber }: Props) => {
               <>
                 <p className="text-base font-bold mb-">Registered Vehicle</p>
                 <div className="flex gap-8">
-                  <Image
-                    src={
-                      activeVehicle.vehicleFrontViewImageUri ??
-                      "/images/placeholder.jpg"
-                    }
-                    alt={"Vehicle front view image"}
-                    className="size-32 bg-gray-200 rounded-lg object-cover"
-                    width={120}
-                    height={120}
-                  />
+                  {activeVehicle.vehicleFrontViewImageUri ? (
+                    <Image
+                      src={activeVehicle.vehicleFrontViewImageUri}
+                      alt="Vehicle front view"
+                      className="size-32 bg-gray-200 rounded-lg object-cover"
+                      width={120}
+                      height={120}
+                    />
+                  ) : (
+                    <div className="size-32 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Car size={32} className="text-gray-300" />
+                    </div>
+                  )}
                   <div className="flex flex-col gap-2">
                     <div>
                       <p className="text-xs text-icon">Car model</p>

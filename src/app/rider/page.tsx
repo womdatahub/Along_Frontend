@@ -3,6 +3,7 @@
 import { Button, NameAvatar } from "@/components";
 import { useEffect } from "react";
 import { usePayment, useRadarMap, useRental, useSession } from "@/store";
+import type { RiderProfile } from "@/types";
 import { WhiteForwardIcon } from "@public/svgs";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,14 +12,15 @@ import { useShallow } from "zustand/shallow";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
-// Radar SDK is large — lazy-load the autocomplete so it doesn't block the
-// rider dashboard initial paint.
 const RadarAutocomplete = dynamic(
   () =>
     import("@/components/shared/radar-map").then((m) => ({
       default: m.RadarAutocomplete,
     })),
-  { ssr: false, loading: () => <span className="text-gray-400 text-sm">Where to?</span> },
+  {
+    ssr: false,
+    loading: () => <span className="text-gray-400 text-sm">Where to?</span>,
+  },
 );
 import {
   Car,
@@ -46,14 +48,15 @@ const Page = () => {
   const router = useRouter();
 
   const {
-    riderProfile,
+    currentUser,
     actions: { logOut },
   } = useSession(
     useShallow((state) => ({
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const {
     autoCompleteAddress,

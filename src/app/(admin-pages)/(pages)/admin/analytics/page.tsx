@@ -24,61 +24,64 @@ import {
   CartesianGrid,
 } from "recharts";
 
-type Period = "7d" | "30d" | "90d" | "1y";
+type Point = { period: string; value: number };
 
 type AnalyticsData = {
-  revenue?: { labels: string[]; values: number[] };
-  rentals?: { labels: string[]; values: number[] };
-  riders?: { labels: string[]; values: number[] };
-  drivers?: { labels: string[]; values: number[] };
-  summary?: {
-    totalRevenue?: number;
-    totalRentals?: number;
-    activeRiders?: number;
-    activeDrivers?: number;
-    revenueGrowth?: number;
-    rentalGrowth?: number;
-    riderGrowth?: number;
-    driverGrowth?: number;
-  };
+  revenue?: Point[];
+  rentalVolume?: Point[];
+  riderSignups?: Point[];
+  driverSignups?: Point[];
 };
 
-const PERIODS: { key: Period; label: string }[] = [
-  { key: "7d", label: "7 days" },
-  { key: "30d", label: "30 days" },
-  { key: "90d", label: "90 days" },
-  { key: "1y", label: "1 year" },
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
-// Placeholder data rendered while real API data loads or is empty
-const PLACEHOLDER_REVENUE = [
-  { name: "Jan", value: 0 },
-  { name: "Feb", value: 0 },
-  { name: "Mar", value: 0 },
-  { name: "Apr", value: 0 },
-  { name: "May", value: 0 },
-  { name: "Jun", value: 0 },
-  { name: "Jul", value: 0 },
-];
+// Backend periods are "YYYY-MM" (monthly series) or "YYYY-MM-DD" (daily series).
+const formatPeriod = (period: string): string => {
+  const parts = period.split("-");
+  if (parts.length === 3) {
+    return `${MONTHS[Number(parts[1]) - 1] ?? ""} ${Number(parts[2])}`;
+  }
+  if (parts.length === 2) {
+    return MONTHS[Number(parts[1]) - 1] ?? period;
+  }
+  return period;
+};
 
-const PLACEHOLDER_RENTALS = [
-  { name: "Mon", value: 0 },
-  { name: "Tue", value: 0 },
-  { name: "Wed", value: 0 },
-  { name: "Thu", value: 0 },
-  { name: "Fri", value: 0 },
-  { name: "Sat", value: 0 },
-  { name: "Sun", value: 0 },
-];
+const sumValues = (points?: Point[]) =>
+  (points ?? []).reduce((acc, p) => acc + (p.value ?? 0), 0);
+
+// Period-over-period growth from the last two entries in a zero-filled series.
+const growthOf = (points?: Point[]): number | undefined => {
+  if (!points || points.length < 2) return undefined;
+  const last = points[points.length - 1].value ?? 0;
+  const prev = points[points.length - 2].value ?? 0;
+  if (prev === 0) return undefined;
+  return ((last - prev) / prev) * 100;
+};
+
+const toChart = (points?: Point[]) =>
+  (points ?? []).map((p) => ({ name: formatPeriod(p.period), value: p.value }));
 
 const Page = () => {
-  const [period, setPeriod] = useState<Period>("30d");
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadAnalytics = async () => {
     setIsLoading(true);
-    const { data } = await requests.admin.getAnalytics(period);
+    const { data } = await requests.admin.getAnalytics();
     setIsLoading(false);
     if (data?.data) {
       setAnalytics(data.data as AnalyticsData);
@@ -86,59 +89,54 @@ const Page = () => {
   };
 
   useEffect(() => {
-    loadAnalytics();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period]);
+    let active = true;
+    requests.admin.getAnalytics().then(({ data }) => {
+      if (!active) return;
+      if (data?.data) setAnalytics(data.data as AnalyticsData);
+      setIsLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const summary = analytics?.summary;
-
-  const revenueData =
-    analytics?.revenue?.labels?.map((label, i) => ({
-      name: label,
-      value: analytics.revenue!.values[i] ?? 0,
-    })) ?? PLACEHOLDER_REVENUE;
-
-  const rentalData =
-    analytics?.rentals?.labels?.map((label, i) => ({
-      name: label,
-      value: analytics.rentals!.values[i] ?? 0,
-    })) ?? PLACEHOLDER_RENTALS;
+  const revenueData = toChart(analytics?.revenue);
+  const rentalData = toChart(analytics?.rentalVolume);
+  const riderData = toChart(analytics?.riderSignups);
+  const driverData = toChart(analytics?.driverSignups);
 
   const stats = [
     {
-      label: "Total Revenue",
-      value:
-        summary?.totalRevenue != null
-          ? `$${summary.totalRevenue.toLocaleString()}`
-          : "—",
+      label: "Revenue (6 mo)",
+      value: `$${sumValues(analytics?.revenue).toLocaleString()}`,
       icon: DollarSign,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
-      growth: summary?.revenueGrowth,
+      growth: growthOf(analytics?.revenue),
     },
     {
-      label: "Total Rentals",
-      value: summary?.totalRentals?.toLocaleString() ?? "—",
+      label: "Rentals (7 days)",
+      value: sumValues(analytics?.rentalVolume).toLocaleString(),
       icon: Activity,
       color: "text-blue-600",
       bg: "bg-blue-50",
-      growth: summary?.rentalGrowth,
+      growth: growthOf(analytics?.rentalVolume),
     },
     {
-      label: "Active Riders",
-      value: summary?.activeRiders?.toLocaleString() ?? "—",
+      label: "New Riders (6 mo)",
+      value: sumValues(analytics?.riderSignups).toLocaleString(),
       icon: Users,
       color: "text-violet-600",
       bg: "bg-violet-50",
-      growth: summary?.riderGrowth,
+      growth: growthOf(analytics?.riderSignups),
     },
     {
-      label: "Active Drivers",
-      value: summary?.activeDrivers?.toLocaleString() ?? "—",
+      label: "New Drivers (6 mo)",
+      value: sumValues(analytics?.driverSignups).toLocaleString(),
       icon: Car,
       color: "text-amber-600",
       bg: "bg-amber-50",
-      growth: summary?.driverGrowth,
+      growth: growthOf(analytics?.driverSignups),
     },
   ];
 
@@ -154,30 +152,13 @@ const Page = () => {
             Platform performance metrics and growth trends
           </p>
         </div>
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          {/* Period selector */}
-          <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden">
-            {PERIODS.map((p) => (
-              <button
-                key={p.key}
-                onClick={() => setPeriod(p.key)}
-                className={`px-3 py-2 text-xs font-semibold transition-colors ${
-                  period === p.key
-                    ? "bg-primary text-white"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={loadAnalytics}
-            className="flex items-center gap-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-xl transition-colors"
-          >
-            <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-          </button>
-        </div>
+        <button
+          onClick={loadAnalytics}
+          className="flex items-center gap-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-xl transition-colors self-start sm:self-auto"
+        >
+          <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+          Refresh
+        </button>
       </div>
 
       {/* Summary cards */}
@@ -228,9 +209,7 @@ const Page = () => {
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-900">Revenue</p>
-              <p className="text-xs text-gray-400">
-                Platform earnings over time
-              </p>
+              <p className="text-xs text-gray-400">Last 6 months</p>
             </div>
           </div>
           <div className="h-52">
@@ -297,9 +276,7 @@ const Page = () => {
               <p className="text-sm font-semibold text-gray-900">
                 Rental Volume
               </p>
-              <p className="text-xs text-gray-400">
-                Number of completed rentals
-              </p>
+              <p className="text-xs text-gray-400">Last 7 days</p>
             </div>
           </div>
           <div className="h-52">
@@ -358,18 +335,15 @@ const Page = () => {
               <p className="text-sm font-semibold text-gray-900">
                 Rider Growth
               </p>
-              <p className="text-xs text-gray-400">New rider registrations</p>
+              <p className="text-xs text-gray-400">
+                New rider registrations · last 6 months
+              </p>
             </div>
           </div>
           <div className="h-44">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={
-                  analytics?.riders?.labels?.map((label, i) => ({
-                    name: label,
-                    value: analytics.riders!.values[i] ?? 0,
-                  })) ?? PLACEHOLDER_REVENUE
-                }
+                data={riderData}
                 margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
               >
                 <defs>
@@ -423,18 +397,15 @@ const Page = () => {
               <p className="text-sm font-semibold text-gray-900">
                 Driver Growth
               </p>
-              <p className="text-xs text-gray-400">New driver registrations</p>
+              <p className="text-xs text-gray-400">
+                New driver registrations · last 6 months
+              </p>
             </div>
           </div>
           <div className="h-44">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={
-                  analytics?.drivers?.labels?.map((label, i) => ({
-                    name: label,
-                    value: analytics.drivers!.values[i] ?? 0,
-                  })) ?? PLACEHOLDER_REVENUE
-                }
+                data={driverData}
                 margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
               >
                 <defs>

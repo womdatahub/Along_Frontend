@@ -7,10 +7,10 @@ import { useSession } from "./use-session";
 import { LoadingComponent } from "@/components";
 import { useShallow } from "zustand/shallow";
 import { AUTH_ONLY_ROUTES, PUBLIC_ROUTES, ROLE_DASHBOARD_MAP } from "@/lib";
+import type { DriverProfile, RiderProfile } from "@/types";
 
 /**
  * Determines the onboarding redirect for a driver based on profile completeness.
- * Returns a path string if the driver needs to complete a step, or null if fully onboarded.
  */
 const getDriverOnboardingRedirect = (
   driverProfile:
@@ -46,8 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const {
     userRole,
     isFetchingUserSessionLoading,
-    driverProfile,
-    riderProfile,
+    currentUser,
     services,
     actions: {
       fetchUserDetails,
@@ -58,12 +57,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useShallow((state) => ({
       userRole: state.userRole,
       isFetchingUserSessionLoading: state.isFetchingUserSessionLoading,
-      driverProfile: state.driverProfile,
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       services: state.services,
       actions: state.actions,
     })),
   );
+
+  const driverProfile = currentUser as DriverProfile | undefined;
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const isPublic = useMemo(
     () => PUBLIC_ROUTES.includes(pathname as (typeof PUBLIC_ROUTES)[number]),

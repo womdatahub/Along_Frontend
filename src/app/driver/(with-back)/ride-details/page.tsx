@@ -3,6 +3,7 @@
 import { Button, Card, CardContent, HeadingHeebo } from "@/components";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCommunication, useRental, useSession } from "@/store";
+import type { DriverProfile } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
@@ -25,9 +26,10 @@ const Page = () => {
   const startConversation = useCommunication(
     (state) => state.actions.startConversation,
   );
-  const { driverProfile } = useSession(
-    useShallow((state) => ({ driverProfile: state.driverProfile })),
+  const { currentUser } = useSession(
+    useShallow((state) => ({ currentUser: state.currentUser })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
 
   useEffect(() => {
     if (rentalId) fetchRentalDetails(rentalId);

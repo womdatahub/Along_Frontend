@@ -7,6 +7,7 @@ import {
   Car,
   Users,
   ShieldAlert,
+  DollarSign,
   Clock,
   Activity,
   ArrowUpRight,
@@ -14,140 +15,117 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+type DashboardMetrics = {
+  totals: {
+    totalRiders: number;
+    totalDrivers: number;
+    totalRentals: number;
+    totalRides: number;
+    totalRevenue: number;
+    totalSos: number;
+  };
+  operationalMetrics: {
+    rushSlaMet: number;
+    availabilityRate: number;
+    incidentRate: number;
+  };
+  queueOverview: {
+    rushRequests: number;
+    scheduledRentals: number;
+    instantRentals: number;
+    pendingRefunds: number;
+    pendingKycs: number;
+  };
+};
+
+function castMetrics(
+  raw: Record<string, unknown> | null,
+): DashboardMetrics | null {
+  if (!raw) return null;
+  return raw as unknown as DashboardMetrics;
+}
+
 const Page = () => {
   const {
-    allDrivers,
-    allRiders,
-    sosAlerts,
-    activeRentals,
-    pendingKyc,
-    actions: {
-      getAllDrivers,
-      getAllRiders,
-      getSOSAlerts,
-      getActiveRentals,
-      getpendingKyc,
-    },
+    dashboardMetrics: rawMetrics,
+    isLoading,
+    actions: { getAdminDashboardDetails },
   } = useAdmin(
     useShallow((state) => ({
+      dashboardMetrics: state.dashboardMetrics,
+      isLoading: state.isLoading,
       actions: state.actions,
-      allDrivers: state.allDrivers,
-      allRiders: state.allRiders,
-      sosAlerts: state.sosAlerts,
-      activeRentals: state.activeRentals,
-      pendingKyc: state.pendingKyc,
     })),
   );
 
   useEffect(() => {
-    getAllDrivers();
-    getAllRiders();
-    getSOSAlerts();
-    getActiveRentals();
-    getpendingKyc();
+    getAdminDashboardDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const openSOSCount = sosAlerts.filter(
-    (a) => !a.status || a.status === "open" || a.status === "active",
-  ).length;
+  const m = castMetrics(rawMetrics);
 
-  const pendingKycRecord = pendingKyc as unknown as Record<
-    string,
-    unknown[]
-  > | null;
-  const kycCount =
-    (Array.isArray(pendingKycRecord?.riderLicenses)
-      ? pendingKycRecord.riderLicenses.length
-      : 0) +
-    (Array.isArray(pendingKycRecord?.vehicles)
-      ? pendingKycRecord.vehicles.length
-      : 0);
+  const totalDrivers = m?.totals.totalDrivers ?? 0;
+  const totalRiders = m?.totals.totalRiders ?? 0;
+  const totalRentals = m?.totals.totalRentals ?? 0;
+  const totalSos = m?.totals.totalSos ?? 0;
+  const totalRevenue = m?.totals.totalRevenue ?? 0;
 
-  // Derive recent activity from live store data
-  type ActivityItem = {
-    title: string;
-    description: string;
-    time: string;
-    icon: React.ElementType;
-    iconBg: string;
-    iconColor: string;
-  };
+  const rushSlaMet = m?.operationalMetrics.rushSlaMet ?? 0;
+  const availabilityRate = m?.operationalMetrics.availabilityRate ?? 0;
+  const incidentRate = m?.operationalMetrics.incidentRate ?? 0;
 
-  const recentActivity: ActivityItem[] = [
-    ...sosAlerts
-      .filter((a) => a.status === "resolved" || a.status === "closed")
-      .slice(0, 2)
-      .map((a) => ({
-        title: "SOS alert resolved",
-        description: `Alert #${a._id ?? a.id ?? "—"} cleared`,
-        time: a.timeStamp
-          ? new Date(a.timeStamp).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "—",
-        icon: ShieldAlert,
-        iconBg: "bg-rose-50",
-        iconColor: "text-rose-600",
-      })),
-    ...sosAlerts
-      .filter((a) => !a.status || a.status === "open" || a.status === "active")
-      .slice(0, 2)
-      .map((a) => ({
-        title: "Open SOS alert",
-        description: `Alert #${a._id ?? a.id ?? "—"} requires attention`,
-        time: a.timeStamp
-          ? new Date(a.timeStamp).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "—",
-        icon: ShieldAlert,
-        iconBg: "bg-amber-50",
-        iconColor: "text-amber-600",
-      })),
-  ].slice(0, 4);
+  const rushRequests = m?.queueOverview.rushRequests ?? 0;
+  const scheduledRentals = m?.queueOverview.scheduledRentals ?? 0;
+  const pendingRefunds = m?.queueOverview.pendingRefunds ?? 0;
+  const pendingKycs = m?.queueOverview.pendingKycs ?? 0;
+
+  const dash = (v: number | string) => (isLoading ? "—" : v);
 
   const stats = [
     {
       label: "Total Drivers",
-      value: allDrivers.length,
+      value: dash(totalDrivers),
       icon: Car,
       color: "text-blue-600",
       bg: "bg-blue-50",
-      trend: `${allDrivers.length} registered`,
+      trend: isLoading ? "Loading…" : `${totalDrivers} registered`,
       trendUp: true,
     },
     {
       label: "Total Riders",
-      value: allRiders.length,
+      value: dash(totalRiders),
       icon: Users,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
-      trend: `${allRiders.length} registered`,
+      trend: isLoading ? "Loading…" : `${totalRiders} registered`,
       trendUp: true,
     },
     {
-      label: "Active Rentals",
-      value: activeRentals.length,
-      icon: Activity,
+      label: "Total Revenue",
+      value: isLoading
+        ? "—"
+        : `$${totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      icon: DollarSign,
       color: "text-violet-600",
       bg: "bg-violet-50",
-      trend:
-        activeRentals.length > 0
-          ? `${activeRentals.length} ongoing`
-          : "None ongoing",
-      trendUp: activeRentals.length > 0,
+      trend: isLoading
+        ? "Loading…"
+        : `${totalRentals} rental${totalRentals !== 1 ? "s" : ""}`,
+      trendUp: totalRevenue > 0,
     },
     {
       label: "Open SOS",
-      value: openSOSCount,
+      value: dash(totalSos),
       icon: ShieldAlert,
       color: "text-rose-600",
       bg: "bg-rose-50",
-      trend: openSOSCount > 0 ? `${openSOSCount} unresolved` : "All resolved",
-      trendUp: openSOSCount === 0,
+      trend: isLoading
+        ? "Loading…"
+        : totalSos > 0
+          ? `${totalSos} unresolved`
+          : "All resolved",
+      trendUp: totalSos === 0,
     },
   ];
 
@@ -155,28 +133,28 @@ const Page = () => {
     {
       label: "Rush requests",
       description: "Approaching SLA deadline",
-      count: 0,
+      count: rushRequests,
       dotColor: "bg-rose-500",
       countColor: "text-rose-600",
     },
     {
       label: "Scheduled rentals",
       description: "Need assignment in 48h",
-      count: activeRentals.length,
+      count: scheduledRentals,
       dotColor: "bg-amber-400",
       countColor: "text-amber-600",
     },
     {
       label: "Pending refunds",
       description: "Awaiting approval",
-      count: 0,
+      count: pendingRefunds,
       dotColor: "bg-gray-400",
       countColor: "text-gray-600",
     },
     {
       label: "KYC reviews",
       description: "Documents awaiting verification",
-      count: kycCount,
+      count: pendingKycs,
       dotColor: "bg-blue-500",
       countColor: "text-blue-600",
     },
@@ -185,8 +163,8 @@ const Page = () => {
   const operationalItems = [
     {
       title: "Rush SLA Met",
-      value: "—",
-      subtitle: "No rush rides in window",
+      value: isLoading ? "—" : String(rushSlaMet),
+      subtitle: "Rush SLA performance",
       icon: Clock,
       iconColor: "text-amber-600",
       bg: "bg-amber-50",
@@ -195,8 +173,8 @@ const Page = () => {
     },
     {
       title: "Availability Rate",
-      value: "—",
-      subtitle: "Driver availability data pending",
+      value: isLoading ? "—" : `${availabilityRate}%`,
+      subtitle: "Active driver availability",
       icon: Activity,
       iconColor: "text-blue-600",
       bg: "bg-blue-50",
@@ -205,16 +183,16 @@ const Page = () => {
     },
     {
       title: "Incident Rate",
-      value: openSOSCount === 0 ? "0" : String(openSOSCount),
+      value: isLoading ? "—" : String(incidentRate),
       subtitle:
-        openSOSCount === 0
+        incidentRate === 0
           ? "Zero incidents in last 24h"
-          : `${openSOSCount} open incident(s)`,
+          : `${incidentRate} incident(s) recorded`,
       icon: AlertTriangle,
-      iconColor: openSOSCount === 0 ? "text-emerald-600" : "text-rose-600",
-      bg: openSOSCount === 0 ? "bg-emerald-50" : "bg-rose-50",
-      border: openSOSCount === 0 ? "border-emerald-100" : "border-rose-100",
-      titleColor: openSOSCount === 0 ? "text-emerald-800" : "text-rose-800",
+      iconColor: incidentRate === 0 ? "text-emerald-600" : "text-rose-600",
+      bg: incidentRate === 0 ? "bg-emerald-50" : "bg-rose-50",
+      border: incidentRate === 0 ? "border-emerald-100" : "border-rose-100",
+      titleColor: incidentRate === 0 ? "text-emerald-800" : "text-rose-800",
     },
   ];
 
@@ -267,53 +245,29 @@ const Page = () => {
                 <p className="text-xs text-gray-500 mt-0.5">{q.description}</p>
               </div>
               <span className={`text-sm font-bold ${q.countColor}`}>
-                {q.count}
+                {isLoading ? "—" : q.count}
               </span>
             </div>
           ))}
         </div>
 
-        {/* Recent activity */}
+        {/* Recent activity placeholder */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <p className="font-semibold text-gray-900">Recent Activity</p>
             <TrendingUp size={14} className="text-gray-400" />
           </div>
-          {recentActivity.length > 0 ? (
-            <div className="flex flex-col gap-1">
-              {recentActivity.map((a, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-3 py-3 border-b border-gray-50 last:border-b-0"
-                >
-                  <div
-                    className={`size-8 rounded-xl ${a.iconBg} flex items-center justify-center shrink-0 mt-0.5`}
-                  >
-                    <a.icon size={14} className={a.iconColor} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800">
-                      {a.title}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {a.description}
-                    </p>
-                  </div>
-                  <span className="text-xs text-gray-400 shrink-0">
-                    {a.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center py-8 text-center gap-2">
-              <Activity size={32} className="text-gray-300" />
-              <p className="text-sm text-gray-400">No recent activity</p>
+          <div className="flex-1 flex flex-col items-center justify-center py-8 text-center gap-2">
+            <Activity size={32} className="text-gray-300" />
+            <p className="text-sm text-gray-400">
+              {isLoading ? "Loading activity…" : "No recent activity"}
+            </p>
+            {!isLoading && (
               <p className="text-xs text-gray-300">
                 Activity will appear here as events occur
               </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 

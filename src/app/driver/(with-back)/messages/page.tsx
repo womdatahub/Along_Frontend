@@ -10,14 +10,16 @@ import {
 } from "@/components";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCommunication, useSession } from "@/store";
+import type { DriverProfile } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { Send, Loader2 } from "lucide-react";
 
 const Page = () => {
-  const { driverProfile } = useSession(
-    useShallow((state) => ({ driverProfile: state.driverProfile })),
+  const { currentUser } = useSession(
+    useShallow((state) => ({ currentUser: state.currentUser })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
   const {
     conversations,
     messages,

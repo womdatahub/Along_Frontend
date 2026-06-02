@@ -6,6 +6,7 @@ import {
   updateMobileNumberSchema,
 } from "@/lib";
 import { useSession } from "@/store";
+import type { DriverProfile } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -14,16 +15,17 @@ import { useShallow } from "zustand/shallow";
 const Page = () => {
   const router = useRouter();
   const {
-    driverProfile,
+    currentUser,
     isLoading,
     actions: { updateDriverDetails },
   } = useSession(
     useShallow((state) => ({
-      driverProfile: state.driverProfile,
+      currentUser: state.currentUser,
       isLoading: state.isLoading,
       actions: state.actions,
     })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
 
   const {
     register,

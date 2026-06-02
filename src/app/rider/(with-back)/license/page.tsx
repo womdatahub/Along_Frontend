@@ -8,7 +8,7 @@ import {
   UploadingImagesReusableComponent,
 } from "@/components";
 import { useSession } from "@/store";
-import { ImageType } from "@/types";
+import { ImageType, RiderProfile } from "@/types";
 import { UploadImageIcon } from "@public/svgs";
 import {
   BadgeCheck,
@@ -76,15 +76,16 @@ const Page = () => {
 
   const {
     isLoading,
-    riderProfile,
+    currentUser,
     actions: { submitRiderLicense, uploadImages },
   } = useSession(
     useShallow((state) => ({
       isLoading: state.isLoading,
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       actions: state.actions,
     })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const hasSubmitted = !!(
     riderProfile?.licenseFrontImageUri || riderProfile?.licenseNumber

@@ -25,11 +25,9 @@ import {
   Radio,
 } from "lucide-react";
 import { useSession } from "@/store";
+import type { AdminProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
-
-// ---------------------------------------------------------------------------
 // Menu structure
-// ---------------------------------------------------------------------------
 
 type MenuItem = {
   icon: React.ElementType;
@@ -53,7 +51,11 @@ const MENU_GROUPS: MenuGroup[] = [
   {
     label: "User Management",
     items: [
-      { icon: Car, text: "Drivers & Fleets", path: "/admin/drivers-and-fleets" },
+      {
+        icon: Car,
+        text: "Drivers & Fleets",
+        path: "/admin/drivers-and-fleets",
+      },
       { icon: Users, text: "Riders", path: "/admin/riders" },
       { icon: UserCog, text: "Admins", path: "/admin/admins" },
     ],
@@ -64,7 +66,11 @@ const MENU_GROUPS: MenuGroup[] = [
       { icon: BadgeCheck, text: "KYC Management", path: "/admin/kyc" },
       { icon: FileCheck, text: "License Approvals", path: "/admin/licenses" },
       { icon: Truck, text: "Vehicle Approvals", path: "/admin/vehicles" },
-      { icon: ShieldCheck, text: "Roles & Permissions", path: "/admin/roles-and-permission" },
+      {
+        icon: ShieldCheck,
+        text: "Roles & Permissions",
+        path: "/admin/roles-and-permission",
+      },
     ],
   },
   {
@@ -95,18 +101,16 @@ const BOTTOM_ITEMS: MenuItem[] = [
   { icon: User, text: "Profile", path: "/admin/profile" },
   { icon: Settings, text: "Settings", path: "/admin/settings" },
 ];
-
-// ---------------------------------------------------------------------------
 // Component
-// ---------------------------------------------------------------------------
 
 export const NavMain = () => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const { adminProfile } = useSession(
-    useShallow((s) => ({ adminProfile: s.adminProfile })),
+  const { currentUser } = useSession(
+    useShallow((s) => ({ currentUser: s.currentUser })),
   );
+  const adminProfile = currentUser as AdminProfile | undefined;
 
   const isSuperAdmin = adminProfile?.role === "admin";
   // Future: filter groups/items by role
@@ -146,9 +150,9 @@ export const NavMain = () => {
   );
 };
 
-// ---------------------------------------------------------------------------
+//
 // Single menu button
-// ---------------------------------------------------------------------------
+//
 
 type SMenuButtonProps = {
   item: MenuItem;
@@ -171,7 +175,9 @@ const SMenuButton = ({ item, isCollapsed }: SMenuButtonProps) => {
         isActive && "bg-white/15 text-white",
         isCollapsed && "justify-center",
       )}
-      onClick={() => { if (isMobile) setOpenMobile(false); }}
+      onClick={() => {
+        if (isMobile) setOpenMobile(false);
+      }}
       asChild
     >
       <Link href={item.path} title={isCollapsed ? item.text : undefined}>

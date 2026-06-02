@@ -386,18 +386,6 @@ export const requests = {
     getPendingKyc: (): R<PendingKycType> =>
       callApi(`${BASE_ADMIN}/compliance/kyc/pending`),
 
-    getPendingDriverApprovals: (): R<unknown> =>
-      callApi(`${BASE_ADMIN}/compliance/drivers/pending`),
-
-    /** Process general KYC (userId field) */
-    processKyc: (data: {
-      userId: string;
-      action: "APPROVE" | "REJECT";
-      notes?: string;
-      reason?: string;
-    }): R<unknown> =>
-      callApi(`${BASE_ADMIN}/compliance/kyc`, data as Record<string, unknown>),
-
     /**
      * Process driver KYC/onboarding approval.
      * On APPROVE, admin confirms/corrects the licence expiry date originally
@@ -518,7 +506,7 @@ export const requests = {
 
     //Cost Settings
     /** GET current ride cost settings */
-    getRideCostSettings: (): R<unknown> =>
+    getRideCostSettings: (): R<TMarketPlaceSchema[]> =>
       callApi(`${BASE_ADMIN}/cost-settings/ride`),
 
     /** POST create new ride cost settings (SUPER_ADMIN only) */
@@ -581,15 +569,10 @@ export const requests = {
       return callApi(`${BASE_ADMIN}/vouchers/usage${qs(q)}`);
     },
 
-    //Analytics
-    getAnalytics: (period?: string): R<unknown> =>
-      callApi(
-        `${BASE_ADMIN}/operations/analytics${period ? `?period=${period}` : ""}`,
-      ),
+    getAnalytics: (): R<unknown> =>
+      callApi(`${BASE_ADMIN}/operations/analytics`),
 
-    //Audit Logs
-    // NOTE: No dedicated audit-log endpoint exists in the current admin service.
-    // This is a placeholder for when the backend adds /api/v1/audit-logs.
+    //Activity / Audit Logs
     getAuditLogs: (params?: {
       limit?: number;
       offset?: number;
@@ -599,12 +582,10 @@ export const requests = {
       adminId?: string;
     }): R<unknown> =>
       callApi(
-        `${BASE_ADMIN}/audit-logs${qs(params as Record<string, string>)}`,
+        `${BASE_ADMIN}/activities/recent${qs(params as Record<string, string>)}`,
       ),
 
     //Disputes
-    // NOTE: No dispute route exists in the current admin service.
-    // Placeholder until backend adds dispute management.
     getDisputes: (params?: {
       limit?: number;
       offset?: number;
@@ -623,26 +604,22 @@ export const requests = {
         `${BASE_ADMIN}/disputes/resolve`,
         data as Record<string, unknown>,
       ),
-
-    //Payment Records (admin view via payment service)
-    // Accessed via payment service admin token route — /payment/api/v1/deposit
-    // Default returns ALL payments regardless of status; pass filters to narrow.
     getPaymentRecords: (params?: {
       limit?: number;
       offset?: number;
       pageSize?: number;
       page?: number;
-      /** PaymentStatusEnum: pending | success | failed | refunded */
       status?: string;
-      /** PaymentForEnum: instant | scheduled | rental | ride | logistics | service */
       paymentFor?: string;
-      /** PaymentTypeEnum: withdraw | deposit | charge | refund | transfer | fee | dispute | reward */
       paymentType?: string;
     }): R<PaymentRecord[]> =>
-      callApi(`${BASE_PAY}/deposit${qs(params as Record<string, string>)}`),
+      callApi(`${BASE_ADMIN}/payments${qs(params as Record<string, string>)}`),
 
-    getPaymentStatus: (rideId: string): R<unknown> =>
-      callApi(`${BASE_PAY}/status/${rideId}`),
+    getDriverById: (driverId: string): R<DriverProfile> =>
+      callApi(`${BASE_ADMIN}/users/drivers/details/?driverId=${driverId}`),
+
+    getRiderById: (riderId: string): R<RiderProfile> =>
+      callApi(`${BASE_ADMIN}/users/riders/details/?riderId=${riderId}`),
   },
 
   // PERMISSIONS/admin/api/v1/permissions/...
@@ -708,34 +685,6 @@ export const requests = {
       callApi(
         `${BASE_ADMIN}/permissions/users/revoke`,
         data as Record<string, unknown>,
-      ),
-  },
-
-  // MARKETPLACE(admin cost-settings + vouchers — convenience grouping)
-  marketplace: {
-    getRideCostSettings: (): R<TMarketPlaceSchema[]> =>
-      callApi(`${BASE_ADMIN}/cost-settings/ride`),
-
-    createRideCostSettings: (data: Record<string, unknown>): R<unknown> =>
-      callApi(`${BASE_ADMIN}/cost-settings/ride`, data),
-
-    updateRideCostSettings: (data: Record<string, unknown>): R<unknown> =>
-      callApi(`${BASE_ADMIN}/cost-settings/ride`, data, "PATCH"),
-
-    getVouchers: (): R<PromoVoucherType[]> => callApi(`${BASE_ADMIN}/vouchers`),
-
-    createVoucher: (data: Record<string, unknown>): R<unknown> =>
-      callApi(`${BASE_ADMIN}/vouchers`, data),
-
-    updateVoucher: (data: {
-      voucherId: string;
-      status?: string;
-      [key: string]: unknown;
-    }): R<unknown> =>
-      callApi(
-        `${BASE_ADMIN}/vouchers`,
-        data as Record<string, unknown>,
-        "PATCH",
       ),
   },
 

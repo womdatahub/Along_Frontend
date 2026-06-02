@@ -10,14 +10,16 @@ import {
 } from "@/components";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCommunication, useSession } from "@/store";
+import type { RiderProfile } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { Send, Loader2 } from "lucide-react";
 
 const Page = () => {
-  const { riderProfile } = useSession(
-    useShallow((state) => ({ riderProfile: state.riderProfile })),
+  const { currentUser } = useSession(
+    useShallow((state) => ({ currentUser: state.currentUser })),
   );
+  const riderProfile = currentUser as RiderProfile | undefined;
   const {
     conversations,
     messages,

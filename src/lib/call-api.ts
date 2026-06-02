@@ -53,6 +53,16 @@ export const clearStoredAuthToken = () => {
   window.localStorage.removeItem(authTokenStorageKey);
 };
 
+export const storeAuthToken = (token: string) => {
+  if (typeof window === "undefined" || !token) return;
+  window.localStorage.setItem(authTokenStorageKey, token);
+};
+
+const getStoredAuthToken = (): string | null => {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(authTokenStorageKey);
+};
+
 const resolveMethod = (
   data?: Record<string, unknown> | FormData,
   legacyMethod?: HttpMethod,
@@ -154,6 +164,9 @@ export const callApi = async <T>(
             : { "Content-Type": "application/json" }),
           ...(options?.idempotencyKey
             ? { "Idempotency-Key": options.idempotencyKey }
+            : {}),
+          ...(getStoredAuthToken()
+            ? { Authorization: `Bearer ${getStoredAuthToken()}` }
             : {}),
           ...options?.headers,
         },

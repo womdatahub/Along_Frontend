@@ -37,11 +37,13 @@ const Page = () => {
 
   const {
     pendingKyc,
+    isLoading,
     isProcessingKYC,
     actions: { getpendingKyc, processDriverKYC },
   } = useAdmin(
     useShallow((s) => ({
       pendingKyc: s.pendingKyc,
+      isLoading: s.isLoading,
       isProcessingKYC: s.isProcessingKYC,
       actions: s.actions,
     })),
@@ -137,7 +139,14 @@ const Page = () => {
         {/* Driver KYC list */}
         {activeTab === "drivers" && (
           <div className="divide-y divide-gray-50">
-            {drivers.length === 0 ? (
+            {isLoading && drivers.length === 0 ? (
+              <div className="flex items-center justify-center py-20 gap-3">
+                <Loader2 size={22} className="animate-spin text-primary" />
+                <p className="text-sm text-gray-400">
+                  Loading KYC submissions…
+                </p>
+              </div>
+            ) : drivers.length === 0 ? (
               <EmptyState label="No driver KYC submissions pending" />
             ) : (
               drivers.map((driver: DriverInfo) => {
@@ -277,7 +286,14 @@ const Page = () => {
         {/* Rider KYC list */}
         {activeTab === "riders" && (
           <div className="divide-y divide-gray-50">
-            {riders.length === 0 ? (
+            {isLoading && riders.length === 0 ? (
+              <div className="flex items-center justify-center py-20 gap-3">
+                <Loader2 size={22} className="animate-spin text-primary" />
+                <p className="text-sm text-gray-400">
+                  Loading KYC submissions…
+                </p>
+              </div>
+            ) : riders.length === 0 ? (
               <EmptyState label="No rider KYC submissions pending" />
             ) : (
               riders.map((rider) => {

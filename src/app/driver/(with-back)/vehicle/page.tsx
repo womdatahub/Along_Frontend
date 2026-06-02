@@ -3,7 +3,7 @@
 import { HeadingHeebo, UploadingImagesReusableComponent } from "@/components";
 import { requests } from "@/lib";
 import { useSession } from "@/store";
-import { ImageType, VehicleInfo } from "@/types";
+import { DriverProfile, ImageType, VehicleInfo } from "@/types";
 import { UploadImageIcon } from "@public/svgs";
 import {
   BadgeCheck,
@@ -296,9 +296,10 @@ function VehicleCard({
 
 /*  page  */
 const Page = () => {
-  const { driverProfile } = useSession(
-    useShallow((s) => ({ driverProfile: s.driverProfile })),
+  const { currentUser } = useSession(
+    useShallow((s) => ({ currentUser: s.currentUser })),
   );
+  const driverProfile = currentUser as DriverProfile | undefined;
 
   const [vehicles, setVehicles] = useState<VehicleInfo[]>([]);
   const [loading, setLoading] = useState(true);

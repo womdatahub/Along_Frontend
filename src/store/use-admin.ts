@@ -27,6 +27,7 @@ type AdminType = {
   singleRiderDetails: RiderProfile | null;
   sosAlerts: SosAlert[];
   activeRentals: ActiveRental[];
+  dashboardMetrics: Record<string, unknown> | null;
   actions: {
     getAdminDashboardDetails: () => Promise<void>;
     getActiveRides: () => Promise<void>;
@@ -122,6 +123,7 @@ const initialState = {
   singleRiderDetails: null,
   sosAlerts: [] as SosAlert[],
   activeRentals: [] as ActiveRental[],
+  dashboardMetrics: null as Record<string, unknown> | null,
 };
 
 export const useAdmin = create<AdminType>()(
@@ -129,7 +131,13 @@ export const useAdmin = create<AdminType>()(
     ...initialState,
     actions: {
       getAdminDashboardDetails: async () => {
-        await requests.admin.getMetrics();
+        set({ isLoading: true });
+        const { data, error } = await requests.admin.getMetrics();
+        set({ isLoading: false });
+        if (error) return;
+        if (data?.data) {
+          set({ dashboardMetrics: data.data as Record<string, unknown> });
+        }
       },
       getActiveRides: async () => {
         await requests.admin.getActiveRides();
@@ -360,8 +368,7 @@ export const useAdmin = create<AdminType>()(
       },
       getSingleDriverDetails: async (driverID) => {
         set({ isLoading: true, singleDriverDetails: null });
-        const { data, error } =
-          await requests.user.getDriverByDriverId(driverID);
+        const { data, error } = await requests.admin.getDriverById(driverID);
         if (error) {
           set({ isLoading: false });
           return;
@@ -372,7 +379,7 @@ export const useAdmin = create<AdminType>()(
       },
       getSingleRiderDetails: async (riderId) => {
         set({ isLoading: true, singleRiderDetails: null });
-        const { data, error } = await requests.user.getRiderDetails(riderId);
+        const { data, error } = await requests.admin.getRiderById(riderId);
         if (error) {
           set({ isLoading: false });
           return;

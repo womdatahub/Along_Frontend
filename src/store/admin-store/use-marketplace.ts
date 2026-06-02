@@ -34,7 +34,7 @@ type MarketPlaceType = {
     ) => Promise<void>;
     getVouchers: () => Promise<void>;
     updateVoucher: (voucherDetails: {
-      status: string;
+      status: "ACTIVE" | "DISABLED" | "EXPIRED";
       voucherId: string;
     }) => Promise<void>;
   };
@@ -64,18 +64,17 @@ export const useMarketPlace = create<MarketPlaceType>()(
           ...rest
         } = costSettings;
         set({ isCreatingCostSetting: true });
-        const { data, error } =
-          await requests.marketplace.createRideCostSettings({
-            ...rest,
-            baseFare: Number(baseFare),
-            baseHagglePercentage: Number(baseHagglePercentage),
-            driverToRiderFee: Number(driverToRiderFee),
-            maxHagglePercentage: Number(maxHagglePercentage),
-            platformFeePercentage: Number(platformFeePercentage),
-            waitingChargePerMinute: Number(waitingChargePerMinute),
-            taxPercentage: Number(taxPercentage),
-            surgeMultiplier: Number(surgeMultiplier),
-          });
+        const { data, error } = await requests.admin.createRideCostSettings({
+          ...rest,
+          baseFare: Number(baseFare),
+          baseHagglePercentage: Number(baseHagglePercentage),
+          driverToRiderFee: Number(driverToRiderFee),
+          maxHagglePercentage: Number(maxHagglePercentage),
+          platformFeePercentage: Number(platformFeePercentage),
+          waitingChargePerMinute: Number(waitingChargePerMinute),
+          taxPercentage: Number(taxPercentage),
+          surgeMultiplier: Number(surgeMultiplier),
+        });
         if (error) {
           set({ isCreatingCostSetting: false });
           return false;
@@ -105,19 +104,18 @@ export const useMarketPlace = create<MarketPlaceType>()(
           "id",
         ]);
         set({ isCreatingCostSetting: true });
-        const { data, error } =
-          await requests.marketplace.updateRideCostSettings({
-            ...rest,
-            baseFare: Number(baseFare),
-            baseHagglePercentage: Number(baseHagglePercentage),
-            driverToRiderFee: Number(driverToRiderFee),
-            maxHagglePercentage: Number(maxHagglePercentage),
-            platformFeePercentage: Number(platformFeePercentage),
-            waitingChargePerMinute: Number(waitingChargePerMinute),
-            taxPercentage: Number(taxPercentage),
-            surgeMultiplier: Number(surgeMultiplier),
-            costId: costSetting.id,
-          });
+        const { data, error } = await requests.admin.updateRideCostSettings({
+          ...rest,
+          baseFare: Number(baseFare),
+          baseHagglePercentage: Number(baseHagglePercentage),
+          driverToRiderFee: Number(driverToRiderFee),
+          maxHagglePercentage: Number(maxHagglePercentage),
+          platformFeePercentage: Number(platformFeePercentage),
+          waitingChargePerMinute: Number(waitingChargePerMinute),
+          taxPercentage: Number(taxPercentage),
+          surgeMultiplier: Number(surgeMultiplier),
+          costId: costSetting.id,
+        });
         if (error) {
           set({ isCreatingCostSetting: false });
           return false;
@@ -131,10 +129,9 @@ export const useMarketPlace = create<MarketPlaceType>()(
       },
       activateOrDeactivateCostSetting: async (costSetting) => {
         set({ isCreatingCostSetting: true });
-        const { data, error } =
-          await requests.marketplace.updateRideCostSettings(
-            costSetting as Record<string, unknown>,
-          );
+        const { data, error } = await requests.admin.updateRideCostSettings(
+          costSetting as Record<string, unknown>,
+        );
         if (error) {
           set({ isCreatingCostSetting: false });
           return;
@@ -147,15 +144,14 @@ export const useMarketPlace = create<MarketPlaceType>()(
       },
 
       getRideCostSettings: async () => {
-        const { data, error } =
-          await requests.marketplace.getRideCostSettings();
+        const { data, error } = await requests.admin.getRideCostSettings();
         if (error) return;
         if (data) {
           set({ rideCostSettings: data.data });
         }
       },
       createVoucher: async (voucherDetails) => {
-        const { data, error } = await requests.marketplace.createVoucher({
+        const { data, error } = await requests.admin.createVoucher({
           ...voucherDetails,
           discountValue: Number(voucherDetails.discountValue),
           minOrderAmount: Number(voucherDetails.minOrderAmount),
@@ -171,7 +167,7 @@ export const useMarketPlace = create<MarketPlaceType>()(
         }
       },
       getVouchers: async () => {
-        const { data, error } = await requests.marketplace.getVouchers();
+        const { data, error } = await requests.admin.getVouchers();
         if (error) return;
         if (data) {
           set({ allVouchers: data.data });
@@ -179,7 +175,7 @@ export const useMarketPlace = create<MarketPlaceType>()(
       },
       updateVoucher: async (voucherDetails) => {
         const { data, error } =
-          await requests.marketplace.updateVoucher(voucherDetails);
+          await requests.admin.updateVoucher(voucherDetails);
         if (error) return;
         if (data) {
           await get().actions.getVouchers();

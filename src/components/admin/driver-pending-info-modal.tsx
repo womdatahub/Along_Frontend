@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { User, Shield, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib";
 import { DriverProfile } from "@/types";
+import { ProfileAvatar } from "@/components";
 import Image from "next/image";
 import { useAdmin } from "@/store";
 import { useShallow } from "zustand/shallow";
@@ -27,23 +28,23 @@ function Field({
 }) {
   return (
     <div className={cn("flex flex-col gap-0.5", className)}>
-      <p className='text-sm text-gray-3'>{label}</p>
-      <p className='text-[15px] font-semibold text-gray-900'>{value}</p>
+      <p className="text-sm text-gray-3">{label}</p>
+      <p className="text-[15px] font-semibold text-gray-900">{value}</p>
     </div>
   );
 }
 
 function ImgBox({ label, img }: { label: string; img: string }) {
   return (
-    <div className='flex flex-col items-center gap-1'>
+    <div className="flex flex-col items-center gap-1">
       <Image
         src={img}
         alt={`Driver profile picture`}
         width={36}
         height={36}
-        className='w-16 h-14 sm:w-20 sm:h-16 bg-gray-200 rounded-md object-cover'
+        className="w-16 h-14 sm:w-20 sm:h-16 bg-gray-200 rounded-md object-cover"
       />
-      <span className='text-xs text-primary'>{label}</span>
+      <span className="text-xs text-primary">{label}</span>
     </div>
   );
 }
@@ -51,47 +52,47 @@ function ImgBox({ label, img }: { label: string; img: string }) {
 function PersonalTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
   return (
     <div>
-      <div className='px-5 py-5'>
-        <Image
-          src={driverInfo?.driverProfilePictureUri ?? "/images/placeholder.jpg"}
-          alt={`${driverInfo?.firstName} ${driverInfo?.lastName} profile picture`}
-          width={36}
-          height={36}
-          className='size-9 rounded-full object-cover'
-        />{" "}
+      <div className="px-5 py-5">
+        <ProfileAvatar
+          src={driverInfo?.driverProfilePictureUri}
+          firstName={driverInfo?.firstName}
+          lastName={driverInfo?.lastName}
+          size={36}
+          className="size-9"
+        />
       </div>
       <Separator />
-      <div className='px-5 py-4'>
+      <div className="px-5 py-4">
         <Field
-          label='Name'
+          label="Name"
           value={`${driverInfo?.firstName} ${driverInfo?.lastName}`}
-          className='capitalize'
+          className="capitalize"
         />
       </div>
       <Separator />
-      <div className='px-5 py-4'>
+      <div className="px-5 py-4">
         <Field
-          label='Date of Birth'
+          label="Date of Birth"
           value={driverInfo?.dateOfBirth ?? ""}
-          className='capitalize'
+          className="capitalize"
         />
       </div>
       <Separator />
-      <div className='px-5 py-4'>
+      <div className="px-5 py-4">
         <Field
-          label='Gender'
+          label="Gender"
           value={driverInfo?.gender ?? ""}
-          className='capitalize'
+          className="capitalize"
         />
       </div>
       <Separator />
-      <div className='px-5 py-4 flex items-start justify-between gap-4'>
+      <div className="px-5 py-4 flex items-start justify-between gap-4">
         <Field
-          label='Email Address'
+          label="Email Address"
           value={driverInfo?.email ?? ""}
-          className='lowercase'
+          className="lowercase"
         />
-        <p className='text-xs text-green-600 font-medium shrink-0 mt-5'>
+        <p className="text-xs text-green-600 font-medium shrink-0 mt-5">
           Verified
         </p>
       </div>
@@ -103,39 +104,39 @@ function SsnTab({ driverInfo }: { driverInfo: DriverProfile | null }) {
   // Driver's licence number lives on the driver itself, not on a vehicle.
   return (
     <div>
-      <div className='px-5 py-4'>
+      <div className="px-5 py-4">
         <Field
-          label='Social Security Number'
+          label="Social Security Number"
           value={driverInfo?.driverSocialSecurityNumber ?? ""}
-          className='capitalize'
+          className="capitalize"
         />
       </div>
       <Separator />
-      <div className='px-5 py-4'>
+      <div className="px-5 py-4">
         <Field
           label="Driver's License Number"
           value={driverInfo?.licenseNumber ?? ""}
-          className='capitalize'
+          className="capitalize"
         />
       </div>
       <Separator />
-      <div className='px-5 py-4'>
+      <div className="px-5 py-4">
         <Field
-          label='Issued Date'
-          value='23 – 06 – 2025'
-          className='capitalize'
+          label="Issued Date"
+          value="23 – 06 – 2025"
+          className="capitalize"
         />
       </div>
       <Separator />
-      <div className='px-5 py-4'>
-        <p className='text-sm text-gray-3 mb-3'>Uploads</p>
-        <div className='flex gap-3 flex-wrap'>
+      <div className="px-5 py-4">
+        <p className="text-sm text-gray-3 mb-3">Uploads</p>
+        <div className="flex gap-3 flex-wrap">
           <ImgBox
-            label='Front'
+            label="Front"
             img={driverInfo?.driverLincenseFrontViewUri ?? ""}
           />
           <ImgBox
-            label='Back'
+            label="Back"
             img={driverInfo?.driverLincenseBackViewUri ?? ""}
           />
         </div>
@@ -295,14 +296,14 @@ export const DriverPendingInfoModal = ({
 
       {isLoading ? (
         <DialogContent
-          dialogTitle='Loading'
-          className='max-w-sm md:max-w-210 min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center'
+          dialogTitle="Loading"
+          className="max-w-sm md:max-w-210 min-h-[50vh] p-0 overflow-y-auto overflow-x-hidden rounded-2xl gap-0 [&>button]:hidden flex justify-center items-center"
         >
           <LoadingSpinner />
         </DialogContent>
       ) : (
         <DialogContent
-          dialogTitle='Driver Information'
+          dialogTitle="Driver Information"
           className={cn(
             "p-0 gap-0 overflow-hidden",
             "w-[calc(100vw-20px)] max-w-[calc(100vw-20px)]",
@@ -311,8 +312,8 @@ export const DriverPendingInfoModal = ({
             "[&>button.absolute]:hidden",
           )}
         >
-          <div className='flex flex-col sm:flex-row flex-1 min-h-0 sm:min-h-112/5'>
-            <div className='flex sm:hidden border-b border-[#CCCCCC] shrink-0 bg-white'>
+          <div className="flex flex-col sm:flex-row flex-1 min-h-0 sm:min-h-112/5">
+            <div className="flex sm:hidden border-b border-[#CCCCCC] shrink-0 bg-white">
               {TABS.map(({ key, shortLabel, icon: Icon }) => (
                 <button
                   key={key}
@@ -329,8 +330,8 @@ export const DriverPendingInfoModal = ({
                 </button>
               ))}
             </div>
-            <div className='hidden sm:flex flex-col md:gap-32 justify-between border-r border-[#CCCCCC] p-4 shrink-0'>
-              <div className='flex flex-col gap-1'>
+            <div className="hidden sm:flex flex-col md:gap-32 justify-between border-r border-[#CCCCCC] p-4 shrink-0">
+              <div className="flex flex-col gap-1">
                 {TABS.map(({ key, label, icon: Icon }) => (
                   <button
                     key={key}
@@ -351,17 +352,17 @@ export const DriverPendingInfoModal = ({
                 ))}
               </div>
 
-              <div className='flex flex-col gap-2'>
+              <div className="flex flex-col gap-2">
                 <ApproveLicenseModal
                   trigger={
                     <Button
-                      className='rounded-xl text-sm'
+                      className="rounded-xl text-sm"
                       disabled={isProcessingKYC}
                     >
                       Verify User
                     </Button>
                   }
-                  title='Approve Driver KYC'
+                  title="Approve Driver KYC"
                   submittedExpiryDate={singleDriverDetails?.licenseExpiryDate}
                   subjectName={
                     singleDriverDetails
@@ -380,15 +381,15 @@ export const DriverPendingInfoModal = ({
                 <ConfirmActionModal
                   trigger={
                     <Button
-                      variant='outline'
-                      className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm'
+                      variant="outline"
+                      className="text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm"
                       disabled={isProcessingKYC}
                     >
                       Reject entry
                     </Button>
                   }
-                  title='Reject driver'
-                  description='Are you sure you want to reject this driver? This action cannot be undone.'
+                  title="Reject driver"
+                  description="Are you sure you want to reject this driver? This action cannot be undone."
                   confirmActionFunction={async (values) => {
                     await processDriverKYC({
                       driverId: singleDriverDetails?.driverId ?? "",
@@ -396,21 +397,21 @@ export const DriverPendingInfoModal = ({
                       reason: values?.reason ?? "",
                     });
                   }}
-                  type='reject-kyc'
+                  type="reject-kyc"
                 />
               </div>
             </div>
-            <div className='flex-1 flex flex-col min-h-0 min-w-0'>
-              <div className='flex-1 overflow-y-auto'>{renderContent()}</div>
+            <div className="flex-1 flex flex-col min-h-0 min-w-0">
+              <div className="flex-1 overflow-y-auto">{renderContent()}</div>
 
-              <div className='sm:hidden shrink-0 border-t border-gray-200 p-4 flex flex-col gap-2 bg-white'>
+              <div className="sm:hidden shrink-0 border-t border-gray-200 p-4 flex flex-col gap-2 bg-white">
                 <ApproveLicenseModal
                   trigger={
-                    <Button className='rounded-xl text-sm w-full'>
+                    <Button className="rounded-xl text-sm w-full">
                       Verify User
                     </Button>
                   }
-                  title='Approve Driver KYC'
+                  title="Approve Driver KYC"
                   submittedExpiryDate={singleDriverDetails?.licenseExpiryDate}
                   subjectName={
                     singleDriverDetails
@@ -429,15 +430,15 @@ export const DriverPendingInfoModal = ({
                 <ConfirmActionModal
                   trigger={
                     <Button
-                      variant='outline'
-                      className='text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm w-full'
+                      variant="outline"
+                      className="text-red-500 border-red-500 hover:text-red-500 hover:bg-transparent rounded-xl text-sm w-full"
                       disabled={isProcessingKYC}
                     >
                       Reject entry
                     </Button>
                   }
-                  title='Reject driver'
-                  description='Are you sure you want to reject this driver? This action cannot be undone.'
+                  title="Reject driver"
+                  description="Are you sure you want to reject this driver? This action cannot be undone."
                   confirmActionFunction={async (values) => {
                     await processDriverKYC({
                       driverId: singleDriverDetails?.userId ?? "",
@@ -445,7 +446,7 @@ export const DriverPendingInfoModal = ({
                       reason: values?.reason ?? "",
                     });
                   }}
-                  type='reject-kyc'
+                  type="reject-kyc"
                 />
               </div>
             </div>
