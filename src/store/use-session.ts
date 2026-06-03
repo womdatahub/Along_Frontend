@@ -71,8 +71,34 @@ type Session = {
       email?: string;
       mobileNumber?: string;
       password: string;
-    }) => Promise<string>;
+    }) => Promise<{ role: string; requires2fa?: boolean; mfaToken?: string }>;
     logOut: () => Promise<void>;
+    verify2FALogin: (data: {
+      mfaToken: string;
+      otp: string;
+    }) => Promise<string>;
+    initiate2FA: () => Promise<{
+      secretBase32: string;
+      otpauthUrl: string;
+    } | null>;
+    verify2FAEnable: (otp: string) => Promise<string[] | null>;
+    disable2FA: (otp: string) => Promise<boolean>;
+    regenerateBackupCodes: (otp: string) => Promise<string[] | null>;
+    activateVehicle: (
+      vehicleId: string,
+      rentalModes?: Array<"SELF_DRIVE" | "WITH_DRIVER">,
+    ) => Promise<boolean>;
+    deactivateVehicle: (vehicleId: string) => Promise<boolean>;
+    updateNotificationPreferences: (
+      prefs: Partial<{
+        emailAlerts: boolean;
+        smsAlerts: boolean;
+        pushNotifications: boolean;
+        systemUpdates: boolean;
+        bookingAlerts: boolean;
+        loginAlerts: boolean;
+      }>,
+    ) => Promise<boolean>;
     verifyOtp: (data?: {
       email?: string;
       mobileNumber?: string;
@@ -218,14 +244,29 @@ export const useSession = create<Session>()(
             const { data, error } = await requests.user.login(loginData);
             if (error) {
               set({ isLoading: false, userRole: "" });
-              return "";
+              return { role: "" };
             }
             if (data) {
-              if (data.data.accessToken) storeAuthToken(data.data.accessToken);
+              const payload = data.data as {
+                requires2fa?: boolean;
+                mfaToken?: string;
+                accessToken?: string;
+                userRole?: string;
+              };
+              if (payload.requires2fa) {
+                set({ isLoading: false });
+                return {
+                  role: "2fa_required",
+                  requires2fa: true,
+                  mfaToken: payload.mfaToken,
+                };
+              }
+              if (payload.accessToken) storeAuthToken(payload.accessToken);
               await get().actions.fetchUserDetails(false);
-              set({ isLoading: false, userRole: data.data.userRole });
+              set({ isLoading: false, userRole: payload.userRole ?? "" });
+              return { role: payload.userRole ?? "" };
             }
-            return data?.data.userRole as string;
+            return { role: "" };
           },
 
           logOut: async () => {
@@ -235,6 +276,87 @@ export const useSession = create<Session>()(
             await useRental.persist.clearStorage();
             clearStoredAuthToken();
             set({ ...initialState, isFetchingUserSessionLoading: false });
+          },
+
+          verify2FALogin: async ({ mfaToken, otp }) => {
+            set({ isLoading: true });
+            const { data, error } = await requests.user.verify2FALogin({
+              mfaToken,
+              otp,
+            });
+            if (error || !data) {
+              set({ isLoading: false });
+              return "";
+            }
+            const payload = data.data as {
+              accessToken?: string;
+              userRole?: string;
+            };
+            if (payload.accessToken) storeAuthToken(payload.accessToken);
+            await get().actions.fetchUserDetails(false);
+            set({ isLoading: false, userRole: payload.userRole ?? "" });
+            return payload.userRole ?? "";
+          },
+
+          initiate2FA: async () => {
+            const { data, error } = await requests.user.initiate2FA();
+            if (error || !data) return null;
+            return data.data as { secretBase32: string; otpauthUrl: string };
+          },
+
+          verify2FAEnable: async (otp) => {
+            const { data, error } = await requests.user.verify2FAEnable({
+              otp,
+            });
+            if (error || !data) return null;
+            const d = data.data as { backupCodes?: string[] };
+            return d.backupCodes ?? null;
+          },
+
+          disable2FA: async (otp) => {
+            const { error } = await requests.user.disable2FA({ otp });
+            return !error;
+          },
+
+          regenerateBackupCodes: async (otp) => {
+            const { data, error } = await requests.user.regenerateBackupCodes({
+              otp,
+            });
+            if (error || !data) return null;
+            const d = data.data as { backupCodes?: string[] };
+            return d.backupCodes ?? null;
+          },
+
+          activateVehicle: async (vehicleId, rentalModes) => {
+            const { data, error } = await requests.user.activateVehicle(
+              vehicleId,
+              rentalModes ? { rentalModes } : undefined,
+            );
+            if (error) return false;
+            if (data) {
+              toast.success("Vehicle activated");
+              await get().actions.fetchUserDetails(false);
+            }
+            return true;
+          },
+
+          deactivateVehicle: async (vehicleId) => {
+            const { data, error } =
+              await requests.user.deactivateVehicle(vehicleId);
+            if (error) return false;
+            if (data) {
+              toast.success("Vehicle deactivated");
+              await get().actions.fetchUserDetails(false);
+            }
+            return true;
+          },
+
+          updateNotificationPreferences: async (prefs) => {
+            const { error } =
+              await requests.user.updateNotificationPreferences(prefs);
+            if (error) return false;
+            toast.success("Preferences saved");
+            return true;
           },
 
           registerUser: async (registerUserData) => {

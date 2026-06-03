@@ -27,14 +27,13 @@ const Page = () => {
   });
 
   const onSubmit = async (values: TSignInValidator) => {
-    await login(values).then((val) => {
-      if (!val) return;
-      if (val !== "admin") {
-        toast.error("This account does not have admin access.");
-        return;
-      }
-      router.push("/admin");
-    });
+    const result = await login(values);
+    if (!result.role) return;
+    if (result.role !== "admin") {
+      toast.error("This account does not have admin access.");
+      return;
+    }
+    router.push("/admin");
   };
 
   return (
