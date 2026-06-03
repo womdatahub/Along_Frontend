@@ -1,7 +1,6 @@
-import { Button, LogoComponent } from "@/components";
+import { LogoComponent } from "@/components";
 import {
   WhiteFacebookIcon,
-  WhiteForwardIcon,
   WhiteInstagramIcon,
   WhiteLinkedInIcon,
   WhiteXIcon,
@@ -9,81 +8,116 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
+const SOCIAL_LINKS = [
+  { href: "https://www.x.com", icon: WhiteXIcon, label: "X" },
+  {
+    href: "https://www.instagram.com",
+    icon: WhiteInstagramIcon,
+    label: "Instagram",
+  },
+  {
+    href: "https://www.facebook.com",
+    icon: WhiteFacebookIcon,
+    label: "Facebook",
+  },
+  {
+    href: "https://www.linkedin.com",
+    icon: WhiteLinkedInIcon,
+    label: "LinkedIn",
+  },
+];
+
+const NAV_LINKS = [
+  { href: "/about", label: "About" },
+  { href: "/rent-ride", label: "Ride" },
+  { href: "/onboarding", label: "Drive" },
+  { href: "/help", label: "Help & Support" },
+];
+
 export const Footer = () => {
+  const currentYear = new Date().getFullYear();
   return (
-    <footer className='flex flex-col'>
-      <div className='bg-teal-700 text-white py-20 px-6'>
-        <div className='max-w-6xl mx-auto flex flex-col md:flex-row gap-8 justify-between'>
-          <div className='flex flex-col gap-11'>
+    <footer className="flex flex-col">
+      <div className="bg-primary-deep text-white py-16 md:py-20 px-5 md:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 justify-between">
+          {/* Brand column */}
+          <div className="flex flex-col gap-8 md:max-w-xs">
             <LogoComponent type2 />
-            <div className='flex gap-4'>
-              <Button className='border-white border-2 flex items-center gap-4 md:gap-8 justify-between bg-transparent hover:bg-transparent font-semibold text-lg h-12 rounded-full'>
-                <div className='flex gap-2 md:gap-4 items-center'>
+            <p className="text-white/60 text-sm font-light leading-relaxed">
+              Along Cities connects people and places with smart, reliable, and
+              comfortable ride solutions.
+            </p>
+            <div className="flex gap-3">
+              {[
+                { src: "/images/android.png", label: "Android" },
+                { src: "/images/ios.png", label: "Apple" },
+              ].map(({ src, label }) => (
+                <button
+                  key={label}
+                  className="inline-flex items-center gap-2.5 border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 text-sm font-semibold h-11 px-4 rounded-2xl transition-all duration-200"
+                >
                   <Image
-                    src={"/images/android.png"}
-                    alt='app-download'
-                    width={28}
-                    height={32}
-                    className='w-auto'
+                    src={src}
+                    alt={`${label} download`}
+                    width={20}
+                    height={24}
+                    className="w-auto"
                   />
-                  Android
-                </div>
-                <WhiteForwardIcon />
-              </Button>
-              <Button className='border-white border-2 flex items-center gap-4 md:gap-8 justify-between bg-transparent hover:bg-transparent font-semibold text-lg h-12 rounded-full'>
-                <div className='flex gap-2 md:gap-4 items-center'>
-                  <Image
-                    src={"/images/ios.png"}
-                    alt='app-download'
-                    width={28}
-                    height={32}
-                    className='w-auto'
-                  />
-                  Apple
-                </div>
-                <WhiteForwardIcon />
-              </Button>
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className='flex flex-col gap-8'>
-            <div className='flex gap-6 flex-wrap justify-between md:gap-20'>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
-                About
-              </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
-                Ride
-              </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
-                Drive
-              </Link>
-              <Link href='#' className='font-heebo text-sm font-semibold'>
-                Support
-              </Link>
-            </div>
-            <div className='md:self-end justify-between flex items-center gap-5 md:gap-10'>
-              <Link href='https://www.x.com' target='_blank'>
-                <WhiteXIcon />
-              </Link>
-              <Link href='https://www.instagram.com' target='_blank'>
-                <WhiteInstagramIcon />
-              </Link>
-              <Link href='https://www.facebook.com' target='_blank'>
-                <WhiteFacebookIcon />
-              </Link>
-              <Link href='https://www.linkedin.com' target='_blank'>
-                <WhiteLinkedInIcon />
-              </Link>
+          {/* Right column */}
+          <div className="flex flex-col gap-8">
+            <nav className="flex flex-wrap gap-x-10 gap-y-4">
+              {NAV_LINKS.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-white/70 hover:text-white text-sm font-medium font-heebo transition-colors duration-200"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-5">
+              {SOCIAL_LINKS.map(({ href, icon: Icon, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="opacity-60 hover:opacity-100 transition-opacity duration-200"
+                >
+                  <Icon />
+                </Link>
+              ))}
             </div>
           </div>
         </div>
       </div>
-      <div className='bg-white text-black px-6 py-6'>
-        <div className='max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 items-center font-heebo text-xs'>
-          <p>©2025 Along Inc. All Rights Reserved</p>
-          <div className='flex items-center gap-8'>
-            <p>Privacy & Policy</p>
-            <p>Terms & Conditions</p>
+
+      {/* Bottom bar */}
+      <div className="bg-primary-deep/90 border-t border-white/10 text-white/50 px-5 md:px-8 py-5">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3 font-heebo text-xs">
+          <p>© 2025 - {currentYear} Along Inc. All Rights Reserved.</p>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/privacy-policy"
+              className="hover:text-white/80 transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms-of-service"
+              className="hover:text-white/80 transition-colors duration-200"
+            >
+              Terms & Conditions
+            </Link>
           </div>
         </div>
       </div>

@@ -1,8 +1,6 @@
 "use client";
 
-import { Button } from "@/components";
-
-// import { useRouter } from "next/navigation";
+import { FileText, ChevronRight } from "lucide-react";
 
 const terms = [
   {
@@ -63,7 +61,7 @@ const terms = [
   },
   {
     title: "Dispute Resolution",
-    text: "In the event of disputes, users agree to first attempt informal resolution through customer support. We may require arbitration or mediation depending on local laws. Users waive the right to participate in class-action lawsuits where permitted.",
+    text: "In the event of disputes, users agree to first attempt informal resolution through customer support. If unresolved, disputes will be submitted to binding arbitration under the rules of the American Arbitration Association (AAA), unless prohibited by applicable federal or state law. Users waive the right to participate in class-action lawsuits to the extent permitted by law.",
   },
   {
     title: "Account Suspension or Termination",
@@ -79,49 +77,103 @@ const terms = [
   },
   {
     title: "Governing Law",
-    text: "These Terms are governed by the laws of the jurisdiction in which the service operates. Any legal claims must be brought in the appropriate local courts unless arbitration is required.",
+    text: "These Terms are governed by the laws of the United States and the state of Delaware, without regard to conflict-of-law principles. Any legal claims not subject to arbitration must be brought exclusively in the federal or state courts located in the United States.",
   },
 ];
 
 const Page = () => {
-  //   const router = useRouter();
   return (
-    <div className="flex flex-col gap-4 w-[500px] aspect-square overflow-y-scroll text-black font-fustat">
-      <p className="font-bold text-xl text-center sticky top-0 bg-white pb-2">
-        Terms Of Service
-      </p>
-      <div className="flex flex-col gap-3 text-sm text-justify">
-        <p>
-          These Terms of Service explain how our ride-hailing platform works,
-          your rights and responsibilities, and the rules that govern rider and
-          driver use.
-        </p>
-        <div className="flex flex-col gap-3">
-          {terms.map((term, i) => {
-            return (
-              <div key={i} className="flex gap-1 flex-col">
-                <p className="font-bold text-lg">{term.title}</p>
-                <p>{term.text}</p>
-              </div>
-            );
-          })}
+    <div className="min-h-screen bg-background font-fustat">
+      {/* Hero */}
+      <div className="bg-white border-b border-gray-2">
+        <div className="max-w-4xl mx-auto px-5 md:px-8 py-12 md:py-16">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-primaryLight2 flex items-center justify-center">
+              <FileText size={22} className="text-primary" />
+            </div>
+            <div>
+              <p className="text-primary text-xs font-semibold uppercase tracking-widest font-heebo">
+                Legal
+              </p>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-black font-heebo leading-tight">
+                Terms of Service
+              </h1>
+            </div>
+          </div>
+          <p className="text-gray text-sm font-light leading-relaxed max-w-2xl">
+            These Terms of Service explain how our ride-hailing platform works,
+            your rights and responsibilities, and the rules that govern rider
+            and driver use. Last updated: January 2025.
+          </p>
         </div>
       </div>
-      <div className="flex self-end">
-        {/* <Button
-          variant="link"
-          className="text-black font-bold hover:cursor-pointer"
-          //   onClick={() => router.back()}
-        >
-          Back
-        </Button> */}
-        <Button
-          variant="link"
-          className="text-primary font-bold hover:cursor-pointer"
-          //   onClick={() => router.push("/onboarding/services")}
-        >
-          Accept
-        </Button>
+
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-5 md:px-8 py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Table of contents */}
+          <aside className="lg:w-64 shrink-0">
+            <div className="bg-white rounded-2xl p-5 shadow-sm sticky top-24">
+              <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-4">
+                Contents
+              </p>
+              <nav className="flex flex-col gap-1">
+                {terms.map((term, i) => (
+                  <a
+                    key={i}
+                    href={`#term-${i}`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-gray hover:text-black hover:bg-background transition-colors duration-150 group"
+                  >
+                    <ChevronRight
+                      size={10}
+                      className="text-gray-2 group-hover:text-primary transition-colors shrink-0"
+                    />
+                    <span className="truncate">{term.title}</span>
+                  </a>
+                ))}
+              </nav>
+            </div>
+          </aside>
+
+          {/* Sections */}
+          <main className="flex-1 flex flex-col gap-6">
+            {terms.map((term, i) => (
+              <div
+                key={i}
+                id={`term-${i}`}
+                className="bg-white rounded-2xl p-6 shadow-sm scroll-mt-24"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-xs font-bold text-primary/60 font-heebo tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h2 className="font-bold text-base text-black font-heebo">
+                    {term.title}
+                  </h2>
+                </div>
+                <p className="text-sm text-gray font-light leading-relaxed text-justify">
+                  {term.text}
+                </p>
+              </div>
+            ))}
+
+            <div className="bg-primaryLight2 rounded-2xl p-6">
+              <p className="text-sm font-semibold text-black font-heebo mb-1">
+                Questions about these terms?
+              </p>
+              <p className="text-xs text-gray font-light leading-relaxed">
+                Contact our legal team at{" "}
+                <a
+                  href="mailto:legal@alongcities.com"
+                  className="text-primary font-medium hover:text-primary-deep transition-colors"
+                >
+                  legal@alongcities.com
+                </a>{" "}
+                — we typically respond within 48 hours.
+              </p>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

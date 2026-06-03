@@ -1,263 +1,45 @@
 "use client";
-import { HeadingHeebo, RadarAutocomplete, RadarMap } from "@/components";
-import Image from "next/image";
 
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components";
-import { cn, carTypes } from "@/lib";
-import { AccuracyIcon, WhiteForwardIcon } from "@public/svgs";
-import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AddressResult } from "@/types";
+import { Badge, Button, HeadingHeebo } from "@/components";
+import Image from "next/image";
+import Link from "next/link";
 
 const Page = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Ride />
-    </Suspense>
-  );
-};
-const Ride = () => {
-  const [open, setOpen] = useState(false);
-  const [autoCompleteAddress, setAutoCompleteAddress] = useState<
-    AddressResult | undefined
-  >(undefined);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const vehicleType = searchParams.get("vehicleType");
-  const rentalType = searchParams.get("rentalType");
-
-  return (
-    <div className="font-fustat">
-      <section className="pt-68 px-6 text-center bg-background-1 h-211">
-        <div className="flex gap-20 max-w-6xl mx-auto items-center justify-between">
-          <div className="flex flex-col gap-2 w-1/2">
-            <HeadingHeebo className="font-extrabold text-[67px] text-left">
-              Rent a ride
-            </HeadingHeebo>
-            <div className="flex flex-col gap-6">
-              <p className="font-heebo font-light text-lg text-left">
-                Need a car for a few hours or even the whole day? Ride options
-                gives you flexibility without the headaches of traditional
-                rentals
-              </p>
-              <p className="font-heebo font-light text-lg text-left">
-                Pay for only the time you need. choose from Sedans, SUVs or
-                Vans. Drivers are vetted, professional and friendly. Transparent
-                prices - No surprises
-              </p>
-            </div>
-            <div
-              className={cn(
-                "flex items-center gap-8 rounded-2xl",
-                // selectedVehicleType && "bg-primaryLight"
-              )}
-            >
-              <div
-                className={cn(
-                  "flex gap-4 items-center px-4 py-3 bg-white rounded-2xl w-full",
-                  //   selectedVehicleType && "bg-transparent"
-                )}
-              >
-                <AccuracyIcon />
-                <RadarAutocomplete
-                  setAutoCompleteAddress={setAutoCompleteAddress}
-                  placeholder="Pick up location"
-                />
-                {/* <GoogleMapAutoComplete>
-                  <input
-                    className={cn(
-                      "text-sm focus:outline-none focus:ring-0 placeholder:text-placeholder w-full md:w-[375px]"
-                    )}
-                    placeholder='Pick up location'
-                  />
-                </GoogleMapAutoComplete> */}
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant={"default"}
-                      disabled={!autoCompleteAddress}
-                      className="bg-transparent hover:bg-transparent shadow-none border-none cursor-pointer flex items-center gap-3 px-0"
-                    >
-                      <div className="bg-primary rounded-full size-10 flex items-center justify-center">
-                        <WhiteForwardIcon />
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent
-                    dialogTitle="Select a vehicle type: Economy, Comfort, Comfort XL,
-                        Luxury or Luxury XL"
-                    className="sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background-1"
-                    showCloseButton={false}
-                  >
-                    <div className="flex flex-col gap-6">
-                      <div className="flex flex-col pl-7">
-                        <HeadingHeebo className="text-primary font-semibold text-xl text-left">
-                          Ride rental
-                        </HeadingHeebo>
-                        <p className="text-sm">
-                          Please select a ride rental option to continue <br />
-                          your booking
-                        </p>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        {rideRental.map((r) => {
-                          const title = r.title
-                            .toLowerCase()
-                            .replace(/\s+/g, "-");
-                          return (
-                            <Dialog key={r.title}>
-                              <DialogTrigger asChild>
-                                <Button
-                                  // disabled
-                                  onClick={() => {
-                                    router.push(`/ride?rentalType=${title}`);
-                                    // setSelectedRentalType(
-                                    //  title
-                                    // );
-                                  }}
-                                  key={r.title}
-                                  className={cn(
-                                    "flex gap-4 items-center rounded-lg bg-white px-4 h-17.75 hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                                    rentalType === title &&
-                                      "bg-primary text-white",
-                                  )}
-                                >
-                                  <Image
-                                    src={r.image}
-                                    alt={r.title}
-                                    width={40}
-                                    height={40}
-                                  />
-                                  <div className="flex flex-col group-hover:text-white duration-150">
-                                    <p className="font-semibold text-sm">
-                                      {r.title}
-                                    </p>
-                                    {/* <p className='text-xs'>{car.seat} Persons</p> */}
-                                  </div>
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent
-                                dialogTitle=" Select a vehicle type: Economy, Comfort,
-                                    Comfort XL, Luxury or Luxury XL"
-                                className="sm:max-w-106.25 px-4 py-8 rounded-[20px] bg-background-1"
-                                showCloseButton={false}
-                              >
-                                <div className="flex flex-col gap-6">
-                                  <div className="flex flex-col pl-7">
-                                    <HeadingHeebo className="text-primary font-semibold text-xl text-left">
-                                      Vehicle type
-                                    </HeadingHeebo>
-                                    <p className="text-sm">
-                                      Please select a vehicle option to continue{" "}
-                                      <br /> your booking
-                                    </p>
-                                  </div>
-                                  <div className="flex flex-col gap-1">
-                                    {carTypes.map((car) => {
-                                      const title = car.name
-                                        .toLowerCase()
-                                        .replace(/\s+/g, "-");
-                                      return (
-                                        <Button
-                                          // disabled
-                                          onClick={() => {
-                                            router.push(
-                                              `/ride?rentalType=${rentalType}&vehicleType=${title}`,
-                                            );
-                                            // setSelectedVehicleType(
-                                            //   title
-                                            // );
-                                          }}
-                                          key={car.name}
-                                          className={cn(
-                                            "flex gap-4 items-center rounded-lg bg-white px-4 h-17.75 hover:bg-primary/70 cursor-pointer group transition-colors duration-150 justify-normal text-black w-full",
-                                            vehicleType === title &&
-                                              "bg-primary text-white",
-                                          )}
-                                        >
-                                          <Image
-                                            src={"/images/small-car.png"}
-                                            alt={"car"}
-                                            width={40}
-                                            height={40}
-                                          />
-                                          <div className="flex flex-col group-hover:text-white duration-150">
-                                            <p className="font-semibold text-sm">
-                                              {car.name}
-                                            </p>
-                                            <p className="text-xs">
-                                              {car.seat} Persons
-                                            </p>
-                                          </div>
-                                        </Button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-          </div>
-          <div className="flex w-1/2 relative">
-            <Image
-              src="/images/about-woman-bg.png"
-              alt="woman-bg"
-              width={600}
-              height={600}
-              className="z-10 object-contain"
-            />
-            <Image
-              src="/images/about-woman.png"
-              alt="woman"
-              width={490}
-              height={700}
-              className="z-20 absolute w-122.5 h-175 object-contain -top-32"
-            />
+    <div className="font-fustat bg-background min-h-[calc(100vh-80px)]">
+      <section className="px-4 py-12 md:py-24 max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+        <div className="flex flex-col gap-5">
+          <Badge className="w-fit bg-primaryLight2 text-primary hover:bg-primaryLight2">
+            Coming soon
+          </Badge>
+          <HeadingHeebo className="font-extrabold text-5xl md:text-[67px] text-left">
+            Ride-hailing
+          </HeadingHeebo>
+          <p className="font-heebo font-light text-lg text-left">
+            Point-to-point ride-hailing will return when dispatch, driver
+            matching, and live trip tracking are available through the backend.
+            Vehicle rental is live today.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button asChild className="rounded-full w-fit">
+              <Link href="/rent-ride">Rent a vehicle</Link>
+            </Button>
+            <Button asChild variant="secondary" className="rounded-full w-fit">
+              <Link href="/">Back home</Link>
+            </Button>
           </div>
         </div>
-      </section>
-      <section className="py-36 px-6 text-center">
-        <div className="flex flex-col gap-32 max-w-6xl mx-auto items-center justify-between h-full">
-          <div className="h-[40vw] w-full">
-            {/* <GoogleMaps /> */}
-            <RadarMap
-              pickup={
-                autoCompleteAddress?.latitude
-                  ? [
-                      autoCompleteAddress?.longitude ?? 0,
-                      autoCompleteAddress?.latitude ?? 0,
-                    ]
-                  : undefined
-              }
-              pickupName={autoCompleteAddress?.formattedAddress ?? ""}
-              // drop={[
-              //   autoCompleteAddressDrop.longitude,
-              //   autoCompleteAddressDrop.latitude,
-              // ]}
-              // dropName={autoCompleteAddressDrop.formattedAddress}
-            />
-          </div>
-        </div>
+        <Image
+          src="/images/rental.png"
+          alt="Along vehicle rental"
+          width={560}
+          height={420}
+          className="w-full rounded-2xl object-cover bg-white"
+          priority
+        />
       </section>
     </div>
   );
 };
-export default Page;
 
-const rideRental = [
-  { title: "Rent instant ride", image: "/images/instant-ride.png" },
-  { title: "Rent for later", image: "/images/later-ride.png" },
-];
+export default Page;

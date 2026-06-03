@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   productionBrowserSourceMaps: false,
   images: {
     remotePatterns: [
@@ -12,6 +11,15 @@ const nextConfig: NextConfig = {
     ],
   },
   output: "standalone",
+  // Tree-shake icon/animation/chart packages — only import used members
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "recharts",
+      "@stripe/react-stripe-js",
+    ],
+  },
 };
 
 export default nextConfig;

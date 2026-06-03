@@ -19,22 +19,22 @@ export const AppSidebar = ({
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible='icon' {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader
         className={cn(
-          "bg-[#768B8F] pt-9 px-12",
+          "bg-icons pt-9 px-12",
           isCollapsed && "w-full flex justify-center items-center px-0",
         )}
       >
-        <Link href='/'>
+        <Link href="/">
           {isCollapsed ? (
-            <p className='text-lg text-white font-bold'>AL</p>
+            <p className="text-lg text-white font-bold">AL</p>
           ) : (
             <AdminLogoIcon />
           )}
         </Link>
       </SidebarHeader>
-      <SidebarContent className='bg-[#768B8F]'>
+      <SidebarContent className="bg-icons">
         <NavMain />
       </SidebarContent>
     </Sidebar>

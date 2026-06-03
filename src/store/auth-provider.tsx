@@ -7,17 +7,17 @@ import { useSession } from "./use-session";
 import { LoadingComponent } from "@/components";
 import { useShallow } from "zustand/shallow";
 import { AUTH_ONLY_ROUTES, PUBLIC_ROUTES, ROLE_DASHBOARD_MAP } from "@/lib";
+import type { DriverProfile, RiderProfile } from "@/types";
 
 /**
  * Determines the onboarding redirect for a driver based on profile completeness.
- * Returns a path string if the driver needs to complete a step, or null if fully onboarded.
  */
 const getDriverOnboardingRedirect = (
   driverProfile:
     | {
         firstName?: string;
         driverProfilePictureUri?: string;
-        vehicleFrontViewImageUri?: string;
+        isVehicleAdded?: boolean;
       }
     | undefined,
   servicesCount: number,
@@ -28,8 +28,7 @@ const getDriverOnboardingRedirect = (
       ? "/onboarding/services"
       : "/onboarding/documents";
   }
-  if (!driverProfile?.vehicleFrontViewImageUri)
-    return "/onboarding/vehicle-info";
+  if (!driverProfile?.isVehicleAdded) return "/onboarding/vehicle-info";
   return null;
 };
 
@@ -47,8 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const {
     userRole,
     isFetchingUserSessionLoading,
-    driverProfile,
-    riderProfile,
+    currentUser,
     services,
     actions: {
       fetchUserDetails,
@@ -59,12 +57,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useShallow((state) => ({
       userRole: state.userRole,
       isFetchingUserSessionLoading: state.isFetchingUserSessionLoading,
-      driverProfile: state.driverProfile,
-      riderProfile: state.riderProfile,
+      currentUser: state.currentUser,
       services: state.services,
       actions: state.actions,
     })),
   );
+
+  const driverProfile = currentUser as DriverProfile | undefined;
+  const riderProfile = currentUser as RiderProfile | undefined;
 
   const isPublic = useMemo(
     () => PUBLIC_ROUTES.includes(pathname as (typeof PUBLIC_ROUTES)[number]),
@@ -87,11 +87,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleRouteGuards = useCallback(() => {
     if (isFetchingUserSessionLoading) return;
 
-    // Guest trying to access a protected route → redirect to sign-in
     if (!userRole && isProtected) {
+      // Persist intended destination in the URL so it survives page refreshes.
+      // Zustand state is kept as a belt-and-suspenders fallback for the rare
+      // case where the query param is stripped by an intermediate redirect.
       setRouteBeforeRedirect(pathname);
       toast.error("You are not logged in");
-      router.replace("/sign-in");
+      router.replace(`/sign-in?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 

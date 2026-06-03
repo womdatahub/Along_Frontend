@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { SelectorFn } from "@/types";
-import { callApi, instantApiStr } from "@/lib";
+import { comingSoonMessage } from "@/lib";
 import { toast } from "sonner";
 
 type CreateRideBase = {
@@ -44,112 +44,22 @@ const initialState = {
   isLoading: false,
 };
 
+const showRideComingSoon = async (..._args: unknown[]) => {
+  void _args;
+  toast.info(comingSoonMessage);
+};
+
 export const useInstantRide = create<InstantRideType>()(() => ({
   ...initialState,
   actions: {
-    createSoloRide: async (soloRideData) => {
-      const path = instantApiStr("");
-
-      const { data, error } = await callApi(path, soloRideData);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    createSharedRide: async (sharedRideData) => {
-      const path = instantApiStr("");
-
-      const { data, error } = await callApi(path, sharedRideData);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    createRushedRide: async (rushedRideData) => {
-      const path = instantApiStr("");
-
-      const { data, error } = await callApi(path, rushedRideData);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    getRide: async (rideID) => {
-      const path = instantApiStr(`/${rideID}`);
-
-      const { data, error } = await callApi(path);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    updateRide: async (updateRideData, rideID) => {
-      const path = instantApiStr(`/${rideID}`);
-
-      const { data, error } = await callApi(path, updateRideData, "PATCH");
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-
-    getAllRides: async (status) => {
-      const path = instantApiStr(`?status=${status}`);
-
-      const { data, error } = await callApi(path);
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    cancelRide: async (rideID) => {
-      const path = instantApiStr(`/${rideID}`);
-      const { data, error } = await callApi(path, {}, "DELETE");
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
-    deleteRideData: async (rideID) => {
-      const path = instantApiStr(`/${rideID}/delete`);
-      const { data, error } = await callApi(path, {}, "DELETE");
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-      if (data) {
-        console.log(data, path);
-      }
-    },
+    createSoloRide: showRideComingSoon,
+    createSharedRide: showRideComingSoon,
+    createRushedRide: showRideComingSoon,
+    getRide: showRideComingSoon,
+    updateRide: showRideComingSoon,
+    getAllRides: showRideComingSoon,
+    cancelRide: showRideComingSoon,
+    deleteRideData: showRideComingSoon,
   },
 }));
 

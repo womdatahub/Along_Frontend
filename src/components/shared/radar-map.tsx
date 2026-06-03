@@ -1,126 +1,186 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
 import AutocompleteUI from "radar-sdk-js/dist/ui/autocomplete";
 import { AddressResult } from "@/types";
 
-const mapContainerId = "map";
 const publishableKey = process.env.NEXT_PUBLIC_RADAR_API_KEY || "";
 type RadarMapProps = {
   pickup?: [number, number];
   pickupName?: string;
   drop?: [number, number];
   dropName?: string;
+  /** Called when the user drags the pickup marker to a new position */
+  onPickupChange?: (lng: number, lat: number) => void;
 };
-const Map = ({ pickup, drop, dropName, pickupName }: RadarMapProps) => {
-  // console.log(pickup, "pickup");
+
+const Map = ({
+  pickup,
+  drop,
+  dropName,
+  pickupName,
+  onPickupChange,
+}: RadarMapProps) => {
+  const generatedId = useId().replace(/:/g, "");
+  const mapContainerId = `radar-map-${generatedId}`;
+  const [sdkFailed, setSdkFailed] = useState(false);
+  const pickupLng = pickup?.[0];
+  const pickupLat = pickup?.[1];
+  const dropLng = drop?.[0];
+  const dropLat = drop?.[1];
+
+  const addRoute = useCallback(
+    async (
+      map: ReturnType<typeof Radar.ui.map>,
+      pickupCoords: [number, number],
+      dropCoords: [number, number],
+    ) => {
+      try {
+        const resp = await axios.get(
+          "https://api.radar.io/v1/route/directions",
+          {
+            params: {
+              locations: `${pickupCoords[1]},${pickupCoords[0]}|${dropCoords[1]},${dropCoords[0]}`,
+              mode: "car",
+              units: "metric",
+            },
+            headers: { Authorization: publishableKey },
+          },
+        );
+        const route = resp.data?.routes?.[0];
+        if (!route) return;
+        if (route.geometry.polyline) {
+          map.addPolyline(route.geometry.polyline as string, {
+            id: "route-polyline",
+            precision: 6,
+            properties: {},
+            paint: { "line-color": "#007AFF", "line-width": 4 },
+          });
+        } else if (route.geometry.coordinates) {
+          map.addLine(
+            {
+              type: "Feature",
+              id: "route-line-feature",
+              properties: {},
+              geometry: {
+                type: "LineString",
+                coordinates: route.geometry.coordinates as [number, number][],
+              },
+            },
+            { paint: { "line-color": "#007AFF", "line-width": 4 } },
+          );
+        }
+      } catch {
+        /* route overlay optional — map still usable */
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    Radar.initialize(publishableKey);
+    if (!publishableKey) return;
 
-    const map = Radar.ui.map({
-      container: mapContainerId,
-      style: "radar-default-v1",
-      center: pickup || [37.7749, -90],
-      zoom: 6,
-    });
+    let map: ReturnType<typeof Radar.ui.map> | undefined;
+    setSdkFailed(false);
 
-    if (pickup) {
-      Radar.ui
-        .marker({
-          text: pickupName || "Pickup",
-          color: "red",
-        })
-        .setLngLat(pickup)
-        .addTo(map);
-      if (drop) {
-        Radar.ui
-          .marker({ text: dropName || "Drop", color: "green" })
-          .setLngLat(drop)
+    try {
+      Radar.initialize(publishableKey);
+      const pickupCoords =
+        pickupLng !== undefined &&
+        pickupLat !== undefined &&
+        (pickupLng !== 0 || pickupLat !== 0)
+          ? ([pickupLng, pickupLat] as [number, number])
+          : undefined;
+      const dropCoords =
+        dropLng !== undefined && dropLat !== undefined
+          ? ([dropLng, dropLat] as [number, number])
+          : undefined;
+
+      map = Radar.ui.map({
+        container: mapContainerId,
+        style: "radar-default-v1",
+        center: pickupCoords ?? [-90, 37.7749],
+        zoom: pickupCoords ? 13 : 4,
+      });
+
+      if (pickupCoords) {
+        const pickupMarker = Radar.ui
+          .marker({ text: pickupName || "Pickup", color: "red" })
+          .setLngLat(pickupCoords)
           .addTo(map);
-        map.on("load", async () => {
+
+        // Enable drag if a callback is provided
+        if (onPickupChange) {
           try {
-            const resp = await axios.get(
-              "https://api.radar.io/v1/route/directions",
-              {
-                params: {
-                  locations: `${pickup[1]},${pickup[0]}|${drop[1]},${drop[0]}`, // note: lat,lng
-                  mode: "car",
-                  units: "metric",
-                },
-                headers: {
-                  Authorization: publishableKey,
-                },
-              },
-            );
-
-            // resp.data should have a routes array
-            const directionsData = resp.data;
-
-            if (!directionsData.routes || directionsData.routes.length === 0) {
-              console.error("No route found");
-              return;
-            }
-
-            const route = directionsData.routes[0];
-            // route.geometry might have:
-            // - an encoded polyline in route.geometry.polyline
-            // - or direct coordinates depending on API response format
-
-            if (route.geometry.polyline) {
-              const polyline = route.geometry.polyline as string;
-
-              // Use Radar Maps UI function to draw encoded polyline
-              map.addPolyline(polyline, {
-                id: "route-polyline",
-                precision: 6,
-                properties: {},
-                paint: {
-                  "line-color": "#007AFF",
-                  "line-width": 4,
-                },
-              });
-            } else if (route.geometry.coordinates) {
-              const coords: [number, number][] = route.geometry.coordinates;
-
-              // Use GeoJSON LineString with map.addLine
-              map.addLine(
-                {
-                  type: "Feature",
-                  id: "route-line-feature",
-                  properties: {},
-                  geometry: {
-                    type: "LineString",
-                    coordinates: coords,
-                  },
-                },
-                {
-                  paint: {
-                    "line-color": "#007AFF",
-                    "line-width": 4,
-                  },
-                },
-              );
-            } else {
-              console.error("Route geometry format not supported");
-            }
-          } catch (error) {
-            console.error("Error fetching route:", error);
+            const el = (pickupMarker as unknown as { _element?: HTMLElement })
+              ._element;
+            if (el) el.style.cursor = "grab";
+            // Radar markers delegate to MapLibre — use the underlying draggable API
+            (
+              pickupMarker as unknown as { setDraggable?: (d: boolean) => void }
+            ).setDraggable?.(true);
+            pickupMarker.on("dragend", () => {
+              const lngLat = (
+                pickupMarker as unknown as {
+                  getLngLat?: () => { lng: number; lat: number };
+                }
+              ).getLngLat?.();
+              if (lngLat) onPickupChange(lngLat.lng, lngLat.lat);
+            });
+          } catch {
+            /* drag not supported in this Radar SDK version — skip silently */
           }
-        });
+        }
+
+        if (dropCoords) {
+          Radar.ui
+            .marker({ text: dropName || "Drop", color: "green" })
+            .setLngLat(dropCoords)
+            .addTo(map);
+          map.on("load", () => addRoute(map!, pickupCoords, dropCoords));
+        }
       }
+    } catch {
+      setSdkFailed(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickup?.[0], pickup?.[1], drop?.[0], drop?.[1]]);
-  // [pickup?.[0], pickup?.[1], drop?.[0], drop?.[1]] correct one that prevents rerender
+
+    return () => {
+      map?.remove?.();
+    };
+  }, [
+    addRoute,
+    dropLat,
+    dropLng,
+    dropName,
+    mapContainerId,
+    onPickupChange,
+    pickupLat,
+    pickupLng,
+    pickupName,
+  ]);
+
+  if (!publishableKey) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-gray-50">
+        <p className="text-sm text-gray-400">Map not configured</p>
+      </div>
+    );
+  }
 
   return (
-    <div
-      id={mapContainerId}
-      style={{ width: "100%", height: "500px", position: "relative" }}
-    />
+    <div className="relative h-full w-full">
+      <div id={mapContainerId} className="h-full w-full" />
+      {sdkFailed && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 gap-2">
+          <p className="text-sm font-medium text-gray-500">Map unavailable</p>
+          <p className="text-xs text-gray-400">
+            Enable hardware acceleration to view the map
+          </p>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -132,11 +192,6 @@ type RadarAutoCompleteProps = {
   containerID?: string;
   setAutoCompleteAddress: (address: AddressResult) => void;
 };
-// type RadarAutoCompleteProps = {
-//   placeholder?: string;
-//   defaultValue?: string;
-//   setAutoCompleteAddress: (addr: AddressResult) => void;
-// };
 
 const RadarAutocomplete = ({
   placeholder,
@@ -145,25 +200,36 @@ const RadarAutocomplete = ({
 }: RadarAutoCompleteProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const autocompleteRef = useRef<AutocompleteUI | null>(null);
+  const [useManualSearch, setUseManualSearch] = useState(() => !publishableKey);
+  const [query, setQuery] = useState(defaultValue ?? "");
+  const [results, setResults] = useState<RadarAutocompleteResult[]>([]);
 
   useEffect(() => {
     if (!containerRef.current) return;
+    if (!publishableKey) {
+      return;
+    }
 
-    Radar.initialize(publishableKey);
+    try {
+      Radar.initialize(publishableKey);
 
-    autocompleteRef.current = Radar.ui.autocomplete({
-      container: containerRef.current, // ✅ DOM node
-      width: "100%",
-      onSelection: setAutoCompleteAddress,
-    });
+      autocompleteRef.current = Radar.ui.autocomplete({
+        container: containerRef.current,
+        width: "100%",
+        onSelection: setAutoCompleteAddress,
+      });
 
-    const input = containerRef.current.querySelector(
-      ".radar-autocomplete-input",
-    ) as HTMLInputElement | null;
+      const input = containerRef.current.querySelector(
+        ".radar-autocomplete-input",
+      ) as HTMLInputElement | null;
 
-    if (input) {
-      input.placeholder = placeholder ?? "Enter your address here";
-      input.value = defaultValue ?? "";
+      if (input) {
+        input.placeholder = placeholder ?? "Enter your address here";
+        input.value = defaultValue ?? "";
+      }
+    } catch {
+      autocompleteRef.current = null;
+      queueMicrotask(() => setUseManualSearch(true));
     }
 
     return () => {
@@ -171,7 +237,75 @@ const RadarAutocomplete = ({
     };
   }, [placeholder, defaultValue, setAutoCompleteAddress]);
 
-  return <div ref={containerRef} className='flex-1' />;
+  useEffect(() => {
+    if (!useManualSearch || !publishableKey || query.length < 3) {
+      return;
+    }
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const nextResults = await radarAutocompleteManual(query);
+        setResults(nextResults.slice(0, 5));
+      } catch {
+        setResults([]);
+      }
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [query, useManualSearch]);
+
+  if (useManualSearch) {
+    return (
+      <div className="relative flex-1">
+        <input
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            if (event.target.value.length < 3) setResults([]);
+          }}
+          className="w-full bg-transparent text-sm outline-none"
+          placeholder={placeholder ?? "Enter your address here"}
+        />
+        {results.length > 0 && (
+          <div className="absolute left-0 right-0 top-8 z-50 rounded-2xl bg-white p-2 shadow-lg">
+            {results.map((result) => (
+              <button
+                key={`${result.address.formattedAddress}-${result.geometry.coordinates.join(",")}`}
+                type="button"
+                onClick={() => {
+                  setQuery(result.address.formattedAddress);
+                  setResults([]);
+                  setAutoCompleteAddress({
+                    addressLabel: result.address.placeLabel,
+                    city: "",
+                    country: "",
+                    countryCode: "",
+                    countryFlag: "",
+                    county: "",
+                    distance: 0,
+                    formattedAddress: result.address.formattedAddress,
+                    geometry: {
+                      type: "Point",
+                      coordinates: result.geometry.coordinates,
+                    },
+                    longitude: result.geometry.coordinates[0],
+                    latitude: result.geometry.coordinates[1],
+                    state: "",
+                    layer: "address",
+                  });
+                }}
+                className="block w-full rounded-xl px-3 py-2 text-left text-xs hover:bg-background"
+              >
+                {result.address.formattedAddress}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return <div ref={containerRef} className="flex-1" />;
 };
 
 export { RadarAutocomplete };
@@ -205,8 +339,46 @@ const radarAutocompleteManual = async (
   if (status !== 200) {
     throw new Error(`Radar autocomplete failed with: ${status} code`);
   }
-  console.log(data);
   return data.addresses ?? [];
 };
 
 export { radarAutocompleteManual };
+
+//  Reverse geocode
+
+const REVERSE_GEOCODE_URL = "https://api.radar.io/v1/geocode/reverse";
+
+type RadarReverseGeocodeResult = {
+  formattedAddress: string;
+  placeLabel?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  countryCode?: string;
+  countryFlag?: string;
+  county?: string;
+  latitude: number;
+  longitude: number;
+};
+
+/**
+ * Converts (lat, lng) coordinates into a human-readable address via Radar's
+ * reverse geocode API. Returns null if the key is missing or the request fails.
+ */
+export const radarReverseGeocode = async (
+  lat: number,
+  lng: number,
+): Promise<RadarReverseGeocodeResult | null> => {
+  if (!publishableKey) return null;
+  try {
+    const { data, status } = await axios(
+      `${REVERSE_GEOCODE_URL}?coordinates=${lat},${lng}`,
+      { headers: { Authorization: publishableKey } },
+    );
+    if (status !== 200) return null;
+    const addresses: RadarReverseGeocodeResult[] = data.addresses ?? [];
+    return addresses[0] ?? null;
+  } catch {
+    return null;
+  }
+};

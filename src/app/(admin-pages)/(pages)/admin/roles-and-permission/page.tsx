@@ -1,30 +1,13 @@
 "use client";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  Switch,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  RolesModal,
-  RolesModalDisplay,
-} from "@/components/";
-import { cn } from "@/lib";
+
+import { RolesModal, RolesModalDisplay } from "@/components/";
 import { usePermission, useAdmin } from "@/store";
-// import { AdminSearchIcon } from "@public/svgs";
 import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
+import { Shield, Users, ChevronRight } from "lucide-react";
 
 const Page = () => {
-  const [userORRoles, setUserOrRoles] = useState<"user" | "roles">("user");
+  const [activeTab, setActiveTab] = useState<"users" | "roles">("users");
 
   const {
     actions: {
@@ -40,7 +23,6 @@ const Page = () => {
       actions: state.actions,
       allActiveAdmins: state.allActiveAdmins,
       allSuspendedAdmins: state.allSuspendedAdmins,
-      isLoading: state.isLoading,
     })),
   );
 
@@ -51,10 +33,7 @@ const Page = () => {
 
   const {
     actions: {
-      // getAllAdminPermissions,
-      // getAllEndpoints,
       getAllRolePermissions,
-      // getEndpointPermissions,
       getSingleAdminPermissions,
       getSingleRolePermissions,
       grantAdminPermission,
@@ -67,8 +46,6 @@ const Page = () => {
     useShallow((state) => ({
       actions: state.actions,
       allRolePermissions: state.allRolePermissions,
-      singleAdminPermission: state.singleAdminPermission,
-      singleRolePermission: state.singleRolePermission,
     })),
   );
 
@@ -76,234 +53,283 @@ const Page = () => {
     getAllActiveAdmins();
     getAllSuspendedAdmins();
     getAllRolePermissions();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <section className='flex flex-col gap-8'>
-      <p className='text-2xl md:text-4xl font-heebo'>Roles and Permission</p>
+  const tabs = [
+    { key: "users" as const, label: "User permissions", count: allAdmins.length },
+    { key: "roles" as const, label: "Role permissions", count: Object.keys(allRolePermissions ?? {}).length },
+  ];
 
-      <div className='flex flex-col md:flex-row md:self-end gap-4 md:gap-7 md:items-center'>
-        {/* <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-white shadow-md md:min-w-[250px]'>
-          <AdminSearchIcon />
-          <input
-            type='text'
-            name='search'
-            id='search'
-            className='bg-transparent focus:outline-none flex-1'
-            placeholder='Search'
-          />
-        </div> */}
-        <div className='flex bg-white p-2 rounded-full'>
-          <Button
-            onClick={() => setUserOrRoles("user")}
-            className={cn(
-              "rounded-full transition-colors duration-300 shadow-none flex-1",
-              userORRoles !== "user" &&
-                "bg-transparent text-black hover:text-white",
-            )}
+  return (
+    <section className="flex flex-col gap-6">
+      <p className="text-2xl font-bold font-heebo text-gray-900">Roles & Permissions</p>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeTab === tab.key
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
           >
-            Users
-          </Button>
-          <Button
-            onClick={() => setUserOrRoles("roles")}
-            className={cn(
-              "rounded-full transition-colors duration-300 shadow-none flex-1",
-              userORRoles !== "roles" &&
-                "bg-transparent text-black hover:text-white",
-            )}
-          >
-            Roles
-          </Button>
-        </div>
+            {tab.label}
+            <span
+              className={`text-xs px-1.5 py-0.5 rounded-full ${
+                activeTab === tab.key
+                  ? "bg-primary/10 text-primary"
+                  : "bg-gray-200 text-gray-500"
+              }`}
+            >
+              {tab.count}
+            </span>
+          </button>
+        ))}
       </div>
 
-      {userORRoles === "user" ? (
-        <Card className='p-0 rounded-md'>
-          <CardContent className='p-0 '>
-            <Table>
-              <TableHeader>
-                <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-                  <TableHead className='text-icons'>User</TableHead>
-                  <TableHead className='text-icons'>Role</TableHead>
-                  <TableHead className='text-icons'>Active</TableHead>
-                  <TableHead className='text-icons'>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              {allAdmins.length === 0 ? (
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={4} className='p-10'>
-                      <Empty>
-                        <EmptyHeader>
-                          <EmptyTitle>No information found</EmptyTitle>
-                        </EmptyHeader>
-                      </Empty>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              ) : (
-                <TableBody>
+      {/* Users tab */}
+      {activeTab === "users" && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          {allAdmins.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 gap-3">
+              <div className="size-12 rounded-2xl bg-gray-50 flex items-center justify-center">
+                <Users size={22} className="text-gray-300" />
+              </div>
+              <p className="text-sm text-gray-400">No admins found</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-50">
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Admin
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Role
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Status
+                    </th>
+                    <th className="text-right text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
                   {allAdmins.map((admin, i) => {
+                    const isActive = admin.status === "active";
                     return (
-                      <TableRow key={i} className='last:border-b-0'>
-                        <TableCell className='text-sm font-medium py-5'>
-                          <div className='flex items-center gap-2'>
-                            <div className='flex flex-col'>
-                              <p className='font-medium text-xl'>
+                      <tr
+                        key={i}
+                        className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                              <span className="text-xs font-bold text-primary uppercase">
+                                {(admin.firstName?.[0] ?? "") + (admin.lastName?.[0] ?? "")}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">
                                 {admin.firstName} {admin.lastName}
                               </p>
-                              <p className='text-sm font-light'>
-                                {admin.email}
-                              </p>
+                              <p className="text-xs text-gray-400 mt-0.5">{admin.email}</p>
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell className='text-sm'>
-                          <p className='bg-[#E0E6E6] px-3 py-1 rounded-full w-fit capitalize'>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-xs font-medium text-gray-700 bg-gray-100 px-2.5 py-1 rounded-lg capitalize">
                             {admin.role.toLowerCase().split("_").join(" ")}
-                          </p>
-                        </TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={admin.status === "active"}
-                            onCheckedChange={async (checked) => {
-                              if (checked) {
-                                await restoreAdmin({ adminId: admin.adminId });
-                              } else {
-                                await suspendAdmin({
-                                  adminId: admin.adminId,
-                                  reason:
-                                    "Suspended from roles and permission page",
-                                });
-                              }
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <RolesModal
-                            trigger={
-                              <Button
-                                onClick={async () =>
-                                  await getSingleAdminPermissions(admin.adminId)
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={async () => {
+                                if (isActive) {
+                                  await suspendAdmin({
+                                    adminId: admin.adminId,
+                                    reason: "Suspended from roles page",
+                                  });
+                                } else {
+                                  await restoreAdmin({ adminId: admin.adminId });
                                 }
-                                className='rounded-full'
-                              >
-                                Edit Role
-                              </Button>
-                            }
-                            onNext={async (CHECKED_IDS, UNCHECKED_IDS) => {
-                              await grantAdminPermission({
-                                adminId: admin.adminId,
-                                endpointIds: CHECKED_IDS,
-                                expiresAt: new Date(
-                                  Date.now() + 30 * 24 * 60 * 60 * 1000,
-                                ).toISOString(),
-                              });
-                              await revokeAdminPermission({
-                                adminId: admin.adminId,
-                                endpointIds: UNCHECKED_IDS,
-                              });
-                            }}
-                            role={admin.role.split("_").join(" ")}
-                            title={`Edit Roles for ${admin.firstName} ${admin.lastName}`}
-                            description="Select the Roles and permission you'd like this user to have."
-                            type={"role"}
-                          />
-                        </TableCell>
-                      </TableRow>
+                              }}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 ${
+                                isActive ? "bg-primary" : "bg-gray-200"
+                              }`}
+                            >
+                              <span
+                                className={`inline-block size-3.5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                                  isActive ? "translate-x-4" : "translate-x-0.5"
+                                }`}
+                              />
+                            </button>
+                            <span
+                              className={`text-xs font-medium ${isActive ? "text-emerald-600" : "text-gray-400"}`}
+                            >
+                              {isActive ? "Active" : "Suspended"}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end">
+                            <RolesModal
+                              trigger={
+                                <button
+                                  onClick={async () => await getSingleAdminPermissions(admin.adminId)}
+                                  className="flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors"
+                                >
+                                  <Shield size={12} />
+                                  Edit role
+                                </button>
+                              }
+                              onNext={async (CHECKED_IDS, UNCHECKED_IDS) => {
+                                await grantAdminPermission({
+                                  adminId: admin.adminId,
+                                  endpointIds: CHECKED_IDS,
+                                  expiresAt: new Date(
+                                    Date.now() + 30 * 24 * 60 * 60 * 1000,
+                                  ).toISOString(),
+                                });
+                                await revokeAdminPermission({
+                                  adminId: admin.adminId,
+                                  endpointIds: UNCHECKED_IDS,
+                                });
+                              }}
+                              role={admin.role.split("_").join(" ")}
+                              title={`Edit roles for ${admin.firstName} ${admin.lastName}`}
+                              description="Select the roles and permissions you'd like this user to have."
+                              type="role"
+                            />
+                          </div>
+                        </td>
+                      </tr>
                     );
                   })}
-                </TableBody>
-              )}
-            </Table>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <div className='flex border-b font-medium text-2xl pb-4'>
-              <p>Roles</p>
+                </tbody>
+              </table>
             </div>
-          </CardHeader>
-          <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6 pb-6'>
-            {Object.keys(allRolePermissions ?? {}).map((role) => {
-              return (
-                <div
-                  key={role}
-                  className='flex flex-col md:flex-row bg-[#F4F4F4] justify-between md:items-center gap-5 rounded-2xl p-6'
-                >
-                  <div className='flex flex-col gap-1'>
-                    <p className='text-xl font-bold capitalize'>
-                      {role.split("_").join(" ")}
-                    </p>
-                    <div>
-                      {(allRolePermissions ?? {})[role].endpoints
-                        .slice(0, 3)
-                        .map((endpoint, id) => (
-                          <p key={id} className='text-sm font-light'>
-                            {endpoint.description}
+          )}
+        </div>
+      )}
+
+      {/* Roles tab */}
+      {activeTab === "roles" && (
+        <div>
+          {!allRolePermissions || Object.keys(allRolePermissions).length === 0 ? (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-16 gap-3">
+              <div className="size-12 rounded-2xl bg-gray-50 flex items-center justify-center">
+                <Shield size={22} className="text-gray-300" />
+              </div>
+              <p className="text-sm text-gray-400">No roles configured</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.keys(allRolePermissions).map((role) => {
+                const roleData = (allRolePermissions ?? {})[role];
+                const endpointCount = roleData.endpoints.length;
+
+                return (
+                  <div
+                    key={role}
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                          <Shield size={15} className="text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-gray-900 capitalize">
+                            {role.split("_").join(" ")}
                           </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {endpointCount} permission{endpointCount !== 1 ? "s" : ""}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {endpointCount > 0 && (
+                      <div className="flex flex-col gap-1">
+                        {roleData.endpoints.slice(0, 3).map((endpoint, id) => (
+                          <div key={id} className="flex items-center gap-2">
+                            <ChevronRight size={12} className="text-gray-300 shrink-0" />
+                            <p className="text-xs text-gray-500 truncate">{endpoint.description}</p>
+                          </div>
                         ))}
+                        {endpointCount > 3 && (
+                          <p className="text-xs text-gray-400 ml-5">
+                            +{endpointCount - 3} more
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <RolesModal
+                        trigger={
+                          <button
+                            onClick={async () =>
+                              await getSingleRolePermissions(
+                                role.toUpperCase().split(" ").join("_"),
+                              )
+                            }
+                            className="text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors flex-1"
+                          >
+                            Edit permissions
+                          </button>
+                        }
+                        onNext={async (CHECKED_IDS, UNCHECKED_IDS) => {
+                          await grantRolePermission({
+                            role: role.toUpperCase().split(" ").join("_"),
+                            endpointIds: CHECKED_IDS,
+                          });
+                          await revokeRolePermission({
+                            role: role.toUpperCase().split(" ").join("_"),
+                            endpointIds: UNCHECKED_IDS,
+                          });
+                        }}
+                        role={role.split("_").join(" ")}
+                        title="Assign permission to role"
+                        description="Assign permissions you'd like this role to have."
+                        type="permission"
+                      />
+                      <RolesModalDisplay
+                        trigger={
+                          <button
+                            onClick={async () =>
+                              await getSingleRolePermissions(
+                                role.toUpperCase().split(" ").join("_"),
+                              )
+                            }
+                            className="text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors flex-1"
+                          >
+                            View all
+                          </button>
+                        }
+                        role={role.split("_").join(" ")}
+                        title="Granted permissions"
+                        description={`Permissions for the ${role.split("_").join(" ")} role.`}
+                        type="permission"
+                      />
                     </div>
                   </div>
-                  <div className='flex gap-2'>
-                    <RolesModal
-                      trigger={
-                        <Button
-                          onClick={async () =>
-                            await getSingleRolePermissions(
-                              role.toUpperCase().split(" ").join("_"),
-                            )
-                          }
-                          className='bg-primary hover:bg-primary/90 rounded-full'
-                        >
-                          Edit permission
-                        </Button>
-                      }
-                      onNext={async (CHECKED_IDS, UNCHECKED_IDS) => {
-                        await grantRolePermission({
-                          role: role.toUpperCase().split(" ").join("_"),
-                          endpointIds: CHECKED_IDS,
-                        });
-                        await revokeRolePermission({
-                          role: role.toUpperCase().split(" ").join("_"),
-                          endpointIds: UNCHECKED_IDS,
-                        });
-                      }}
-                      role={role.split("_").join(" ")}
-                      title='Assign Permission to Role'
-                      description="Assign permission you'd like this role to have."
-                      type={"permission"}
-                    />
-                    <RolesModalDisplay
-                      trigger={
-                        <Button
-                          onClick={async () =>
-                            await getSingleRolePermissions(
-                              role.toUpperCase().split(" ").join("_"),
-                            )
-                          }
-                          className='bg-primary hover:bg-primary/90 rounded-full'
-                        >
-                          View all
-                        </Button>
-                      }
-                      role={role.split("_").join(" ")}
-                      title='Granted Permissions'
-                      description={`Permissions for the ${role.split("_").join(" ")} role.`}
-                      type={"permission"}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
       )}
     </section>
   );
 };
+
 export default Page;

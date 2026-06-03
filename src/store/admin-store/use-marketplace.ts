@@ -2,9 +2,8 @@ import { create } from "zustand";
 import type { PromoVoucherType, SelectorFn } from "@/types";
 import { devtools } from "zustand/middleware";
 import {
-  adminApiStr,
-  callApi,
   removeFieldsFromObject,
+  requests,
   TMarketPlaceSchema,
   TPromoAndVoucherSchema,
 } from "@/lib";
@@ -19,7 +18,7 @@ type MarketPlaceType = {
     createRideCostSettings: (
       costSettings: TMarketPlaceSchema,
     ) => Promise<boolean>;
-    getRideCostSettings: (hideToast?: boolean) => Promise<void>;
+    getRideCostSettings: () => Promise<void>;
     updateRideCost: (
       costSettings: Partial<TMarketPlaceSchema>,
     ) => Promise<boolean>;
@@ -35,7 +34,7 @@ type MarketPlaceType = {
     ) => Promise<void>;
     getVouchers: () => Promise<void>;
     updateVoucher: (voucherDetails: {
-      status: string;
+      status: "ACTIVE" | "DISABLED" | "EXPIRED";
       voucherId: string;
     }) => Promise<void>;
   };
@@ -65,30 +64,25 @@ export const useMarketPlace = create<MarketPlaceType>()(
           ...rest
         } = costSettings;
         set({ isCreatingCostSetting: true });
-        const { data, error } = await callApi(
-          adminApiStr("/cost-settings/ride"),
-          {
-            ...rest,
-            baseFare: Number(baseFare),
-            baseHagglePercentage: Number(baseHagglePercentage),
-            driverToRiderFee: Number(driverToRiderFee),
-            maxHagglePercentage: Number(maxHagglePercentage),
-            platformFeePercentage: Number(platformFeePercentage),
-            waitingChargePerMinute: Number(waitingChargePerMinute),
-            taxPercentage: Number(taxPercentage),
-            surgeMultiplier: Number(surgeMultiplier),
-          },
-        );
+        const { data, error } = await requests.admin.createRideCostSettings({
+          ...rest,
+          baseFare: Number(baseFare),
+          baseHagglePercentage: Number(baseHagglePercentage),
+          driverToRiderFee: Number(driverToRiderFee),
+          maxHagglePercentage: Number(maxHagglePercentage),
+          platformFeePercentage: Number(platformFeePercentage),
+          waitingChargePerMinute: Number(waitingChargePerMinute),
+          taxPercentage: Number(taxPercentage),
+          surgeMultiplier: Number(surgeMultiplier),
+        });
         if (error) {
-          console.log(error);
-          toast.error(error.message ?? "Something went wrong");
           set({ isCreatingCostSetting: false });
           return false;
         }
         if (data) {
           set({ isCreatingCostSetting: false });
-          toast.success(data.message ?? "Cost settings created successfully");
-          await get().actions.getRideCostSettings(true);
+          toast.success(data.message ?? "Fare profile created successfully");
+          await get().actions.getRideCostSettings();
         }
         return true;
       },
@@ -110,72 +104,54 @@ export const useMarketPlace = create<MarketPlaceType>()(
           "id",
         ]);
         set({ isCreatingCostSetting: true });
-        const { data, error } = await callApi(
-          adminApiStr("/cost-settings/ride"),
-          {
-            ...rest,
-            baseFare: Number(baseFare),
-            baseHagglePercentage: Number(baseHagglePercentage),
-            driverToRiderFee: Number(driverToRiderFee),
-            maxHagglePercentage: Number(maxHagglePercentage),
-            platformFeePercentage: Number(platformFeePercentage),
-            waitingChargePerMinute: Number(waitingChargePerMinute),
-            taxPercentage: Number(taxPercentage),
-            surgeMultiplier: Number(surgeMultiplier),
-            costId: costSetting.id,
-          },
-          "PATCH",
-        );
+        const { data, error } = await requests.admin.updateRideCostSettings({
+          ...rest,
+          baseFare: Number(baseFare),
+          baseHagglePercentage: Number(baseHagglePercentage),
+          driverToRiderFee: Number(driverToRiderFee),
+          maxHagglePercentage: Number(maxHagglePercentage),
+          platformFeePercentage: Number(platformFeePercentage),
+          waitingChargePerMinute: Number(waitingChargePerMinute),
+          taxPercentage: Number(taxPercentage),
+          surgeMultiplier: Number(surgeMultiplier),
+          costId: costSetting.id,
+        });
         if (error) {
-          console.log(error);
-          toast.error(error.message ?? "Something went wrong");
           set({ isCreatingCostSetting: false });
           return false;
         }
         if (data) {
           set({ isCreatingCostSetting: false });
-          toast.success(data.message ?? "Cost settings created successfully");
-          await get().actions.getRideCostSettings(true);
+          toast.success(data.message ?? "Fare profile updated successfully");
+          await get().actions.getRideCostSettings();
         }
         return true;
       },
       activateOrDeactivateCostSetting: async (costSetting) => {
         set({ isCreatingCostSetting: true });
-        const { data, error } = await callApi(
-          adminApiStr("/cost-settings/ride"),
-          costSetting,
-          "PATCH",
+        const { data, error } = await requests.admin.updateRideCostSettings(
+          costSetting as Record<string, unknown>,
         );
         if (error) {
-          console.log(error);
-          toast.error(error.message ?? "Something went wrong");
           set({ isCreatingCostSetting: false });
           return;
         }
         if (data) {
           set({ isCreatingCostSetting: false });
-          toast.success(data.message ?? "Cost settings created successfully");
-          await get().actions.getRideCostSettings(true);
+          toast.success(data.message ?? "Fare profile status updated");
+          await get().actions.getRideCostSettings();
         }
-        return;
       },
 
-      getRideCostSettings: async (hideToast) => {
-        const { data, error } = await callApi<TMarketPlaceSchema[]>(
-          adminApiStr("/cost-settings/ride"),
-        );
-        if (error) {
-          if (!hideToast) toast.error(error.message);
-          return;
-        }
+      getRideCostSettings: async () => {
+        const { data, error } = await requests.admin.getRideCostSettings();
+        if (error) return;
         if (data) {
           set({ rideCostSettings: data.data });
-          if (!hideToast)
-            toast.success(data.message ?? "Cost settings fetched successfully");
         }
       },
       createVoucher: async (voucherDetails) => {
-        const { data, error } = await callApi(adminApiStr("/vouchers"), {
+        const { data, error } = await requests.admin.createVoucher({
           ...voucherDetails,
           discountValue: Number(voucherDetails.discountValue),
           minOrderAmount: Number(voucherDetails.minOrderAmount),
@@ -184,38 +160,23 @@ export const useMarketPlace = create<MarketPlaceType>()(
           maxTotalUsage: Number(voucherDetails.maxTotalUsage),
           discountType: voucherDetails.discountType.toUpperCase(),
         });
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        if (error) return;
         if (data) {
           await get().actions.getVouchers();
           toast.success(data.message ?? "Voucher created successfully");
         }
       },
       getVouchers: async () => {
-        const { data, error } = await callApi<PromoVoucherType[]>(
-          adminApiStr("/vouchers"),
-        );
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        const { data, error } = await requests.admin.getVouchers();
+        if (error) return;
         if (data) {
           set({ allVouchers: data.data });
-          toast.success(data.message ?? "Vouchers fetched successfully");
         }
       },
       updateVoucher: async (voucherDetails) => {
-        const { data, error } = await callApi(
-          adminApiStr("/vouchers"),
-          voucherDetails,
-          "PATCH",
-        );
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        const { data, error } =
+          await requests.admin.updateVoucher(voucherDetails);
+        if (error) return;
         if (data) {
           await get().actions.getVouchers();
           toast.success(data.message ?? "Voucher updated successfully");

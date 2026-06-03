@@ -1,9 +1,9 @@
 "use client";
 
-import { PaymentSuccess } from "@/components";
+import { redirect } from "next/navigation";
 
 const Page = () => {
-  return <PaymentSuccess />;
+  redirect("/rent-ride/success");
 };
 
 export default Page;

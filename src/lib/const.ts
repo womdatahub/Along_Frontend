@@ -52,11 +52,17 @@ export const nonModalItems = [
 export const PUBLIC_ROUTES = [
   "/",
   "/about",
+  "/privacy-policy",
+  "/terms-of-service",
+  "/ride",
+  "/help",
+  "/schedule-ride",
   "/onboarding",
   "/onboarding/driver-info",
   "/onboarding/services",
   "/onboarding/documents",
   "/onboarding/vehicle-info",
+  "/onboarding/vehicle-insurance",
 ] as const;
 
 // Routes that authenticated users should be redirected away from
@@ -70,7 +76,7 @@ export const AUTH_ONLY_ROUTES = [
 
 // Dashboard landing pages per role
 export const ROLE_DASHBOARD_MAP: Record<string, string> = {
-  driver: "/driver-db",
-  rider: "/rider-db",
+  driver: "/driver",
+  rider: "/rider",
   admin: "/admin",
 };

@@ -42,58 +42,84 @@ export type SuspendedDriver = {
 };
 
 export type DriverProfile = {
-  _id: string;
+  //  Identifiers
+  _id?: string;
   userId: string;
+  driverId?: string;
   firstName: string;
   lastName: string;
-  acceptanceRate: number;
-  rating: {
+  email: string;
+  mobileNumber?: string;
+  role: "driver" | string;
+  gender?: "male" | "female" | "other";
+  dateOfBirth?: string;
+  address?: string;
+  referralCode?: string;
+  driverProfilePictureUri?: string;
+  // ISO 8601 strings
+  createdAt: string;
+  updatedAt: string;
+
+  //  KYC documents
+  driverSocialSecurityNumber?: string;
+  driverLincenseFrontViewUri?: string;
+  driverLincenseBackViewUri?: string;
+  advancedVerificationUri?: string;
+  licenseNumber?: string;
+  licenseExpiryDate?: string;
+  kycStatus?: "PENDING" | "APPROVED" | "REJECTED" | string;
+  kycRejectionReason?: string;
+  kycNotes?: string;
+  /** True only after kyc approval. */
+  isLicenseApproved?: boolean;
+
+  //  Driver state
+  acceptanceRate?: number;
+  driverScore?: number;
+  availableForDriving?: boolean;
+  payoutReady?: boolean;
+  rating?: {
     totalRating: number;
     numberOfRatings: number;
   };
-  // ISO 8601 strings
-  dateOfBirth: string;
-  createdAt: string;
-  updatedAt: string;
-  gender: "male" | "female" | "other";
-  services: Array<"scheduled_ride" | string>;
-  allowPets: boolean;
-  email: string;
-  role: "driver" | string;
-  driverId: string;
-  vehicleMake: string;
-  vehicleModel: string;
-  vehicleYear: string;
-  vehicleColor: string;
-  vehicleClass: "economy" | "standard" | "premium" | string;
-  vehicleIdentificationNumber: string;
-  advancedVerificationUri: string;
-  driverLincenseFrontViewUri: string;
-  driverLincenseBackViewUri: string;
-  driverProfilePictureUri: string;
-  vehicleFrontViewImageUri: string;
-  vehicleBackViewImageUri: string;
-  vehicleSideViewImageUri: string;
-  vehicleId: string;
-  mobileNumber: string;
-  insuranceDocumentUri: string;
-  isActive: boolean;
-  __v: number;
-  referralCode: string;
-  kycStatus: string;
-  rideProfile: {
-    currentLocation: {
-      location: string;
-      longitude: number;
-      latitude: number;
-    };
-    ratePerHour: string;
-    allowPets: boolean;
-    luggageCapacity: number;
+  services?: string[];
+  rideProfile?: {
+    ratePerHour?: string;
+    allowPets?: boolean;
+    luggageCapacity?: number;
+    passengerCapacity?: number;
   };
-  driverSocialSecurityNumber: string;
 
-  id: "69c581bc7900183e6b33f627";
+  //  Banking
+  bankName?: string;
+  routingNumber?: string;
+  accountNumber?: string;
+  vehicles?: DriverVehicleSummary[];
+  vehicleId?: string;
+  isVehicleAdded?: boolean;
+};
+
+export type DriverVehicleSummary = {
+  _id: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  vehicleYear?: string;
+  vehicleColor?: string;
+  vehicleClass?:
+    | "economy"
+    | "comfort"
+    | "comfort_xl"
+    | "luxury"
+    | "luxury_xl"
+    | string;
+  vehicleIdentificationNumber?: string;
+  vehicleFrontViewImageUri?: string;
+  vehicleBackViewImageUri?: string;
+  vehicleSideViewImageUri?: string;
+  insuranceDocumentUri?: string;
+  rentalModes?: Array<"SELF_DRIVE" | "WITH_DRIVER">;
+  isActive?: boolean;
+  verificationStatus?: "PENDING" | "APPROVED" | "REJECTED";
 };
 
 export interface RiderProfile {
@@ -110,6 +136,13 @@ export interface RiderProfile {
   createdAt: string;
   updatedAt: string;
   dateOfBirth: string;
+  isLicenseApproved?: boolean;
+  licenseNumber?: string;
+  licenseExpiryDate?: string;
+  licenseFrontImageUri?: string;
+  licenseBackImageUri?: string;
+  licenseSelfieImageUri?: string;
+
   __v: number;
 }
 
@@ -146,6 +179,7 @@ export type AllDriversAccount = {
   email: string;
   mobileNumber: string;
   isSuspended: boolean;
+  createdAt: string;
   role: "driver";
   driver: {
     _id: string;

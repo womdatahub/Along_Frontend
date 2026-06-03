@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { usPhoneSchema } from "./onboardingSchema";
 
 export const marketPlaceSchema = z.object({
   title: z.string({ message: "Cost settings title is required." }),
@@ -49,9 +50,7 @@ export const createNewAdminSchema = z.object({
   lastName: z.string().min(3, {
     message: "Last name is required",
   }),
-  mobileNumber: z.string({ message: "Invalid mobile number" }).min(10, {
-    message: "Phone number must be at least 10 digits long",
-  }),
+  mobileNumber: usPhoneSchema,
   role: z.string().min(1, {
     message: "Role is required",
   }),

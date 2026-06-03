@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&display=swap');
-
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -9,33 +6,30 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 
   /* Along colors */
-
-  --color-primary: #0E696A;
-  --color-primary-deep:#084B4C;
+  --color-primary: #0e696a;
+  --color-primary-deep: #084b4c;
   --color-gray: #777676;
-  --color-gray-2:#E7ECED;
-  --color-gray-3:#858585;
-  --color-gray-4:#565656;
-  --color-gray-5:#707072;
-  --color-icons:#768B8F;
-  --color-inactive:#C9CDCE;
-  --color-placeholder:#C5C5C5;
-  --color-lightgreen:#87C4C4;
-  --color-background-1:#EFF1F1;
-  --color-border-2:#D9D9D9;
-  --color-primaryLight:#BBCCCF80;
-  --color-primaryLight2:#D5DEE0;
-  --color-pending:#F19E22;
-  --color-danger:#EE1717;
+  --color-gray-2: #e7eced;
+  --color-gray-3: #858585;
+  --color-gray-4: #565656;
+  --color-gray-5: #707072;
+  --color-icons: #768b8f;
+  --color-inactive: #c9cdce;
+  --color-placeholder: #c5c5c5;
+  --color-lightgreen: #87c4c4;
+  --color-background-1: #eff1f1;
+  --color-border-2: #d9d9d9;
+  --color-primaryLight: #bbcccf80;
+  --color-primaryLight2: #d5dee0;
+  --color-pending: #f19e22;
+  --color-danger: #ee1717;
 
   /* Along fonts */
 
-  --font-heebo: 'Heebo', sans-serif;
-  --font-fustat: 'Fustat', serif;
+  --font-heebo: "Heebo", sans-serif;
+  --font-fustat: "Fustat", serif;
 
   /* Shadcn colors */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -69,7 +63,8 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px)}
+  --radius-xl: calc(var(--radius) + 4px);
+}
 
 :root {
   --radius: 0.625rem;
@@ -103,7 +98,8 @@
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);}
+  --sidebar-ring: oklch(0.708 0 0);
+}
 
 .dark {
   --background: oklch(0.145 0 0);
@@ -112,7 +108,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(93.344% 0.00757 16.522);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -136,13 +132,35 @@
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);}
+  --sidebar-ring: oklch(0.556 0 0);
+  --color-background-1: #111827;
+  --color-gray: oklch(95.979% 0.00643 16.336);
+  --color-gray-2: rgba(255, 255, 255, 0.08);
+  --color-gray-3: #94a3b8;
+  --color-gray-4: #94a3b8;
+  --color-gray-5: #9ca3af;
+  --color-primaryLight2: rgba(14, 105, 106, 0.2);
+  --color-border-2: rgba(255, 255, 255, 0.1);
+  --color-inactive: #374151;
+}
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;}
+    @apply border-border outline-ring/50;
+  }
   body {
-    @apply bg-background text-foreground;}}
+    @apply bg-background text-foreground;
+  }
+
+  /*  Light-mode input border — inside @layer base so Tailwind utilities can override */
+  input:not([type="checkbox"]):not([type="radio"]):not(.radar-autocomplete-input),
+  textarea,
+  select {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d0d5dd;
+  }
+}
 
 ::-webkit-scrollbar {
   display: none;
@@ -154,27 +172,147 @@ input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px inherit inset !important;
   box-shadow: 0 0 0px 1000px inherit inset !important;
   -webkit-text-fill-color: #000 !important;
-
-   /* -webkit-text-fill-color: inherit !important; 
-  caret-color: inherit !important;
-  transition: background-color 9999s ease-out 0s;  */
-
 }
 
-
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-/* border: 1px solid #ccc; */
-/* .radar-autocomplete-input {
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 16px;
-  background-color: #f5f5f5;
+/*  Sidebar  */
+.dark .bg-icons {
+  background-color: #1a2628;
 }
-*/
+
+/*  Page & card backgrounds  */
+.dark .bg-white {
+  background-color: #1e2533;
+}
+.dark .bg-gray-50 {
+  background-color: #252d3d;
+}
+.dark .bg-gray-100 {
+  background-color: #2d3748;
+}
+.dark .bg-white\/80 {
+  background-color: rgba(17, 24, 39, 0.88);
+}
+.dark .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+.dark .bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/*  Hover backgrounds  */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #2d3748;
+}
+.dark .hover\:bg-gray-50\/50:hover {
+  background-color: #252d3d;
+}
+.dark .hover\:bg-gray-100:hover {
+  background-color: #374151;
+}
+.dark .hover\:bg-gray-50\/50:hover {
+  background-color: rgba(37, 45, 61, 0.5);
+}
+
+/*  Borders  */
+.dark .border-gray-50 {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+.dark .border-gray-100 {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.dark .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.dark .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/*  Divide utilities  */
+.dark .divide-gray-100 > * + * {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.dark .divide-gray-50 > * + * {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/*  Primary text  */
+.dark .text-black {
+  color: #f1f5f9;
+}
+.dark .text-gray-900 {
+  color: #f1f5f9;
+}
+.dark .text-gray-800 {
+  color: #e2e8f0;
+}
+.dark .text-gray-700 {
+  color: #cbd5e1;
+}
+.dark .text-gray-600 {
+  color: #94a3b8;
+}
+/*  Hover text  */
+.dark .hover\:text-gray-900:hover {
+  color: #f1f5f9;
+}
+.dark .hover\:text-gray-700:hover {
+  color: #e2e8f0;
+}
+
+/*  Form inputs  */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  background-color: #252d3d; /* reliable dark bg — no dependency on parent */
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  -webkit-text-fill-color: #f1f5f9; /* WebKit/Safari: overrides the UA colour */
+  caret-color: #f1f5f9;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
+  -webkit-text-fill-color: #64748b;
+}
+
+/*  Dark mode autofill (must override -webkit-text-fill-color from above) */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #252d3d inset !important;
+  box-shadow: 0 0 0px 1000px #252d3d inset !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  caret-color: #f1f5f9;
+}
+
+/*  Explicit Along color token overrides */
+.dark .text-gray {
+  color: #94a3b8;
+}
+.dark .text-gray-3 {
+  color: #94a3b8;
+}
+.dark .text-gray-4 {
+  color: #94a3b8;
+}
+.dark .text-gray-5 {
+  color: #9ca3af;
+}
+
+/*  Table header rows that use bg-gray-50 via thead or class  */
+.dark thead tr {
+  background-color: transparent;
+}
+
+/*  Skeleton / loading pulses  */
+.dark .animate-pulse {
+  opacity: 0.5;
+}
 
 .radar-autocomplete-input {
   all: unset;
@@ -192,9 +330,8 @@ input[type='number'] {
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
-
 }
 
 .radar-autocomplete-search-icon {
   display: none;
-} 
+}

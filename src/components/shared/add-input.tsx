@@ -10,6 +10,7 @@ import { Input, Textarea } from "@/components";
 
 import { cn } from "@/lib";
 import { HTMLAttributes, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 export interface AddInputProps<T extends FieldValues> {
   id: Path<T>;
   inputMode?: HTMLAttributes<T>["inputMode"];
@@ -31,6 +32,7 @@ export interface AddInputProps<T extends FieldValues> {
   iconAndInputWrapperClassName?: string;
   isReverse?: boolean;
   withFocusRing?: boolean;
+  maxLength?: number;
 }
 
 const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
@@ -54,6 +56,7 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
     isReverse,
     pattern,
     withFocusRing,
+    maxLength,
   } = props;
 
   const [realType, setRealType] = useState(type);
@@ -68,27 +71,29 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
           <span>{label}</span>
         </label>
       )}
-      <div className='flex flex-col gap-1'>
+      <div className="flex flex-col gap-1">
         <div
           className={cn(
-            "flex gap-2 items-center px-6",
+            "relative flex gap-2 items-center px-6 border border-gray-200",
             iconAndInputWrapperClassName,
-            errors[id] && "border border-red-400",
+            errors[id] && "border-red-400",
             isReverse && "flex-row-reverse",
           )}
         >
-          {icon && <div className='flex items-center'>{icon}</div>}
+          {icon && <div className="flex items-center">{icon}</div>}
           <Input
             id={id}
             type={realType}
             disabled={disabled}
             inputMode={inputMode}
             pattern={pattern}
+            maxLength={maxLength}
             {...register(id, { required })}
             onBlur={onblur}
             placeholder={placeholder}
             className={cn(
               "rounded-lg",
+              type === "password" && "pr-8",
               inputClassName,
               withFocusRing &&
                 "focus-visible:ring-1 focus-visible:ring-teal-600",
@@ -96,19 +101,27 @@ const AddInput = <T extends FieldValues>(props: AddInputProps<T>) => {
           />
           {type === "password" && (
             <button
-              type='button'
+              type="button"
+              tabIndex={-1}
+              aria-label={
+                realType === "password" ? "Show password" : "Hide password"
+              }
               onClick={() =>
                 setRealType(realType === "password" ? "text" : "password")
               }
-              className='text-sm text-primary font-medium cursor-pointer'
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              {realType === "password" ? "Show" : "Hide"}
+              {realType === "password" ? (
+                <Eye size={16} />
+              ) : (
+                <EyeOff size={16} />
+              )}
             </button>
           )}
         </div>
 
         {errors[id]?.message && (
-          <p className='text-xs text-red-400 ml-4'>{`${errors[id].message}`}</p>
+          <p className="text-xs text-red-400 ml-4">{`${errors[id].message}`}</p>
         )}
       </div>
     </div>
@@ -131,7 +144,7 @@ const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
   } = props;
   return (
     <div className={cn("w-full flex flex-col gap-3 bg-white", className)}>
-      <label htmlFor={id} className='text-base'>
+      <label htmlFor={id} className="text-base">
         {label}
       </label>
       <Textarea
@@ -147,7 +160,7 @@ const AddTextarea = <T extends FieldValues>(props: AddInputProps<T>) => {
         )}
       />
       {errors[id]?.message && (
-        <p className='text-xs text-red-400 ml-4'>{`${errors[id].message}`}</p>
+        <p className="text-xs text-red-400 ml-4">{`${errors[id].message}`}</p>
       )}
     </div>
   );

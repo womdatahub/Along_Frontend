@@ -1,10 +1,7 @@
-
-
-
 "use client";
 
-import { Button } from "@/components";
-// import { useRouter } from "next/navigation";
+import { Shield, ChevronRight } from "lucide-react";
+
 const policies = [
   {
     title: "Introduction",
@@ -48,7 +45,7 @@ const policies = [
   },
   {
     title: "Your Rights",
-    text: "Depending on your jurisdiction, you may have rights to access, update, delete, or restrict the processing of your personal data. Requests can be submitted through customer support. Some information may be retained for safety and compliance reasons.",
+    text: "Under applicable U.S. law — including the California Consumer Privacy Act (CCPA) for California residents — you may have the right to know what personal data we collect, request deletion of your data, opt out of certain data sharing, and not be discriminated against for exercising these rights. All users may access, correct, or delete their information by contacting our support team. Some data may be retained as required by law or for safety and fraud-prevention purposes.",
   },
   {
     title: "Cookies and Tracking Technologies",
@@ -63,8 +60,8 @@ const policies = [
     text: "Our service is not intended for minors under 18. We do not knowingly collect information from children. Accounts suspected of being created by minors may be suspended.",
   },
   {
-    title: "International Data Transfers",
-    text: "Where applicable, your data may be stored or processed in regions outside your country. We ensure appropriate safeguards are in place to protect your information during international transfers.",
+    title: "Data Storage and Transfers",
+    text: "Your data is primarily stored and processed within the United States. Where necessary for operations, data may be transferred to and stored in other countries. We ensure appropriate contractual and technical safeguards are in place to protect your information in compliance with applicable U.S. law.",
   },
   {
     title: "Automated Decision Making",
@@ -85,43 +82,98 @@ const policies = [
 ];
 
 const Page = () => {
-  //   const router = useRouter();
   return (
-    <div className="flex flex-col gap-4 w-[500px] aspect-square overflow-y-scroll text-black font-fustat">
-      <p className="font-bold text-xl text-center sticky top-0 bg-white pb-2">
-        Privacy Policy
-      </p>
-      <div className="flex flex-col gap-3 text-sm text-justify">
-        <p>
-          This Privacy Policy explains what data we collect, how we use it, how
-          we protect it, and the rights you have regarding your information.
-        </p>
-        <div className="flex flex-col gap-3">
-          {policies.map((policy, i) => {
-            return (
-              <div key={i} className="flex gap-1 flex-col">
-                <p className="font-bold text-lg">{policy.title}</p>
-                <p>{policy.text}</p>
-              </div>
-            );
-          })}
+    <div className="min-h-screen bg-background font-fustat">
+      {/* Hero */}
+      <div className="bg-white border-b border-gray-2">
+        <div className="max-w-4xl mx-auto px-5 md:px-8 py-12 md:py-16">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-primaryLight2 flex items-center justify-center">
+              <Shield size={22} className="text-primary" />
+            </div>
+            <div>
+              <p className="text-primary text-xs font-semibold uppercase tracking-widest font-heebo">
+                Legal
+              </p>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-black font-heebo leading-tight">
+                Privacy Policy
+              </h1>
+            </div>
+          </div>
+          <p className="text-gray text-sm font-light leading-relaxed max-w-2xl">
+            This Privacy Policy explains what data we collect, how we use it,
+            how we protect it, and the rights you have regarding your
+            information. Last updated: January 2025.
+          </p>
         </div>
       </div>
-      <div className="flex self-end">
-        {/* <Button
-          variant="link"
-          className="text-black font-bold hover:cursor-pointer"
-          //   onClick={() => router.back()}
-        >
-          Back
-        </Button> */}
-        <Button
-          variant="link"
-          className="text-primary font-bold hover:cursor-pointer"
-          //   onClick={() => router.push("/onboarding/services")}
-        >
-          Accept
-        </Button>
+
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-5 md:px-8 py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Table of contents */}
+          <aside className="lg:w-64 shrink-0">
+            <div className="bg-white rounded-2xl p-5 shadow-sm sticky top-24">
+              <p className="text-xs font-semibold text-gray uppercase tracking-wider mb-4">
+                Contents
+              </p>
+              <nav className="flex flex-col gap-1">
+                {policies.map((policy, i) => (
+                  <a
+                    key={i}
+                    href={`#section-${i}`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-gray hover:text-black hover:bg-background transition-colors duration-150 group"
+                  >
+                    <ChevronRight
+                      size={10}
+                      className="text-gray-2 group-hover:text-primary transition-colors shrink-0"
+                    />
+                    <span className="truncate">{policy.title}</span>
+                  </a>
+                ))}
+              </nav>
+            </div>
+          </aside>
+
+          {/* Sections */}
+          <main className="flex-1 flex flex-col gap-6">
+            {policies.map((policy, i) => (
+              <div
+                key={i}
+                id={`section-${i}`}
+                className="bg-white rounded-2xl p-6 shadow-sm scroll-mt-24"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-xs font-bold text-primary/60 font-heebo tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h2 className="font-bold text-base text-black font-heebo">
+                    {policy.title}
+                  </h2>
+                </div>
+                <p className="text-sm text-gray font-light leading-relaxed text-justify">
+                  {policy.text}
+                </p>
+              </div>
+            ))}
+
+            <div className="bg-primaryLight2 rounded-2xl p-6">
+              <p className="text-sm font-semibold text-black font-heebo mb-1">
+                Questions about this policy?
+              </p>
+              <p className="text-xs text-gray font-light leading-relaxed">
+                Contact our privacy team at{" "}
+                <a
+                  href="mailto:privacy@alongcities.com"
+                  className="text-primary font-medium hover:text-primary-deep transition-colors"
+                >
+                  privacy@alongcities.com
+                </a>{" "}
+                — we typically respond within 48 hours.
+              </p>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

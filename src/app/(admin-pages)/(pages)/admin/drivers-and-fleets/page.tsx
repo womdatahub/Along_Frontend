@@ -1,44 +1,40 @@
 "use client";
+
 import {
-  Button,
-  Card,
-  CardContent,
-  DriverPendingInfoModal,
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
   ConfirmActionModal,
   DriverInformationModal,
+  DriverPendingInfoModal,
+  ProfileAvatar,
 } from "@/components/";
 import { useAdmin } from "@/store";
-// import { AdminFilterIcon, AdminSearchIcon } from "@public/svgs";
-import Image from "next/image";
 import { useShallow } from "zustand/shallow";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Car, Search, Star, UserX, Loader2 } from "lucide-react";
 
 const Page = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<
+    "active" | "pending" | "suspended"
+  >("active");
+
   const {
+    isLoading,
     actions: {
       getAllDrivers,
-      getPendingDriversKYC,
+      getpendingKyc,
       getSuspendedDrivers,
       getSingleDriverDetails,
       suspendDriverOrRider,
       reactivateDriverOrRider,
     },
-    pendingDriversKYC,
     allDrivers,
+    pendingKyc,
     suspendedDrivers,
   } = useAdmin(
     useShallow((state) => ({
+      isLoading: state.isLoading,
       actions: state.actions,
-      pendingDriversKYC: state.pendingDriversKYC,
+      pendingKyc: state.pendingKyc,
       allDrivers: state.allDrivers,
       suspendedDrivers: state.suspendedDrivers,
     })),
@@ -46,260 +42,344 @@ const Page = () => {
 
   useEffect(() => {
     getAllDrivers();
-    getPendingDriversKYC();
+    getpendingKyc();
     getSuspendedDrivers();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const filteredDrivers = allDrivers.filter((d) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      d.driver.firstName?.toLowerCase().includes(q) ||
+      d.driver.lastName?.toLowerCase().includes(q) ||
+      d.email?.toLowerCase().includes(q)
+    );
+  });
+
+  const tabs = [
+    {
+      key: "active" as const,
+      label: "Active drivers",
+      count: allDrivers.length,
+    },
+    {
+      key: "pending" as const,
+      label: "Pending KYC",
+      count: pendingKyc?.drivers.length ?? 0,
+    },
+    {
+      key: "suspended" as const,
+      label: "Suspended",
+      count: suspendedDrivers.length,
+    },
+  ];
+
   return (
-    <section className='flex flex-col gap-8'>
-      <p className='text-2xl md:text-4xl font-heebo'>Drivers & Fleets</p>
-
-      <div className='rounded-xl md:rounded-3xl border bg-white border-gray-300 flex flex-col gap-4 py-4'>
-        <div className='flex flex-col md:flex-row justify-between gap-5 md:items-center px-2 md:px-6'>
-          <p className='text-xl text-left font-medium'>Drivers information</p>
-          {/* <div className='flex items-center gap-5'>
-            <div className='flex gap-3 items-center px-3 py-2 rounded-full bg-[#EAEAEA] md:min-w-[325px]'>
-              <AdminSearchIcon />
-              <input
-                type='text'
-                name='search'
-                id='search'
-                className='bg-transparent focus:outline-none'
-                placeholder='Search'
-              />
-            </div>
-            <AdminFilterIcon />
-          </div> */}
+    <section className="flex flex-col gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <p className="text-2xl font-bold font-heebo text-gray-900">
+          Drivers & Fleets
+        </p>
+        <div className="relative">
+          <Search
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
+          <input
+            type="text"
+            placeholder="Search drivers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 pr-4 h-10 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-64"
+          />
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow className='bg-[#E0E6E6] font-semibold text-base hover:bg-[#E0E6E6]'>
-              <TableHead className='text-icons'>Driver Name</TableHead>
-              <TableHead className='text-icons'>Email</TableHead>
-              <TableHead className='text-icons'>Phone Number</TableHead>
-              <TableHead className='text-icons'>Rating</TableHead>
-              <TableHead className='text-icons'>Social Security No</TableHead>
-              <TableHead className='text-icons'>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          {allDrivers.length === 0 ? (
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={7} className='p-10'>
-                  <Empty>
-                    <EmptyHeader>
-                      <EmptyTitle>No information found</EmptyTitle>
-                    </EmptyHeader>
-                  </Empty>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          ) : (
-            <TableBody>
-              {allDrivers.map((driver, i) => {
-                return (
-                  <TableRow key={i} className='last:border-b-0'>
-                    <TableCell className='text-sm font-medium py-5'>
-                      <div className='flex items-center gap-2'>
-                        <Image
-                          src={
-                            driver.driver.driverProfilePictureUri ??
-                            "/images/placeholder.jpg"
-                          }
-                          alt={driver.driver.firstName}
-                          className='rounded-full size-8 object-cover'
-                          width={32}
-                          height={32}
-                        />
-                        <p className='truncate'>
-                          {driver.driver.firstName} {driver.driver.lastName}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell className=' text-sm font-medium truncate'>
-                      {driver.email}
-                    </TableCell>
-                    <TableCell className=' text-sm font-medium truncate'>
-                      {driver.mobileNumber}
-                    </TableCell>
-                    <TableCell className=' text-sm font-medium'>
-                      {driver.driver.rating.totalRating}
-                    </TableCell>
-
-                    <TableCell className=' text-sm font-medium truncate'>
-                      {driver.driver.driverSocialSecurityNumber}
-                    </TableCell>
-                    <TableCell>
-                      <div className='flex items-center gap-3'>
-                        <ConfirmActionModal
-                          trigger={
-                            <Button className='rounded-full bg-primary hover:bg-primary'>
-                              Suspend
-                            </Button>
-                          }
-                          title='Suspend driver'
-                          description='Are you sure you want to suspend this driver'
-                          confirmActionFunction={async (values) => {
-                            if (!values) return;
-                            await suspendDriverOrRider(
-                              {
-                                userId: driver.driver.userId,
-                                reason: values.reason!,
-                                suspensionType:
-                                  values.suspensionType!.toUpperCase(),
-                                suspensionDuration: Number(
-                                  values.suspensionDuration,
-                                ),
-                              },
-                              "driver",
-                            );
-                          }}
-                          type='suspend'
-                        />
-                        <DriverInformationModal
-                          phoneNumber={driver?.mobileNumber ?? ""}
-                          trigger={
-                            <Button
-                              onClick={() =>
-                                getSingleDriverDetails(driver.driver.userId)
-                              }
-                              className='rounded-full bg-primary hover:bg-primary'
-                            >
-                              View profile
-                            </Button>
-                          }
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          )}
-        </Table>
       </div>
 
-      <div className='flex flex-col md:flex-row gap-4 md:gap-8'>
-        <div className='flex gap-2 flex-col flex-1'>
-          <p className='font-semibold text-xl'>Pending Activation</p>
-          <Card className='p-5 gap-1 flex-1'>
-            <CardContent className='p-0'>
-              {pendingDriversKYC.length === 0 && (
-                <Empty className='py-20'>
-                  <EmptyHeader>
-                    <EmptyTitle>No information found</EmptyTitle>
-                  </EmptyHeader>
-                </Empty>
-              )}
-              {pendingDriversKYC.map((driver, i) => (
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeTab === tab.key
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {tab.label}
+            <span
+              className={`text-xs px-1.5 py-0.5 rounded-full ${
+                activeTab === tab.key
+                  ? "bg-primary/10 text-primary"
+                  : "bg-gray-200 text-gray-500"
+              }`}
+            >
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Active drivers */}
+      {activeTab === "active" && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          {isLoading && allDrivers.length === 0 ? (
+            <div className="flex items-center justify-center py-20 gap-3">
+              <Loader2 size={22} className="animate-spin text-primary" />
+              <p className="text-sm text-gray-400">Loading drivers…</p>
+            </div>
+          ) : filteredDrivers.length === 0 ? (
+            <EmptyState icon={Car} message="No active drivers found" />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-50">
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Driver
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Contact
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Rating
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Date Joined
+                    </th>
+                    <th className="text-right text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredDrivers.map((driver, i) => (
+                    <tr
+                      key={i}
+                      className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <ProfileAvatar
+                            src={driver.driver.driverProfilePictureUri}
+                            firstName={driver.driver.firstName}
+                            lastName={driver.driver.lastName}
+                            size={36}
+                            className="size-9 rounded-xl"
+                          />
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {driver.driver.firstName} {driver.driver.lastName}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {driver.email}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-sm text-gray-600">
+                          {driver.mobileNumber}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1">
+                          <Star
+                            size={13}
+                            className="text-amber-400 fill-amber-400"
+                          />
+                          <span className="text-sm font-medium text-gray-700">
+                            {driver.driver.rating.totalRating.toFixed(1)}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-sm text-gray-500 font-mono">
+                          {driver.createdAt
+                            ? new Date(driver.createdAt).toLocaleDateString()
+                            : "—"}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <ConfirmActionModal
+                            trigger={
+                              <button className="text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition-colors">
+                                Suspend
+                              </button>
+                            }
+                            title="Suspend driver"
+                            description="Are you sure you want to suspend this driver?"
+                            confirmActionFunction={async (values) => {
+                              if (!values) return;
+                              await suspendDriverOrRider(
+                                {
+                                  userId: driver.driver.userId,
+                                  reason: values.reason!,
+                                  suspensionType:
+                                    values.suspensionType!.toUpperCase() as
+                                      | "TEMPORARY"
+                                      | "PERMANENT",
+                                  suspensionDuration: Number(
+                                    values.suspensionDuration,
+                                  ),
+                                },
+                                "driver",
+                              );
+                            }}
+                            type="suspend"
+                          />
+                          <DriverInformationModal
+                            phoneNumber={driver?.mobileNumber ?? ""}
+                            trigger={
+                              <button
+                                onClick={() =>
+                                  getSingleDriverDetails(driver.driver.userId)
+                                }
+                                className="text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors"
+                              >
+                                View profile
+                              </button>
+                            }
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Pending KYC */}
+      {activeTab === "pending" && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          {!pendingKyc || pendingKyc.drivers.length === 0 ? (
+            <EmptyState icon={Car} message="No pending KYC applications" />
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {pendingKyc.drivers.map((driver, i) => (
                 <div
                   key={i}
-                  className='flex items-center gap-3 justify-between  first:py-3 border-b last:border-b-0 py-6 px-4'
+                  className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
                 >
-                  <div className='flex items-center gap-3'>
-                    <Image
-                      src={
-                        driver.driverProfilePictureUri ??
-                        "/images/placeholder.jpg"
-                      }
-                      alt={`${driver.firstName} ${driver.lastName} profile picture`}
-                      width={36}
-                      height={36}
-                      className='size-9 rounded-full object-cover'
+                  <div className="flex items-center gap-3">
+                    <ProfileAvatar
+                      src={driver.driverProfilePictureUri}
+                      firstName={driver.firstName}
+                      lastName={driver.lastName}
+                      size={36}
+                      className="size-9 rounded-xl"
                     />
-                    <p className='text-sm font-medium'>
-                      {driver.firstName} {driver.lastName}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {driver.firstName} {driver.lastName}
+                      </p>
+                      <span className="text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                        Pending review
+                      </span>
+                    </div>
                   </div>
-
                   <DriverPendingInfoModal
                     trigger={
-                      <Button
-                        onClick={() => getSingleDriverDetails(driver.id)}
-                        variant='ghost'
+                      <button
+                        onClick={() => getSingleDriverDetails(driver._id)}
+                        className="text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors"
                       >
-                        Open
-                      </Button>
+                        Review
+                      </button>
                     }
                   />
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </div>
-        <div className='flex gap-2 flex-col flex-1'>
-          <p className='font-semibold text-xl'>Suspended drivers</p>
-          <Card className='p-5 gap-1 flex-1'>
-            <CardContent className='p-0'>
-              {suspendedDrivers.length === 0 && (
-                <Empty className='py-20'>
-                  <EmptyHeader>
-                    <EmptyTitle>No information found</EmptyTitle>
-                  </EmptyHeader>
-                </Empty>
-              )}
+      )}
+
+      {/* Suspended */}
+      {activeTab === "suspended" && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          {suspendedDrivers.length === 0 ? (
+            <EmptyState icon={UserX} message="No suspended drivers" />
+          ) : (
+            <div className="divide-y divide-gray-50">
               {suspendedDrivers.map((driver) => (
                 <div
                   key={driver.driver.firstName}
-                  className='flex items-center gap-3 justify-between first:py-3 py-6 px-1'
+                  className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
                 >
-                  <div className='flex items-center gap-3'>
-                    <Image
-                      src={
-                        driver.driver.driverProfilePictureUri ??
-                        "/images/placeholder.jpg"
-                      }
-                      alt={`Driver profile picture`}
-                      width={36}
-                      height={36}
-                      className='size-9 rounded-full object-cover'
+                  <div className="flex items-center gap-3">
+                    <ProfileAvatar
+                      src={driver.driver.driverProfilePictureUri}
+                      firstName={driver.driver.firstName}
+                      lastName={driver.driver.lastName}
+                      size={36}
+                      className="size-9 rounded-xl"
                     />
-                    <p className='text-sm font-medium'>
-                      {driver.driver.firstName} {driver.driver.lastName}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {driver.driver.firstName} {driver.driver.lastName}
+                      </p>
+                      <span className="text-xs font-medium text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full">
+                        Suspended
+                      </span>
+                    </div>
                   </div>
-                  <div className='flex flex-col md:flex-row gap-2 md:items-center'>
+                  <div className="flex items-center gap-2">
                     <ConfirmActionModal
                       trigger={
-                        <Button
-                          variant='default'
-                          className='bg-primary hover:bg-primary/90 rounded-full'
-                        >
+                        <button className="text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
                           Reactivate
-                        </Button>
+                        </button>
                       }
-                      title='Reactivate driver'
-                      description='Are you sure you want to reactivate this driver'
+                      title="Reactivate driver"
+                      description="Are you sure you want to reactivate this driver?"
                       confirmActionFunction={async () => {
                         await reactivateDriverOrRider(
-                          {
-                            userId: driver._id,
-                          },
+                          { userId: driver._id },
                           "driver",
                         );
                       }}
-                      type='reactivate'
+                      type="reactivate"
                     />
                     <DriverInformationModal
                       trigger={
-                        <Button
+                        <button
                           onClick={() => getSingleDriverDetails(driver._id)}
-                          className='rounded-full bg-primary hover:bg-primary'
+                          className="text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors"
                         >
                           View profile
-                        </Button>
+                        </button>
                       }
                     />
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </section>
   );
 };
+
 export default Page;
+
+const EmptyState = ({
+  icon: Icon,
+  message,
+}: {
+  icon: React.ElementType;
+  message: string;
+}) => (
+  <div className="flex flex-col items-center justify-center py-16 gap-3">
+    <div className="size-12 rounded-2xl bg-gray-50 flex items-center justify-center">
+      <Icon size={22} className="text-gray-300" />
+    </div>
+    <p className="text-sm text-gray-400">{message}</p>
+  </div>
+);

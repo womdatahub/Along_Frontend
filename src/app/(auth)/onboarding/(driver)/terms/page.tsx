@@ -3,58 +3,55 @@
 import { Button } from "@/components";
 import { useRouter } from "next/navigation";
 
+const terms = [
+  {
+    title: "Driver eligibility",
+    body: "You must provide accurate identity, license, verification, vehicle, and insurance information. Along may restrict rental availability until verification is reviewed and approved.",
+  },
+  {
+    title: "Vehicle rental services",
+    body: "Rental listings must represent vehicles you are authorized to operate or list. You are responsible for keeping vehicle details, pickup location, availability, and rental mode support accurate.",
+  },
+  {
+    title: "With-driver rentals",
+    body: "When accepting with-driver rentals, you agree to drive safely, arrive at the agreed pickup location, and follow local transport, insurance, and safety obligations.",
+  },
+  {
+    title: "Self-drive rentals",
+    body: "Self-drive rentals may be booked only by riders who satisfy Along eligibility checks. You must not bypass platform checks or settle payments outside Along.",
+  },
+  {
+    title: "Payments and disputes",
+    body: "Rental payments are processed through the platform. Payment confirmation depends on the payment processor webhook, and payout timing may depend on Stripe account status and compliance review.",
+  },
+];
+
 const Page = () => {
   const router = useRouter();
   return (
-    <div className='flex flex-col gap-4 w-[500px] aspect-square overflow-y-scroll text-black font-fustat'>
-      <p className='font-bold text-xl text-center sticky top-0 bg-white pb-2'>
-        Terms and Conditions
+    <div className="flex w-full max-w-140 flex-col gap-4 overflow-y-auto text-black font-fustat">
+      <p className="font-bold text-xl text-center sticky top-0 bg-white pb-2">
+        Driver Terms and Conditions
       </p>
-      <div className='flex flex-col gap-3 text-sm text-justify'>
-        <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry-s standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </p>
-        <p className='font-bold text-lg'>Offered Services </p>
-        <p>
-          It is a long established fact that a reader will be distracted by the
-          readable content of a page when looking at its layout. The point of
-          using Lorem Ipsum is that it has a more-or-less normal distribution of
-          letters, as opposed to using Content here, content here, making it
-          look like readable English. Many desktop publishing packages and web
-          page editors now use Lorem Ipsum as their default model text, and a
-          search for lorem ipsum will uncover many web sites still in their
-          infancy. Various versions have evolved over the years, sometimes by
-          accident, sometimes on purpose (injected humour and the like). Lorem
-          Ipsum is simply dummy text of the printing and typesetting industry.
-          Lorem Ipsum has been the industry-s standard dummy text ever since the
-          1500s, when an unknown printer took a galley of type and scrambled it
-          to make a type specimen book. It has survived not only five centuries,
-          but also the leap into electronic typesetting, remaining essentially
-          unchanged. It was popularised in the 1960s with the release of
-          Letraset sheets containing Lorem Ipsum passages, and more recently
-          with desktop publishing software like Aldus PageMaker including
-          versions of Lorem Ipsum.
-        </p>
+      <div className="flex flex-col gap-4 text-sm">
+        {terms.map((term) => (
+          <section key={term.title} className="flex flex-col gap-1">
+            <p className="font-bold text-lg">{term.title}</p>
+            <p className="text-gray-5">{term.body}</p>
+          </section>
+        ))}
       </div>
-      <div className='flex self-end'>
+      <div className="flex justify-end gap-2">
         <Button
-          variant='link'
-          className='text-black font-bold hover:cursor-pointer'
+          variant="link"
+          className="text-black font-bold hover:cursor-pointer"
           onClick={() => router.back()}
         >
           Back
         </Button>
         <Button
-          variant='link'
-          className='text-primary font-bold hover:cursor-pointer'
+          variant="link"
+          className="text-primary font-bold hover:cursor-pointer"
           onClick={() => router.push("/onboarding/driver-info")}
         >
           Accept
@@ -63,4 +60,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;

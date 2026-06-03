@@ -32,68 +32,68 @@ const ResetPasswordModal = ({ trigger }: { trigger: React.ReactNode }) => {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
-        dialogTitle='Reset Password'
-        className='max-w-sm md:max-w-[460px] rounded-2xl p-8 gap-0 [&>button]:hidden'
+        dialogTitle="Reset Password"
+        className="max-w-sm md:max-w-115 rounded-2xl p-8 gap-0 [&>button]:hidden"
       >
         {state === "input" ? (
           <div>
-            <h2 className='text-[20px] font-bold text-gray-900 mb-7'>
+            <h2 className="text-[20px] font-bold text-gray-900 mb-7">
               Reset Password
             </h2>
 
             <button
-              type='button'
-              className='w-full py-5 rounded-xl bg-[#e8f0f0] text-[13px] text-gray-500 hover:bg-[#dce9e9] transition-colors mb-4 text-center'
+              type="button"
+              className="w-full py-5 rounded-xl bg-[#e8f0f0] text-[13px] text-gray-500 hover:bg-[#dce9e9] transition-colors mb-4 text-center"
             >
               Generate Password
             </button>
 
-            <div className='mb-5'>
+            <div className="mb-5">
               <Input
-                placeholder='Type Password'
-                className='h-11 rounded-xl border border-gray-300 text-[13px] placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-teal-600'
+                placeholder="Type Password"
+                className="h-11 rounded-xl border border-gray-300 text-[13px] placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-teal-600"
               />
             </div>
 
-            <div className='flex items-center gap-3 mb-8'>
+            <div className="flex items-center gap-3 mb-8">
               <Checkbox defaultChecked className={tealCheckbox} />
-              <label className='text-[13px] text-gray-700'>
+              <label className="text-[13px] text-gray-700">
                 Require user to change their password when they first sign in
               </label>
             </div>
 
             <Button
               onClick={() => setState("confirmation")}
-              className='rounded-full'
+              className="rounded-full"
             >
               Continue
             </Button>
           </div>
         ) : (
           <div>
-            <h2 className='text-[20px] font-bold text-gray-900 mb-7'>
+            <h2 className="text-[20px] font-bold text-gray-900 mb-7">
               Password reset confirmation
             </h2>
 
-            <div className='mb-8'>
-              <div className='flex items-center justify-between mb-1'>
-                <p className='text-[13px] font-bold text-gray-900'>
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-[13px] font-bold text-gray-900">
                   Your New Password
                 </p>
                 <button
-                  type='button'
-                  className='flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700 transition-colors'
+                  type="button"
+                  className="flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   <Copy size={14} strokeWidth={1.5} />
                   Copy
                 </button>
               </div>
-              <p className='text-[13px] text-gray-700'>HK877yhyyf&amp;998hhh</p>
+              <p className="text-[13px] text-gray-700">HK877yhyyf&amp;998hhh</p>
             </div>
 
             <Button
               onClick={close}
-              className='h-10 px-8 rounded-full text-[13px] font-medium bg-[#0f766e] text-white hover:bg-[#0a6360] shadow-none border-0'
+              className="h-10 px-8 rounded-full text-[13px] font-medium bg-[#0f766e] text-white hover:bg-[#0a6360] shadow-none border-0"
             >
               Continue
             </Button>

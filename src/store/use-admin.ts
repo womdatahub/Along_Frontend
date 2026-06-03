@@ -6,9 +6,11 @@ import type {
   SuspendedDriver,
   AllRiderAccount,
   AllDriversAccount,
+  PendingKycType,
+  RiderProfile,
 } from "@/types";
 import { devtools } from "zustand/middleware";
-import { adminApiStr, callApi, TCreateNewAdminSchema, userApiStr } from "@/lib";
+import { requests, TCreateNewAdminSchema } from "@/lib";
 import { toast } from "sonner";
 
 type AdminType = {
@@ -16,12 +18,16 @@ type AdminType = {
   allSuspendedAdmins: AdminsType[];
   isLoading: boolean;
   isProcessingKYC: boolean;
-  pendingDriversKYC: DriverProfile[];
+  pendingKyc: PendingKycType | null;
   suspendedDrivers: SuspendedDriver[];
   suspendedRiders: AllRiderAccount[];
   allRiders: AllRiderAccount[];
   allDrivers: AllDriversAccount[];
   singleDriverDetails: DriverProfile | null;
+  singleRiderDetails: RiderProfile | null;
+  sosAlerts: SosAlert[];
+  activeRentals: ActiveRental[];
+  dashboardMetrics: Record<string, unknown> | null;
   actions: {
     getAdminDashboardDetails: () => Promise<void>;
     getActiveRides: () => Promise<void>;
@@ -40,7 +46,7 @@ type AdminType = {
       suspendDetails: {
         userId: string;
         reason: string;
-        suspensionType: string;
+        suspensionType: "TEMPORARY" | "PERMANENT";
         suspensionDuration?: number;
       },
       type: "driver" | "rider",
@@ -53,12 +59,13 @@ type AdminType = {
       },
       type: "driver" | "rider",
     ) => Promise<void>;
-    getPendingDriversKYC: () => Promise<void>;
+    getpendingKyc: () => Promise<PendingKycType>;
     processDriverKYC: (data: {
       driverId: string;
       action: "APPROVE" | "REJECT";
       notes?: string;
       reason?: string;
+      licenseExpiryDate?: string;
     }) => Promise<void>;
     getAllRiders: () => Promise<void>;
     getSuspendedRiders: () => Promise<void>;
@@ -71,7 +78,35 @@ type AdminType = {
     }) => Promise<void>;
     restoreAdmin: (restoreData: { adminId: string }) => Promise<void>;
     getSingleDriverDetails: (driverID: string) => Promise<void>;
+    getSingleRiderDetails: (riderId: string) => Promise<void>;
   };
+};
+
+export type SosAlert = {
+  tripID?: string;
+  _id?: string;
+  id?: string;
+  driver?: string;
+  rider?: string;
+  status?: string;
+  type?: string;
+  timeStamp?: string;
+  initiator?: string;
+  [key: string]: unknown;
+};
+
+export type ActiveRental = {
+  _id?: string;
+  id?: string;
+  rentalId?: string;
+  driverId?: string;
+  riderId?: string;
+  status?: string;
+  startTime?: string;
+  endTime?: string;
+  pickup?: string;
+  dropoff?: string;
+  [key: string]: unknown;
 };
 
 const initialState = {
@@ -79,12 +114,16 @@ const initialState = {
   allSuspendedAdmins: [],
   isLoading: false,
   isProcessingKYC: false,
-  pendingDriversKYC: [],
+  pendingKyc: null,
   suspendedDrivers: [],
   suspendedRiders: [],
   allRiders: [],
   allDrivers: [],
   singleDriverDetails: null,
+  singleRiderDetails: null,
+  sosAlerts: [] as SosAlert[],
+  activeRentals: [] as ActiveRental[],
+  dashboardMetrics: null as Record<string, unknown> | null,
 };
 
 export const useAdmin = create<AdminType>()(
@@ -92,120 +131,62 @@ export const useAdmin = create<AdminType>()(
     ...initialState,
     actions: {
       getAdminDashboardDetails: async () => {
-        const path = adminApiStr("/operations/dashboard");
-        const { data, error } = await callApi(path);
-        if (error) {
-          // toast.error(error.message);
-          return;
-        }
-        if (data) {
-          // console.log(path, data);
-          // toast.success(
-          //   data.message ?? "Dashboard details fetched successfully",
-          // );
+        set({ isLoading: true });
+        const { data, error } = await requests.admin.getMetrics();
+        set({ isLoading: false });
+        if (error) return;
+        if (data?.data) {
+          set({ dashboardMetrics: data.data as Record<string, unknown> });
         }
       },
       getActiveRides: async () => {
-        const path = adminApiStr("/operations/rides/active");
-        const { data, error } = await callApi(path);
-        if (error) {
-          // toast.error(error.message);
-          return;
-        }
-        if (data) {
-          // console.log(path, data);
-          // toast.success(
-          //   data.message ?? "Dashboard details fetched successfully",
-          // );
-        }
+        await requests.admin.getActiveRides();
       },
       getPendingRequests: async () => {
-        const path = adminApiStr("/operations/rides/pending");
-        const { data, error } = await callApi(path);
-        if (error) {
-          // toast.error(error.message);
-          return;
-        }
-        if (data) {
-          // console.log(path, data);
-          // toast.success(
-          //   data.message ?? "Dashboard details fetched successfully",
-          // );
-        }
+        await requests.admin.getPendingRequests();
       },
       getActiveRentals: async () => {
-        const path = adminApiStr("/operations/rentals/active");
-        const { data, error } = await callApi(path);
-        if (error) {
-          // toast.error(error.message);
-          return;
-        }
-        if (data) {
-          // console.log(path, data);
-          // toast.success(
-          //   data.message ?? "Dashboard details fetched successfully",
-          // );
-        }
+        const { data } = await requests.admin.getActiveRentals();
+        if (!data) return;
+        const raw = data as unknown;
+        const list: ActiveRental[] = Array.isArray(raw)
+          ? (raw as ActiveRental[])
+          : Array.isArray((raw as Record<string, unknown>)?.data)
+            ? ((raw as Record<string, unknown>).data as ActiveRental[])
+            : [];
+        set({ activeRentals: list });
       },
       getDriverAvailability: async () => {
-        const path = adminApiStr("/operations/driver/availability");
-        const { data, error } = await callApi(path);
-        if (error) {
-          // toast.error(error.message);
-          return;
-        }
-        if (data) {
-          // console.log(path, data);
-          // toast.success(
-          //   data.message ?? "Dashboard details fetched successfully",
-          // );
-        }
+        await requests.admin.getDriverAvailability();
       },
       getRideRoutePlayback: async () => {
-        const path = adminApiStr("/operations/rides/playback");
-        const { data, error } = await callApi(path);
-        if (error) {
-          // toast.error(error.message);
-          return;
-        }
-        if (data) {
-          // console.log(path, data);
-          // toast.success(
-          //   data.message ?? "Dashboard details fetched successfully",
-          // );
-        }
+        await requests.admin.getRideRoutePlayback();
       },
       getSOSAlerts: async () => {
-        const path = adminApiStr("/sos/alerts");
-        const { data, error } = await callApi(path);
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
-        if (data) {
-          console.log(path, data);
-          toast.success(data.message ?? "SOS alerts fetched successfully");
-        }
+        const { data } = await requests.admin.getSOSAlerts();
+        if (!data) return;
+        const raw = data as unknown;
+        const list: SosAlert[] = Array.isArray(raw)
+          ? (raw as SosAlert[])
+          : Array.isArray((raw as Record<string, unknown>)?.data)
+            ? ((raw as Record<string, unknown>).data as SosAlert[])
+            : [];
+        set({ sosAlerts: list });
       },
       resolveSOSAlert: async (alert) => {
-        const path = adminApiStr("/sos/alerts/resolve");
-        const { data, error } = await callApi(path, alert);
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        const { data, error } = await requests.admin.resolveSOSAlert(alert);
+        if (error) return;
         if (data) {
-          console.log(path, data);
-          toast.success(data.message ?? "SOS resolved successfully");
+          toast.success(data.message ?? "SOS alert resolved");
+          // Refresh alert list after resolution
+          await get().actions.getSOSAlerts();
         }
       },
       getAllDrivers: async () => {
         set({ isLoading: false });
-        const path = adminApiStr("/users/drivers");
-        const { data, error } = await callApi<AllDriversAccount[]>(path);
+        const { data, error } = await requests.admin.getAllDrivers();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
@@ -215,33 +196,25 @@ export const useAdmin = create<AdminType>()(
               (driver) => driver.isSuspended !== true,
             ),
           });
-          // toast.success(data.message ?? "Drivers fetched successfully");
         }
       },
       getSuspendedDrivers: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/users/drivers/suspended");
-        const { data, error } = await callApi<SuspendedDriver[]>(path);
+        const { data, error } = await requests.admin.getSuspendedDrivers();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          // console.log(path, data);
           set({ suspendedDrivers: data.data, isLoading: false });
-          // toast.success(
-          //   data.message ?? "Suspended drivers fetched successfully",
-          // );
         }
       },
       suspendDriverOrRider: async (suspendDetails, type) => {
         set({ isLoading: true });
-        const path = adminApiStr("/compliance/users/suspend");
-        const { data, error } = await callApi(path, suspendDetails);
+        const { data, error } =
+          await requests.admin.suspendUser(suspendDetails);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
@@ -258,15 +231,13 @@ export const useAdmin = create<AdminType>()(
       },
       reactivateDriverOrRider: async (reactivateDetails, type) => {
         set({ isLoading: true });
-        const path = adminApiStr("/compliance/users/reactivate");
-        const { data, error } = await callApi(path, reactivateDetails);
+        const { data, error } =
+          await requests.admin.reactivateUser(reactivateDetails);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          console.log(path, data);
           set({ isLoading: false });
           if (type === "driver") {
             await get().actions.getAllDrivers();
@@ -278,43 +249,36 @@ export const useAdmin = create<AdminType>()(
           toast.success(data.message ?? "User reactivated successfully");
         }
       },
-      getPendingDriversKYC: async () => {
+      getpendingKyc: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/compliance/kyc/pending");
-        const { data, error } = await callApi<DriverProfile[]>(path);
+        const { data, error } = await requests.admin.getPendingKyc();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          // console.log(path, data);
-          toast.success(data.message ?? "Pending KYC fetched successfully");
-          set({ isLoading: false, pendingDriversKYC: data.data });
+          set({ isLoading: false, pendingKyc: data.data });
         }
       },
       processDriverKYC: async (driverKYCData) => {
         set({ isProcessingKYC: true });
-        const path = adminApiStr("/compliance/drivers/approval");
-        const { data, error } = await callApi(path, driverKYCData);
+        const { data, error } =
+          await requests.admin.processDriverKyc(driverKYCData);
         if (error) {
           set({ isProcessingKYC: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          await get().actions.getPendingDriversKYC();
+          await get().actions.getpendingKyc();
           toast.success(data.message ?? "KYC processed successfully");
           set({ isProcessingKYC: false });
         }
       },
       getAllRiders: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/users/riders");
-        const { data, error } = await callApi<AllRiderAccount[]>(path);
+        const { data, error } = await requests.admin.getAllRiders();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
@@ -322,79 +286,63 @@ export const useAdmin = create<AdminType>()(
             isLoading: false,
             allRiders: data.data.filter((r) => r.isSuspended !== true),
           });
-          // toast.success(data.message ?? "Riders fetched successfully");
         }
       },
       getSuspendedRiders: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/users/riders/suspended");
-        const { data, error } = await callApi<AllRiderAccount[]>(path);
+        const { data, error } = await requests.admin.getSuspendedRiders();
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          // console.log(path, data);
           set({ suspendedRiders: data.data, isLoading: false });
-          // toast.success(
-          //   data.message ?? "Suspended riders fetched successfully",
-          // );
         }
       },
 
       getAllActiveAdmins: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/admins?status=active&limit=50&offset=0");
-        const { data, error } = await callApi<AdminsType[]>(path);
+        const { data, error } = await requests.admin.getActiveAdmins();
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return;
         }
         if (data) {
           set({ allActiveAdmins: data.data });
-          // toast.success(data.message ?? "Admins fetched successfully");
         }
         set({ isLoading: false });
       },
       getAllSuspendedAdmins: async () => {
         set({ isLoading: true });
-        const path = adminApiStr("/admins?status=suspended&limit=50&offset=0");
-        const { data, error } = await callApi<AdminsType[]>(path);
+        const { data, error } = await requests.admin.getSuspendedAdmins();
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return;
         }
         if (data) {
           set({ allSuspendedAdmins: data.data });
-          // toast.success(data.message ?? "Admins fetched successfully");
         }
         set({ isLoading: false });
       },
       createNewAdmin: async (adminData) => {
         set({ isLoading: true });
-        const path = adminApiStr("/admins");
-        const { data, error } = await callApi(path, adminData);
+        const { data, error } = await requests.admin.createAdmin(adminData);
         if (error) {
-          toast.error(error.message);
           set({ isLoading: false });
           return;
         }
         if (data) {
-          toast.success(data.message ?? "Admins created successfully");
+          toast.success(data.message ?? "Admin created successfully");
           await get().actions.getAllActiveAdmins();
         }
         set({ isLoading: false });
       },
       suspendAdmin: async (suspendDetails) => {
         set({ isLoading: true });
-        const path = adminApiStr("/admins/suspend");
-        const { data, error } = await callApi(path, suspendDetails, "PATCH");
+        const { data, error } =
+          await requests.admin.suspendAdmin(suspendDetails);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
@@ -406,11 +354,9 @@ export const useAdmin = create<AdminType>()(
       },
       restoreAdmin: async (restoreData) => {
         set({ isLoading: true });
-        const path = adminApiStr("/admins/restore");
-        const { data, error } = await callApi(path, restoreData, "PATCH");
+        const { data, error } = await requests.admin.restoreAdmin(restoreData);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
@@ -422,17 +368,24 @@ export const useAdmin = create<AdminType>()(
       },
       getSingleDriverDetails: async (driverID) => {
         set({ isLoading: true, singleDriverDetails: null });
-        const path = userApiStr(`/user/driver/${driverID}`);
-        const { data, error } = await callApi<DriverProfile>(path);
+        const { data, error } = await requests.admin.getDriverById(driverID);
         if (error) {
           set({ isLoading: false });
-          toast.error(error.message);
           return;
         }
         if (data) {
-          // console.log(path, data);
           set({ isLoading: false, singleDriverDetails: data.data });
-          // toast.success(data.message ?? "Admin restored successfully");
+        }
+      },
+      getSingleRiderDetails: async (riderId) => {
+        set({ isLoading: true, singleRiderDetails: null });
+        const { data, error } = await requests.admin.getRiderById(riderId);
+        if (error) {
+          set({ isLoading: false });
+          return;
+        }
+        if (data) {
+          set({ isLoading: false, singleRiderDetails: data.data });
         }
       },
     },
