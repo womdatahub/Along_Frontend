@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Bell,
   Mail,
@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { requests } from "@/lib";
+import { useSession } from "@/store";
 import { toast } from "sonner";
 import { TwoFactorFlow, PasswordInput } from "@/components";
 
@@ -39,6 +40,8 @@ const Toggle = ({ enabled, onChange }: ToggleProps) => (
 );
 
 const Page = () => {
+  const { actions } = useSession((s) => ({ actions: s.actions }));
+
   const [notifications, setNotifications] = useState({
     emailAlerts: true,
     bookingAlerts: true,
@@ -46,6 +49,9 @@ const Page = () => {
     pushNotifications: false,
     smsAlerts: false,
   });
+
+  // Debounce timer ref so rapid toggles only fire one API call
+  const notifDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [appearance, setAppearance] = useState({
     darkMode: false,
@@ -103,8 +109,19 @@ const Page = () => {
     document.documentElement.classList.toggle("dark", stored);
   }, []);
 
-  const toggle = <K extends keyof typeof notifications>(key: K) =>
-    setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggle = <K extends keyof typeof notifications>(key: K) => {
+    setNotifications((prev) => {
+      const updated = { ...prev, [key]: !prev[key] };
+      // Persist with debounce so rapid toggles coalesce into one request
+      if (notifDebounceRef.current) clearTimeout(notifDebounceRef.current);
+      notifDebounceRef.current = setTimeout(() => {
+        actions.updateNotificationPreferences(updated).catch(() => {
+          toast.error("Failed to save notification preferences");
+        });
+      }, 600);
+      return updated;
+    });
+  };
 
   const toggleAppearance = <K extends keyof typeof appearance>(
     key: K,
@@ -252,8 +269,12 @@ const Page = () => {
                 <Shield size={14} className="text-gray" />
               </div>
               <div>
-                <p className="text-sm font-medium text-black">Two-factor authentication</p>
-                <p className="text-xs text-gray mt-0.5">Require 2FA on every login</p>
+                <p className="text-sm font-medium text-black">
+                  Two-factor authentication
+                </p>
+                <p className="text-xs text-gray mt-0.5">
+                  Require 2FA on every login
+                </p>
               </div>
             </div>
             <Toggle
@@ -268,7 +289,10 @@ const Page = () => {
             <TwoFactorFlow
               mode={twoFaMode}
               onSuccess={() => {
-                setSecurity((prev) => ({ ...prev, twoFactor: twoFaMode === "enable" }));
+                setSecurity((prev) => ({
+                  ...prev,
+                  twoFactor: twoFaMode === "enable",
+                }));
                 setTwoFaMode(null);
               }}
               onCancel={() => setTwoFaMode(null)}
@@ -423,6 +447,6 @@ const Page = () => {
       </div>
     </div>
   );
-};
+};;
 
 export default Page;

@@ -50,6 +50,10 @@ type LoginResponse = {
   userRole: string;
   accessToken?: string;
   refreshToken?: string;
+  /** Present when the account has 2FA enabled — client must complete the OTP step. */
+  requires2fa?: boolean;
+  /** Short-lived token passed to the verify-2fa endpoint. */
+  mfaToken?: string;
 };
 
 type RegisterDriverResponse = {
@@ -146,6 +150,49 @@ export const requests = {
       callApi(
         `${BASE_USER}/user/google-signin`,
         data as Record<string, unknown>,
+      ),
+
+    // 2FA
+    initiate2FA: (): R<{ secretBase32: string; otpauthUrl: string }> =>
+      callApi(`${BASE_USER}/user/2fa/enable`, {}, "POST"),
+
+    verify2FAEnable: (data: { otp: string }): R<{ backupCodes: string[] }> =>
+      callApi(`${BASE_USER}/user/2fa/verify`, data as Record<string, unknown>),
+
+    disable2FA: (data: { otp: string }): R<unknown> =>
+      callApi(`${BASE_USER}/user/2fa/disable`, data as Record<string, unknown>),
+
+    regenerateBackupCodes: (data: {
+      otp: string;
+    }): R<{ backupCodes: string[] }> =>
+      callApi(
+        `${BASE_USER}/user/2fa/regenerate-backup-codes`,
+        data as Record<string, unknown>,
+      ),
+
+    verify2FALogin: (data: {
+      mfaToken: string;
+      otp: string;
+    }): R<LoginResponse> =>
+      callApi(
+        `${BASE_USER}/user/2fa/login-verify`,
+        data as Record<string, unknown>,
+      ),
+
+    updateNotificationPreferences: (
+      data: Partial<{
+        emailAlerts: boolean;
+        smsAlerts: boolean;
+        pushNotifications: boolean;
+        systemUpdates: boolean;
+        bookingAlerts: boolean;
+        loginAlerts: boolean;
+      }>,
+    ): R<unknown> =>
+      callApi(
+        `${BASE_USER}/user/preferences`,
+        data as Record<string, unknown>,
+        "PATCH",
       ),
 
     updatePushToken: (data: { pushToken: string }): R<unknown> =>
@@ -326,6 +373,20 @@ export const requests = {
       data: Record<string, unknown>,
     ): R<unknown> =>
       callApi(`${BASE_USER}/vehicle/${vehicleId}`, data, "PATCH"),
+
+    // Vehicle activate / deactivate
+    activateVehicle: (
+      vehicleId: string,
+      data?: { rentalModes?: Array<"SELF_DRIVE" | "WITH_DRIVER"> },
+    ): R<unknown> =>
+      callApi(
+        `${BASE_USER}/vehicle/${vehicleId}/activate`,
+        (data ?? {}) as Record<string, unknown>,
+        "PATCH",
+      ),
+
+    deactivateVehicle: (vehicleId: string): R<unknown> =>
+      callApi(`${BASE_USER}/vehicle/${vehicleId}/deactivate`, {}, "PATCH"),
 
     // User-service driver/rider list endpoints (verifyToken — not admin-only)
     getAllDrivers: (): R<AllDriversAccount[]> =>
@@ -615,7 +676,9 @@ export const requests = {
       paymentFor?: string;
       paymentType?: string;
     }): R<PaymentRecord[]> =>
-      callApi(`${BASE_ADMIN}/cost-settings/deposits${qs(params as Record<string, string>)}`),
+      callApi(
+        `${BASE_ADMIN}/cost-settings/deposits${qs(params as Record<string, string>)}`,
+      ),
 
     getDriverById: (driverId: string): R<DriverProfile> =>
       callApi(`${BASE_ADMIN}/users/drivers/details/?driverId=${driverId}`),

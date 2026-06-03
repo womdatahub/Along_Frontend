@@ -12,6 +12,8 @@ import {
   Clock,
   Loader2,
   Pencil,
+  Power,
+  PowerOff,
   X,
   XCircle,
 } from "lucide-react";
@@ -239,11 +241,19 @@ function EditPanel({ vehicle, onClose, onSaved }: EditPanelProps) {
 function VehicleCard({
   vehicle,
   onEdit,
+  onActivate,
+  onDeactivate,
+  actionLoading,
 }: {
   vehicle: VehicleInfo;
   onEdit: () => void;
+  onActivate: () => void;
+  onDeactivate: () => void;
+  actionLoading: boolean;
 }) {
   const imageUri = vehicle.vehicleFrontViewImageUri;
+  // kycStatus can be lowercase ("approved") or uppercase ("APPROVED")
+  const isApproved = vehicle.kycStatus?.toLowerCase() === "approved";
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-primary/30 transition-colors group">
@@ -265,30 +275,81 @@ function VehicleCard({
         <div className="absolute top-3 right-3">
           <StatusBadge status={vehicle.kycStatus} />
         </div>
+        {/* Active indicator */}
+        {isApproved && (
+          <div className="absolute top-3 left-3">
+            {vehicle.isActive ? (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-600 text-white">
+                <Power size={10} />
+                Active
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-400 text-white">
+                <PowerOff size={10} />
+                Inactive
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Details */}
-      <div className="p-4 flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <p className="font-bold text-sm text-gray-900 font-heebo truncate">
-            {vehicle.vehicleMake} {vehicle.vehicleModel}
-          </p>
-          <p className="text-xs text-gray-400 mt-0.5">
-            {vehicle.vehicleYear} · {vehicle.vehicleColor}
-            {vehicle.vehicleClass && ` · ${vehicle.vehicleClass}`}
-          </p>
-          <p className="text-xs text-gray-300 mt-1 font-mono">
-            {vehicle.vehicleIdentificationNumber}
-          </p>
+      <div className="p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="font-bold text-sm text-gray-900 font-heebo truncate">
+              {vehicle.vehicleMake} {vehicle.vehicleModel}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {vehicle.vehicleYear} · {vehicle.vehicleColor}
+              {vehicle.vehicleClass && ` · ${vehicle.vehicleClass}`}
+            </p>
+            <p className="text-xs text-gray-300 mt-1 font-mono">
+              {vehicle.vehicleIdentificationNumber}
+            </p>
+          </div>
+          <button
+            onClick={onEdit}
+            className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-primary bg-primaryLight2 hover:bg-primaryLight px-3 py-2 rounded-xl transition-colors"
+          >
+            <Pencil size={12} />
+            Edit
+            <ChevronRight size={12} />
+          </button>
         </div>
-        <button
-          onClick={onEdit}
-          className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-primary bg-primaryLight2 hover:bg-primaryLight px-3 py-2 rounded-xl transition-colors"
-        >
-          <Pencil size={12} />
-          Edit
-          <ChevronRight size={12} />
-        </button>
+
+        {/* Activate / Deactivate — only for approved vehicles */}
+        {isApproved && (
+          <div className="flex gap-2 pt-1 border-t border-gray-100">
+            {vehicle.isActive ? (
+              <button
+                onClick={onDeactivate}
+                disabled={actionLoading}
+                className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 transition-colors"
+              >
+                {actionLoading ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : (
+                  <PowerOff size={12} />
+                )}
+                Deactivate
+              </button>
+            ) : (
+              <button
+                onClick={onActivate}
+                disabled={actionLoading}
+                className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50 transition-colors"
+              >
+                {actionLoading ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : (
+                  <Power size={12} />
+                )}
+                Activate
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -296,8 +357,8 @@ function VehicleCard({
 
 /*  page  */
 const Page = () => {
-  const { currentUser } = useSession(
-    useShallow((s) => ({ currentUser: s.currentUser })),
+  const { currentUser, actions } = useSession(
+    useShallow((s) => ({ currentUser: s.currentUser, actions: s.actions })),
   );
   const driverProfile = currentUser as DriverProfile | undefined;
 
@@ -306,6 +367,9 @@ const Page = () => {
   const [editingVehicle, setEditingVehicle] = useState<VehicleInfo | null>(
     null,
   );
+  const [vehicleActionLoading, setVehicleActionLoading] = useState<
+    string | null
+  >(null);
 
   const load = useCallback(async () => {
     const driverId = driverProfile?.driverId ?? driverProfile?._id;
@@ -347,14 +411,14 @@ const Page = () => {
     <div className="flex flex-col gap-5">
       <HeadingHeebo className="text-start pl-4">My Vehicles</HeadingHeebo>
 
-      {/* Mobile-listing notice */}
+      {/* Info notice */}
       <div className="flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-2xl px-5 py-4 w-full md:max-w-8xl">
         <Car size={16} className="text-primary shrink-0 mt-0.5" />
         <p className="text-sm text-gray-600 leading-relaxed">
-          Vehicle listing and availability for rentals is managed through the{" "}
-          <strong className="text-primary">Along mobile app</strong>. Here you
-          can view your vehicles and update details like colour or photos (e.g.
-          after a repaint).
+          Once your vehicle is{" "}
+          <strong className="text-primary">approved</strong>, you can activate
+          or deactivate it for rentals directly here. You can also update
+          details like colour or photos at any time.
         </p>
       </div>
 
@@ -379,13 +443,29 @@ const Page = () => {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 gap-4 w-full md:max-w-8xl">
-          {vehicles.map((v) => (
-            <VehicleCard
-              key={v._id ?? v.vehicleId}
-              vehicle={v}
-              onEdit={() => setEditingVehicle(v)}
-            />
-          ))}
+          {vehicles.map((v) => {
+            const vehicleId = v._id ?? v.vehicleId ?? "";
+            return (
+              <VehicleCard
+                key={vehicleId}
+                vehicle={v}
+                onEdit={() => setEditingVehicle(v)}
+                actionLoading={vehicleActionLoading === vehicleId}
+                onActivate={async () => {
+                  setVehicleActionLoading(vehicleId);
+                  await actions.activateVehicle(vehicleId);
+                  setVehicleActionLoading(null);
+                  load();
+                }}
+                onDeactivate={async () => {
+                  setVehicleActionLoading(vehicleId);
+                  await actions.deactivateVehicle(vehicleId);
+                  setVehicleActionLoading(null);
+                  load();
+                }}
+              />
+            );
+          })}
         </div>
       )}
 
