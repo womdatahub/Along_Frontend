@@ -70,7 +70,7 @@ const Page = () => {
 
       const isSuccess = await addVerificationDocumentsAndServices({
         driverSocialSecurityNumber: v.socialSecurityNumber,
-        driverProfilePictureUri: uris[0],
+        profilePictureUri: uris[0],
         driverLincenseFrontViewUri: uris[1],
         driverLincenseBackViewUri: uris[2],
         advancedVerificationUri: uris[3],

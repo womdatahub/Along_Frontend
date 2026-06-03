@@ -119,7 +119,7 @@ const Page = () => {
     setPwSaving(true);
     try {
       const { error } = await requests.user.changePassword({
-        currentPassword: pwForm.current,
+        oldPassword: pwForm.current,
         newPassword: pwForm.next,
       });
       if (error) {

@@ -89,10 +89,12 @@ type Session = {
     }) => Promise<boolean>;
     addVerificationDocumentsAndServices: (data: {
       driverSocialSecurityNumber: string;
-      driverProfilePictureUri: string;
+      profilePictureUri?: string;
       driverLincenseFrontViewUri: string;
       driverLincenseBackViewUri: string;
       advancedVerificationUri: string;
+      licenseNumber?: string;
+      licenseExpiryDate?: string;
       services?: string[];
     }) => Promise<boolean>;
     registerVehicle: (data: {

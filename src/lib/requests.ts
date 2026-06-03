@@ -112,7 +112,7 @@ export const requests = {
       ),
 
     changePassword: (data: {
-      currentPassword: string;
+      oldPassword: string;
       newPassword: string;
     }): R<unknown> =>
       callApi(
@@ -133,7 +133,7 @@ export const requests = {
     resetPassword: (data: {
       email?: string;
       mobileNumber?: string;
-      otp: string;
+      resetToken: string;
       newPassword: string;
     }): R<unknown> =>
       callApi(
@@ -142,7 +142,7 @@ export const requests = {
         "PATCH",
       ),
 
-    googleSignin: (data: { idToken: string }): R<LoginResponse> =>
+    googleSignin: (data: { googleToken: string }): R<LoginResponse> =>
       callApi(
         `${BASE_USER}/user/google-signin`,
         data as Record<string, unknown>,
@@ -202,10 +202,12 @@ export const requests = {
 
     addDocumentsAndServices: (data: {
       driverSocialSecurityNumber: string;
-      driverProfilePictureUri: string;
+      profilePictureUri?: string;
       driverLincenseFrontViewUri: string;
       driverLincenseBackViewUri: string;
       advancedVerificationUri: string;
+      licenseNumber?: string;
+      licenseExpiryDate?: string;
       services?: string[];
     }): R<unknown> =>
       callApi(
@@ -613,7 +615,7 @@ export const requests = {
       paymentFor?: string;
       paymentType?: string;
     }): R<PaymentRecord[]> =>
-      callApi(`${BASE_ADMIN}/payments${qs(params as Record<string, string>)}`),
+      callApi(`${BASE_ADMIN}/cost-settings/deposits${qs(params as Record<string, string>)}`),
 
     getDriverById: (driverId: string): R<DriverProfile> =>
       callApi(`${BASE_ADMIN}/users/drivers/details/?driverId=${driverId}`),

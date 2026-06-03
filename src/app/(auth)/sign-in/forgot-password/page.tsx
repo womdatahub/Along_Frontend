@@ -51,7 +51,7 @@ const Page = () => {
     }
   };
 
-  //  Step 2: verify OTP + set new password
+  //  Step 2: verify OTP → get resetToken, then set new password
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.trim().length < 4) {
@@ -69,16 +69,35 @@ const Page = () => {
     setLoading(true);
     try {
       const trimmed = identifier.trim();
-      const payload = {
-        otp: otp.trim(),
-        newPassword,
-        ...(trimmed.includes("@")
-          ? { email: trimmed }
-          : { mobileNumber: trimmed }),
-      };
-      const { error } = await requests.user.resetPassword(payload);
-      if (error) {
+      const identifierPayload = trimmed.includes("@")
+        ? { email: trimmed }
+        : { mobileNumber: trimmed };
+
+      // Exchange OTP for a short-lived reset token
+      const { data: verifyData, error: verifyError } =
+        await requests.user.verifyResetOtp({
+          ...identifierPayload,
+          otp: otp.trim(),
+        });
+      if (verifyError || !verifyData?.data) {
         toast.error("Invalid or expired code. Please try again.");
+        return;
+      }
+
+      const resetToken = (verifyData.data as { resetToken?: string })
+        ?.resetToken;
+      if (!resetToken) {
+        toast.error("Could not process reset. Please request a new code.");
+        return;
+      }
+
+      const { error } = await requests.user.resetPassword({
+        ...identifierPayload,
+        resetToken,
+        newPassword,
+      });
+      if (error) {
+        toast.error("Password reset failed. Please try again.");
         return;
       }
       toast.success("Password reset successfully — please sign in");
