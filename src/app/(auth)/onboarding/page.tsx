@@ -2,7 +2,6 @@
 
 import {
   ButtonWithLoader,
-  HeadingHeebo,
   AddInput,
   TermsModal,
   PhoneInput,

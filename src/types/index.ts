@@ -12,7 +12,7 @@ export type ApiResponse<T = Record<string, unknown>> = {
   data: T;
   error?: string;
   errors?: Array<{ path?: string; message: string }>;
-  /** Pagination metadata — present on paginated list endpoints. */
+  pagination?: PaginationMeta;
   meta?: PaginationMeta;
 };
 

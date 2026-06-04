@@ -8,7 +8,7 @@ import {
   Button,
 } from "@/components";
 import { BadgeCheck, Calendar } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 type Props = {
   trigger: React.ReactNode;
@@ -59,15 +59,8 @@ const ApproveLicenseModal = ({
   const minDate = useMemo(() => tomorrow(), []);
   const submittedFormatted = toDateInputValue(submittedExpiryDate);
   // Whether the admin has changed the rider's/driver's submitted value
-  const wasCorrected = Boolean(submittedFormatted) && expiry !== submittedFormatted;
-
-  // Reset on open with the rider's/driver's submitted date pre-filled
-  useEffect(() => {
-    if (open) {
-      setExpiry(submittedFormatted);
-      setError(null);
-    }
-  }, [open, submittedFormatted]);
+  const wasCorrected =
+    Boolean(submittedFormatted) && expiry !== submittedFormatted;
 
   const handleConfirm = async () => {
     if (!expiry) {
@@ -91,7 +84,16 @@ const ApproveLicenseModal = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (isOpen) {
+          setExpiry(submittedFormatted);
+          setError(null);
+        }
+      }}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         dialogTitle={title}
@@ -104,8 +106,9 @@ const ApproveLicenseModal = ({
           </div>
           <h2 className="text-xl font-bold text-gray-800">{title}</h2>
           <p className="text-xs text-gray-600 max-w-65">
-            Confirm the licence expiry date{subjectName ? ` for ${subjectName}` : ""}.
-            You may correct it if the submitted value is inaccurate.
+            Confirm the licence expiry date
+            {subjectName ? ` for ${subjectName}` : ""}. You may correct it if
+            the submitted value is inaccurate.
           </p>
         </div>
 

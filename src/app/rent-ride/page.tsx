@@ -79,7 +79,7 @@ const Page = () => {
 };
 
 const RentRide = () => {
-  const [open, setOpen] = useState(false);
+  const [, setOpen] = useState(false);
   const [mobileBannerDismissed, setMobileBannerDismissed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -1059,7 +1059,7 @@ const RentRide = () => {
       />
     </>
   );
-};;;;
+};
 
 export default Page;
 

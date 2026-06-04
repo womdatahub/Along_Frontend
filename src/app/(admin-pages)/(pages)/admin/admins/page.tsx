@@ -5,7 +5,6 @@ import { AddNewAdminModal } from "@/components/";
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
   Separator,
   Checkbox,
   ButtonWithLoader,
@@ -71,7 +70,10 @@ const AdminDetailModal = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, admin.adminId]);
 
-  const currentPermissions = singleAdminPermission ?? [];
+  const currentPermissions = useMemo(
+    () => singleAdminPermission ?? [],
+    [singleAdminPermission],
+  );
 
   const currentPermissionIds = useMemo(
     () => new Set(currentPermissions.map((ep) => ep.id)),

@@ -304,7 +304,7 @@ const AddNewAdminModal = ({ trigger }: { trigger: React.ReactNode }) => {
     if (Object.keys(allRolePermissions ?? {}).length === 0) {
       getAllRolePermissions();
     }
-  }, []);
+  }, [allRolePermissions, getAllRolePermissions]);
   const close = async () => {
     await createNewAdmin({
       ...newAdminDetails!,

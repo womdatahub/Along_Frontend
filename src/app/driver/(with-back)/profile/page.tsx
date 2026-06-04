@@ -4,7 +4,6 @@ import { useSession } from "@/store";
 import type { DriverProfile } from "@/types";
 import { useShallow } from "zustand/shallow";
 import {
-  Phone,
   Shield,
   Calendar,
   User,

@@ -9,12 +9,11 @@ import {
   Search,
   ArrowUpRight,
   ArrowDownLeft,
-  ChevronLeft,
-  ChevronRight,
   Filter,
 } from "lucide-react";
 import { requests } from "@/lib";
 import { cn } from "@/lib";
+import { PaginationBar } from "@/components";
 import {
   PaymentFor,
   PaymentStatus,
@@ -40,7 +39,7 @@ const titleCase = (s: string) =>
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [records, setRecords] = useState<PaymentRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
@@ -50,7 +49,8 @@ const Page = () => {
   const [paymentForFilter, setPaymentForFilter] = useState<string>("");
   const [paymentTypeFilter, setPaymentTypeFilter] = useState<string>("");
 
-  const loadRecords = useCallback(
+  // Pure fetch — no setState; all state updates happen in .then() callbacks
+  const fetchRecords = useCallback(
     async (
       nextPage: number,
       size: number,
@@ -60,57 +60,84 @@ const Page = () => {
         paymentType?: string;
       },
     ) => {
-      setIsLoading(true);
       const { data } = await requests.admin.getPaymentRecords({
         page: nextPage,
         pageSize: size,
-        // Back-compat: also send limit/offset for any endpoint that still expects them
         limit: size,
         offset: (nextPage - 1) * size,
         ...(filters.status ? { status: filters.status } : {}),
         ...(filters.paymentFor ? { paymentFor: filters.paymentFor } : {}),
         ...(filters.paymentType ? { paymentType: filters.paymentType } : {}),
       });
-      setIsLoading(false);
-      if (data?.data) {
-        setRecords(data.data as PaymentRecord[]);
-        setMeta(data.meta ?? null);
-      }
+      return data;
     },
     [],
   );
-
-  // Initial load + reload when filters or page size change → reset to page 1
   useEffect(() => {
-    setPage(1);
-    loadRecords(1, pageSize, {
+    let alive = true;
+    fetchRecords(1, pageSize, {
       status: statusFilter,
       paymentFor: paymentForFilter,
       paymentType: paymentTypeFilter,
+    }).then((data) => {
+      if (!alive) return;
+      setIsLoading(false);
+      setPage(1);
+      if (data?.data) {
+        setRecords(data.data as PaymentRecord[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, paymentForFilter, paymentTypeFilter, pageSize]);
+    return () => {
+      alive = false;
+    };
+  }, [
+    statusFilter,
+    paymentForFilter,
+    paymentTypeFilter,
+    pageSize,
+    fetchRecords,
+  ]);
 
-  // Page changes only (filters/size handled above)
+  // Re-fetch when the user navigates to a different page
   useEffect(() => {
-    if (page === 1) return; // initial-load effect already covered page 1
-    loadRecords(page, pageSize, {
+    if (page === 1) return;
+    let alive = true;
+    fetchRecords(page, pageSize, {
       status: statusFilter,
       paymentFor: paymentForFilter,
       paymentType: paymentTypeFilter,
+    }).then((data) => {
+      if (!alive) return;
+      setIsLoading(false);
+      if (data?.data) {
+        setRecords(data.data as PaymentRecord[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
     });
+    return () => {
+      alive = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const handleRefresh = () => {
-    loadRecords(page, pageSize, {
+    setIsLoading(true);
+    fetchRecords(page, pageSize, {
       status: statusFilter,
       paymentFor: paymentForFilter,
       paymentType: paymentTypeFilter,
+    }).then((data) => {
+      setIsLoading(false);
+      if (data?.data) {
+        setRecords(data.data as PaymentRecord[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
     });
   };
 
   const clearFilters = () => {
+    setIsLoading(true);
     setStatusFilter("");
     setPaymentForFilter("");
     setPaymentTypeFilter("");
@@ -218,19 +245,28 @@ const Page = () => {
 
           <FilterSelect
             value={statusFilter}
-            onChange={setStatusFilter}
+            onChange={(v) => {
+              setIsLoading(true);
+              setStatusFilter(v);
+            }}
             placeholder="All statuses"
             options={Object.values(PaymentStatus)}
           />
           <FilterSelect
             value={paymentForFilter}
-            onChange={setPaymentForFilter}
+            onChange={(v) => {
+              setIsLoading(true);
+              setPaymentForFilter(v);
+            }}
             placeholder="All categories"
             options={Object.values(PaymentFor)}
           />
           <FilterSelect
             value={paymentTypeFilter}
-            onChange={setPaymentTypeFilter}
+            onChange={(v) => {
+              setIsLoading(true);
+              setPaymentTypeFilter(v);
+            }}
             placeholder="All types"
             options={Object.values(PaymentType)}
           />
@@ -360,47 +396,17 @@ const Page = () => {
           </div>
         )}
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between px-6 py-3 border-t border-gray-50 flex-wrap gap-3">
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            <span>
-              Page {meta?.page ?? page}
-              {meta?.total != null ? ` · ${meta.total} total` : ""}
-            </span>
-            <label className="flex items-center gap-1.5">
-              <span className="text-gray-400">Per page</span>
-              <select
-                value={pageSize}
-                onChange={(e) => setPageSize(Number(e.target.value))}
-                className="text-xs border border-gray-200 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              >
-                {PAGE_SIZE_OPTIONS.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={!(meta?.hasPrevPage ?? page > 1) || isLoading}
-              className="flex items-center gap-1 text-xs font-medium text-gray-600 disabled:text-gray-300 hover:text-gray-900 disabled:cursor-not-allowed px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <ChevronLeft size={14} />
-              Prev
-            </button>
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              disabled={!(meta?.hasNextPage ?? false) || isLoading}
-              className="flex items-center gap-1 text-xs font-medium text-gray-600 disabled:text-gray-300 hover:text-gray-900 disabled:cursor-not-allowed px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              Next
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        </div>
+        <PaginationBar
+          page={page}
+          meta={meta}
+          pageSize={pageSize}
+          pageSizeOptions={PAGE_SIZE_OPTIONS}
+          onPageSizeChange={(size) => { setIsLoading(true); setPageSize(size); }}
+          isLoading={isLoading}
+          onPrev={() => { setIsLoading(true); setPage((p) => Math.max(1, p - 1)); }}
+          onNext={() => { setIsLoading(true); setPage((p) => p + 1); }}
+          px="px-6"
+        />
       </div>
     </section>
   );

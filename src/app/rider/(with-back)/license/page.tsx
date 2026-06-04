@@ -241,9 +241,9 @@ const Page = () => {
                   <div className="grid grid-cols-3 gap-2">
                     {(["Front", "Back", "Selfie"] as const).map((label, i) =>
                       existingUris[i] ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <div key={label} className="flex flex-col gap-1">
                           <p className="text-xs text-gray ml-0.5">{label}</p>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={existingUris[i]}
                             alt={`${label} of license`}
@@ -277,8 +277,8 @@ const Page = () => {
             <div className="flex flex-col gap-6">
               {!hasSubmitted && (
                 <p className="text-sm text-gray-5">
-                  Self-drive rentals require a verified driver's license before
-                  checkout.
+                  Self-drive rentals require a verified driver&apos;s license
+                  before checkout.
                 </p>
               )}
 

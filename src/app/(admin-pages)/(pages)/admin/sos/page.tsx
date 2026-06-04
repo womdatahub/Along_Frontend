@@ -2,7 +2,8 @@
 
 import { useAdmin } from "@/store";
 import { useShallow } from "zustand/shallow";
-import { useEffect } from "react";
+import { PaginationBar } from "@/components";
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   Phone,
@@ -10,6 +11,8 @@ import {
   CheckCircle,
   Clock,
 } from "lucide-react";
+
+const LOG_PAGE_SIZE = 20;
 import { ConfirmActionModal } from "@/components";
 
 const Page = () => {
@@ -25,7 +28,9 @@ const Page = () => {
 
   useEffect(() => {
     getSOSAlerts();
-  }, []);
+  }, [getSOSAlerts]);
+
+  const [logPage, setLogPage] = useState(1);
 
   const openAlerts = sosAlerts.filter(
     (a) => !a.status || a.status === "open" || a.status === "active",
@@ -34,6 +39,9 @@ const Page = () => {
   const resolvedAlerts = sosAlerts.filter(
     (a) => a.status === "resolved" || a.status === "closed",
   );
+
+  const logStart = (logPage - 1) * LOG_PAGE_SIZE;
+  const paginatedLog = resolvedAlerts.slice(logStart, logStart + LOG_PAGE_SIZE);
 
   return (
     <section className="flex flex-col gap-6">
@@ -180,7 +188,7 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {resolvedAlerts.map((alert, i) => (
+                {paginatedLog.map((alert, i) => (
                   <tr
                     key={alert._id ?? alert.id ?? i}
                     className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
@@ -221,6 +229,13 @@ const Page = () => {
             </table>
           </div>
         )}
+        <PaginationBar
+          page={logPage}
+          total={resolvedAlerts.length}
+          pageSize={LOG_PAGE_SIZE}
+          onPrev={() => setLogPage((p) => p - 1)}
+          onNext={() => setLogPage((p) => p + 1)}
+        />
       </div>
     </section>
   );

@@ -2,7 +2,7 @@
 
 import { ConfirmActionModal, RiderInformationModal } from "@/components/";
 import { useAdmin } from "@/store";
-import { ProfileAvatar } from "@/components";
+import { ProfileAvatar, PaginationBar } from "@/components";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useState } from "react";
 import {
@@ -20,6 +20,8 @@ import {
   Calendar,
   Loader2,
 } from "lucide-react";
+
+const PAGE_SIZE = 20;
 import { requests } from "@/lib";
 import { toast } from "sonner";
 
@@ -28,6 +30,7 @@ const Page = () => {
   const [activeTab, setActiveTab] = useState<
     "active" | "pending" | "suspended"
   >("active");
+  const [page, setPage] = useState(1);
   const [expandedKycId, setExpandedKycId] = useState<string | null>(null);
   const [kycProcessing, setKycProcessing] = useState<string | null>(null);
 
@@ -69,6 +72,24 @@ const Page = () => {
       r.email?.toLowerCase().includes(q)
     );
   });
+  const pendingRiders = pendingKyc?.riders ?? [];
+  const suspendedList = suspendedRiders;
+
+  // Paginated slices (page resets on tab/search change)
+  const activeStart = (page - 1) * PAGE_SIZE;
+  const paginatedActive = filteredRiders.slice(
+    activeStart,
+    activeStart + PAGE_SIZE,
+  );
+  const paginatedPending = pendingRiders.slice(
+    activeStart,
+    activeStart + PAGE_SIZE,
+  );
+  const paginatedSuspended = suspendedList.slice(
+    activeStart,
+    activeStart + PAGE_SIZE,
+  );
+
 
   const tabs = [
     { key: "active" as const, label: "Active riders", count: allRiders.length },
@@ -97,7 +118,10 @@ const Page = () => {
             type="text"
             placeholder="Search riders..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             className="pl-9 pr-4 h-10 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-64"
           />
         </div>
@@ -108,7 +132,10 @@ const Page = () => {
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => {
+              setActiveTab(tab.key);
+              setPage(1);
+            }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab.key
                 ? "bg-white text-gray-900 shadow-sm"
@@ -162,7 +189,7 @@ const Page = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRiders.map((rider, i) => (
+                  {paginatedActive.map((rider, i) => (
                     <tr
                       key={i}
                       className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
@@ -247,17 +274,25 @@ const Page = () => {
               </table>
             </div>
           )}
+          <PaginationBar
+            page={page}
+            total={filteredRiders.length}
+            pageSize={PAGE_SIZE}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+            px="px-6"
+          />
         </div>
       )}
 
       {/* Pending KYC */}
       {activeTab === "pending" && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {!pendingKyc || pendingKyc.riders.length === 0 ? (
+          {pendingRiders.length === 0 ? (
             <EmptyState icon={Users} message="No pending KYC applications" />
           ) : (
             <div className="divide-y divide-gray-50">
-              {pendingKyc.riders.map((rider, i) => {
+              {paginatedPending.map((rider, i) => {
                 const riderId = rider._id ?? rider.userId ?? String(i);
                 const isExpanded = expandedKycId === riderId;
                 const isLoading = kycProcessing === riderId;
@@ -460,17 +495,25 @@ const Page = () => {
               })}
             </div>
           )}
+          <PaginationBar
+            page={page}
+            total={pendingRiders.length}
+            pageSize={PAGE_SIZE}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+            px="px-6"
+          />
         </div>
       )}
 
       {/* Suspended */}
       {activeTab === "suspended" && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {suspendedRiders.length === 0 ? (
+          {suspendedList.length === 0 ? (
             <EmptyState icon={UserX} message="No suspended riders" />
           ) : (
             <div className="divide-y divide-gray-50">
-              {suspendedRiders.map((rider) => (
+              {paginatedSuspended.map((rider) => (
                 <div
                   key={rider.rider.userId}
                   className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
@@ -511,6 +554,14 @@ const Page = () => {
               ))}
             </div>
           )}
+          <PaginationBar
+            page={page}
+            total={suspendedList.length}
+            pageSize={PAGE_SIZE}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+            px="px-6"
+          />
         </div>
       )}
     </section>

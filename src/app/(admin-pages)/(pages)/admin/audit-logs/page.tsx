@@ -1,16 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import {
-  ScrollText,
-  RefreshCw,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-} from "lucide-react";
+import { ScrollText, RefreshCw, Search, Filter } from "lucide-react";
 import { requests } from "@/lib";
 import { cn } from "@/lib";
+import { PaginationBar } from "@/components";
 
 /** Shape returned by GET /admin/api/v1/activities/recent */
 type ActivityLog = {
@@ -84,7 +78,7 @@ function fmtTs(iso: string): { date: string; time: string } {
 
 const Page = () => {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [page, setPage] = useState(1);
@@ -98,38 +92,74 @@ const Page = () => {
   } | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const loadLogs = useCallback(async (nextPage: number, size: number) => {
-    setIsLoading(true);
+  // Pure fetch — no setState; all state updates happen in .then() callbacks
+  const fetchLogs = useCallback(async (nextPage: number, size: number) => {
     const { data } = await requests.admin.getAuditLogs({
       page: nextPage,
       pageSize: size,
       limit: size,
       offset: (nextPage - 1) * size,
     });
-    setIsLoading(false);
-    if (data?.data) {
-      const raw = Array.isArray(data.data)
-        ? data.data
-        : (((data.data as Record<string, unknown>)
-            .activities as ActivityLog[]) ?? []);
-      setLogs(raw as ActivityLog[]);
-      setMeta(data.meta ?? null);
-    }
+    return data;
   }, []);
 
+  // Re-fetch from page 1 when category filter or page-size changes
   useEffect(() => {
-    setPage(1);
-    loadLogs(1, pageSize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryFilter, pageSize]);
+    let alive = true;
+    fetchLogs(1, pageSize).then((data) => {
+      if (!alive) return;
+      setIsLoading(false);
+      setPage(1);
+      if (data?.data) {
+        const raw = Array.isArray(data.data)
+          ? data.data
+          : (((data.data as Record<string, unknown>)
+              .activities as ActivityLog[]) ?? []);
+        setLogs(raw as ActivityLog[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, [categoryFilter, pageSize, fetchLogs]);
 
+  // Re-fetch when the user navigates to a different page
   useEffect(() => {
     if (page === 1) return;
-    loadLogs(page, pageSize);
+    let alive = true;
+    fetchLogs(page, pageSize).then((data) => {
+      if (!alive) return;
+      setIsLoading(false);
+      if (data?.data) {
+        const raw = Array.isArray(data.data)
+          ? data.data
+          : (((data.data as Record<string, unknown>)
+              .activities as ActivityLog[]) ?? []);
+        setLogs(raw as ActivityLog[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
+    });
+    return () => {
+      alive = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  const handleRefresh = () => loadLogs(page, pageSize);
+  const handleRefresh = () => {
+    setIsLoading(true);
+    fetchLogs(page, pageSize).then((data) => {
+      setIsLoading(false);
+      if (data?.data) {
+        const raw = Array.isArray(data.data)
+          ? data.data
+          : (((data.data as Record<string, unknown>)
+              .activities as ActivityLog[]) ?? []);
+        setLogs(raw as ActivityLog[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
+    });
+  };
 
   const filtered = logs.filter((l) => {
     const q = searchQuery.toLowerCase();
@@ -207,7 +237,10 @@ const Page = () => {
         {showFilters && (
           <div className="px-5 py-3 flex flex-wrap gap-2 border-b border-gray-50 bg-gray-50/40">
             <button
-              onClick={() => setCategoryFilter("all")}
+              onClick={() => {
+                setIsLoading(true);
+                setCategoryFilter("all");
+              }}
               className={cn(
                 "text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all",
                 categoryFilter === "all"
@@ -220,7 +253,10 @@ const Page = () => {
             {CATEGORY_FILTER_OPTIONS.map((c) => (
               <button
                 key={c}
-                onClick={() => setCategoryFilter(c)}
+                onClick={() => {
+                  setIsLoading(true);
+                  setCategoryFilter(c);
+                }}
                 className={cn(
                   "text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all",
                   categoryFilter === c
@@ -342,48 +378,26 @@ const Page = () => {
           </div>
         )}
 
-        {/* Pagination */}
         {filtered.length > 0 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-gray-50 flex-wrap gap-3">
-            <div className="flex items-center gap-3 text-xs text-gray-500">
-              <span>
-                Page {meta?.page ?? page}
-                {meta?.total != null ? ` · ${meta.total} total` : ""}
-              </span>
-              <label className="flex items-center gap-1.5">
-                <span className="text-gray-400">Per page</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="text-xs border border-gray-200 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                >
-                  {PAGE_SIZE_OPTIONS.map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={!(meta?.hasPrevPage ?? page > 1) || isLoading}
-                className="flex items-center gap-1 text-xs font-medium text-gray-600 disabled:text-gray-300 hover:text-gray-900 disabled:cursor-not-allowed px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <ChevronLeft size={14} />
-                Prev
-              </button>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={!(meta?.hasNextPage ?? false) || isLoading}
-                className="flex items-center gap-1 text-xs font-medium text-gray-600 disabled:text-gray-300 hover:text-gray-900 disabled:cursor-not-allowed px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Next
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </div>
+          <PaginationBar
+            page={page}
+            meta={meta}
+            pageSize={pageSize}
+            pageSizeOptions={PAGE_SIZE_OPTIONS}
+            onPageSizeChange={(size) => {
+              setIsLoading(true);
+              setPageSize(size);
+            }}
+            isLoading={isLoading}
+            onPrev={() => {
+              setIsLoading(true);
+              setPage((p) => Math.max(1, p - 1));
+            }}
+            onNext={() => {
+              setIsLoading(true);
+              setPage((p) => p + 1);
+            }}
+          />
         )}
       </div>
     </section>
