@@ -19,3 +19,4 @@ export * from "./two-factor-flow";
 export * from "./password-input";
 export * from "./phone-input";
 export * from "./profile-avatar";
+export * from "./pagination-bar";

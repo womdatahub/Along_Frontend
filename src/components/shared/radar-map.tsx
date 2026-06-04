@@ -83,7 +83,6 @@ const Map = ({
     if (!publishableKey) return;
 
     let map: ReturnType<typeof Radar.ui.map> | undefined;
-    setSdkFailed(false);
 
     try {
       Radar.initialize(publishableKey);

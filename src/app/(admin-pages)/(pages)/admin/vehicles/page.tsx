@@ -173,11 +173,11 @@ const Page = () => {
                           </button>
                         }
                         title="Reject Vehicle"
-                        description="Reject this vehicle registration?"
-                        confirmActionFunction={async () => {
-                          await processVehicle(id, "REJECT");
+                        description="Reject this vehicle registration? The driver will be notified with the reason."
+                        confirmActionFunction={async (values) => {
+                          await processVehicle(id, "REJECT", values?.reason);
                         }}
-                        type="suspend"
+                        type="reject-kyc"
                       />
                       <ConfirmActionModal
                         trigger={

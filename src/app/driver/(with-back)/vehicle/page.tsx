@@ -17,7 +17,6 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
@@ -371,41 +370,58 @@ const Page = () => {
     string | null
   >(null);
 
-  const load = useCallback(async () => {
+  // Pure fetch — returns vehicle list, no setState
+  const fetchVehicles = useCallback(async () => {
     const driverId = driverProfile?.driverId ?? driverProfile?._id;
-    if (!driverId) {
-      setLoading(false);
-      return;
+    if (!driverId) return null;
+    const { data } = await requests.user.getVehicleByDriverId(driverId);
+    const raw = data as unknown;
+    let list: VehicleInfo[];
+    if (Array.isArray(raw)) {
+      list = raw as VehicleInfo[];
+    } else if (raw && typeof raw === "object") {
+      const obj = raw as Record<string, unknown>;
+      if (obj.data && Array.isArray(obj.data)) list = obj.data as VehicleInfo[];
+      else if (obj.vehicle) list = [obj.vehicle as VehicleInfo];
+      else if (obj.data) list = [obj.data as VehicleInfo];
+      else list = [raw as VehicleInfo];
+    } else {
+      list = [];
     }
-    setLoading(true);
-    try {
-      const { data } = await requests.user.getVehicleByDriverId(driverId);
-      // API may return array, wrapped object, or single vehicle
-      const raw = data as unknown;
-      let list: VehicleInfo[];
-      if (Array.isArray(raw)) {
-        list = raw as VehicleInfo[];
-      } else if (raw && typeof raw === "object") {
-        const obj = raw as Record<string, unknown>;
-        if (obj.data && Array.isArray(obj.data))
-          list = obj.data as VehicleInfo[];
-        else if (obj.vehicle) list = [obj.vehicle as VehicleInfo];
-        else if (obj.data) list = [obj.data as VehicleInfo];
-        else list = [raw as VehicleInfo];
-      } else {
-        list = [];
-      }
-      setVehicles(list.filter(Boolean));
-    } catch {
-      toast.error("Could not load vehicles");
-    } finally {
-      setLoading(false);
-    }
+    return list.filter(Boolean) as VehicleInfo[];
   }, [driverProfile]);
 
+  // Re-fetch and update state (used after activate/deactivate/edit)
+  const refresh = useCallback(() => {
+    setLoading(true);
+    fetchVehicles()
+      .then((list) => {
+        setLoading(false);
+        if (list !== null) setVehicles(list);
+      })
+      .catch(() => {
+        toast.error("Could not load vehicles");
+        setLoading(false);
+      });
+  }, [fetchVehicles]);
+
   useEffect(() => {
-    load();
-  }, [load]);
+    let alive = true;
+    fetchVehicles()
+      .then((list) => {
+        if (!alive) return;
+        setLoading(false);
+        if (list !== null) setVehicles(list);
+      })
+      .catch(() => {
+        if (!alive) return;
+        toast.error("Could not load vehicles");
+        setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [fetchVehicles]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -455,13 +471,13 @@ const Page = () => {
                   setVehicleActionLoading(vehicleId);
                   await actions.activateVehicle(vehicleId);
                   setVehicleActionLoading(null);
-                  load();
+                  refresh();
                 }}
                 onDeactivate={async () => {
                   setVehicleActionLoading(vehicleId);
                   await actions.deactivateVehicle(vehicleId);
                   setVehicleActionLoading(null);
-                  load();
+                  refresh();
                 }}
               />
             );
@@ -476,12 +492,12 @@ const Page = () => {
           onClose={() => setEditingVehicle(null)}
           onSaved={() => {
             setEditingVehicle(null);
-            load();
+            refresh();
           }}
         />
       )}
     </div>
   );
-};
+};;
 
 export default Page;

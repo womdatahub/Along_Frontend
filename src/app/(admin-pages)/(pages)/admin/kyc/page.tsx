@@ -192,16 +192,18 @@ const Page = () => {
                             </button>
                           }
                           title="Reject KYC Submission"
-                          description="Reject this driver's KYC documents?"
-                          confirmActionFunction={async () => {
+                          description="Reject this driver's KYC documents? The driver will be notified with the reason."
+                          confirmActionFunction={async (values) => {
                             await processDriverKYC({
                               driverId: id,
                               action: "REJECT",
                               reason:
-                                actionNotes || "Does not meet requirements",
+                                values?.reason ||
+                                actionNotes ||
+                                "Does not meet requirements",
                             });
                           }}
-                          type="suspend"
+                          type="reject-kyc"
                         />
                         <ConfirmActionModal
                           trigger={
@@ -305,12 +307,16 @@ const Page = () => {
 
                 const handleRiderKycAction = async (
                   action: "APPROVE" | "REJECT",
+                  reason?: string,
                 ) => {
                   setRiderKycProcessing(id);
                   try {
                     const { error } = await requests.admin.processRiderKyc({
                       riderId: id,
                       action,
+                      ...(action === "REJECT"
+                        ? { reason: reason || "Does not meet requirements" }
+                        : {}),
                     });
                     if (!error) {
                       toast.success(
@@ -369,18 +375,27 @@ const Page = () => {
                       </button>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          disabled={isLoading}
-                          onClick={() => handleRiderKycAction("REJECT")}
-                          className="flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
-                        >
-                          {isLoading ? (
-                            <Loader2 size={12} className="animate-spin" />
-                          ) : (
-                            <XCircle size={13} />
-                          )}
-                          Reject
-                        </button>
+                        <ConfirmActionModal
+                          trigger={
+                            <button
+                              disabled={isLoading}
+                              className="flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              {isLoading ? (
+                                <Loader2 size={12} className="animate-spin" />
+                              ) : (
+                                <XCircle size={13} />
+                              )}
+                              Reject
+                            </button>
+                          }
+                          title="Reject KYC Submission"
+                          description="Reject this rider's KYC documents? The rider will be notified with the reason."
+                          confirmActionFunction={async (values) =>
+                            handleRiderKycAction("REJECT", values?.reason)
+                          }
+                          type="reject-kyc"
+                        />
                         <button
                           disabled={isLoading}
                           onClick={() => handleRiderKycAction("APPROVE")}

@@ -95,10 +95,7 @@ const RiderInformationModal = ({ trigger }: Props) => {
               <div className="flex flex-col gap-1.5">
                 {rider?.email ? (
                   <span className="flex items-center gap-2 text-sm">
-                    <Mail
-                      size={13}
-                      className="text-primary shrink-0"
-                    />
+                    <Mail size={13} className="text-primary shrink-0" />
                     <span className="truncate">{rider.email}</span>
                   </span>
                 ) : null}

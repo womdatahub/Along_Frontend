@@ -159,11 +159,14 @@ const Page = () => {
                           </button>
                         }
                         title="Reject Licence"
-                        description="Reject this rider's licence submission?"
-                        confirmActionFunction={async () => {
-                          await processLicense(id, "REJECT");
+                        description="Reject this rider's licence submission? The rider will be notified with the reason."
+                        confirmActionFunction={async (values) => {
+                          await processLicense(id, "REJECT", {
+                            reason:
+                              values?.reason || "Does not meet requirements",
+                          });
                         }}
-                        type="suspend"
+                        type="reject-kyc"
                       />
                       <ApproveLicenseModal
                         trigger={

@@ -46,10 +46,12 @@ const Page = () => {
     smsAlerts: false,
   });
 
-  const [appearance, setAppearance] = useState({
-    darkMode: false,
+  const [appearance, setAppearance] = useState(() => ({
+    darkMode:
+      typeof window !== "undefined" &&
+      localStorage.getItem("along-dark-mode") === "true",
     compactView: false,
-  });
+  }));
 
   const [security, setSecurity] = useState({
     twoFactor: false,
@@ -64,12 +66,10 @@ const Page = () => {
   // 2FA flow state
   const [twoFaMode, setTwoFaMode] = useState<"enable" | "disable" | null>(null);
 
-  // Hydrate dark mode from localStorage on mount
+  // Sync DOM class with dark mode state
   useEffect(() => {
-    const stored = localStorage.getItem("along-dark-mode") === "true";
-    setAppearance((prev) => ({ ...prev, darkMode: stored }));
-    document.documentElement.classList.toggle("dark", stored);
-  }, []);
+    document.documentElement.classList.toggle("dark", appearance.darkMode);
+  }, [appearance.darkMode]);
 
   const toggle = <K extends keyof typeof notifications>(key: K) =>
     setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -423,6 +423,6 @@ const Page = () => {
       </div>
     </div>
   );
-};;
+};
 
 export default Page;

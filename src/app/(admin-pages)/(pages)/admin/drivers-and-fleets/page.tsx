@@ -4,6 +4,7 @@ import {
   ConfirmActionModal,
   DriverInformationModal,
   DriverPendingInfoModal,
+  PaginationBar,
   ProfileAvatar,
 } from "@/components/";
 import { useAdmin } from "@/store";
@@ -11,11 +12,14 @@ import { useShallow } from "zustand/shallow";
 import { useEffect, useState } from "react";
 import { Car, Search, Star, UserX, Loader2 } from "lucide-react";
 
+const PAGE_SIZE = 20;
+
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<
     "active" | "pending" | "suspended"
   >("active");
+  const [page, setPage] = useState(1);
 
   const {
     isLoading,
@@ -55,6 +59,23 @@ const Page = () => {
       d.email?.toLowerCase().includes(q)
     );
   });
+  const pendingDrivers = pendingKyc?.drivers ?? [];
+  const suspendedList = suspendedDrivers;
+
+  const activeStart = (page - 1) * PAGE_SIZE;
+  const paginatedActive = filteredDrivers.slice(
+    activeStart,
+    activeStart + PAGE_SIZE,
+  );
+  const paginatedPending = pendingDrivers.slice(
+    activeStart,
+    activeStart + PAGE_SIZE,
+  );
+  const paginatedSuspended = suspendedList.slice(
+    activeStart,
+    activeStart + PAGE_SIZE,
+  );
+
 
   const tabs = [
     {
@@ -89,7 +110,10 @@ const Page = () => {
             type="text"
             placeholder="Search drivers..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             className="pl-9 pr-4 h-10 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-64"
           />
         </div>
@@ -100,7 +124,10 @@ const Page = () => {
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => {
+              setActiveTab(tab.key);
+              setPage(1);
+            }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab.key
                 ? "bg-white text-gray-900 shadow-sm"
@@ -154,7 +181,7 @@ const Page = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredDrivers.map((driver, i) => (
+                  {paginatedActive.map((driver, i) => (
                     <tr
                       key={i}
                       className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
@@ -251,17 +278,25 @@ const Page = () => {
               </table>
             </div>
           )}
+          <PaginationBar
+            page={page}
+            total={filteredDrivers.length}
+            pageSize={PAGE_SIZE}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+            px="px-6"
+          />
         </div>
       )}
 
       {/* Pending KYC */}
       {activeTab === "pending" && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {!pendingKyc || pendingKyc.drivers.length === 0 ? (
+          {pendingDrivers.length === 0 ? (
             <EmptyState icon={Car} message="No pending KYC applications" />
           ) : (
             <div className="divide-y divide-gray-50">
-              {pendingKyc.drivers.map((driver, i) => (
+              {paginatedPending.map((driver, i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
@@ -297,17 +332,25 @@ const Page = () => {
               ))}
             </div>
           )}
+          <PaginationBar
+            page={page}
+            total={pendingDrivers.length}
+            pageSize={PAGE_SIZE}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+            px="px-6"
+          />
         </div>
       )}
 
       {/* Suspended */}
       {activeTab === "suspended" && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {suspendedDrivers.length === 0 ? (
+          {suspendedList.length === 0 ? (
             <EmptyState icon={UserX} message="No suspended drivers" />
           ) : (
             <div className="divide-y divide-gray-50">
-              {suspendedDrivers.map((driver) => (
+              {paginatedSuspended.map((driver) => (
                 <div
                   key={driver.driver.firstName}
                   className="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50"
@@ -361,6 +404,14 @@ const Page = () => {
               ))}
             </div>
           )}
+          <PaginationBar
+            page={page}
+            total={suspendedList.length}
+            pageSize={PAGE_SIZE}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+            px="px-6"
+          />
         </div>
       )}
     </section>

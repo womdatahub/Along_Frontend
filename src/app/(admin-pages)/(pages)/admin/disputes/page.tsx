@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Scale,
   RefreshCw,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { requests } from "@/lib";
 import { cn } from "@/lib";
+import { PaginationBar } from "@/components";
 
 type DisputeStatus = "open" | "under_review" | "resolved" | "escalated";
 type DisputeOutcome = "REFUND" | "NO_REFUND" | "PARTIAL_REFUND";
@@ -44,36 +45,39 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [selected, setSelected] = useState<Dispute | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [resolutionNote, setResolutionNote] = useState("");
   const [selectedOutcome, setSelectedOutcome] =
     useState<DisputeOutcome>("REFUND");
   const [isResolving, setIsResolving] = useState(false);
-  // Pagination
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
   const [meta, setMeta] = useState<{
-    page: number;
-    pageSize: number;
     total: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
   } | null>(null);
+  const pageSize = 20;
 
-  const loadDisputes = async (nextPage: number = page) => {
-    setIsLoading(true);
+  const fetchDisputes = useCallback(async (p: number) => {
     const { data } = await requests.admin.getDisputes({
-      page: nextPage,
+      page: p,
       pageSize,
       limit: pageSize,
-      offset: (nextPage - 1) * pageSize,
+      offset: (p - 1) * pageSize,
     });
-    setIsLoading(false);
-    if (data?.data) {
-      setDisputes(data.data as Dispute[]);
-      setMeta(data.meta ?? null);
-    }
-  };
+    return data;
+  }, []);
+
+  const applyDisputes = useCallback(
+    (data: Awaited<ReturnType<typeof fetchDisputes>>) => {
+      setIsLoading(false);
+      if (data?.data) {
+        setDisputes(data.data as Dispute[]);
+        setMeta((data.pagination ?? data.meta) ?? null);
+      }
+    },
+    [],
+  );
 
   const resolveDispute = async () => {
     if (!selected) return;
@@ -87,14 +91,21 @@ const Page = () => {
     if (!error) {
       setSelected(null);
       setResolutionNote("");
-      loadDisputes();
+      setIsLoading(true);
+      fetchDisputes(page).then(applyDisputes);
     }
   };
 
   useEffect(() => {
-    loadDisputes(page);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+    let alive = true;
+    fetchDisputes(page).then((data) => {
+      if (!alive) return;
+      applyDisputes(data);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [page, fetchDisputes, applyDisputes]);
 
   const open = disputes.filter(
     (d) =>
@@ -124,7 +135,10 @@ const Page = () => {
           </p>
         </div>
         <button
-          onClick={() => loadDisputes(page)}
+          onClick={() => {
+            setIsLoading(true);
+            fetchDisputes(page).then(applyDisputes);
+          }}
           className="flex items-center gap-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-xl transition-colors self-start sm:self-auto"
         >
           <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
@@ -273,6 +287,20 @@ const Page = () => {
               ))
             )}
           </div>
+          <PaginationBar
+            page={page}
+            meta={meta}
+            isLoading={isLoading}
+            onPrev={() => {
+              setIsLoading(true);
+              setPage((p) => p - 1);
+            }}
+            onNext={() => {
+              setIsLoading(true);
+              setPage((p) => p + 1);
+            }}
+            px="px-4"
+          />
         </div>
 
         {/* Detail / resolve panel */}
