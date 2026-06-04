@@ -59,7 +59,7 @@ type AdminType = {
       },
       type: "driver" | "rider",
     ) => Promise<void>;
-    getpendingKyc: () => Promise<PendingKycType>;
+    getpendingKyc: () => Promise<void>;
     processDriverKYC: (data: {
       driverId: string;
       action: "APPROVE" | "REJECT";
