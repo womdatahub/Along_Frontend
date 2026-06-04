@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, Mail, Loader2, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Mail, Loader2, ShieldCheck, KeyRound } from "lucide-react";
 import { requests } from "@/lib";
 import { PasswordInput } from "@/components";
 
 //  Types
-type Step = "request" | "reset";
+type Step = "request" | "verify" | "password";
 
 //  Page
 const Page = () => {
@@ -18,25 +18,31 @@ const Page = () => {
   const [step, setStep] = useState<Step>("request");
   const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
 
+  // Build the email/phone payload from the entered identifier
+  const identifierPayload = () => {
+    const trimmed = identifier.trim();
+    return trimmed.includes("@")
+      ? { email: trimmed }
+      : { mobileNumber: trimmed };
+  };
+
   //  Step 1: request OTP
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = identifier.trim();
-    if (!trimmed) {
+    if (!identifier.trim()) {
       toast.error("Please enter your email or phone number");
       return;
     }
     setLoading(true);
     try {
-      const payload = trimmed.includes("@")
-        ? { email: trimmed }
-        : { mobileNumber: trimmed };
-      const { error } = await requests.user.requestPasswordReset(payload);
+      const { error } =
+        await requests.user.requestPasswordReset(identifierPayload());
       if (error) {
         toast.error(
           "Could not send reset code. Please check your details and try again.",
@@ -44,20 +50,49 @@ const Page = () => {
         return;
       }
       toast.success("Reset code sent — check your email or phone");
-      setStep("reset");
+      setStep("verify");
       startResendCooldown();
     } finally {
       setLoading(false);
     }
   };
 
-  //  Step 2: verify OTP → get resetToken, then set new password
-  const handleReset = async (e: React.FormEvent) => {
+  //  Step 2: verify OTP → exchange for a password reset token
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.trim().length < 4) {
       toast.error("Enter the reset code we sent you");
       return;
     }
+    setLoading(true);
+    try {
+      const { data: verifyData, error: verifyError } =
+        await requests.user.verifyResetOtp({
+          ...identifierPayload(),
+          otp: otp.trim(),
+        });
+      if (verifyError || !verifyData?.data) {
+        toast.error("Invalid or expired code. Please try again.");
+        return;
+      }
+
+      const token = (verifyData.data as { passwordResetToken?: string })
+        ?.passwordResetToken;
+      if (!token) {
+        toast.error("Could not process reset. Please request a new code.");
+        return;
+      }
+
+      setResetToken(token);
+      setStep("password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //  Step 3: set the new password using the reset token
+  const handlePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (newPassword.length < 8) {
       toast.error("Password must be at least 8 characters");
       return;
@@ -66,33 +101,15 @@ const Page = () => {
       toast.error("Passwords do not match");
       return;
     }
+    if (!resetToken) {
+      toast.error("Your reset session expired. Please request a new code.");
+      setStep("request");
+      return;
+    }
     setLoading(true);
     try {
-      const trimmed = identifier.trim();
-      const identifierPayload = trimmed.includes("@")
-        ? { email: trimmed }
-        : { mobileNumber: trimmed };
-
-      // Exchange OTP for a short-lived reset token
-      const { data: verifyData, error: verifyError } =
-        await requests.user.verifyResetOtp({
-          ...identifierPayload,
-          otp: otp.trim(),
-        });
-      if (verifyError || !verifyData?.data) {
-        toast.error("Invalid or expired code. Please try again.");
-        return;
-      }
-
-      const resetToken = (verifyData.data as { resetToken?: string })
-        ?.resetToken;
-      if (!resetToken) {
-        toast.error("Could not process reset. Please request a new code.");
-        return;
-      }
-
       const { error } = await requests.user.resetPassword({
-        ...identifierPayload,
+        ...identifierPayload(),
         resetToken,
         newPassword,
       });
@@ -125,20 +142,27 @@ const Page = () => {
     if (resendCooldown > 0) return;
     setLoading(true);
     try {
-      const trimmed = identifier.trim();
-      const payload = trimmed.includes("@")
-        ? { email: trimmed }
-        : { mobileNumber: trimmed };
-      const { error } = await requests.user.requestPasswordReset(payload);
+      const { error } =
+        await requests.user.requestPasswordReset(identifierPayload());
       if (error) {
         toast.error("Could not resend code. Please try again.");
         return;
       }
       toast.success("New code sent");
+      setOtp("");
       startResendCooldown();
     } finally {
       setLoading(false);
     }
+  };
+
+  // Restart the flow from the email/phone step
+  const restart = () => {
+    setStep("request");
+    setOtp("");
+    setResetToken("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   //  Render
@@ -154,27 +178,37 @@ const Page = () => {
           Back to sign in
         </Link>
 
-        {step === "request" ? (
+        {step === "request" && (
           <RequestStep
             identifier={identifier}
             setIdentifier={setIdentifier}
             loading={loading}
             onSubmit={handleRequest}
           />
-        ) : (
-          <ResetStep
+        )}
+
+        {step === "verify" && (
+          <VerifyStep
             identifier={identifier}
             otp={otp}
             setOtp={setOtp}
+            loading={loading}
+            resendCooldown={resendCooldown}
+            onSubmit={handleVerify}
+            onResend={handleResend}
+            onBack={restart}
+          />
+        )}
+
+        {step === "password" && (
+          <PasswordStep
             newPassword={newPassword}
             setNewPassword={setNewPassword}
             confirmPassword={confirmPassword}
             setConfirmPassword={setConfirmPassword}
             loading={loading}
-            resendCooldown={resendCooldown}
-            onSubmit={handleReset}
-            onResend={handleResend}
-            onBack={() => setStep("request")}
+            onSubmit={handlePassword}
+            onBack={() => setStep("verify")}
           />
         )}
       </div>
@@ -184,7 +218,7 @@ const Page = () => {
 
 export default Page;
 
-//  Sub-components
+//  Step 1 — Request reset code
 type RequestStepProps = {
   identifier: string;
   setIdentifier: (v: string) => void;
@@ -241,14 +275,11 @@ const RequestStep = ({
   </>
 );
 
-type ResetStepProps = {
+//  Step 2 — Verify OTP
+type VerifyStepProps = {
   identifier: string;
   otp: string;
   setOtp: (v: string) => void;
-  newPassword: string;
-  setNewPassword: (v: string) => void;
-  confirmPassword: string;
-  setConfirmPassword: (v: string) => void;
   loading: boolean;
   resendCooldown: number;
   onSubmit: (e: React.FormEvent) => void;
@@ -256,20 +287,16 @@ type ResetStepProps = {
   onBack: () => void;
 };
 
-const ResetStep = ({
+const VerifyStep = ({
   identifier,
   otp,
   setOtp,
-  newPassword,
-  setNewPassword,
-  confirmPassword,
-  setConfirmPassword,
   loading,
   resendCooldown,
   onSubmit,
   onResend,
   onBack,
-}: ResetStepProps) => (
+}: VerifyStepProps) => (
   <>
     <div className="mb-8 text-center">
       <div className="inline-flex size-14 rounded-2xl bg-primary/10 items-center justify-center mb-4">
@@ -281,7 +308,7 @@ const ResetStep = ({
       <p className="text-gray text-sm font-light max-w-xs mx-auto">
         We sent a reset code to{" "}
         <span className="font-medium text-gray-4">{identifier}</span>. Enter it
-        below along with your new password.
+        below to continue.
       </p>
     </div>
 
@@ -289,7 +316,6 @@ const ResetStep = ({
       onSubmit={onSubmit}
       className="flex flex-col gap-4 bg-background rounded-3xl px-6 md:px-8 py-8 shadow-sm"
     >
-      {/* OTP */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-semibold text-gray-4 ml-1">
           Reset code
@@ -304,10 +330,79 @@ const ResetStep = ({
           }
           placeholder="Enter code"
           autoComplete="one-time-code"
+          autoFocus
           className="h-14 rounded-2xl bg-white border border-gray-200 px-4 text-center text-xl font-mono font-bold tracking-[0.35em] text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-gray-300 placeholder:tracking-widest placeholder:font-normal placeholder:text-base"
         />
       </div>
 
+      <button
+        type="submit"
+        disabled={loading}
+        className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-white text-base font-semibold h-14 rounded-2xl transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+      >
+        {loading && <Loader2 size={16} className="animate-spin" />}
+        {loading ? "Verifying…" : "Verify code"}
+      </button>
+
+      {/* Resend + change identifier */}
+      <div className="flex items-center justify-between pt-1">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-xs text-gray hover:text-gray-4 transition-colors"
+        >
+          Change email / phone
+        </button>
+        <button
+          type="button"
+          onClick={onResend}
+          disabled={resendCooldown > 0 || loading}
+          className="text-xs font-semibold text-primary hover:text-primary-deep disabled:text-gray disabled:cursor-not-allowed transition-colors"
+        >
+          {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+        </button>
+      </div>
+    </form>
+  </>
+);
+
+//  Step 3 — Set new password
+type PasswordStepProps = {
+  newPassword: string;
+  setNewPassword: (v: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (v: string) => void;
+  loading: boolean;
+  onSubmit: (e: React.FormEvent) => void;
+  onBack: () => void;
+};
+
+const PasswordStep = ({
+  newPassword,
+  setNewPassword,
+  confirmPassword,
+  setConfirmPassword,
+  loading,
+  onSubmit,
+  onBack,
+}: PasswordStepProps) => (
+  <>
+    <div className="mb-8 text-center">
+      <div className="inline-flex size-14 rounded-2xl bg-primary/10 items-center justify-center mb-4">
+        <KeyRound size={24} className="text-primary" />
+      </div>
+      <h1 className="text-3xl font-extrabold text-black font-heebo mb-2 tracking-tight">
+        Set a new password
+      </h1>
+      <p className="text-gray text-sm font-light max-w-xs mx-auto">
+        Your code is verified. Choose a new password for your account.
+      </p>
+    </div>
+
+    <form
+      onSubmit={onSubmit}
+      className="flex flex-col gap-4 bg-background rounded-3xl px-6 md:px-8 py-8 shadow-sm"
+    >
       {/* New password */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-semibold text-gray-4 ml-1">
@@ -345,22 +440,13 @@ const ResetStep = ({
         {loading ? "Resetting…" : "Reset password"}
       </button>
 
-      {/* Resend + change identifier */}
-      <div className="flex items-center justify-between pt-1">
+      <div className="flex items-center justify-start pt-1">
         <button
           type="button"
           onClick={onBack}
           className="text-xs text-gray hover:text-gray-4 transition-colors"
         >
-          Change email / phone
-        </button>
-        <button
-          type="button"
-          onClick={onResend}
-          disabled={resendCooldown > 0 || loading}
-          className="text-xs font-semibold text-primary hover:text-primary-deep disabled:text-gray disabled:cursor-not-allowed transition-colors"
-        >
-          {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+          Re-enter code
         </button>
       </div>
     </form>
