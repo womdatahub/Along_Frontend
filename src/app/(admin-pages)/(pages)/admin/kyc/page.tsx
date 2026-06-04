@@ -253,10 +253,11 @@ const Page = () => {
                               {label}
                             </p>
                             {url ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
+                              <Image
                                 src={url}
                                 alt={label}
+                                width={400}
+                                height={240}
                                 className="w-full h-32 object-cover"
                               />
                             ) : (

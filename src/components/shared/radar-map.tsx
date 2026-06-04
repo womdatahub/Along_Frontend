@@ -142,7 +142,7 @@ const Map = ({
         }
       }
     } catch {
-      setSdkFailed(true);
+      queueMicrotask(() => setSdkFailed(true));
     }
 
     return () => {
