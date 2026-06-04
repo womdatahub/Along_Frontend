@@ -193,9 +193,11 @@ const RiderInformationModal = ({ trigger }: Props) => {
                     {label}
                   </p>
                   {url ? (
-                    <img
+                    <Image
                       src={url}
                       alt={label}
+                      width={400}
+                      height={240}
                       className="w-full h-24 object-cover"
                     />
                   ) : (
