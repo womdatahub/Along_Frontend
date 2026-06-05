@@ -44,7 +44,7 @@ const OTPVerification = () => {
     if (!email || otpValue.length <= 3) return;
     await verifyEmail({ email: email!, otp: otpValue }).then((val) => {
       if (val === false) return;
-      router.push("/onboarding/user-type");
+      router.push("/onboarding/account");
     });
   };
 

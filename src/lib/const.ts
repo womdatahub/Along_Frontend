@@ -70,7 +70,7 @@ export const AUTH_ONLY_ROUTES = [
   "/sign-in",
   "/onboarding/otp",
   "/onboarding/rider",
-  "/onboarding/user-type",
+  "/onboarding/account",
   "/onboarding/terms",
 ] as const;
 

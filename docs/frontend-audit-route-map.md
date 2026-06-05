@@ -36,7 +36,7 @@ Backend source: Along Services gateway + route audit
 | `/terms-of-service` | Public; preserved |
 | `/onboarding` | User account registration |
 | `/onboarding/otp` | Email verification |
-| `/onboarding/user-type` | Rider/driver role selection |
+| `/onboarding/account` | Rider/driver role selection |
 | `/onboarding/rider` | Rider profile onboarding |
 | `/onboarding/driver-info` | Driver profile onboarding |
 | `/onboarding/services` | Rental service selection; ride/logistics disabled |

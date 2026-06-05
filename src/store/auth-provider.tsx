@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         "Onboarding process incomplete. Please complete your onboarding process to continue!",
       );
       setIsFetchingUserSessionLoading(false);
-      router.replace("/onboarding/user-type");
+      router.replace("/onboarding/account");
     }
   }, [
     isFetchingUserSessionLoading,
