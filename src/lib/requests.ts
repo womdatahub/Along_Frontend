@@ -226,8 +226,8 @@ export const requests = {
       lastName: string;
       dateOfBirth: string;
       gender: "male" | "female" | "other";
-      firstEmergencyContact: string;
-      secondEmergencyContact: string;
+      firstEmergencyContact?: { name: string; mobileNumber: string };
+      secondEmergencyContact?: { name: string; mobileNumber: string };
     }): R<RegisterDriverResponse> =>
       callApi(`${BASE_USER}/user/driver`, data as Record<string, unknown>),
 
