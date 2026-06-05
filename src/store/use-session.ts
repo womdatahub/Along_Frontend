@@ -110,8 +110,8 @@ type Session = {
       lastName: string;
       dateOfBirth: string;
       gender: "male" | "female" | "other";
-      firstEmergencyContact: string;
-      secondEmergencyContact: string;
+      firstEmergencyContact?: { name: string; mobileNumber: string };
+      secondEmergencyContact?: { name: string; mobileNumber: string };
     }) => Promise<boolean>;
     addVerificationDocumentsAndServices: (data: {
       driverSocialSecurityNumber: string;

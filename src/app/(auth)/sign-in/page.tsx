@@ -85,7 +85,7 @@ const SignInContent = () => {
   /** Navigate to the role's dashboard after a successful sign-in. */
   const redirectAfterLogin = (role: string) => {
     if (role === "user") {
-      router.replace("/onboarding/user-type");
+      router.replace("/onboarding/account");
       toast.error("Please complete your onboarding to continue.");
       return;
     }

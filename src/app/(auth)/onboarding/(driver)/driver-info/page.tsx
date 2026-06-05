@@ -1,18 +1,100 @@
 "use client";
-import {
-  AddInput,
-  AuthBackAndContinueButton,
-} from "@/components";
+import { AddInput, PhoneInput } from "@/components";
 import { cn, TDriverBasicInfoSchema } from "@/lib";
 import { useSession } from "@/store";
 import type { DriverProfile, UserProfile } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useForm, useWatch } from "react-hook-form";
+import {
+  useForm,
+  useWatch,
+  Controller,
+  UseFormRegister,
+  Control,
+  FieldErrors,
+} from "react-hook-form";
 import { toast } from "sonner";
 import { driverBasicInfoSchema } from "@/lib";
 import { useShallow } from "zustand/shallow";
-import { Car } from "lucide-react";
+import { Car, User } from "lucide-react";
+import { AuthBackAndContinueButton } from "@/components";
+
+const EmergencyContactCard = ({
+  title,
+  prefix,
+  register,
+  control,
+  errors,
+  disabled,
+}: {
+  title: string;
+  prefix: "firstEmergencyContact" | "secondEmergencyContact";
+  register: UseFormRegister<TDriverBasicInfoSchema>;
+  control: Control<TDriverBasicInfoSchema, unknown>;
+  errors: FieldErrors<TDriverBasicInfoSchema>;
+  disabled: boolean;
+}) => {
+  const contactErrors = errors[prefix] as
+    | { name?: { message?: string }; mobileNumber?: { message?: string } }
+    | undefined;
+
+  return (
+    <div className="bg-white rounded-2xl p-4 flex flex-col gap-3">
+      <div className="flex items-center gap-2.5">
+        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <User size={14} className="text-primary" />
+        </div>
+        <p className="text-sm font-semibold text-black">{title}</p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {/* Name */}
+        <div className="flex flex-col gap-1.5">
+          <label className="font-medium text-sm ml-1 text-black">
+            Full Name
+          </label>
+          <div
+            className={cn(
+              "flex items-center gap-2 px-4 h-12 bg-background rounded-xl border transition-colors",
+              contactErrors?.name ? "border-red-400" : "border-gray-200",
+            )}
+          >
+            <User size={16} className="text-placeholder shrink-0" />
+            <input
+              {...register(`${prefix}.name`)}
+              placeholder="Contact's full name"
+              disabled={disabled}
+              className="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+            />
+          </div>
+          {contactErrors?.name?.message && (
+            <p className="text-xs text-red-500 ml-1 mt-0.5">
+              {contactErrors.name.message}
+            </p>
+          )}
+        </div>
+
+        {/* Phone */}
+        <Controller
+          control={control}
+          name={`${prefix}.mobileNumber`}
+          render={({ field }) => (
+            <PhoneInput
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={contactErrors?.mobileNumber?.message}
+              label="Phone Number"
+              disabled={disabled}
+              iconAndInputWrapperClassName="bg-background rounded-xl h-12 border border-gray-200"
+              inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+            />
+          )}
+        />
+      </div>
+    </div>
+  );
+};
 
 const Page = () => {
   const {
@@ -41,13 +123,18 @@ const Page = () => {
       firstName: "",
       lastName: "",
       dateOfBirth: "",
-      firstEmergencyContact: "",
-      secondEmergencyContact: "",
+      firstEmergencyContact: { name: "", mobileNumber: "" },
+      secondEmergencyContact: { name: "", mobileNumber: "" },
     },
   });
 
   const router = useRouter();
   const selectedGender = useWatch({ control, name: "gender" });
+
+  const cleanContact = (contact: { name: string; mobileNumber: string }) => {
+    if (!contact.name.trim() && !contact.mobileNumber.trim()) return undefined;
+    return contact;
+  };
 
   const onSubmit = async (data: TDriverBasicInfoSchema) => {
     if (!driverProfile?.email && !userProfile?.email) {
@@ -57,6 +144,8 @@ const Page = () => {
 
     const driverData = {
       ...data,
+      firstEmergencyContact: cleanContact(data.firstEmergencyContact),
+      secondEmergencyContact: cleanContact(data.secondEmergencyContact),
       email: driverProfile?.email || userProfile?.email,
     };
 
@@ -66,7 +155,7 @@ const Page = () => {
       toast.error("Failed to register driver. Please try again.");
       return;
     }
-    router.push("/onboarding/services");
+    router.push("/onboarding/documents");
   };
 
   const genderOptions: { value: "male" | "female" | "other"; label: string }[] =
@@ -75,6 +164,8 @@ const Page = () => {
       { value: "female", label: "Female" },
       { value: "other", label: "Other" },
     ];
+
+  const disabled = isSubmitting || isLoading;
 
   return (
     <div className="flex justify-center items-center min-h-full w-full px-4 py-8">
@@ -97,7 +188,7 @@ const Page = () => {
             </div>
             <div>
               <p className="font-bold text-sm text-black font-heebo">Driver</p>
-              <p className="text-xs text-gray font-light">Step 1 of 4</p>
+              <p className="text-xs text-gray font-light">Step 1 of 3</p>
             </div>
           </div>
 
@@ -109,7 +200,7 @@ const Page = () => {
                 errors={errors}
                 placeholder="First name"
                 register={register}
-                disabled={isSubmitting || isLoading}
+                disabled={disabled}
                 required
                 type="text"
                 maxLength={50}
@@ -122,7 +213,7 @@ const Page = () => {
                 errors={errors}
                 placeholder="Last name"
                 register={register}
-                disabled={isSubmitting || isLoading}
+                disabled={disabled}
                 required
                 type="text"
                 maxLength={50}
@@ -137,7 +228,7 @@ const Page = () => {
               errors={errors}
               placeholder="YYYY-MM-DD"
               register={register}
-              disabled={isSubmitting || isLoading}
+              disabled={disabled}
               required
               type="date"
               iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
@@ -172,46 +263,42 @@ const Page = () => {
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p className="font-medium text-sm ml-1 text-black">
-                Emergency Contacts
-              </p>
+            {/* Emergency Contacts */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between ml-1">
+                <p className="font-medium text-sm text-black">
+                  Emergency Contacts
+                </p>
+                <span className="text-xs text-gray bg-gray-100 px-2.5 py-0.5 rounded-full font-light">
+                  Optional
+                </span>
+              </div>
               <div className="flex flex-col gap-3">
-                <AddInput
-                  label="Primary Contact"
-                  id="firstEmergencyContact"
-                  errors={errors}
-                  placeholder="+1 (000) 000 0000"
+                <EmergencyContactCard
+                  title="Primary Contact"
+                  prefix="firstEmergencyContact"
                   register={register}
-                  disabled={isSubmitting || isLoading}
-                  required
-                  type="tel"
-                  maxLength={17}
-                  iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
-                  inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+                  control={control}
+                  errors={errors}
+                  disabled={disabled}
                 />
-                <AddInput
-                  label="Secondary Contact"
-                  id="secondEmergencyContact"
-                  errors={errors}
-                  placeholder="+1 (000) 000 0000"
+                <EmergencyContactCard
+                  title="Secondary Contact"
+                  prefix="secondEmergencyContact"
                   register={register}
-                  disabled={isSubmitting || isLoading}
-                  required
-                  type="tel"
-                  maxLength={17}
-                  iconAndInputWrapperClassName="bg-white rounded-2xl h-14"
-                  inputClassName="placeholder:text-placeholder text-sm font-medium font-fustat focus:outline-none focus:ring-0 border-0 shadow-none"
+                  control={control}
+                  errors={errors}
+                  disabled={disabled}
                 />
               </div>
             </div>
           </div>
 
           <AuthBackAndContinueButton
-            backActive={!isSubmitting && !isLoading}
-            continueActive={!isSubmitting && !isLoading}
+            backActive={!disabled}
+            continueActive={!disabled}
             continueFnc={handleSubmit(onSubmit)}
-            continueIsLoading={isSubmitting || isLoading}
+            continueIsLoading={disabled}
           />
         </div>
       </div>

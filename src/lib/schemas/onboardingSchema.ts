@@ -56,37 +56,40 @@ export const onboardingSchema = z.object({
   mobileNumber: usPhoneSchema,
 });
 
-export const driverBasicInfoSchema = z
+const emergencyContactSchema = z
   .object({
-    firstName: z.string().min(2, "First name must be at least 2 characters"),
-    lastName: z.string().min(2, "Last name must be at least 2 characters"),
-    dateOfBirth: z.string().min(1, "Date of birth is required"),
-    gender: z.enum(["male", "female", "other"], {
-      message: "Please select a valid gender",
-    }),
-    firstEmergencyContact: z
-      .string()
-      .min(10, "Please enter a valid phone number")
-      .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
-    secondEmergencyContact: z
-      .string()
-      .min(10, "Please enter a valid phone number")
-      .regex(/^[0-9+\-() ]+$/, "Please enter a valid phone number"),
+    name: z.string(),
+    mobileNumber: z.string(),
   })
   .superRefine((data, ctx) => {
-    const normalize = (v: string) => v.replace(/[\s\-()]/g, "");
-
-    if (
-      normalize(data.firstEmergencyContact) ===
-      normalize(data.secondEmergencyContact)
-    ) {
+    const hasName = !!data.name?.trim();
+    const hasMobile = !!data.mobileNumber?.trim();
+    if (hasName && !hasMobile) {
       ctx.addIssue({
         code: "custom",
-        path: ["secondEmergencyContact"], // attach error to second field
-        message: "Emergency contact numbers must be different",
+        path: ["mobileNumber"],
+        message: "Phone number is required",
+      });
+    }
+    if (hasMobile && !hasName) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["name"],
+        message: "Name is required",
       });
     }
   });
+
+export const driverBasicInfoSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  gender: z.enum(["male", "female", "other"], {
+    message: "Please select a valid gender",
+  }),
+  firstEmergencyContact: emergencyContactSchema,
+  secondEmergencyContact: emergencyContactSchema,
+});
 
 export const socialSecurityNumberSchema = z.object({
   socialSecurityNumber: z

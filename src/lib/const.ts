@@ -59,7 +59,6 @@ export const PUBLIC_ROUTES = [
   "/schedule-ride",
   "/onboarding",
   "/onboarding/driver-info",
-  "/onboarding/services",
   "/onboarding/documents",
   "/onboarding/vehicle-info",
   "/onboarding/vehicle-insurance",
@@ -70,7 +69,7 @@ export const AUTH_ONLY_ROUTES = [
   "/sign-in",
   "/onboarding/otp",
   "/onboarding/rider",
-  "/onboarding/user-type",
+  "/onboarding/account",
   "/onboarding/terms",
 ] as const;
 

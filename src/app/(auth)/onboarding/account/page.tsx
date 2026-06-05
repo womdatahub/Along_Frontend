@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  AuthBackAndContinueButton,
-  TermsModal,
-} from "@/components";
+import { AuthBackAndContinueButton } from "@/components";
 import { cn } from "@/lib";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,7 +10,6 @@ import { Car, User } from "lucide-react";
 const Page = () => {
   const router = useRouter();
   const [selected, setSelected] = useState<"rider" | "driver" | "">("");
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   return (
     <div className="flex justify-center items-center min-h-full w-full px-4 py-8">
@@ -134,25 +130,15 @@ const Page = () => {
             </button>
           </div>
 
-          <TermsModal
-            acceptFunction={() => {
-              setIsTermsModalOpen(false);
-              router.push("/onboarding/driver-info");
-            }}
-            isTermsModalOpen={isTermsModalOpen}
-            setIsTermsModalOpen={setIsTermsModalOpen}
-            trigger={<div key="1" />}
-          />
-
           <AuthBackAndContinueButton
             backActive
             continueActive={!!selected}
             continueFnc={() => {
-              if (selected === "driver") {
-                setIsTermsModalOpen(true);
-                return;
-              }
-              router.push(`/onboarding/${selected}`);
+              router.push(
+                selected === "driver"
+                  ? "/onboarding/driver-info"
+                  : "/onboarding/rider",
+              );
             }}
           />
         </div>
