@@ -155,7 +155,7 @@ const Page = () => {
       toast.error("Failed to register driver. Please try again.");
       return;
     }
-    router.push("/onboarding/services");
+    router.push("/onboarding/documents");
   };
 
   const genderOptions: { value: "male" | "female" | "other"; label: string }[] =
@@ -188,7 +188,7 @@ const Page = () => {
             </div>
             <div>
               <p className="font-bold text-sm text-black font-heebo">Driver</p>
-              <p className="text-xs text-gray font-light">Step 1 of 4</p>
+              <p className="text-xs text-gray font-light">Step 1 of 3</p>
             </div>
           </div>
 

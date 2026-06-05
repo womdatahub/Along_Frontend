@@ -136,7 +136,7 @@ const Page = () => {
           {/* Step badge */}
           <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-gray-2 w-fit">
             <div className="size-2 rounded-full bg-primary" />
-            <span className="text-xs font-medium text-gray-4">Step 4 of 4</span>
+            <span className="text-xs font-medium text-gray-4">Step 3 of 3</span>
           </div>
 
           {/* Vehicle details */}

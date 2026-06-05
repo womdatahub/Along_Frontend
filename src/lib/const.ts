@@ -59,7 +59,6 @@ export const PUBLIC_ROUTES = [
   "/schedule-ride",
   "/onboarding",
   "/onboarding/driver-info",
-  "/onboarding/services",
   "/onboarding/documents",
   "/onboarding/vehicle-info",
   "/onboarding/vehicle-insurance",

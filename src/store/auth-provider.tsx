@@ -8,10 +8,6 @@ import { LoadingComponent } from "@/components";
 import { useShallow } from "zustand/shallow";
 import { AUTH_ONLY_ROUTES, PUBLIC_ROUTES, ROLE_DASHBOARD_MAP } from "@/lib";
 import type { DriverProfile, RiderProfile } from "@/types";
-
-/**
- * Determines the onboarding redirect for a driver based on profile completeness.
- */
 const getDriverOnboardingRedirect = (
   driverProfile:
     | {
@@ -20,14 +16,9 @@ const getDriverOnboardingRedirect = (
         isVehicleAdded?: boolean;
       }
     | undefined,
-  servicesCount: number,
 ): string | null => {
   if (!driverProfile?.firstName) return "/onboarding/driver-info";
-  if (!driverProfile?.driverProfilePictureUri) {
-    return servicesCount === 0
-      ? "/onboarding/services"
-      : "/onboarding/documents";
-  }
+  if (!driverProfile?.driverProfilePictureUri) return "/onboarding/documents";
   if (!driverProfile?.isVehicleAdded) return "/onboarding/vehicle-info";
   return null;
 };
@@ -47,7 +38,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     userRole,
     isFetchingUserSessionLoading,
     currentUser,
-    services,
     actions: {
       fetchUserDetails,
       setRouteBeforeRedirect,
@@ -58,7 +48,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       userRole: state.userRole,
       isFetchingUserSessionLoading: state.isFetchingUserSessionLoading,
       currentUser: state.currentUser,
-      services: state.services,
       actions: state.actions,
     })),
   );
@@ -100,10 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (userRole) {
       // Driver onboarding checks
       if (userRole === "driver") {
-        const redirect = getDriverOnboardingRedirect(
-          driverProfile,
-          services.length,
-        );
+        const redirect = getDriverOnboardingRedirect(driverProfile);
         if (redirect) {
           router.replace(redirect);
           return;
@@ -149,7 +135,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     pathname,
     driverProfile,
     riderProfile,
-    services.length,
     router,
     setRouteBeforeRedirect,
     setIsFetchingUserSessionLoading,
